@@ -33,7 +33,7 @@
           (prin (.CAR x))
           " . "
           (prin (.CDR x))
-          ")"))
+          ")")))
 
   java.lang.Object
   (prin
