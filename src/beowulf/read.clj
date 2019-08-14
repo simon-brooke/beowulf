@@ -57,7 +57,6 @@
   'p'. Note that the function acts recursively and progressively decapitates
   its argument, so that the argument will not always be a valid parse tree."
   [p]
-  (println p)
   (cond
     (empty? p)
     NIL
@@ -72,6 +71,8 @@
       (gen-dot-terminated-list (rest p)))))
 
 (defn gen-cond-clause
+  "Generate a cond clause from this simplified parse tree fragment `p`;
+  returns `nil` if `p` does not represent a cond clause."
   [p]
   (if
     (and (coll? p)(= :cond-clause (first p)))
@@ -79,9 +80,9 @@
       (list (generate (nth p 1))
                      (generate (nth p 2))))))
 
-
-
 (defn gen-cond
+  "Generate a cond statement from this simplified parse tree fragment `p`;
+  returns `nil` if `p` does not represent a (MEXPR) cond statement."
   [p]
   (if
     (and (coll? p)(= :cond (first p)))
@@ -92,7 +93,17 @@
           gen-cond-clause
           (rest p))))))
 
-
+(defn gen-fn-call
+  "Generate a function call from this simplified parse tree fragment `p`;
+  returns `nil` if `p` does not represent a (MEXPR) function call.
+  TODO: I'm not yet certain but it appears that args in mexprs are
+  implicitly quoted; this function does not (yet) do that."
+  [p]
+  (if
+    (and (coll? p)(= :fncall (first p))(= :fn-name (first (second p))))
+    (make-cons-cell
+      (second (second p))
+      (generate (nth p 2)))))
 
 (defn generate
   "Generate lisp structure from this parse tree `p`. It is assumed that
@@ -106,7 +117,8 @@
       :dotted-pair (make-cons-cell
                      (generate (nth p 1))
                      (generate (nth p 2)))
-      :list (gen-dot-terminated-list (rest p))
+      :fncall (gen-fn-call p)
+      (:args :list) (gen-dot-terminated-list (rest p))
       :number (clojure.core/read-string (second p))
       ;; default
       (throw (Exception. (str "Cannot yet generate " (first p)))))

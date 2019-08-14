@@ -26,14 +26,26 @@
 
   beowulf.cons_cell.ConsCell
   (prin [x]
-        (let [car (.CAR x)
-              cdr (.CDR x)]
-        (str
-          "("
-          (prin (.CAR x))
-          " . "
-          (prin (.CDR x))
-          ")")))
+        (loop [c x
+               n 0
+               s "("]
+          (let [car (.CAR c)
+                cdr (.CDR c)
+                cons? (instance? beowulf.cons_cell.ConsCell cdr)
+                ss (str
+                     s
+                     (prin car)
+                     (cond
+                       cons?
+                       " "
+                       (or (nil? cdr) (= cdr 'NIL))
+                       ")"
+                       :else
+                       (str " . " (prin cdr) ")")))]
+            (if
+              cons?
+              (recur cdr (inc n) ss)
+              ss))))
 
   java.lang.Object
   (prin
