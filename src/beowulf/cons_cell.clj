@@ -3,7 +3,9 @@
 
 (def NIL (symbol "NIL"))
 
-(def NIL (symbol "NIL"))
+(def T (symbol "T")) ;; true.
+
+(def F (symbol "F")) ;; false as distinct from nil
 
 (deftype ConsCell [CAR CDR]
   clojure.lang.ISeq

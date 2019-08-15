@@ -266,3 +266,6 @@
       (throw (Exception. (str "Cannot yet generate " (first p)))))
     p))
 
+(defn primitive-read
+  []
+  (generate (simplify (parse (read-line)))))

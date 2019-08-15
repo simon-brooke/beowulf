@@ -51,3 +51,9 @@
     [x]
     (str x)))
 
+(defn primitive-print
+  [x]
+  (if
+    (satisfies? beowulf.print.Printable x) (prin x)
+    (str x)))
+
