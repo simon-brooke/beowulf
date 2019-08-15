@@ -85,5 +85,10 @@
       (is (= actual expected)))
     (let [expected "(A B (C . D) E)"
           actual (prin (generate (simplify (parse expected))))]
-      (is (= actual expected)))
-))
+      (is (= actual expected)))))
+
+(deftest list-tests
+  (testing "Reading arbitrarily structured lists"
+    (let [expected "(DEFUN FACT (X) (COND ((ZEROP X) 1) (T (TIMES X (FACT (SUB1 X))))))"
+          actual (prin (generate (simplify (parse expected))))]
+      (is (= actual expected)))))
