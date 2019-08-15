@@ -1,5 +1,4 @@
 (ns beowulf.print
-;;  (:require [beowulf.cons-cell])
   )
 
 (defprotocol Printable
