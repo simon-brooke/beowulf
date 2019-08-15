@@ -4,36 +4,47 @@
 ;;  (:import [beowulf.cons-cell ConsCell])
   )
 
+(declare generate)
+
 (def parse
   "Parse a string presented as argument into a parse tree which can then
   be operated upon further."
   (i/parser
-    "expr := mexpr | sexpr;
-    mexpr := fncall | defn | cond;
-    fncall := fn-name lsqb args rsqb;
-    lsqb := '[';
-    rsqb := ']';
-    defn := mexpr opt-space '=' opt-space mexpr;
-    cond := lsqb (cond-clause semi-colon opt-space)* cond-clause rsqb;
-    cond-clause := expr opt-space arrow opt-space expr;
-    arrow := '->';
-    args := (arg semi-colon opt-space)* arg;
-    arg := mexpr | sexpr;
-    fn-name := #'[a-z]*';
-    semi-colon := ';';
+    (str
+      ;; top level: we accept mexprs as well as sexprs.
+      "expr := mexpr | sexpr;"
 
-    list := lpar sexpr rpar | lpar (sexpr sep)* rpar | lpar (sexpr sep)* dot-terminal;
-    dotted-pair := lpar dot-terminal ;
-    dot := '.';
-    lpar := '(';
-    rpar := ')';
-    sexpr := atom | number | dotted-pair | list;
-    dot-terminal := sexpr space dot space sexpr rpar;
-    space := #'\\p{javaWhitespace}+';
-    opt-space := #'\\p{javaWhitespace}*';
-    sep := ',' | opt-space;
-    atom := #'[A-Z][A-Z0-9]*';
-    number := #'-?[0-9][0-9.]*';"))
+      ;; mexprs. I'm pretty clear that Lisp 1.5 could never read these,
+      ;; but it's a convenience.
+      "mexpr := fncall | defn | cond;
+      fncall := fn-name lsqb args rsqb;
+      lsqb := '[';
+      rsqb := ']';
+      defn := mexpr opt-space '=' opt-space mexpr;
+      cond := lsqb (cond-clause semi-colon opt-space)* cond-clause rsqb;
+      cond-clause := expr opt-space arrow opt-space expr;
+      arrow := '->';
+      args := (arg semi-colon opt-space)* arg;
+      arg := mexpr | sexpr;
+      fn-name := #'[a-z]*';
+      semi-colon := ';';"
+
+      ;; sexprs. Note it's not clear to me whether Lisp 1.5 had the quote macro,
+      ;; but I've included it on the basis that it can do little harm.
+      "list := lpar sexpr rpar | lpar (sexpr sep)* rpar | lpar (sexpr sep)* dot-terminal;
+      dotted-pair := lpar dot-terminal ;
+      dot := '.';
+      lpar := '(';
+      rpar := ')';
+      sexpr := atom | number | dotted-pair | list | quoted-expr;
+      quoted-expr := quote sexpr;
+      quote := '\\'';
+      dot-terminal := sexpr space dot space sexpr rpar;
+      space := #'\\p{javaWhitespace}+';
+      opt-space := #'\\p{javaWhitespace}*';
+      sep := ',' | opt-space;
+      atom := #'[A-Z][A-Z0-9]*';
+      number := #'-?[0-9][0-9.]*';")))
 
 (defn simplify
   "Simplify this parse tree `p`."
@@ -45,9 +56,11 @@
       (remove
         #(if (coll? %) (empty? %))
         (case (first p)
-          (:arrow :dot :lpar :lsqb :opt-space :rpar :rsqb :semi-colon :sep :space) nil
+          (:arrow :dot :lpar :lsqb :opt-space :quote :rpar :rsqb :semi-colon :sep :space) nil
           (:arg :expr :mexpr :sexpr) (simplify (second p))
           (:args :cond :cond-clause :dot-terminal :dotted-pair :fncall :list) (map simplify p)
+          ;; the quote read macro (which probably didn't exist in Lisp 1.5, but...)
+          :quoted-expr [:fncall [:fn-name "quote"] [:args (simplify (nth p 2))]]
           ;;default
           p)))
     p))
