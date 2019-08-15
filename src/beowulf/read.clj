@@ -54,7 +54,7 @@
       ;; Lisp 1.5 supported octal as well as decimal and scientific notation
       "number := integer | decimal | scientific | octal;
       integer := #'-?[1-9][0-9]*';
-      decimal := #'-?[1-9][0-9]*\\.?[0-9]*' | #'0\\.[0-9]*';
+      decimal := #'-?[1-9][0-9]*\\.?[0-9]*' | #'0.[0-9]*';
       scientific := coefficient e exponent;
       coefficient := decimal;
       exponent := integer;
@@ -248,7 +248,7 @@
                      (generate (nth p 2)))
       :exponent (generate (second p))
       :fncall (gen-fn-call p)
-      :mvar (upper-case (second p))
+      :mvar (symbol (upper-case (second p)))
       :octal (let [n (read-string (strip-leading-zeros (second p) "0"))
                    scale (generate (nth p 2))]
                (* n (expt 8 scale)))

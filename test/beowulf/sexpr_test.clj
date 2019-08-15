@@ -1,6 +1,7 @@
 (ns beowulf.sexpr-test
   (:require [clojure.math.numeric-tower :refer [abs]]
             [clojure.test :refer :all]
+            [beowulf.cons-cell :refer :all]
             [beowulf.read :refer [parse simplify generate]]
             [beowulf.print :refer :all]))
 
@@ -74,3 +75,15 @@
              actual (generate (simplify (parse "0.6E2")))]
          (is (< (abs (- actual expected)) 0.0001))))
 
+(deftest dotted-pair-tests
+  (testing "Reading dotted pairs"
+    (let [expected "(A . B)"
+          actual (prin (generate (simplify (parse expected))))]
+      (is (= actual expected)))
+    (let [expected "(A B C . D)"
+          actual (prin (generate (simplify (parse expected))))]
+      (is (= actual expected)))
+    (let [expected "(A B (C . D) E)"
+          actual (prin (generate (simplify (parse expected))))]
+      (is (= actual expected)))
+))
