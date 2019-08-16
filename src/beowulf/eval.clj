@@ -31,14 +31,18 @@
   (if
     (instance? beowulf.cons_cell.ConsCell x)
     (.CAR x)
-    NIL))
+    (throw
+      (Exception.
+        (str "Cannot take CAR of `" x "` (" (.getName (.getClass x)) ")")))))
 
 (defn cdr
   [x]
   (if
     (instance? beowulf.cons_cell.ConsCell x)
     (.CDR x)
-    NIL))
+    (throw
+      (Exception.
+        (str "Cannot take CDR of `" x "` (" (.getName (.getClass x)) ")")))))
 
 (defn uaf
   "Universal access function; `l` is expected to be an arbitrary list, `path`
@@ -47,14 +51,10 @@
   [l path]
   (cond
     (null l) NIL
-    (not (instance? beowulf.cons_cell.ConsCell l))
-    (throw (Exception. (str "Unexpected list argument to uaf: `" l "`")))
-    (empty? (rest path))(case (first path)
-                          \a (car l)
-                          \d (cdr l))
-    :else (case (first path)
-            \a (uaf (car l) (rest path))
-            \d (uaf (cdr l) (rest path)))))
+    (empty? path) l
+    :else (case (last path)
+            \a (uaf (car l) (butlast path))
+            \d (uaf (cdr l) (butlast path)))))
 
 (defn caar [x] (uaf x (seq "aa")))
 (defn cadr [x] (uaf x (seq "ad")))

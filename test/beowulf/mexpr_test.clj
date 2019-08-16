@@ -1,7 +1,6 @@
 (ns beowulf.mexpr-test
   (:require [clojure.test :refer :all]
-            [beowulf.read :refer [parse simplify generate]]
-            [beowulf.print :refer :all]))
+            [beowulf.read :refer [parse simplify generate]]))
 
 ;; These tests are taken generally from the examples on page 10 of
 ;; Lisp 1.5 Programmers Manual:
@@ -23,10 +22,10 @@
 (deftest variable-tests
   (testing "Variable translation"
     (let [expected "X"
-          actual (prin (generate (simplify (parse "x"))))]
+          actual (print-str (generate (simplify (parse "x"))))]
       (is (= actual expected)))
     (let [expected "CAR"
-          actual (prin (generate (simplify (parse "car"))))]
+          actual (print-str (generate (simplify (parse "car"))))]
       (is (= actual expected)))
     ))
 
@@ -38,7 +37,7 @@
     ;; "T" would be interpreted as a sexpr, which would not be
     ;; quoted.
     (let [expected "(ATOM (QUOTE T))"
-          actual (prin (generate (simplify (parse "atom[T]"))))]
+          actual (print-str (generate (simplify (parse "atom[T]"))))]
       (is (= actual expected)))
     ;; I'm not clear how `car[(A B C)]` should be translated, but
     ;; I suspect as (CAR (LIST 'A 'B 'C)).
@@ -47,19 +46,19 @@
 (deftest fncall-tests
   (testing "Function calls"
     (let [expected "(CAR X)"
-          actual (prin (generate (simplify (parse "car[x]"))))]
+          actual (print-str (generate (simplify (parse "car[x]"))))]
       (is (= actual expected)))
     (let [expected "(FF (CAR X))"
-          actual (prin (generate (simplify (parse "ff[car[x]]"))))]
+          actual (print-str (generate (simplify (parse "ff[car[x]]"))))]
       (is (= actual expected)))))
 
 (deftest conditional-tests
   (testing "Conditional expressions"
     (let [expected "(COND ((ATOM X) X) ((QUOTE T) (FF (CAR X))))"
-          actual (prin (generate (simplify (parse "[atom[x]->x; T->ff[car[x]]]"))))]
+          actual (print-str (generate (simplify (parse "[atom[x]->x; T->ff[car[x]]]"))))]
       (is (= actual expected)))
     (let [expected "(LABEL FF (LAMBDA (X) (COND ((ATOM X) X) ((QUOTE T) (FF (CAR X))))))"
-          actual (prin
+          actual (print-str
                    (generate
                      (simplify
                        (parse "label[ff;λ[[x];[atom[x]->x; T->ff[car[x]]]]]"))))]

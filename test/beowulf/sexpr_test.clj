@@ -2,8 +2,7 @@
   (:require [clojure.math.numeric-tower :refer [abs]]
             [clojure.test :refer :all]
             [beowulf.cons-cell :refer :all]
-            [beowulf.read :refer [parse simplify generate]]
-            [beowulf.print :refer :all]))
+            [beowulf.read :refer [parse simplify generate]]))
 
 ;; broadly, sexprs should be homoiconic
 
@@ -78,17 +77,17 @@
 (deftest dotted-pair-tests
   (testing "Reading dotted pairs"
     (let [expected "(A . B)"
-          actual (prin (generate (simplify (parse expected))))]
+          actual (print-str (generate (simplify (parse expected))))]
       (is (= actual expected)))
     (let [expected "(A B C . D)"
-          actual (prin (generate (simplify (parse expected))))]
+          actual (print-str (generate (simplify (parse expected))))]
       (is (= actual expected)))
     (let [expected "(A B (C . D) E)"
-          actual (prin (generate (simplify (parse expected))))]
+          actual (print-str (generate (simplify (parse expected))))]
       (is (= actual expected)))))
 
 (deftest list-tests
   (testing "Reading arbitrarily structured lists"
     (let [expected "(DEFUN FACT (X) (COND ((ZEROP X) 1) (T (TIMES X (FACT (SUB1 X))))))"
-          actual (prin (generate (simplify (parse expected))))]
+          actual (print-str (generate (simplify (parse expected))))]
       (is (= actual expected)))))
