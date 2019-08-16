@@ -14,19 +14,13 @@
   ;; next and more must return ISeq:
   ;; https://github.com/clojure/clojure/blob/master/src/jvm/clojure/lang/ISeq.java
   (more [this] (if
-                 (seq? this)
-                 (if
-                   (= (.CDR this) NIL)
-                   clojure.lang.PersistentList/EMPTY
-                   (.CDR this))
-                 NIL))
+                 (seq? (.CDR this))
+                 clojure.lang.PersistentList/EMPTY
+                 (.CDR this)))
   (next [this] (if
-                 (seq? this)
-                 (if
-                   (= (.CDR this) NIL)
-                   nil ;; next returns nil when empty
-                   (.CDR this))
-                 NIL))
+                 (seq? (.CDR this))
+                 nil ;; next returns nil when empty
+                 (.CDR this)))
 
   clojure.lang.Seqable
   (seq [this] this)
@@ -37,12 +31,9 @@
 
   clojure.lang.IPersistentCollection
   (count [this] (if
-                  (seq? this)
-                  (if
-                    (= (.CDR this) NIL)
-                    0
-                    (inc (count (.CDR this))))
-                  0))
+                  (seq? (.CDR this))
+                  0
+                  (inc (count (.CDR this)))))
   (empty [this] false)
   (equiv [this other] false))
 
