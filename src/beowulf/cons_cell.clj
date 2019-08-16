@@ -67,6 +67,42 @@
           ss))
       (str c))))
 
+(defn pretty-print
+  "This isn't the world's best pretty printer but it sort of works."
+  ([^beowulf.cons_cell.ConsCell cell]
+   (println (pretty-print cell 80 0)))
+  ([^beowulf.cons_cell.ConsCell cell width level]
+   (loop [c cell
+          n (inc level)
+          s "("]
+     (if
+       (instance? beowulf.cons_cell.ConsCell c)
+       (let [car (.CAR c)
+             cdr (.CDR c)
+             cons? (instance? beowulf.cons_cell.ConsCell cdr)
+             print-width (count (print-str c))
+             indent (apply str (repeat n "  "))
+             ss (str
+                  s
+                  (pretty-print car width n)
+                  (cond
+                    cons?
+                    (if
+                      (< (+ (count indent) print-width) width)
+                      " "
+                      (str "\n" indent))
+                    (or (nil? cdr) (= cdr 'NIL))
+                    ")"
+                    :else
+                    (str " . " (pretty-print cdr width n) ")")))]
+         (if
+           cons?
+           (recur cdr n ss)
+           ss))
+       (str c)))))
+
+
+
 (defmethod clojure.core/print-method beowulf.cons_cell.ConsCell
   [this writer]
   (.write writer (to-string this)))

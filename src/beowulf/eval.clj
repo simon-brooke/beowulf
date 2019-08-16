@@ -11,7 +11,7 @@
 
 (defn null
   [x]
-  (= x NIL))
+  (if (= x NIL) 'T 'F))
 
 (defn primitive-atom
   "It is not clear to me from the documentation whether `(ATOM 7)` should return
@@ -50,7 +50,7 @@
   all those fiddly `#'c[ad]+r'` functions a bit easier"
   [l path]
   (cond
-    (null l) NIL
+    (= l NIL) NIL
     (empty? path) l
     :else (case (last path)
             \a (uaf (car l) (butlast path))
@@ -87,30 +87,23 @@
 (defn cdaadr [x] (uaf x (seq "daad")))
 (defn cdaddr [x] (uaf x (seq "dadd")))
 
-;; (defn eq
-;;   "`eq` is only defined for atoms (symbols); it is NOT pointer identity, as
-;;   it is in later Lisps. Returns `'T` on success (identical atoms), `'F`
-;;   (NOT `NIL`) on failure. The behaviour if either argument is not an atom is
-;;   stated to be 'undefined', but I shall return `'F` for consistency."I
-;;   [x y]
-;;   (cond
-;;     (and (primitive-atom? x) (= x y)) 'T
-;;     :else
-;;     'F))
-
-(defn eq [x y] (if (and (primitive-atom? x) (= x y)) T F))
+(defn eq
+  ;; For some reason providing a doc string for this function breaks the
+  ;; Clojure parser!
+  [x y]
+  (if (and (= (primitive-atom x) 'T) (= x y)) 'T 'F))
 
 (defn equal
   "This is a predicate that is true if its two arguments are identical
   S-expressions, and false if they are different. (The elementary predicate
   `eq` is defined only for atomic arguments.) The definition of `equal` is
-  an example of a conditional expression inside a conditional expression."
+  an example of a conditional expression inside a conditional expression.
+
+  NOTE: returns F on failure, not NIL"
   [x y]
   (cond
-    (primitive-atom? x) (cond
-                  (primitive-atom? y) (eq x y)
-                  :else 'F) ;; NOTE: returns F on failure, not NIL
-    (equal (car x) (car y)) (equal (cdr x) (cdr y))
+    (= (primitive-atom x) 'T) (eq x y)
+    (= (equal (car x) (car y)) 'T) (equal (cdr x) (cdr y))
     :else 'F))
 
 (defn subst
@@ -118,8 +111,8 @@
   all occurrences of the atomic symbol `y` in the S-expression `z`."
   [x y z]
   (cond
-    (equal y z) x
-    (primitive-atom? z) z ;; NIL is a symbol
+    (= (equal y z) 'T) x
+    (= (primitive-atom? z) 'T) z ;; NIL is a symbol
     :else
     (make-cons-cell (subst x y (car z)) (subst x y (cdr z)))))
 
@@ -130,9 +123,9 @@
   See page 11 of the Lisp 1.5 Programmers Manual."
   [x y]
   (cond
-   (null x) y
+    (= x NIL) y
     :else
-    (cons (car x) (append (cdr x) y))))
+    (make-cons-cell (car x) (append (cdr x) y))))
 
 
 (defn member
@@ -144,7 +137,7 @@
   [x y]
   (cond
     (= y NIL) F ;; NOTE: returns F on falsity, not NIL
-    (equal x (car y)) T
+    (= (equal x (car y)) 'T) 'T
     :else (member x (cdr y))))
 
 (defn pairlis
@@ -162,7 +155,7 @@
   (cond
     ;; the original tests only x; testing y as well will be a little more
     ;; robust if `x` and `y` are not the same length.
-    (or (null x) (null y)) a
+    (or (= NIL x) (= NIL y)) a
     :else (make-cons-cell
             (make-cons-cell (car x) (car y))
             (pairlis (cdr x) (cdr y) a))))
@@ -176,9 +169,9 @@
   See page 12 of the Lisp 1.5 Programmers Manual."
   [x a]
   (cond
-    (null a) NIL ;; this clause is not present in the original but is added for
+    (= NIL a) NIL ;; this clause is not present in the original but is added for
     ;; robustness.
-    (equal (caar a) x) (car a)
+    (= (equal (caar a) x) 'T) (car a)
     :else
     (primitive-assoc x (cdr a))))
 
@@ -187,8 +180,8 @@
   ? I think this is doing variable binding in the stack frame?"
   [a z]
   (cond
-    (null a) z
-    (= (caar a) z) (cdar a)
+    (= NIL a) z
+    (= (caar a) z) (cdar a) ;; TODO: this looks definitely wrong
     :else
     (sub2 (cdr a) z)))
 
@@ -243,10 +236,9 @@
   `beowulf.cons-cell/ConsCell` objects.
   See page 13 of the Lisp 1.5 Programmers Manual."
   [clauses env]
-  (cond
+  (if
     (not= (primitive-eval (caar clauses) env) NIL)
     (primitive-eval (cadar clauses) env)
-    :else
     (evcon (cdr clauses) env)))
 
 (defn- evlis
