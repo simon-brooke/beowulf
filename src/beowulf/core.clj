@@ -4,13 +4,12 @@
   (:gen-class))
 
 (defn -main
-  "I don't do a whole lot ... yet."
+  "Read/eval/print loop."
   [& args]
-  (println "Hello, World!")
+  (println "Béowulf is mín nama")
   (loop []
     (print ":: ")
     (flush)
     (let [input (READ)]
-      (println (str "\tI read: " input))
       (println (str ">  " (EVAL input @oblist)))
       (recur))))
