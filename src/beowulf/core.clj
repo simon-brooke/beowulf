@@ -1,6 +1,6 @@
 (ns beowulf.core
-  (:require [beowulf.eval :refer [primitive-eval oblist]]
-            [beowulf.read :refer [primitive-read]])
+  (:require [beowulf.eval :refer [EVAL oblist]]
+            [beowulf.read :refer [READ]])
   (:gen-class))
 
 (defn -main
@@ -10,7 +10,7 @@
   (loop []
     (print ":: ")
     (flush)
-    (let [input (primitive-read)]
+    (let [input (READ)]
       (println (str "\tI read: " input))
-      (println (str ">  " (primitive-eval input @oblist)))
+      (println (str ">  " (EVAL input @oblist)))
       (recur))))

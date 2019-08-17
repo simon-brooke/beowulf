@@ -266,13 +266,13 @@
       (throw (Exception. (str "Cannot yet generate " (first p)))))
     p))
 
-(defn primitive-read
-  []
-  (generate (simplify (parse (read-line)))))
-
 (defmacro gsp
   "Shortcut macro - the internals of read; or, if you like, read-string.
   Argument `s` should be a string representation of a valid Lisp
   expression."
   [s]
   `(generate (simplify (parse ~s))))
+
+(defn READ
+  []
+  (gsp (read-line)))

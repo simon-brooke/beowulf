@@ -14,136 +14,136 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (deftest atom-tests
-  (testing "primitive-atom"
+  (testing "ATOM"
     (let [expected T
-          actual (primitive-atom T)]
+          actual (ATOM T)]
       (is (= actual expected) "T is an atom (symbol)"))
     (let [expected T
-          actual (primitive-atom (gsp "HELLO"))]
+          actual (ATOM (gsp "HELLO"))]
       (is (= actual expected) "HELLO is an atom (symbol)"))
     (let [expected T
-          actual (primitive-atom 7)]
+          actual (ATOM 7)]
       (is (= actual expected)
           "I'm not actually certain whether a number should be treated as an
           atom, but I'm guessing so"))
     (let [expected F
-          actual (primitive-atom (make-cons-cell 'A 'B))]
+          actual (ATOM (make-cons-cell 'A 'B))]
       (is (= actual expected) "A dotted pair is explicitly not an atom."))
     (let [expected F
-          actual (primitive-atom (gsp "(A B C D)"))]
+          actual (ATOM (gsp "(A B C D)"))]
       (is (= actual expected) "A list is explicitly not an atom")))
-  (testing "primitive-atom?"
+  (testing "ATOM?"
     (let [expected T
-          actual (primitive-atom? T)]
+          actual (ATOM? T)]
       (is (= actual expected) "T is an atom (symbol)"))
     (let [expected T
-          actual (primitive-atom? (gsp "HELLO"))]
+          actual (ATOM? (gsp "HELLO"))]
       (is (= actual expected) "HELLO is an atom (symbol)"))
     (let [expected T
-          actual (primitive-atom? 7)]
+          actual (ATOM? 7)]
       (is (= actual expected)
           "I'm not actually certain whether a number should be treated as an
           atom, but I'm guessing so"))
     (let [expected NIL
-          actual (primitive-atom? (make-cons-cell 'A 'B))]
+          actual (ATOM? (make-cons-cell 'A 'B))]
       (is (= actual expected) "A dotted pair is explicitly not an atom."))
     (let [expected NIL
-          actual (primitive-atom? (gsp "(A B C D)"))]
+          actual (ATOM? (gsp "(A B C D)"))]
       (is (= actual expected) "A list is explicitly not an atom"))))
 
 (deftest access-function-tests
-  (testing "car"
+  (testing "CAR"
     (let [expected 'A
-          actual (car (make-cons-cell 'A 'B))]
-      (is (= actual expected) "A is car of (A . B)"))
+          actual (CAR (make-cons-cell 'A 'B))]
+      (is (= actual expected) "A is CAR of (A . B)"))
     (let [expected 'A
-          actual (car (gsp "(A B C D)"))]
-      (is (= actual expected) "A is car of (A B C D)"))
+          actual (CAR (gsp "(A B C D)"))]
+      (is (= actual expected) "A is CAR of (A B C D)"))
     (is (thrown-with-msg?
           Exception
           #"Cannot take CAR of `.*"
-          (car 'T))
-        "Can't take the car of an atom")
+          (CAR 'T))
+        "Can't take the CAR of an atom")
     (is (thrown-with-msg?
           Exception
           #"Cannot take CAR of `.*"
-          (car 7))
-        "Can't take the car of a number"))
-  (testing "cdr"
+          (CAR 7))
+        "Can't take the CAR of a number"))
+  (testing "CDR"
     (let [expected 'B
-          actual (cdr (make-cons-cell 'A 'B))]
-      (is (= actual expected) "B is cdr of (A . B)"))
+          actual (CDR (make-cons-cell 'A 'B))]
+      (is (= actual expected) "B is CDR of (A . B)"))
     (let [expected 'B
-          actual (cdr (gsp "(A B C D)"))]
+          actual (CDR (gsp "(A B C D)"))]
       (is (instance? beowulf.cons_cell.ConsCell actual)
-          "cdr of (A B C D) is a cons cell")
-      (is (= (car actual) expected) "the car of that cons-cell is B"))
+          "CDR of (A B C D) is a cons cell")
+      (is (= (CAR actual) expected) "the CAR of that cons-cell is B"))
     (is (thrown-with-msg?
           Exception
           #"Cannot take CDR of `.*"
-          (cdr 'T))
-        "Can't take the cdr of an atom")
+          (CDR 'T))
+        "Can't take the CDR of an atom")
     (is (thrown-with-msg?
           Exception
           #"Cannot take CDR of `.*"
-          (cdr 7))
-        "Can't take the cdr of a number"))
+          (CDR 7))
+        "Can't take the CDR of a number"))
   (let [s (gsp "((((1 . 2) 3)(4 5) 6)(7 (8 9) (10 11 12) 13) 14 (15 16) 17)")]
     ;; structure for testing access functions
     (testing "cadr"
       (let [expected 'B
-            actual (cadr (gsp "(A B C D)"))]
+            actual (CADR (gsp "(A B C D)"))]
         (is (= actual expected))))
     (testing "caddr"
       (let [expected 'C
-            actual (caddr (gsp "(A B C D)"))]
+            actual (CADDR (gsp "(A B C D)"))]
         (is (= actual expected)))
       (let [expected 14
-            actual (caddr s)]
+            actual (CADDR s)]
         (is (= actual expected)))
       )
     (testing "cadddr"
       (let [expected 'D
-            actual (cadddr (gsp "(A B C D)"))]
+            actual (CADDDR (gsp "(A B C D)"))]
         (is (= actual expected))))
     (testing "caaaar"
       (let [expected "1"
-            actual (print-str (caaaar s))]
+            actual (print-str (CAAAAR s))]
         (is (= actual expected))))))
 
 
 (deftest equality-tests
   (testing "eq"
     (let [expected 'T
-          actual (eq 'FRED 'FRED)]
+          actual (EQ 'FRED 'FRED)]
       (is (= actual expected) "identical symbols"))
     (let [expected 'F
-          actual (eq 'FRED 'ELFREDA)]
+          actual (EQ 'FRED 'ELFREDA)]
       (is (= actual expected) "different symbols"))
     (let [expected 'F
           l (gsp "(NOT AN ATOM)")
-          actual (eq l l)]
-      (is (= actual expected) "identical lists (eq is not defined for lists)")))
+          actual (EQ l l)]
+      (is (= actual expected) "identical lists (EQ is not defined for lists)")))
   (testing "equal"
     (let [expected 'T
-          actual (equal 'FRED 'FRED)]
+          actual (EQUAL 'FRED 'FRED)]
       (is (= actual expected) "identical symbols"))
     (let [expected 'F
-          actual (equal 'FRED 'ELFREDA)]
+          actual (EQUAL 'FRED 'ELFREDA)]
       (is (= actual expected) "different symbols"))
     (let [expected 'T
           l (gsp "(NOT AN ATOM)")
-          actual (equal l l)]
+          actual (EQUAL l l)]
       (is (= actual expected) "same list, same content"))
     (let [expected 'T
           l (gsp "(NOT AN ATOM)")
           m (gsp "(NOT AN ATOM)")
-          actual (equal l m)]
+          actual (EQUAL l m)]
       (is (= actual expected) "different lists, same content"))
     (let [expected 'F
           l (gsp "(NOT AN ATOM)")
           m (gsp "(NOT REALLY AN ATOM)")
-          actual (equal l m)]
+          actual (EQUAL l m)]
       (is (= actual expected) "different lists, different content"))))
 
 (deftest substitution-tests
@@ -152,7 +152,7 @@
           ;; differs from example in book only because of how the function
           ;; `beowulf.cons-cell/to-string` formats lists.
           actual (print-str
-                   (subst
+                   (SUBST
                      (gsp "(X . A)")
                      (gsp "B")
                      (gsp "((A . B) . C)")))]
@@ -162,13 +162,13 @@
   (testing "append"
     (let [expected "(A B C . D)"
           actual (print-str
-                   (append
+                   (APPEND
                      (gsp "(A B)")
                      (gsp "(C . D)")))]
       (is (= actual expected)))
     (let [expected "(A B C D E)"
           actual (print-str
-                   (append
+                   (APPEND
                      (gsp "(A B)")
                      (gsp "(C D E)")))]
       (is (= actual expected)))))
@@ -176,23 +176,23 @@
 (deftest member-tests
   (testing "member"
     (let [expected 'T
-          actual (member (gsp "ALBERT") (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
+          actual (MEMBER (gsp "ALBERT") (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
       (= actual expected))
     (let [expected 'T
-          actual (member (gsp "BELINDA") (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
+          actual (MEMBER (gsp "BELINDA") (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
       (= actual expected))
     (let [expected 'T
-          actual (member (gsp "ELFREDA") (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
+          actual (MEMBER (gsp "ELFREDA") (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
       (= actual expected))
     (let [expected 'F
-          actual (member (gsp "BERTRAM") (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
+          actual (MEMBER (gsp "BERTRAM") (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
       (= actual expected))))
 
 (deftest pairlis-tests
   (testing "pairlis"
     (let [expected "((A . U) (B . V) (C . W) (D . X) (E . Y))"
           actual (print-str
-                   (pairlis
+                   (PAIRLIS
                      (gsp "(A B C)")
                      (gsp "(U V W)")
                      (gsp "((D . X)(E . Y))")))]
@@ -202,19 +202,19 @@
   (testing "assoc"
     (let [expected "(B CAR X)"
           actual (print-str
-                   (primitive-assoc
+                   (ASSOC
                      'B
                      (gsp "((A . (M N)) (B . (CAR X)) (C . (QUOTE M)) (C . (CDR X)))")))]
       (is (= actual expected)))
     (let [expected "(C QUOTE M)"
           actual (print-str
-                   (primitive-assoc
+                   (ASSOC
                      'C
                      (gsp "((A . (M N)) (B . (CAR X)) (C . (QUOTE M)) (C . (CDR X)))")))]
       (is (= actual expected)))
     (let [expected "NIL"
           actual (print-str
-                   (primitive-assoc
+                   (ASSOC
                      'D
                      (gsp "((A . (M N)) (B . (CAR X)) (C . (QUOTE M)) (C . (CDR X)))")))]
       (is (= actual expected)))))
@@ -223,7 +223,7 @@
   (testing "sublis"
     (let [expected "(SHAKESPEARE WROTE (THE TEMPEST))"
           actual (print-str
-                   (sublis
+                   (SUBLIS
                      (gsp "((X . SHAKESPEARE) (Y . (THE TEMPEST)))")
                      (gsp "(X WROTE Y)")))]
       (is (= actual expected)))))
