@@ -198,7 +198,7 @@
   See page 12 of the Lisp 1.5 Programmers Manual."
   [a y]
   (cond
-    (primitive-atom? y) (sub2 a y)
+    (= (primitive-atom? y) 'T) (sub2 a y)
     :else
     (make-cons-cell (sublis a (car y)) (sublis a (cdr y)))))
 

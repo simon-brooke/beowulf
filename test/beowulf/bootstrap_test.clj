@@ -218,3 +218,12 @@
                      'D
                      (gsp "((A . (M N)) (B . (CAR X)) (C . (QUOTE M)) (C . (CDR X)))")))]
       (is (= actual expected)))))
+
+(deftest sublis-tests
+  (testing "sublis"
+    (let [expected "(SHAKESPEARE WROTE (THE TEMPEST))"
+          actual (print-str
+                   (sublis
+                     (gsp "((X . SHAKESPEARE) (Y . (THE TEMPEST)))")
+                     (gsp "(X WROTE Y)")))]
+      (is (= actual expected)))))
