@@ -69,7 +69,7 @@
   ([p]
    (if
      (instance? instaparse.gll.Failure p)
-     (throw (ex-info "Parse error" {:cause :parse-failure :failure p}))
+     (throw (ex-info "Ic ne behæfd" {:cause :parse-failure :failure p}))
      (simplify p :sexpr)))
   ([p context]
   (if

@@ -9,7 +9,7 @@
   "Read/eval/print loop."
   []
   (loop []
-    (print ":: ")
+    (print "Sprecan:: ")
     (flush)
     (try
       (let [input (read-line)]
@@ -21,14 +21,14 @@
         Exception
         e
         (let [data (ex-data e)]
+          (println (.getMessage e))
           (if
             data
             (case (:cause data)
               :parse-failure (println (:failure data))
               :quit (throw e)
               ;; default
-              (pprint data))
-            (println (.getMessage e))))))
+              (pprint data))))))
     (recur)))
 
 (defn -main
@@ -47,7 +47,7 @@
         (if
           data
           (case (:cause data)
-            :quit (println (.getMessage e))
+            :quit nil
             ;; default
             (pprint data))
           (println e))))))
