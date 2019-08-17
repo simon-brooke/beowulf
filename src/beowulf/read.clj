@@ -26,7 +26,7 @@
       fncall := fn-name lsqb args rsqb;
       lsqb := '[';
       rsqb := ']';
-      defn := mexpr opt-space '=' opt-space mexpr;
+      defn := mexpr opt-space <'='> opt-space mexpr;
       cond := lsqb (cond-clause semi-colon opt-space)* cond-clause rsqb;
       cond-clause := expr opt-space arrow opt-space expr;
       arrow := '->';
@@ -81,7 +81,7 @@
         (case (first p)
           (:arg :expr :coefficient :fn-name :number :sexpr) (simplify (second p) context)
           (:λexpr
-            :args :bindings :body :cond :cond-clause :dot-terminal
+            :args :bindings :body :cond :cond-clause :defn :dot-terminal
             :fncall :octal :quoted-expr :scientific) (map #(simplify % context) p)
           (:arrow :dot :e :lpar :lsqb :opt-space :q :quote :rpar :rsqb
             :semi-colon :sep :space) nil
@@ -195,6 +195,17 @@
       (generate (second p))
       (generate (nth p 2)))))
 
+(defn gen-defn
+  [p]
+  (make-beowulf-list
+    (list
+      'LABEL
+      (generate (second (second p)))
+      (make-beowulf-list
+        (list
+          'LAMBDA
+          (generate (nth (second p) 2))
+          (doall (map generate (rest (rest p)))))))))
 
 (defn gen-dot-terminated-list
   "Generate a list, which may be dot-terminated, from this partial parse tree
@@ -247,6 +258,7 @@
       :body (make-beowulf-list (map generate (rest p)))
       :cond (gen-cond p)
       (:decimal :integer) (read-string (strip-leading-zeros (second p)))
+      :defn (gen-defn p)
       :dotted-pair (make-cons-cell
                      (generate (nth p 1))
                      (generate (nth p 2)))

@@ -64,3 +64,4 @@
                        (parse "label[ff;λ[[x];[atom[x]->x; T->ff[car[x]]]]]"))))]
       (is (= actual expected)))))
 
+;; (parse "equal[x;y] = [atom[x]->[atom[y]->eq[x;y]; T->F]; equal[car[x]; car[y]]->equal[cdr[x];cdr[y]];T->F]")

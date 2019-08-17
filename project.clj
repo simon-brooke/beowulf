@@ -3,7 +3,7 @@
   :url "http://example.com/FIXME"
   :license {:name "GPL-2.0-or-later"
             :url "https://www.eclipse.org/legal/epl-2.0/"}
-  :dependencies [[org.clojure/clojure "1.10.0"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/math.numeric-tower "0.0.4"]
                  [org.clojure/tools.trace "0.7.10"]
                  [environ "1.1.0"]
