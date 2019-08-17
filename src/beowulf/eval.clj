@@ -27,19 +27,25 @@
   (if (or (symbol? x) (number? x)) 'T NIL))
 
 (defn CAR
+  "Return the item indicated by the first pointer of a pair. NIL is treated
+  specially: the CAR of NIL is NIL."
   [x]
-  (if
-    (instance? beowulf.cons_cell.ConsCell x)
-    (.CAR x)
+  (cond
+    (= x NIL) NIL
+    (instance? beowulf.cons_cell.ConsCell x) (.CAR x)
+    :else
     (throw
       (Exception.
         (str "Cannot take CAR of `" x "` (" (.getName (.getClass x)) ")")))))
 
 (defn CDR
+  "Return the item indicated by the second pointer of a pair. NIL is treated
+  specially: the CDR of NIL is NIL."
   [x]
-  (if
-    (instance? beowulf.cons_cell.ConsCell x)
-    (.CDR x)
+  (cond
+    (= x NIL) NIL
+    (instance? beowulf.cons_cell.ConsCell x) (.CDR x)
+    :else
     (throw
       (Exception.
         (str "Cannot take CDR of `" x "` (" (.getName (.getClass x)) ")")))))
