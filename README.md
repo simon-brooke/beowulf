@@ -4,15 +4,22 @@ LISP 1.5 is to all Lisp dialects as Beowulf is to Emglish literature.
 
 ## What this is
 
-A work-in-progress towards an implementation of Lisp 1.5 in Clojure.
+A work-in-progress towards an implementation of Lisp 1.5 in Clojure. The
+objective is to build a complete and accurate implementation of Lisp 1.5
+as described in the manual, with, in so far as is possible, exactly the
+same bahaviour; the only intended deviation is that the parser reads
+'mexprs' (meta language expressions) as well as sexprs.
 
 ## BUT WHY?!!?!
 
 Because.
 
-Because Lisp is the only computer language worth learning, and if a thing is worth learning, it's worth learning properly; which means going back to the beginning and trying to understand that.
+Because Lisp is the only computer language worth learning, and if a thing
+is worth learning, it's worth learning properly; which means going back to
+the beginning and trying to understand that.
 
-Because there is, so far as I know, no working implementation of Lisp 1.5 for modern machines.
+Because there is, so far as I know, no working implementation of Lisp 1.5
+for modern machines.
 
 Because I'm barking mad, and this is therapy.
 
@@ -23,6 +30,10 @@ Download from http://example.com/FIXME.
 ## Usage
 
 `java -jar beowulf-0.1.0-standalone.jar`
+
+This will start a Lisp 1.5 read/eval/print loop (REPL).
+
+To end a session, type `quit` at the command prompt.
 
 ## Learning Lisp 1.5
 

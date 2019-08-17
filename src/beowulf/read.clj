@@ -64,9 +64,13 @@
       scale-factor := #'[0-9]*'")))
 
 (defn simplify
-  "Simplify this parse tree `p`."
+  "Simplify this parse tree `p`. If `p` is an instaparse failure object, throw
+  an `ex-info`, with `p` as the value of its `:failure` key."
   ([p]
-   (simplify p :sexpr))
+   (if
+     (instance? instaparse.gll.Failure p)
+     (throw (ex-info "Parse error" {:cause :parse-failure :failure p}))
+     (simplify p :sexpr)))
   ([p context]
   (if
     (coll? p)
@@ -274,5 +278,5 @@
   `(generate (simplify (parse ~s))))
 
 (defn READ
-  []
-  (gsp (read-line)))
+  [input]
+  (gsp (or input (read-line))))

@@ -6,7 +6,9 @@
   :dependencies [[org.clojure/clojure "1.10.0"]
                  [org.clojure/math.numeric-tower "0.0.4"]
                  [org.clojure/tools.trace "0.7.10"]
+                 [environ "1.1.0"]
                  [instaparse "1.4.10"]]
   :main ^:skip-aot beowulf.core
+  :plugins [[lein-environ "1.1.0"]]
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
