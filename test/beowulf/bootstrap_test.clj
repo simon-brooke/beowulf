@@ -49,9 +49,7 @@
       (is (= actual expected) "A dotted pair is explicitly not an atom."))
     (let [expected NIL
           actual (primitive-atom? (gsp "(A B C D)"))]
-      (is (= actual expected) "A list is explicitly not an atom"))
-
-    ))
+      (is (= actual expected) "A list is explicitly not an atom"))))
 
 (deftest access-function-tests
   (testing "car"
@@ -111,8 +109,7 @@
     (testing "caaaar"
       (let [expected "1"
             actual (print-str (caaaar s))]
-        (is (= actual expected))))
-    ))
+        (is (= actual expected))))))
 
 
 (deftest equality-tests
@@ -163,6 +160,12 @@
 
 (deftest append-tests
   (testing "append"
+    (let [expected "(A B C . D)"
+          actual (print-str
+                   (append
+                     (gsp "(A B)")
+                     (gsp "(C . D)")))]
+      (is (= actual expected)))
     (let [expected "(A B C D E)"
           actual (print-str
                    (append
@@ -185,4 +188,33 @@
           actual (member (gsp "BERTRAM") (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
       (= actual expected))))
 
+(deftest pairlis-tests
+  (testing "pairlis"
+    (let [expected "((A . U) (B . V) (C . W) (D . X) (E . Y))"
+          actual (print-str
+                   (pairlis
+                     (gsp "(A B C)")
+                     (gsp "(U V W)")
+                     (gsp "((D . X)(E . Y))")))]
+      (is (= actual expected)))))
 
+(deftest assoc-tests
+  (testing "assoc"
+    (let [expected "(B CAR X)"
+          actual (print-str
+                   (primitive-assoc
+                     'B
+                     (gsp "((A . (M N)) (B . (CAR X)) (C . (QUOTE M)) (C . (CDR X)))")))]
+      (is (= actual expected)))
+    (let [expected "(C QUOTE M)"
+          actual (print-str
+                   (primitive-assoc
+                     'C
+                     (gsp "((A . (M N)) (B . (CAR X)) (C . (QUOTE M)) (C . (CDR X)))")))]
+      (is (= actual expected)))
+    (let [expected "NIL"
+          actual (print-str
+                   (primitive-assoc
+                     'D
+                     (gsp "((A . (M N)) (B . (CAR X)) (C . (QUOTE M)) (C . (CDR X)))")))]
+      (is (= actual expected)))))
