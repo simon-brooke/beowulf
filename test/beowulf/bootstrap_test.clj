@@ -2,7 +2,7 @@
   (:require [clojure.math.numeric-tower :refer [abs]]
             [clojure.test :refer :all]
             [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL T F]]
-            [beowulf.eval :refer :all]
+            [beowulf.bootstrap :refer :all]
             [beowulf.read :refer [gsp]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

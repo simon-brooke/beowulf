@@ -2,9 +2,15 @@
   (:require [clojure.math.numeric-tower :refer [expt]]
             [clojure.string :refer [starts-with? upper-case]]
             [instaparse.core :as i]
-            [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL]])
-;;  (:import [beowulf.cons-cell ConsCell])
-  )
+            [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL]]))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; This file provides the reader required for boostrapping. It's not a bad
+;;; reader - it provides feedback on errors found in the input - but it isn't
+;;; the real Lisp reader.
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (declare generate)
 

@@ -1,6 +1,16 @@
-(ns beowulf.eval
+(ns beowulf.bootstrap
   (:require [clojure.tools.trace :refer :all]
             [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL T F]]))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; This file is essentially Lisp as defined in Chapter 1 (pages 1-14) of the
+;;; Lisp 1.5 Programmer's Manual; that is to say, a very simple Lisp language,
+;;; which should, I believe, be sufficient in conjunction with the functions
+;;; provided by `beowulf.host`, be sufficient to bootstrap the full Lisp 1.5
+;;; interpreter.
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (declare EVAL)
 
@@ -8,6 +18,10 @@
   "The default environment; modified certainly be `LABEL` (which seems to
   be Lisp 1.5's EQuivalent of `SETQ`), possibly by other things."
   (atom NIL))
+
+(def ^:dynamic *trace?*
+  "Whether or not to trace `EVAL`."
+  false)
 
 (defn NULL
   [x]
@@ -208,7 +222,7 @@
     :else
     (make-cons-cell (SUBLIS a (CAR y)) (SUBLIS a (CDR y)))))
 
-(deftrace APPLY
+(defn APPLY
   "For bootstrapping, at least, a version of APPLY written in Clojure.
   All args are assumed to be symbols or `beowulf.cons-cell/ConsCell` objects.
   See page 13 of the Lisp 1.5 Programmers Manual."
@@ -217,6 +231,8 @@
     (=
       (ATOM? function)
       'T)(cond
+           ;; TODO: doesn't check whether `function` is bound in the environment;
+           ;; we'll need that before we can bootstrap.
            (= function 'CAR) (CAAR args)
            (= function 'CDR) (CDAR args)
            (= function 'CONS) (make-cons-cell (CAR args) (CADR args))
@@ -261,11 +277,8 @@
       (EVAL (CAR args) env)
       (EVLIS (CDR args) env))))
 
-
-(deftrace EVAL
-  "For bootstrapping, at least, a version of EVAL written in Clojure.
-  All args are assumed to be symbols or `beowulf.cons-cell/ConsCell` objects.
-  See page 13 of the Lisp 1.5 Programmers Manual."
+(deftrace traced-eval
+  "Essentially, identical to EVAL except traced."
   [expr env]
   (cond
     (=
@@ -284,4 +297,30 @@
             (CAR expr)
             (EVLIS (CDR expr) env)
             env)))
+
+(defn EVAL
+  "For bootstrapping, at least, a version of EVAL written in Clojure.
+  All args are assumed to be symbols or `beowulf.cons-cell/ConsCell` objects.
+  See page 13 of the Lisp 1.5 Programmers Manual."
+  [expr env]
+  (cond
+    *trace?* (traced-eval expr env)
+    (=
+      (ATOM? expr) 'T)
+    (CDR (ASSOC expr env))
+    (=
+      (ATOM? (CAR expr))
+      'T)(cond
+           (= (CAR expr) 'QUOTE) (CADR expr)
+           (= (CAR expr) 'COND) (EVCON (CDR expr) env)
+           :else (APPLY
+                   (CAR expr)
+                   (EVLIS (CDR expr) env)
+                   env))
+    :else (APPLY
+            (CAR expr)
+            (EVLIS (CDR expr) env)
+            env)))
+
+
 
