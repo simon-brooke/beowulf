@@ -1,4 +1,4 @@
-(defproject beowulf "0.2.0-SNAPSHOT"
+(defproject beowulf "0.2.1-SNAPSHOT"
   :cloverage {:output "docs/cloverage"}
   :codox {:metadata {:doc "**TODO**: write docs"
                      :doc/format :markdown}
