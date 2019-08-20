@@ -1,4 +1,5 @@
 (ns beowulf.core
+  "Essentially, the `-main` function and the bootstrap read-eval-print loop."
   (:require [beowulf.bootstrap :refer [EVAL oblist *options*]]
             [beowulf.read :refer [READ]]
             [clojure.java.io :as io]
@@ -47,6 +48,8 @@
     (recur)))
 
 (defn -main
+  "Parse options, print the banner, read the init file if any, and enter the
+  read/eval/print loop."
   [& opts]
   (let [args (parse-opts opts cli-options)]
     (println

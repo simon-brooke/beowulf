@@ -3,11 +3,18 @@
   Lisp 1.5 lists do not necessarily have a sequence as their CDR, so
   cannot be implemented on top of Clojure lists.")
 
-(def NIL (symbol "NIL"))
+(def NIL
+  "The canonical empty list symbol."
+  (symbol "NIL"))
 
-(def T (symbol "T")) ;; true.
+(def T
+  "The canonical true value."
+  (symbol "T")) ;; true.
 
-(def F (symbol "F")) ;; false as distinct from nil
+(def F
+  "The canonical false value - different from `NIL`, which is not canonically
+  false in Lisp 1.5."
+  (symbol "F")) ;; false as distinct from nil
 
 (deftype ConsCell [CAR CDR]
   clojure.lang.ISeq

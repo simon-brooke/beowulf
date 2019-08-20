@@ -1,6 +1,14 @@
 (ns beowulf.bootstrap
   "Lisp as defined in Chapter 1 (pages 1-14) of the
-   `Lisp 1.5 Programmer's Manual`; that is to say, a very simple Lisp language,"
+  `Lisp 1.5 Programmer's Manual`; that is to say, a very simple Lisp language,
+  which should, I believe, be sufficient in conjunction with the functions
+  provided by `beowulf.host`, be sufficient to bootstrap the full Lisp 1.5
+  interpreter..
+
+  The convention is adopted that functions in this file with names in
+  ALLUPPERCASE are Lisp 1.5 functions (although written in Clojure) and that
+  therefore all arguments must be numbers, symbols or `beowulf.cons_cell.ConsCell`
+  objects."
   (:require [clojure.tools.trace :refer :all]
             [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL T F]]))
 
@@ -17,8 +25,7 @@
 (declare EVAL)
 
 (def oblist
-  "The default environment; modified certainly be `LABEL` (which seems to
-  be Lisp 1.5's EQuivalent of `SETQ`), possibly by other things."
+  "The default environment."
   (atom NIL))
 
 (def ^:dynamic *options*
@@ -26,11 +33,13 @@
   {})
 
 (defmacro NULL
+  "Returns `T` if and only if the argument `x` is bound to `NIL`; else `F`."
   [x]
   `(if (= ~x NIL) T F))
 
 (defmacro ATOM
-  "It is not clear to me from the documentation whether `(ATOM 7)` should return
+  "Returns `T` if and only is the argument `x` is bound to and atom; else `F`.
+  It is not clear to me from the documentation whether `(ATOM 7)` should return
   `T` or `F`. I'm going to assume `T`."
   [x]
   `(if (or (symbol? ~x) (number? ~x)) T F))
@@ -110,8 +119,8 @@
 (defn CDADDR [x] (uaf x (seq "dadd")))
 
 (defn EQ
-  ;; For some reason providing a doc string for this function breaks the
-  ;; Clojure parser!
+  "Returns `T` if and only if both `x` and `y` are bound to the same atom,
+  else `F`."
   [x y]
   (if (and (= (ATOM x) T) (= x y)) T F))
 
@@ -121,7 +130,7 @@
   `EQ` is defined only for atomic arguments.) The definition of `EQUAL` is
   an example of a conditional expression inside a conditional expression.
 
-  NOTE: returns F on failure, not NIL"
+  NOTE: returns `F` on failure, not `NIL`"
   [x y]
   (cond
     (= (ATOM x) T) (EQ x y)

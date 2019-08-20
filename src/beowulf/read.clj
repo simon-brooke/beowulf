@@ -1,4 +1,18 @@
 (ns beowulf.read
+  "This provides the reader required for boostrapping. It's not a bad
+  reader - it provides feedback on errors found in the input - but it isn't
+  the real Lisp reader.
+
+  Intended deviations from the behaviour of the real Lisp reader are as follows:
+
+  1. It reads the meta-expression language `MEXPR` in addition to the
+      symbolic expression language `SEXPR`, which I do not believe the Lisp 1.5
+      reader ever did;
+  2. It treats everything between a semi-colon and an end of line as a comment,
+      as most modern Lisps do; but I do not believe Lisp 1.5 had this feature.
+
+  Both these extensions can be disabled by using the `--strict` command line
+  switch."
   (:require [beowulf.bootstrap :refer [*options*]]
             [clojure.math.numeric-tower :refer [expt]]
             [clojure.string :refer [starts-with? upper-case]]
@@ -204,9 +218,7 @@
 
 (defn gen-fn-call
   "Generate a function call from this simplified parse tree fragment `p`;
-  returns `nil` if `p` does not represent a (MEXPR) function call.
-  TODO: I'm not yet certain but it appears that args in mexprs are
-  implicitly quoted; this function does not (yet) do that."
+  returns `nil` if `p` does not represent a (MEXPR) function call."
   [p]
   (if
     (and (coll? p)(= :fncall (first p))(= :mvar (first (second p))))
@@ -297,5 +309,7 @@
   `(generate (simplify (parse ~s))))
 
 (defn READ
+  "An implementation of a Lisp reader sufficient for bootstrapping; not necessarily
+  the final Lisp reader."
   [input]
   (gsp (or input (read-line))))

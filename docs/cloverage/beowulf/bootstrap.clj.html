@@ -11,985 +11,1012 @@
                 002&nbsp;&nbsp;&nbsp;&nbsp;&quot;Lisp&nbsp;as&nbsp;defined&nbsp;in&nbsp;Chapter&nbsp;1&nbsp;(pages&nbsp;1-14)&nbsp;of&nbsp;the
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                003&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`Lisp&nbsp;1.5&nbsp;Programmer&#x27;s&nbsp;Manual`;&nbsp;that&nbsp;is&nbsp;to&nbsp;say,&nbsp;a&nbsp;very&nbsp;simple&nbsp;Lisp&nbsp;language,&quot;
+                003&nbsp;&nbsp;&nbsp;&nbsp;`Lisp&nbsp;1.5&nbsp;Programmer&#x27;s&nbsp;Manual`;&nbsp;that&nbsp;is&nbsp;to&nbsp;say,&nbsp;a&nbsp;very&nbsp;simple&nbsp;Lisp&nbsp;language,
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                004&nbsp;&nbsp;&nbsp;&nbsp;(:require&nbsp;[clojure.tools.trace&nbsp;:refer&nbsp;:all]
+                004&nbsp;&nbsp;&nbsp;&nbsp;which&nbsp;should,&nbsp;I&nbsp;believe,&nbsp;be&nbsp;sufficient&nbsp;in&nbsp;conjunction&nbsp;with&nbsp;the&nbsp;functions
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                005&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[beowulf.cons-cell&nbsp;:refer&nbsp;[make-beowulf-list&nbsp;make-cons-cell&nbsp;NIL&nbsp;T&nbsp;F]]))
+                005&nbsp;&nbsp;&nbsp;&nbsp;provided&nbsp;by&nbsp;`beowulf.host`,&nbsp;be&nbsp;sufficient&nbsp;to&nbsp;bootstrap&nbsp;the&nbsp;full&nbsp;Lisp&nbsp;1.5
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                006&nbsp;&nbsp;&nbsp;&nbsp;interpreter..
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                006&nbsp;&nbsp;
+                007&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                007&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                008&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;convention&nbsp;is&nbsp;adopted&nbsp;that&nbsp;functions&nbsp;in&nbsp;this&nbsp;file&nbsp;with&nbsp;names&nbsp;in
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                008&nbsp;&nbsp;;;;
+                009&nbsp;&nbsp;&nbsp;&nbsp;ALLUPPERCASE&nbsp;are&nbsp;Lisp&nbsp;1.5&nbsp;functions&nbsp;(although&nbsp;written&nbsp;in&nbsp;Clojure)&nbsp;and&nbsp;that
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                009&nbsp;&nbsp;;;;&nbsp;This&nbsp;file&nbsp;is&nbsp;essentially&nbsp;Lisp&nbsp;as&nbsp;defined&nbsp;in&nbsp;Chapter&nbsp;1&nbsp;(pages&nbsp;1-14)&nbsp;of&nbsp;the
+                010&nbsp;&nbsp;&nbsp;&nbsp;therefore&nbsp;all&nbsp;arguments&nbsp;must&nbsp;be&nbsp;numbers,&nbsp;symbols&nbsp;or&nbsp;`beowulf.cons_cell.ConsCell`
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                010&nbsp;&nbsp;;;;&nbsp;Lisp&nbsp;1.5&nbsp;Programmer&#x27;s&nbsp;Manual;&nbsp;that&nbsp;is&nbsp;to&nbsp;say,&nbsp;a&nbsp;very&nbsp;simple&nbsp;Lisp&nbsp;language,
+                011&nbsp;&nbsp;&nbsp;&nbsp;objects.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                011&nbsp;&nbsp;;;;&nbsp;which&nbsp;should,&nbsp;I&nbsp;believe,&nbsp;be&nbsp;sufficient&nbsp;in&nbsp;conjunction&nbsp;with&nbsp;the&nbsp;functions
+                012&nbsp;&nbsp;&nbsp;&nbsp;(:require&nbsp;[clojure.tools.trace&nbsp;:refer&nbsp;:all]
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                012&nbsp;&nbsp;;;;&nbsp;provided&nbsp;by&nbsp;`beowulf.host`,&nbsp;be&nbsp;sufficient&nbsp;to&nbsp;bootstrap&nbsp;the&nbsp;full&nbsp;Lisp&nbsp;1.5
+                013&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[beowulf.cons-cell&nbsp;:refer&nbsp;[make-beowulf-list&nbsp;make-cons-cell&nbsp;NIL&nbsp;T&nbsp;F]]))
                 </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                013&nbsp;&nbsp;;;;&nbsp;interpreter.
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                014&nbsp;&nbsp;;;;
+<span class="blank" title="0 out of 0 forms covered">
+                014&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
                 015&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                 </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                016&nbsp;&nbsp;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                017&nbsp;&nbsp;;;;&nbsp;This&nbsp;file&nbsp;is&nbsp;essentially&nbsp;Lisp&nbsp;as&nbsp;defined&nbsp;in&nbsp;Chapter&nbsp;1&nbsp;(pages&nbsp;1-14)&nbsp;of&nbsp;the
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                018&nbsp;&nbsp;;;;&nbsp;Lisp&nbsp;1.5&nbsp;Programmer&#x27;s&nbsp;Manual;&nbsp;that&nbsp;is&nbsp;to&nbsp;say,&nbsp;a&nbsp;very&nbsp;simple&nbsp;Lisp&nbsp;language,
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                019&nbsp;&nbsp;;;;&nbsp;which&nbsp;should,&nbsp;I&nbsp;believe,&nbsp;be&nbsp;sufficient&nbsp;in&nbsp;conjunction&nbsp;with&nbsp;the&nbsp;functions
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                020&nbsp;&nbsp;;;;&nbsp;provided&nbsp;by&nbsp;`beowulf.host`,&nbsp;be&nbsp;sufficient&nbsp;to&nbsp;bootstrap&nbsp;the&nbsp;full&nbsp;Lisp&nbsp;1.5
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                021&nbsp;&nbsp;;;;&nbsp;interpreter.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                022&nbsp;&nbsp;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                023&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                016&nbsp;&nbsp;
+                024&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
-                017&nbsp;&nbsp;(declare&nbsp;EVAL)
+                025&nbsp;&nbsp;(declare&nbsp;EVAL)
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                018&nbsp;&nbsp;
+                026&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                019&nbsp;&nbsp;(def&nbsp;oblist
+                027&nbsp;&nbsp;(def&nbsp;oblist
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                020&nbsp;&nbsp;&nbsp;&nbsp;&quot;The&nbsp;default&nbsp;environment;&nbsp;modified&nbsp;certainly&nbsp;be&nbsp;`LABEL`&nbsp;(which&nbsp;seems&nbsp;to
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                021&nbsp;&nbsp;&nbsp;&nbsp;be&nbsp;Lisp&nbsp;1.5&#x27;s&nbsp;EQuivalent&nbsp;of&nbsp;`SETQ`),&nbsp;possibly&nbsp;by&nbsp;other&nbsp;things.&quot;
+                028&nbsp;&nbsp;&nbsp;&nbsp;&quot;The&nbsp;default&nbsp;environment.&quot;
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                022&nbsp;&nbsp;&nbsp;&nbsp;(atom&nbsp;NIL))
+                029&nbsp;&nbsp;&nbsp;&nbsp;(atom&nbsp;NIL))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                023&nbsp;&nbsp;
+                030&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                024&nbsp;&nbsp;(def&nbsp;^:dynamic&nbsp;*options*
+                031&nbsp;&nbsp;(def&nbsp;^:dynamic&nbsp;*options*
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                025&nbsp;&nbsp;&nbsp;&nbsp;&quot;Command&nbsp;line&nbsp;options&nbsp;from&nbsp;invocation.&quot;
+                032&nbsp;&nbsp;&nbsp;&nbsp;&quot;Command&nbsp;line&nbsp;options&nbsp;from&nbsp;invocation.&quot;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                026&nbsp;&nbsp;&nbsp;&nbsp;{})
+                033&nbsp;&nbsp;&nbsp;&nbsp;{})
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                027&nbsp;&nbsp;
+                034&nbsp;&nbsp;
                 </span><br/>
 <span class="partial" title="4 out of 35 forms covered">
-                028&nbsp;&nbsp;(defmacro&nbsp;NULL
+                035&nbsp;&nbsp;(defmacro&nbsp;NULL
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                029&nbsp;&nbsp;&nbsp;&nbsp;[x]
+                036&nbsp;&nbsp;&nbsp;&nbsp;&quot;Returns&nbsp;`T`&nbsp;if&nbsp;and&nbsp;only&nbsp;if&nbsp;the&nbsp;argument&nbsp;`x`&nbsp;is&nbsp;bound&nbsp;to&nbsp;`NIL`;&nbsp;else&nbsp;`F`.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                037&nbsp;&nbsp;&nbsp;&nbsp;[x]
                 </span><br/>
 <span class="not-covered" title="0 out of 1 forms covered">
-                030&nbsp;&nbsp;&nbsp;&nbsp;`(if&nbsp;(=&nbsp;~x&nbsp;NIL)&nbsp;T&nbsp;F))
+                038&nbsp;&nbsp;&nbsp;&nbsp;`(if&nbsp;(=&nbsp;~x&nbsp;NIL)&nbsp;T&nbsp;F))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                031&nbsp;&nbsp;
+                039&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="64 out of 64 forms covered">
-                032&nbsp;&nbsp;(defmacro&nbsp;ATOM
+                040&nbsp;&nbsp;(defmacro&nbsp;ATOM
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                033&nbsp;&nbsp;&nbsp;&nbsp;&quot;It&nbsp;is&nbsp;not&nbsp;clear&nbsp;to&nbsp;me&nbsp;from&nbsp;the&nbsp;documentation&nbsp;whether&nbsp;`(ATOM&nbsp;7)`&nbsp;should&nbsp;return
+                041&nbsp;&nbsp;&nbsp;&nbsp;&quot;Returns&nbsp;`T`&nbsp;if&nbsp;and&nbsp;only&nbsp;is&nbsp;the&nbsp;argument&nbsp;`x`&nbsp;is&nbsp;bound&nbsp;to&nbsp;and&nbsp;atom;&nbsp;else&nbsp;`F`.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                034&nbsp;&nbsp;&nbsp;&nbsp;`T`&nbsp;or&nbsp;`F`.&nbsp;I&#x27;m&nbsp;going&nbsp;to&nbsp;assume&nbsp;`T`.&quot;
+                042&nbsp;&nbsp;&nbsp;&nbsp;It&nbsp;is&nbsp;not&nbsp;clear&nbsp;to&nbsp;me&nbsp;from&nbsp;the&nbsp;documentation&nbsp;whether&nbsp;`(ATOM&nbsp;7)`&nbsp;should&nbsp;return
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                035&nbsp;&nbsp;&nbsp;&nbsp;[x]
+                043&nbsp;&nbsp;&nbsp;&nbsp;`T`&nbsp;or&nbsp;`F`.&nbsp;I&#x27;m&nbsp;going&nbsp;to&nbsp;assume&nbsp;`T`.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                044&nbsp;&nbsp;&nbsp;&nbsp;[x]
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
-                036&nbsp;&nbsp;&nbsp;&nbsp;`(if&nbsp;(or&nbsp;(symbol?&nbsp;~x)&nbsp;(number?&nbsp;~x))&nbsp;T&nbsp;F))
+                045&nbsp;&nbsp;&nbsp;&nbsp;`(if&nbsp;(or&nbsp;(symbol?&nbsp;~x)&nbsp;(number?&nbsp;~x))&nbsp;T&nbsp;F))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                037&nbsp;&nbsp;
+                046&nbsp;&nbsp;
                 </span><br/>
 <span class="partial" title="76 out of 88 forms covered">
-                038&nbsp;&nbsp;(defmacro&nbsp;ATOM?
+                047&nbsp;&nbsp;(defmacro&nbsp;ATOM?
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                039&nbsp;&nbsp;&nbsp;&nbsp;&quot;The&nbsp;convention&nbsp;of&nbsp;returning&nbsp;`F`&nbsp;from&nbsp;predicates,&nbsp;rather&nbsp;than&nbsp;`NIL`,&nbsp;is&nbsp;going
+                048&nbsp;&nbsp;&nbsp;&nbsp;&quot;The&nbsp;convention&nbsp;of&nbsp;returning&nbsp;`F`&nbsp;from&nbsp;predicates,&nbsp;rather&nbsp;than&nbsp;`NIL`,&nbsp;is&nbsp;going
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                040&nbsp;&nbsp;&nbsp;&nbsp;to&nbsp;tie&nbsp;me&nbsp;in&nbsp;knots.&nbsp;This&nbsp;is&nbsp;a&nbsp;variant&nbsp;of&nbsp;`ATOM`&nbsp;which&nbsp;returns&nbsp;`NIL`
+                049&nbsp;&nbsp;&nbsp;&nbsp;to&nbsp;tie&nbsp;me&nbsp;in&nbsp;knots.&nbsp;This&nbsp;is&nbsp;a&nbsp;variant&nbsp;of&nbsp;`ATOM`&nbsp;which&nbsp;returns&nbsp;`NIL`
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                041&nbsp;&nbsp;&nbsp;&nbsp;on&nbsp;failure.&quot;
+                050&nbsp;&nbsp;&nbsp;&nbsp;on&nbsp;failure.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                042&nbsp;&nbsp;&nbsp;&nbsp;[x]
+                051&nbsp;&nbsp;&nbsp;&nbsp;[x]
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
-                043&nbsp;&nbsp;&nbsp;&nbsp;`(if&nbsp;(or&nbsp;(symbol?&nbsp;~x)&nbsp;(number?&nbsp;~x))&nbsp;T&nbsp;NIL))
+                052&nbsp;&nbsp;&nbsp;&nbsp;`(if&nbsp;(or&nbsp;(symbol?&nbsp;~x)&nbsp;(number?&nbsp;~x))&nbsp;T&nbsp;NIL))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                044&nbsp;&nbsp;
+                053&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                045&nbsp;&nbsp;(defn&nbsp;CAR
+                054&nbsp;&nbsp;(defn&nbsp;CAR
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                046&nbsp;&nbsp;&nbsp;&nbsp;&quot;Return&nbsp;the&nbsp;item&nbsp;indicated&nbsp;by&nbsp;the&nbsp;first&nbsp;pointer&nbsp;of&nbsp;a&nbsp;pair.&nbsp;NIL&nbsp;is&nbsp;treated
+                055&nbsp;&nbsp;&nbsp;&nbsp;&quot;Return&nbsp;the&nbsp;item&nbsp;indicated&nbsp;by&nbsp;the&nbsp;first&nbsp;pointer&nbsp;of&nbsp;a&nbsp;pair.&nbsp;NIL&nbsp;is&nbsp;treated
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                047&nbsp;&nbsp;&nbsp;&nbsp;specially:&nbsp;the&nbsp;CAR&nbsp;of&nbsp;NIL&nbsp;is&nbsp;NIL.&quot;
+                056&nbsp;&nbsp;&nbsp;&nbsp;specially:&nbsp;the&nbsp;CAR&nbsp;of&nbsp;NIL&nbsp;is&nbsp;NIL.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                048&nbsp;&nbsp;&nbsp;&nbsp;[x]
+                057&nbsp;&nbsp;&nbsp;&nbsp;[x]
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                049&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                058&nbsp;&nbsp;&nbsp;&nbsp;(cond
                 </span><br/>
 <span class="partial" title="4 out of 5 forms covered">
-                050&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;x&nbsp;NIL)&nbsp;NIL
+                059&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;x&nbsp;NIL)&nbsp;NIL
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                051&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(instance?&nbsp;beowulf.cons_cell.ConsCell&nbsp;x)&nbsp;(.CAR&nbsp;x)
+                060&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(instance?&nbsp;beowulf.cons_cell.ConsCell&nbsp;x)&nbsp;(.CAR&nbsp;x)
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                052&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else
+                061&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                053&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw
+                062&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                054&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Exception.
+                063&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Exception.
                 </span><br/>
 <span class="covered" title="7 out of 7 forms covered">
-                055&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;&quot;Cannot&nbsp;take&nbsp;CAR&nbsp;of&nbsp;`&quot;&nbsp;x&nbsp;&quot;`&nbsp;(&quot;&nbsp;(.getName&nbsp;(.getClass&nbsp;x))&nbsp;&quot;)&quot;)))))
+                064&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;&quot;Cannot&nbsp;take&nbsp;CAR&nbsp;of&nbsp;`&quot;&nbsp;x&nbsp;&quot;`&nbsp;(&quot;&nbsp;(.getName&nbsp;(.getClass&nbsp;x))&nbsp;&quot;)&quot;)))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                056&nbsp;&nbsp;
+                065&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                057&nbsp;&nbsp;(defn&nbsp;CDR
+                066&nbsp;&nbsp;(defn&nbsp;CDR
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                058&nbsp;&nbsp;&nbsp;&nbsp;&quot;Return&nbsp;the&nbsp;item&nbsp;indicated&nbsp;by&nbsp;the&nbsp;second&nbsp;pointer&nbsp;of&nbsp;a&nbsp;pair.&nbsp;NIL&nbsp;is&nbsp;treated
+                067&nbsp;&nbsp;&nbsp;&nbsp;&quot;Return&nbsp;the&nbsp;item&nbsp;indicated&nbsp;by&nbsp;the&nbsp;second&nbsp;pointer&nbsp;of&nbsp;a&nbsp;pair.&nbsp;NIL&nbsp;is&nbsp;treated
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                059&nbsp;&nbsp;&nbsp;&nbsp;specially:&nbsp;the&nbsp;CDR&nbsp;of&nbsp;NIL&nbsp;is&nbsp;NIL.&quot;
+                068&nbsp;&nbsp;&nbsp;&nbsp;specially:&nbsp;the&nbsp;CDR&nbsp;of&nbsp;NIL&nbsp;is&nbsp;NIL.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                060&nbsp;&nbsp;&nbsp;&nbsp;[x]
+                069&nbsp;&nbsp;&nbsp;&nbsp;[x]
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                061&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                070&nbsp;&nbsp;&nbsp;&nbsp;(cond
                 </span><br/>
 <span class="partial" title="4 out of 5 forms covered">
-                062&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;x&nbsp;NIL)&nbsp;NIL
+                071&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;x&nbsp;NIL)&nbsp;NIL
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                063&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(instance?&nbsp;beowulf.cons_cell.ConsCell&nbsp;x)&nbsp;(.CDR&nbsp;x)
+                072&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(instance?&nbsp;beowulf.cons_cell.ConsCell&nbsp;x)&nbsp;(.CDR&nbsp;x)
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                064&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else
+                073&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                065&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw
+                074&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                066&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Exception.
+                075&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Exception.
                 </span><br/>
 <span class="covered" title="7 out of 7 forms covered">
-                067&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;&quot;Cannot&nbsp;take&nbsp;CDR&nbsp;of&nbsp;`&quot;&nbsp;x&nbsp;&quot;`&nbsp;(&quot;&nbsp;(.getName&nbsp;(.getClass&nbsp;x))&nbsp;&quot;)&quot;)))))
+                076&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;&quot;Cannot&nbsp;take&nbsp;CDR&nbsp;of&nbsp;`&quot;&nbsp;x&nbsp;&quot;`&nbsp;(&quot;&nbsp;(.getName&nbsp;(.getClass&nbsp;x))&nbsp;&quot;)&quot;)))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                068&nbsp;&nbsp;
+                077&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                069&nbsp;&nbsp;(defn&nbsp;uaf
+                078&nbsp;&nbsp;(defn&nbsp;uaf
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                070&nbsp;&nbsp;&nbsp;&nbsp;&quot;Universal&nbsp;access&nbsp;function;&nbsp;`l`&nbsp;is&nbsp;expected&nbsp;to&nbsp;be&nbsp;an&nbsp;arbitrary&nbsp;list,&nbsp;`path`
+                079&nbsp;&nbsp;&nbsp;&nbsp;&quot;Universal&nbsp;access&nbsp;function;&nbsp;`l`&nbsp;is&nbsp;expected&nbsp;to&nbsp;be&nbsp;an&nbsp;arbitrary&nbsp;list,&nbsp;`path`
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                071&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;(clojure)&nbsp;list&nbsp;of&nbsp;the&nbsp;characters&nbsp;`a`&nbsp;and&nbsp;`d`.&nbsp;Intended&nbsp;to&nbsp;make&nbsp;declaring
+                080&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;(clojure)&nbsp;list&nbsp;of&nbsp;the&nbsp;characters&nbsp;`a`&nbsp;and&nbsp;`d`.&nbsp;Intended&nbsp;to&nbsp;make&nbsp;declaring
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                072&nbsp;&nbsp;&nbsp;&nbsp;all&nbsp;those&nbsp;fiddly&nbsp;`#&#x27;c[ad]+r&#x27;`&nbsp;functions&nbsp;a&nbsp;bit&nbsp;easier&quot;
+                081&nbsp;&nbsp;&nbsp;&nbsp;all&nbsp;those&nbsp;fiddly&nbsp;`#&#x27;c[ad]+r&#x27;`&nbsp;functions&nbsp;a&nbsp;bit&nbsp;easier&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                073&nbsp;&nbsp;&nbsp;&nbsp;[l&nbsp;path]
+                082&nbsp;&nbsp;&nbsp;&nbsp;[l&nbsp;path]
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                074&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                083&nbsp;&nbsp;&nbsp;&nbsp;(cond
                 </span><br/>
 <span class="partial" title="4 out of 5 forms covered">
-                075&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;l&nbsp;NIL)&nbsp;NIL
+                084&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;l&nbsp;NIL)&nbsp;NIL
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                076&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(empty?&nbsp;path)&nbsp;l
+                085&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(empty?&nbsp;path)&nbsp;l
                 </span><br/>
 <span class="partial" title="5 out of 11 forms covered">
-                077&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;(case&nbsp;(last&nbsp;path)
+                086&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;(case&nbsp;(last&nbsp;path)
                 </span><br/>
 <span class="covered" title="8 out of 8 forms covered">
-                078&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\a&nbsp;(uaf&nbsp;(CAR&nbsp;l)&nbsp;(butlast&nbsp;path))
+                087&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\a&nbsp;(uaf&nbsp;(CAR&nbsp;l)&nbsp;(butlast&nbsp;path))
                 </span><br/>
 <span class="covered" title="8 out of 8 forms covered">
-                079&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\d&nbsp;(uaf&nbsp;(CDR&nbsp;l)&nbsp;(butlast&nbsp;path)))))
+                088&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\d&nbsp;(uaf&nbsp;(CDR&nbsp;l)&nbsp;(butlast&nbsp;path)))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                080&nbsp;&nbsp;
+                089&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="7 out of 7 forms covered">
-                081&nbsp;&nbsp;(defn&nbsp;CAAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;aa&quot;)))
+                090&nbsp;&nbsp;(defn&nbsp;CAAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;aa&quot;)))
                 </span><br/>
 <span class="covered" title="7 out of 7 forms covered">
-                082&nbsp;&nbsp;(defn&nbsp;CADR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;ad&quot;)))
+                091&nbsp;&nbsp;(defn&nbsp;CADR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;ad&quot;)))
                 </span><br/>
 <span class="partial" title="1 out of 7 forms covered">
-                083&nbsp;&nbsp;(defn&nbsp;CDDR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;dd&quot;)))
+                092&nbsp;&nbsp;(defn&nbsp;CDDR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;dd&quot;)))
                 </span><br/>
 <span class="covered" title="7 out of 7 forms covered">
-                084&nbsp;&nbsp;(defn&nbsp;CDAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;da&quot;)))
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                085&nbsp;&nbsp;
-                </span><br/>
-<span class="partial" title="1 out of 7 forms covered">
-                086&nbsp;&nbsp;(defn&nbsp;CAAAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;aaa&quot;)))
-                </span><br/>
-<span class="partial" title="1 out of 7 forms covered">
-                087&nbsp;&nbsp;(defn&nbsp;CAADR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;aad&quot;)))
-                </span><br/>
-<span class="partial" title="1 out of 7 forms covered">
-                088&nbsp;&nbsp;(defn&nbsp;CADAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;ada&quot;)))
-                </span><br/>
-<span class="covered" title="7 out of 7 forms covered">
-                089&nbsp;&nbsp;(defn&nbsp;CADDR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;add&quot;)))
-                </span><br/>
-<span class="partial" title="1 out of 7 forms covered">
-                090&nbsp;&nbsp;(defn&nbsp;CDDAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;dda&quot;)))
-                </span><br/>
-<span class="partial" title="1 out of 7 forms covered">
-                091&nbsp;&nbsp;(defn&nbsp;CDDDR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;ddd&quot;)))
-                </span><br/>
-<span class="partial" title="1 out of 7 forms covered">
-                092&nbsp;&nbsp;(defn&nbsp;CDAAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;daa&quot;)))
-                </span><br/>
-<span class="partial" title="1 out of 7 forms covered">
-                093&nbsp;&nbsp;(defn&nbsp;CDADR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;dad&quot;)))
+                093&nbsp;&nbsp;(defn&nbsp;CDAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;da&quot;)))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
                 094&nbsp;&nbsp;
                 </span><br/>
-<span class="covered" title="7 out of 7 forms covered">
-                095&nbsp;&nbsp;(defn&nbsp;CAAAAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;aaaa&quot;)))
+<span class="partial" title="1 out of 7 forms covered">
+                095&nbsp;&nbsp;(defn&nbsp;CAAAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;aaa&quot;)))
                 </span><br/>
 <span class="partial" title="1 out of 7 forms covered">
-                096&nbsp;&nbsp;(defn&nbsp;CAADAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;aada&quot;)))
+                096&nbsp;&nbsp;(defn&nbsp;CAADR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;aad&quot;)))
                 </span><br/>
 <span class="partial" title="1 out of 7 forms covered">
-                097&nbsp;&nbsp;(defn&nbsp;CADAAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;adaa&quot;)))
-                </span><br/>
-<span class="partial" title="1 out of 7 forms covered">
-                098&nbsp;&nbsp;(defn&nbsp;CADDAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;adda&quot;)))
-                </span><br/>
-<span class="partial" title="1 out of 7 forms covered">
-                099&nbsp;&nbsp;(defn&nbsp;CDDAAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;ddaa&quot;)))
-                </span><br/>
-<span class="partial" title="1 out of 7 forms covered">
-                100&nbsp;&nbsp;(defn&nbsp;CDDDAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;ddda&quot;)))
-                </span><br/>
-<span class="partial" title="1 out of 7 forms covered">
-                101&nbsp;&nbsp;(defn&nbsp;CDAAAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;daaa&quot;)))
-                </span><br/>
-<span class="partial" title="1 out of 7 forms covered">
-                102&nbsp;&nbsp;(defn&nbsp;CDADAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;dada&quot;)))
-                </span><br/>
-<span class="partial" title="1 out of 7 forms covered">
-                103&nbsp;&nbsp;(defn&nbsp;CAAADR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;aaad&quot;)))
-                </span><br/>
-<span class="partial" title="1 out of 7 forms covered">
-                104&nbsp;&nbsp;(defn&nbsp;CAADDR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;aadd&quot;)))
-                </span><br/>
-<span class="partial" title="1 out of 7 forms covered">
-                105&nbsp;&nbsp;(defn&nbsp;CADADR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;adad&quot;)))
+                097&nbsp;&nbsp;(defn&nbsp;CADAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;ada&quot;)))
                 </span><br/>
 <span class="covered" title="7 out of 7 forms covered">
-                106&nbsp;&nbsp;(defn&nbsp;CADDDR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;addd&quot;)))
+                098&nbsp;&nbsp;(defn&nbsp;CADDR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;add&quot;)))
                 </span><br/>
 <span class="partial" title="1 out of 7 forms covered">
-                107&nbsp;&nbsp;(defn&nbsp;CDDADR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;ddad&quot;)))
+                099&nbsp;&nbsp;(defn&nbsp;CDDAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;dda&quot;)))
                 </span><br/>
 <span class="partial" title="1 out of 7 forms covered">
-                108&nbsp;&nbsp;(defn&nbsp;CDDDDR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;dddd&quot;)))
+                100&nbsp;&nbsp;(defn&nbsp;CDDDR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;ddd&quot;)))
                 </span><br/>
 <span class="partial" title="1 out of 7 forms covered">
-                109&nbsp;&nbsp;(defn&nbsp;CDAADR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;daad&quot;)))
+                101&nbsp;&nbsp;(defn&nbsp;CDAAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;daa&quot;)))
                 </span><br/>
 <span class="partial" title="1 out of 7 forms covered">
-                110&nbsp;&nbsp;(defn&nbsp;CDADDR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;dadd&quot;)))
+                102&nbsp;&nbsp;(defn&nbsp;CDADR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;dad&quot;)))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                111&nbsp;&nbsp;
+                103&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="7 out of 7 forms covered">
+                104&nbsp;&nbsp;(defn&nbsp;CAAAAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;aaaa&quot;)))
+                </span><br/>
+<span class="partial" title="1 out of 7 forms covered">
+                105&nbsp;&nbsp;(defn&nbsp;CAADAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;aada&quot;)))
+                </span><br/>
+<span class="partial" title="1 out of 7 forms covered">
+                106&nbsp;&nbsp;(defn&nbsp;CADAAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;adaa&quot;)))
+                </span><br/>
+<span class="partial" title="1 out of 7 forms covered">
+                107&nbsp;&nbsp;(defn&nbsp;CADDAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;adda&quot;)))
+                </span><br/>
+<span class="partial" title="1 out of 7 forms covered">
+                108&nbsp;&nbsp;(defn&nbsp;CDDAAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;ddaa&quot;)))
+                </span><br/>
+<span class="partial" title="1 out of 7 forms covered">
+                109&nbsp;&nbsp;(defn&nbsp;CDDDAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;ddda&quot;)))
+                </span><br/>
+<span class="partial" title="1 out of 7 forms covered">
+                110&nbsp;&nbsp;(defn&nbsp;CDAAAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;daaa&quot;)))
+                </span><br/>
+<span class="partial" title="1 out of 7 forms covered">
+                111&nbsp;&nbsp;(defn&nbsp;CDADAR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;dada&quot;)))
+                </span><br/>
+<span class="partial" title="1 out of 7 forms covered">
+                112&nbsp;&nbsp;(defn&nbsp;CAAADR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;aaad&quot;)))
+                </span><br/>
+<span class="partial" title="1 out of 7 forms covered">
+                113&nbsp;&nbsp;(defn&nbsp;CAADDR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;aadd&quot;)))
+                </span><br/>
+<span class="partial" title="1 out of 7 forms covered">
+                114&nbsp;&nbsp;(defn&nbsp;CADADR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;adad&quot;)))
+                </span><br/>
+<span class="covered" title="7 out of 7 forms covered">
+                115&nbsp;&nbsp;(defn&nbsp;CADDDR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;addd&quot;)))
+                </span><br/>
+<span class="partial" title="1 out of 7 forms covered">
+                116&nbsp;&nbsp;(defn&nbsp;CDDADR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;ddad&quot;)))
+                </span><br/>
+<span class="partial" title="1 out of 7 forms covered">
+                117&nbsp;&nbsp;(defn&nbsp;CDDDDR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;dddd&quot;)))
+                </span><br/>
+<span class="partial" title="1 out of 7 forms covered">
+                118&nbsp;&nbsp;(defn&nbsp;CDAADR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;daad&quot;)))
+                </span><br/>
+<span class="partial" title="1 out of 7 forms covered">
+                119&nbsp;&nbsp;(defn&nbsp;CDADDR&nbsp;[x]&nbsp;(uaf&nbsp;x&nbsp;(seq&nbsp;&quot;dadd&quot;)))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                120&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                112&nbsp;&nbsp;(defn&nbsp;EQ
+                121&nbsp;&nbsp;(defn&nbsp;EQ
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                113&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;For&nbsp;some&nbsp;reason&nbsp;providing&nbsp;a&nbsp;doc&nbsp;string&nbsp;for&nbsp;this&nbsp;function&nbsp;breaks&nbsp;the
+                122&nbsp;&nbsp;&nbsp;&nbsp;&quot;Returns&nbsp;`T`&nbsp;if&nbsp;and&nbsp;only&nbsp;if&nbsp;both&nbsp;`x`&nbsp;and&nbsp;`y`&nbsp;are&nbsp;bound&nbsp;to&nbsp;the&nbsp;same&nbsp;atom,
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                114&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;Clojure&nbsp;parser!
+                123&nbsp;&nbsp;&nbsp;&nbsp;else&nbsp;`F`.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                115&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y]
+                124&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y]
                 </span><br/>
 <span class="covered" title="23 out of 23 forms covered">
-                116&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(and&nbsp;(=&nbsp;(ATOM&nbsp;x)&nbsp;T)&nbsp;(=&nbsp;x&nbsp;y))&nbsp;T&nbsp;F))
+                125&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(and&nbsp;(=&nbsp;(ATOM&nbsp;x)&nbsp;T)&nbsp;(=&nbsp;x&nbsp;y))&nbsp;T&nbsp;F))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                117&nbsp;&nbsp;
+                126&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                118&nbsp;&nbsp;(defn&nbsp;EQUAL
+                127&nbsp;&nbsp;(defn&nbsp;EQUAL
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                119&nbsp;&nbsp;&nbsp;&nbsp;&quot;This&nbsp;is&nbsp;a&nbsp;predicate&nbsp;that&nbsp;is&nbsp;true&nbsp;if&nbsp;its&nbsp;two&nbsp;arguments&nbsp;are&nbsp;identical
+                128&nbsp;&nbsp;&nbsp;&nbsp;&quot;This&nbsp;is&nbsp;a&nbsp;predicate&nbsp;that&nbsp;is&nbsp;true&nbsp;if&nbsp;its&nbsp;two&nbsp;arguments&nbsp;are&nbsp;identical
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                120&nbsp;&nbsp;&nbsp;&nbsp;S-expressions,&nbsp;and&nbsp;false&nbsp;if&nbsp;they&nbsp;are&nbsp;different.&nbsp;(The&nbsp;elementary&nbsp;predicate
+                129&nbsp;&nbsp;&nbsp;&nbsp;S-expressions,&nbsp;and&nbsp;false&nbsp;if&nbsp;they&nbsp;are&nbsp;different.&nbsp;(The&nbsp;elementary&nbsp;predicate
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                121&nbsp;&nbsp;&nbsp;&nbsp;`EQ`&nbsp;is&nbsp;defined&nbsp;only&nbsp;for&nbsp;atomic&nbsp;arguments.)&nbsp;The&nbsp;definition&nbsp;of&nbsp;`EQUAL`&nbsp;is
+                130&nbsp;&nbsp;&nbsp;&nbsp;`EQ`&nbsp;is&nbsp;defined&nbsp;only&nbsp;for&nbsp;atomic&nbsp;arguments.)&nbsp;The&nbsp;definition&nbsp;of&nbsp;`EQUAL`&nbsp;is
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                122&nbsp;&nbsp;&nbsp;&nbsp;an&nbsp;example&nbsp;of&nbsp;a&nbsp;conditional&nbsp;expression&nbsp;inside&nbsp;a&nbsp;conditional&nbsp;expression.
+                131&nbsp;&nbsp;&nbsp;&nbsp;an&nbsp;example&nbsp;of&nbsp;a&nbsp;conditional&nbsp;expression&nbsp;inside&nbsp;a&nbsp;conditional&nbsp;expression.
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                123&nbsp;&nbsp;
+                132&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                124&nbsp;&nbsp;&nbsp;&nbsp;NOTE:&nbsp;returns&nbsp;F&nbsp;on&nbsp;failure,&nbsp;not&nbsp;NIL&quot;
+                133&nbsp;&nbsp;&nbsp;&nbsp;NOTE:&nbsp;returns&nbsp;`F`&nbsp;on&nbsp;failure,&nbsp;not&nbsp;`NIL`&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                125&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y]
-                </span><br/>
-<span class="covered" title="3 out of 3 forms covered">
-                126&nbsp;&nbsp;&nbsp;&nbsp;(cond
-                </span><br/>
-<span class="covered" title="16 out of 16 forms covered">
-                127&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(ATOM&nbsp;x)&nbsp;T)&nbsp;(EQ&nbsp;x&nbsp;y)
-                </span><br/>
-<span class="covered" title="19 out of 19 forms covered">
-                128&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(EQUAL&nbsp;(CAR&nbsp;x)&nbsp;(CAR&nbsp;y))&nbsp;T)&nbsp;(EQUAL&nbsp;(CDR&nbsp;x)&nbsp;(CDR&nbsp;y))
-                </span><br/>
-<span class="covered" title="1 out of 1 forms covered">
-                129&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;F))
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                130&nbsp;&nbsp;
-                </span><br/>
-<span class="covered" title="1 out of 1 forms covered">
-                131&nbsp;&nbsp;(defn&nbsp;SUBST
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                132&nbsp;&nbsp;&nbsp;&nbsp;&quot;This&nbsp;function&nbsp;gives&nbsp;the&nbsp;result&nbsp;of&nbsp;substituting&nbsp;the&nbsp;S-expression&nbsp;`x`&nbsp;for
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                133&nbsp;&nbsp;&nbsp;&nbsp;all&nbsp;occurrences&nbsp;of&nbsp;the&nbsp;atomic&nbsp;symbol&nbsp;`y`&nbsp;in&nbsp;the&nbsp;S-expression&nbsp;`z`.&quot;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                134&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y&nbsp;z]
+                134&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y]
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
                 135&nbsp;&nbsp;&nbsp;&nbsp;(cond
                 </span><br/>
-<span class="covered" title="8 out of 8 forms covered">
-                136&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(EQUAL&nbsp;y&nbsp;z)&nbsp;T)&nbsp;x
+<span class="covered" title="16 out of 16 forms covered">
+                136&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(ATOM&nbsp;x)&nbsp;T)&nbsp;(EQ&nbsp;x&nbsp;y)
                 </span><br/>
-<span class="covered" title="13 out of 13 forms covered">
-                137&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(ATOM?&nbsp;z)&nbsp;T)&nbsp;z&nbsp;;;&nbsp;NIL&nbsp;is&nbsp;a&nbsp;symbol
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                138&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else
-                </span><br/>
-<span class="covered" title="15 out of 15 forms covered">
-                139&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell&nbsp;(SUBST&nbsp;x&nbsp;y&nbsp;(CAR&nbsp;z))&nbsp;(SUBST&nbsp;x&nbsp;y&nbsp;(CDR&nbsp;z)))))
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                140&nbsp;&nbsp;
+<span class="covered" title="19 out of 19 forms covered">
+                137&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(EQUAL&nbsp;(CAR&nbsp;x)&nbsp;(CAR&nbsp;y))&nbsp;T)&nbsp;(EQUAL&nbsp;(CDR&nbsp;x)&nbsp;(CDR&nbsp;y))
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                141&nbsp;&nbsp;(defn&nbsp;APPEND
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                142&nbsp;&nbsp;&nbsp;&nbsp;&quot;Append&nbsp;the&nbsp;the&nbsp;elements&nbsp;of&nbsp;`y`&nbsp;to&nbsp;the&nbsp;elements&nbsp;of&nbsp;`x`.
+                138&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;F))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                143&nbsp;&nbsp;
+                139&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                140&nbsp;&nbsp;(defn&nbsp;SUBST
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                144&nbsp;&nbsp;&nbsp;&nbsp;All&nbsp;args&nbsp;are&nbsp;assumed&nbsp;to&nbsp;be&nbsp;`beowulf.cons-cell&#x2F;ConsCell`&nbsp;objects.
+                141&nbsp;&nbsp;&nbsp;&nbsp;&quot;This&nbsp;function&nbsp;gives&nbsp;the&nbsp;result&nbsp;of&nbsp;substituting&nbsp;the&nbsp;S-expression&nbsp;`x`&nbsp;for
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                145&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;page&nbsp;11&nbsp;of&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;Programmers&nbsp;Manual.&quot;
+                142&nbsp;&nbsp;&nbsp;&nbsp;all&nbsp;occurrences&nbsp;of&nbsp;the&nbsp;atomic&nbsp;symbol&nbsp;`y`&nbsp;in&nbsp;the&nbsp;S-expression&nbsp;`z`.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                146&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y]
+                143&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y&nbsp;z]
                 </span><br/>
-<span class="covered" title="2 out of 2 forms covered">
-                147&nbsp;&nbsp;&nbsp;&nbsp;(cond
+<span class="covered" title="3 out of 3 forms covered">
+                144&nbsp;&nbsp;&nbsp;&nbsp;(cond
                 </span><br/>
-<span class="covered" title="5 out of 5 forms covered">
-                148&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;x&nbsp;NIL)&nbsp;y
+<span class="covered" title="8 out of 8 forms covered">
+                145&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(EQUAL&nbsp;y&nbsp;z)&nbsp;T)&nbsp;x
+                </span><br/>
+<span class="covered" title="13 out of 13 forms covered">
+                146&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(ATOM?&nbsp;z)&nbsp;T)&nbsp;z&nbsp;;;&nbsp;NIL&nbsp;is&nbsp;a&nbsp;symbol
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                149&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else
+                147&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else
                 </span><br/>
-<span class="covered" title="10 out of 10 forms covered">
-                150&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell&nbsp;(CAR&nbsp;x)&nbsp;(APPEND&nbsp;(CDR&nbsp;x)&nbsp;y))))
+<span class="covered" title="15 out of 15 forms covered">
+                148&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell&nbsp;(SUBST&nbsp;x&nbsp;y&nbsp;(CAR&nbsp;z))&nbsp;(SUBST&nbsp;x&nbsp;y&nbsp;(CDR&nbsp;z)))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                151&nbsp;&nbsp;
+                149&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                150&nbsp;&nbsp;(defn&nbsp;APPEND
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                151&nbsp;&nbsp;&nbsp;&nbsp;&quot;Append&nbsp;the&nbsp;the&nbsp;elements&nbsp;of&nbsp;`y`&nbsp;to&nbsp;the&nbsp;elements&nbsp;of&nbsp;`x`.
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
                 152&nbsp;&nbsp;
                 </span><br/>
-<span class="covered" title="1 out of 1 forms covered">
-                153&nbsp;&nbsp;(defn&nbsp;MEMBER
+<span class="not-tracked" title="0 out of 0 forms covered">
+                153&nbsp;&nbsp;&nbsp;&nbsp;All&nbsp;args&nbsp;are&nbsp;assumed&nbsp;to&nbsp;be&nbsp;`beowulf.cons-cell&#x2F;ConsCell`&nbsp;objects.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                154&nbsp;&nbsp;&nbsp;&nbsp;&quot;This&nbsp;predicate&nbsp;is&nbsp;true&nbsp;if&nbsp;the&nbsp;S-expression&nbsp;`x`&nbsp;occurs&nbsp;among&nbsp;the&nbsp;elements
+                154&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;page&nbsp;11&nbsp;of&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;Programmers&nbsp;Manual.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                155&nbsp;&nbsp;&nbsp;&nbsp;of&nbsp;the&nbsp;list&nbsp;`y`.
+                155&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y]
                 </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                156&nbsp;&nbsp;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                157&nbsp;&nbsp;&nbsp;&nbsp;All&nbsp;args&nbsp;are&nbsp;assumed&nbsp;to&nbsp;be&nbsp;symbols&nbsp;or&nbsp;`beowulf.cons-cell&#x2F;ConsCell`&nbsp;objects.
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                158&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;page&nbsp;11&nbsp;of&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;Programmers&nbsp;Manual.&quot;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                159&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y]
-                </span><br/>
-<span class="covered" title="3 out of 3 forms covered">
-                160&nbsp;&nbsp;&nbsp;&nbsp;(cond
+<span class="covered" title="2 out of 2 forms covered">
+                156&nbsp;&nbsp;&nbsp;&nbsp;(cond
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                161&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;y&nbsp;NIL)&nbsp;F&nbsp;;;&nbsp;NOTE:&nbsp;returns&nbsp;F&nbsp;on&nbsp;falsity,&nbsp;not&nbsp;NIL
+                157&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;x&nbsp;NIL)&nbsp;y
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                158&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else
                 </span><br/>
 <span class="covered" title="10 out of 10 forms covered">
-                162&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(EQUAL&nbsp;x&nbsp;(CAR&nbsp;y))&nbsp;T)&nbsp;T
-                </span><br/>
-<span class="covered" title="6 out of 6 forms covered">
-                163&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;(MEMBER&nbsp;x&nbsp;(CDR&nbsp;y))))
+                159&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell&nbsp;(CAR&nbsp;x)&nbsp;(APPEND&nbsp;(CDR&nbsp;x)&nbsp;y))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                164&nbsp;&nbsp;
+                160&nbsp;&nbsp;
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                161&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                165&nbsp;&nbsp;(defn&nbsp;PAIRLIS
+                162&nbsp;&nbsp;(defn&nbsp;MEMBER
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                166&nbsp;&nbsp;&nbsp;&nbsp;&quot;This&nbsp;function&nbsp;gives&nbsp;the&nbsp;list&nbsp;of&nbsp;pairs&nbsp;of&nbsp;corresponding&nbsp;elements&nbsp;of&nbsp;the
+                163&nbsp;&nbsp;&nbsp;&nbsp;&quot;This&nbsp;predicate&nbsp;is&nbsp;true&nbsp;if&nbsp;the&nbsp;S-expression&nbsp;`x`&nbsp;occurs&nbsp;among&nbsp;the&nbsp;elements
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                167&nbsp;&nbsp;&nbsp;&nbsp;lists&nbsp;`x`&nbsp;and&nbsp;`y`,&nbsp;and&nbsp;APPENDs&nbsp;this&nbsp;to&nbsp;the&nbsp;list&nbsp;`a`.&nbsp;The&nbsp;resultant&nbsp;list
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                168&nbsp;&nbsp;&nbsp;&nbsp;of&nbsp;pairs,&nbsp;which&nbsp;is&nbsp;like&nbsp;a&nbsp;table&nbsp;with&nbsp;two&nbsp;columns,&nbsp;is&nbsp;called&nbsp;an
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                169&nbsp;&nbsp;&nbsp;&nbsp;association&nbsp;list.
+                164&nbsp;&nbsp;&nbsp;&nbsp;of&nbsp;the&nbsp;list&nbsp;`y`.
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                170&nbsp;&nbsp;
+                165&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                171&nbsp;&nbsp;&nbsp;&nbsp;Eessentially,&nbsp;it&nbsp;builds&nbsp;the&nbsp;environment&nbsp;on&nbsp;the&nbsp;stack,&nbsp;implementing&nbsp;shallow
+                166&nbsp;&nbsp;&nbsp;&nbsp;All&nbsp;args&nbsp;are&nbsp;assumed&nbsp;to&nbsp;be&nbsp;symbols&nbsp;or&nbsp;`beowulf.cons-cell&#x2F;ConsCell`&nbsp;objects.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                172&nbsp;&nbsp;&nbsp;&nbsp;binding.
+                167&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;page&nbsp;11&nbsp;of&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;Programmers&nbsp;Manual.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                168&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y]
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                169&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                170&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;y&nbsp;NIL)&nbsp;F&nbsp;;;&nbsp;NOTE:&nbsp;returns&nbsp;F&nbsp;on&nbsp;falsity,&nbsp;not&nbsp;NIL
+                </span><br/>
+<span class="covered" title="10 out of 10 forms covered">
+                171&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(EQUAL&nbsp;x&nbsp;(CAR&nbsp;y))&nbsp;T)&nbsp;T
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                172&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;(MEMBER&nbsp;x&nbsp;(CDR&nbsp;y))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
                 173&nbsp;&nbsp;
                 </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                174&nbsp;&nbsp;&nbsp;&nbsp;All&nbsp;args&nbsp;are&nbsp;assumed&nbsp;to&nbsp;be&nbsp;`beowulf.cons-cell&#x2F;ConsCell`&nbsp;objects.
+<span class="covered" title="1 out of 1 forms covered">
+                174&nbsp;&nbsp;(defn&nbsp;PAIRLIS
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                175&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;page&nbsp;12&nbsp;of&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;Programmers&nbsp;Manual.&quot;
+                175&nbsp;&nbsp;&nbsp;&nbsp;&quot;This&nbsp;function&nbsp;gives&nbsp;the&nbsp;list&nbsp;of&nbsp;pairs&nbsp;of&nbsp;corresponding&nbsp;elements&nbsp;of&nbsp;the
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                176&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y&nbsp;a]
+                176&nbsp;&nbsp;&nbsp;&nbsp;lists&nbsp;`x`&nbsp;and&nbsp;`y`,&nbsp;and&nbsp;APPENDs&nbsp;this&nbsp;to&nbsp;the&nbsp;list&nbsp;`a`.&nbsp;The&nbsp;resultant&nbsp;list
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                177&nbsp;&nbsp;&nbsp;&nbsp;of&nbsp;pairs,&nbsp;which&nbsp;is&nbsp;like&nbsp;a&nbsp;table&nbsp;with&nbsp;two&nbsp;columns,&nbsp;is&nbsp;called&nbsp;an
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                178&nbsp;&nbsp;&nbsp;&nbsp;association&nbsp;list.
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                179&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                180&nbsp;&nbsp;&nbsp;&nbsp;Eessentially,&nbsp;it&nbsp;builds&nbsp;the&nbsp;environment&nbsp;on&nbsp;the&nbsp;stack,&nbsp;implementing&nbsp;shallow
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                181&nbsp;&nbsp;&nbsp;&nbsp;binding.
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                182&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                183&nbsp;&nbsp;&nbsp;&nbsp;All&nbsp;args&nbsp;are&nbsp;assumed&nbsp;to&nbsp;be&nbsp;`beowulf.cons-cell&#x2F;ConsCell`&nbsp;objects.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                184&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;page&nbsp;12&nbsp;of&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;Programmers&nbsp;Manual.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                185&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y&nbsp;a]
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
-                177&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                186&nbsp;&nbsp;&nbsp;&nbsp;(cond
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                178&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;the&nbsp;original&nbsp;tests&nbsp;only&nbsp;x;&nbsp;testing&nbsp;y&nbsp;as&nbsp;well&nbsp;will&nbsp;be&nbsp;a&nbsp;little&nbsp;more
+                187&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;the&nbsp;original&nbsp;tests&nbsp;only&nbsp;x;&nbsp;testing&nbsp;y&nbsp;as&nbsp;well&nbsp;will&nbsp;be&nbsp;a&nbsp;little&nbsp;more
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                179&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;robust&nbsp;if&nbsp;`x`&nbsp;and&nbsp;`y`&nbsp;are&nbsp;not&nbsp;the&nbsp;same&nbsp;length.
+                188&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;robust&nbsp;if&nbsp;`x`&nbsp;and&nbsp;`y`&nbsp;are&nbsp;not&nbsp;the&nbsp;same&nbsp;length.
                 </span><br/>
 <span class="covered" title="13 out of 13 forms covered">
-                180&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(or&nbsp;(=&nbsp;NIL&nbsp;x)&nbsp;(=&nbsp;NIL&nbsp;y))&nbsp;a
+                189&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(or&nbsp;(=&nbsp;NIL&nbsp;x)&nbsp;(=&nbsp;NIL&nbsp;y))&nbsp;a
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                181&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;(make-cons-cell
+                190&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;(make-cons-cell
                 </span><br/>
 <span class="covered" title="7 out of 7 forms covered">
-                182&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell&nbsp;(CAR&nbsp;x)&nbsp;(CAR&nbsp;y))
+                191&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell&nbsp;(CAR&nbsp;x)&nbsp;(CAR&nbsp;y))
                 </span><br/>
 <span class="covered" title="9 out of 9 forms covered">
-                183&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(PAIRLIS&nbsp;(CDR&nbsp;x)&nbsp;(CDR&nbsp;y)&nbsp;a))))
+                192&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(PAIRLIS&nbsp;(CDR&nbsp;x)&nbsp;(CDR&nbsp;y)&nbsp;a))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                184&nbsp;&nbsp;
+                193&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                185&nbsp;&nbsp;(defn&nbsp;ASSOC
+                194&nbsp;&nbsp;(defn&nbsp;ASSOC
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                186&nbsp;&nbsp;&nbsp;&nbsp;&quot;If&nbsp;a&nbsp;is&nbsp;an&nbsp;association&nbsp;list&nbsp;such&nbsp;as&nbsp;the&nbsp;one&nbsp;formed&nbsp;by&nbsp;PAIRLIS&nbsp;in&nbsp;the&nbsp;above
+                195&nbsp;&nbsp;&nbsp;&nbsp;&quot;If&nbsp;a&nbsp;is&nbsp;an&nbsp;association&nbsp;list&nbsp;such&nbsp;as&nbsp;the&nbsp;one&nbsp;formed&nbsp;by&nbsp;PAIRLIS&nbsp;in&nbsp;the&nbsp;above
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                187&nbsp;&nbsp;&nbsp;&nbsp;example,&nbsp;then&nbsp;assoc&nbsp;will&nbsp;produce&nbsp;the&nbsp;first&nbsp;pair&nbsp;whose&nbsp;first&nbsp;term&nbsp;is&nbsp;x.&nbsp;Thus
+                196&nbsp;&nbsp;&nbsp;&nbsp;example,&nbsp;then&nbsp;assoc&nbsp;will&nbsp;produce&nbsp;the&nbsp;first&nbsp;pair&nbsp;whose&nbsp;first&nbsp;term&nbsp;is&nbsp;x.&nbsp;Thus
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                188&nbsp;&nbsp;&nbsp;&nbsp;it&nbsp;is&nbsp;a&nbsp;table&nbsp;searching&nbsp;function.
+                197&nbsp;&nbsp;&nbsp;&nbsp;it&nbsp;is&nbsp;a&nbsp;table&nbsp;searching&nbsp;function.
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                189&nbsp;&nbsp;
+                198&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                190&nbsp;&nbsp;&nbsp;&nbsp;All&nbsp;args&nbsp;are&nbsp;assumed&nbsp;to&nbsp;be&nbsp;`beowulf.cons-cell&#x2F;ConsCell`&nbsp;objects.
+                199&nbsp;&nbsp;&nbsp;&nbsp;All&nbsp;args&nbsp;are&nbsp;assumed&nbsp;to&nbsp;be&nbsp;`beowulf.cons-cell&#x2F;ConsCell`&nbsp;objects.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                191&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;page&nbsp;12&nbsp;of&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;Programmers&nbsp;Manual.&quot;
+                200&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;page&nbsp;12&nbsp;of&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;Programmers&nbsp;Manual.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                192&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;a]
+                201&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;a]
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                193&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                202&nbsp;&nbsp;&nbsp;&nbsp;(cond
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                194&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;NIL&nbsp;a)&nbsp;NIL&nbsp;;;&nbsp;this&nbsp;clause&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;original&nbsp;but&nbsp;is&nbsp;added&nbsp;for
+                203&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;NIL&nbsp;a)&nbsp;NIL&nbsp;;;&nbsp;this&nbsp;clause&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;original&nbsp;but&nbsp;is&nbsp;added&nbsp;for
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                195&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;robustness.
+                204&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;robustness.
                 </span><br/>
 <span class="covered" title="12 out of 12 forms covered">
-                196&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(EQUAL&nbsp;(CAAR&nbsp;a)&nbsp;x)&nbsp;T)&nbsp;(CAR&nbsp;a)
+                205&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(EQUAL&nbsp;(CAAR&nbsp;a)&nbsp;x)&nbsp;T)&nbsp;(CAR&nbsp;a)
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                197&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else
+                206&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else
                 </span><br/>
 <span class="covered" title="6 out of 6 forms covered">
-                198&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ASSOC&nbsp;x&nbsp;(CDR&nbsp;a))))
+                207&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ASSOC&nbsp;x&nbsp;(CDR&nbsp;a))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                199&nbsp;&nbsp;
+                208&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
-                200&nbsp;&nbsp;(defn-&nbsp;SUB2
+                209&nbsp;&nbsp;(defn-&nbsp;SUB2
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                201&nbsp;&nbsp;&nbsp;&nbsp;&quot;Internal&nbsp;to&nbsp;`SUBLIS`,&nbsp;q.v.,&nbsp;which&nbsp;SUBSTitutes&nbsp;into&nbsp;a&nbsp;list&nbsp;from&nbsp;a&nbsp;store.
+                210&nbsp;&nbsp;&nbsp;&nbsp;&quot;Internal&nbsp;to&nbsp;`SUBLIS`,&nbsp;q.v.,&nbsp;which&nbsp;SUBSTitutes&nbsp;into&nbsp;a&nbsp;list&nbsp;from&nbsp;a&nbsp;store.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                202&nbsp;&nbsp;&nbsp;&nbsp;?&nbsp;I&nbsp;think&nbsp;this&nbsp;is&nbsp;doing&nbsp;variable&nbsp;binding&nbsp;in&nbsp;the&nbsp;stack&nbsp;frame?&quot;
+                211&nbsp;&nbsp;&nbsp;&nbsp;?&nbsp;I&nbsp;think&nbsp;this&nbsp;is&nbsp;doing&nbsp;variable&nbsp;binding&nbsp;in&nbsp;the&nbsp;stack&nbsp;frame?&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                203&nbsp;&nbsp;&nbsp;&nbsp;[a&nbsp;z]
+                212&nbsp;&nbsp;&nbsp;&nbsp;[a&nbsp;z]
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                204&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                213&nbsp;&nbsp;&nbsp;&nbsp;(cond
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                205&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;NIL&nbsp;a)&nbsp;z
+                214&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;NIL&nbsp;a)&nbsp;z
                 </span><br/>
 <span class="covered" title="9 out of 9 forms covered">
-                206&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(CAAR&nbsp;a)&nbsp;z)&nbsp;(CDAR&nbsp;a)&nbsp;;;&nbsp;TODO:&nbsp;this&nbsp;looks&nbsp;definitely&nbsp;wrong
+                215&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(CAAR&nbsp;a)&nbsp;z)&nbsp;(CDAR&nbsp;a)&nbsp;;;&nbsp;TODO:&nbsp;this&nbsp;looks&nbsp;definitely&nbsp;wrong
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                207&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else
+                216&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else
                 </span><br/>
 <span class="covered" title="6 out of 6 forms covered">
-                208&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(SUB2&nbsp;(CDR&nbsp;a)&nbsp;z)))
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                209&nbsp;&nbsp;
-                </span><br/>
-<span class="covered" title="1 out of 1 forms covered">
-                210&nbsp;&nbsp;(defn&nbsp;SUBLIS
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                211&nbsp;&nbsp;&nbsp;&nbsp;&quot;Here&nbsp;`a`&nbsp;is&nbsp;assumed&nbsp;to&nbsp;be&nbsp;an&nbsp;association&nbsp;list&nbsp;of&nbsp;the&nbsp;form
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                212&nbsp;&nbsp;&nbsp;&nbsp;`((ul&nbsp;.&nbsp;vl)...(un&nbsp;.&nbsp;vn))`,&nbsp;where&nbsp;the&nbsp;`u`s&nbsp;are&nbsp;atomic,&nbsp;and&nbsp;`y`&nbsp;is&nbsp;any
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                213&nbsp;&nbsp;&nbsp;&nbsp;S-expression.&nbsp;What&nbsp;`SUBLIS`&nbsp;does,&nbsp;is&nbsp;to&nbsp;treat&nbsp;the&nbsp;`u`s&nbsp;as&nbsp;variables&nbsp;when
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                214&nbsp;&nbsp;&nbsp;&nbsp;they&nbsp;occur&nbsp;in&nbsp;`y`,&nbsp;and&nbsp;to&nbsp;SUBSTitute&nbsp;the&nbsp;corresponding&nbsp;`v`s&nbsp;from&nbsp;the&nbsp;pair
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                215&nbsp;&nbsp;&nbsp;&nbsp;list.
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                216&nbsp;&nbsp;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                217&nbsp;&nbsp;&nbsp;&nbsp;My&nbsp;interpretation&nbsp;is&nbsp;that&nbsp;this&nbsp;is&nbsp;variable&nbsp;binding&nbsp;in&nbsp;the&nbsp;stack&nbsp;frame.
+                217&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(SUB2&nbsp;(CDR&nbsp;a)&nbsp;z)))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
                 218&nbsp;&nbsp;
                 </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                219&nbsp;&nbsp;&nbsp;&nbsp;All&nbsp;args&nbsp;are&nbsp;assumed&nbsp;to&nbsp;be&nbsp;`beowulf.cons-cell&#x2F;ConsCell`&nbsp;objects.
+<span class="covered" title="1 out of 1 forms covered">
+                219&nbsp;&nbsp;(defn&nbsp;SUBLIS
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                220&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;page&nbsp;12&nbsp;of&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;Programmers&nbsp;Manual.&quot;
+                220&nbsp;&nbsp;&nbsp;&nbsp;&quot;Here&nbsp;`a`&nbsp;is&nbsp;assumed&nbsp;to&nbsp;be&nbsp;an&nbsp;association&nbsp;list&nbsp;of&nbsp;the&nbsp;form
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                221&nbsp;&nbsp;&nbsp;&nbsp;[a&nbsp;y]
+                221&nbsp;&nbsp;&nbsp;&nbsp;`((ul&nbsp;.&nbsp;vl)...(un&nbsp;.&nbsp;vn))`,&nbsp;where&nbsp;the&nbsp;`u`s&nbsp;are&nbsp;atomic,&nbsp;and&nbsp;`y`&nbsp;is&nbsp;any
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                222&nbsp;&nbsp;&nbsp;&nbsp;S-expression.&nbsp;What&nbsp;`SUBLIS`&nbsp;does,&nbsp;is&nbsp;to&nbsp;treat&nbsp;the&nbsp;`u`s&nbsp;as&nbsp;variables&nbsp;when
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                223&nbsp;&nbsp;&nbsp;&nbsp;they&nbsp;occur&nbsp;in&nbsp;`y`,&nbsp;and&nbsp;to&nbsp;SUBSTitute&nbsp;the&nbsp;corresponding&nbsp;`v`s&nbsp;from&nbsp;the&nbsp;pair
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                224&nbsp;&nbsp;&nbsp;&nbsp;list.
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                225&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                226&nbsp;&nbsp;&nbsp;&nbsp;My&nbsp;interpretation&nbsp;is&nbsp;that&nbsp;this&nbsp;is&nbsp;variable&nbsp;binding&nbsp;in&nbsp;the&nbsp;stack&nbsp;frame.
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                227&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                228&nbsp;&nbsp;&nbsp;&nbsp;All&nbsp;args&nbsp;are&nbsp;assumed&nbsp;to&nbsp;be&nbsp;`beowulf.cons-cell&#x2F;ConsCell`&nbsp;objects.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                229&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;page&nbsp;12&nbsp;of&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;Programmers&nbsp;Manual.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                230&nbsp;&nbsp;&nbsp;&nbsp;[a&nbsp;y]
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
-                222&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                231&nbsp;&nbsp;&nbsp;&nbsp;(cond
                 </span><br/>
 <span class="covered" title="16 out of 16 forms covered">
-                223&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(ATOM?&nbsp;y)&nbsp;T)&nbsp;(SUB2&nbsp;a&nbsp;y)
+                232&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(ATOM?&nbsp;y)&nbsp;T)&nbsp;(SUB2&nbsp;a&nbsp;y)
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                224&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else
+                233&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else
                 </span><br/>
 <span class="covered" title="13 out of 13 forms covered">
-                225&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell&nbsp;(SUBLIS&nbsp;a&nbsp;(CAR&nbsp;y))&nbsp;(SUBLIS&nbsp;a&nbsp;(CDR&nbsp;y)))))
+                234&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell&nbsp;(SUBLIS&nbsp;a&nbsp;(CAR&nbsp;y))&nbsp;(SUBLIS&nbsp;a&nbsp;(CDR&nbsp;y)))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                226&nbsp;&nbsp;
+                235&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                227&nbsp;&nbsp;(defn&nbsp;APPLY
+                236&nbsp;&nbsp;(defn&nbsp;APPLY
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                228&nbsp;&nbsp;&nbsp;&nbsp;&quot;For&nbsp;bootstrapping,&nbsp;at&nbsp;least,&nbsp;a&nbsp;version&nbsp;of&nbsp;APPLY&nbsp;written&nbsp;in&nbsp;Clojure.
+                237&nbsp;&nbsp;&nbsp;&nbsp;&quot;For&nbsp;bootstrapping,&nbsp;at&nbsp;least,&nbsp;a&nbsp;version&nbsp;of&nbsp;APPLY&nbsp;written&nbsp;in&nbsp;Clojure.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                229&nbsp;&nbsp;&nbsp;&nbsp;All&nbsp;args&nbsp;are&nbsp;assumed&nbsp;to&nbsp;be&nbsp;symbols&nbsp;or&nbsp;`beowulf.cons-cell&#x2F;ConsCell`&nbsp;objects.
+                238&nbsp;&nbsp;&nbsp;&nbsp;All&nbsp;args&nbsp;are&nbsp;assumed&nbsp;to&nbsp;be&nbsp;symbols&nbsp;or&nbsp;`beowulf.cons-cell&#x2F;ConsCell`&nbsp;objects.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                230&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;page&nbsp;13&nbsp;of&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;Programmers&nbsp;Manual.&quot;
+                239&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;page&nbsp;13&nbsp;of&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;Programmers&nbsp;Manual.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                231&nbsp;&nbsp;&nbsp;&nbsp;[function&nbsp;args&nbsp;environment]
+                240&nbsp;&nbsp;&nbsp;&nbsp;[function&nbsp;args&nbsp;environment]
                 </span><br/>
 <span class="partial" title="1 out of 4 forms covered">
-                232&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                241&nbsp;&nbsp;&nbsp;&nbsp;(cond
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
-                233&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=
+                242&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=
                 </span><br/>
 <span class="partial" title="7 out of 9 forms covered">
-                234&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ATOM?&nbsp;function)
+                243&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ATOM?&nbsp;function)
                 </span><br/>
 <span class="partial" title="4 out of 7 forms covered">
-                235&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T)(cond
+                244&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T)(cond
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                236&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;TODO:&nbsp;doesn&#x27;t&nbsp;check&nbsp;whether&nbsp;`function`&nbsp;is&nbsp;bound&nbsp;in&nbsp;the&nbsp;environment;
+                245&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;TODO:&nbsp;doesn&#x27;t&nbsp;check&nbsp;whether&nbsp;`function`&nbsp;is&nbsp;bound&nbsp;in&nbsp;the&nbsp;environment;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                237&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;we&#x27;ll&nbsp;need&nbsp;that&nbsp;before&nbsp;we&nbsp;can&nbsp;bootstrap.
+                246&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;we&#x27;ll&nbsp;need&nbsp;that&nbsp;before&nbsp;we&nbsp;can&nbsp;bootstrap.
                 </span><br/>
 <span class="partial" title="4 out of 7 forms covered">
-                238&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;function&nbsp;&#x27;CAR)&nbsp;(CAAR&nbsp;args)
+                247&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;function&nbsp;&#x27;CAR)&nbsp;(CAAR&nbsp;args)
                 </span><br/>
 <span class="partial" title="4 out of 7 forms covered">
-                239&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;function&nbsp;&#x27;CDR)&nbsp;(CDAR&nbsp;args)
+                248&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;function&nbsp;&#x27;CDR)&nbsp;(CDAR&nbsp;args)
                 </span><br/>
 <span class="covered" title="11 out of 11 forms covered">
-                240&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;function&nbsp;&#x27;CONS)&nbsp;(make-cons-cell&nbsp;(CAR&nbsp;args)&nbsp;(CADR&nbsp;args))
+                249&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;function&nbsp;&#x27;CONS)&nbsp;(make-cons-cell&nbsp;(CAR&nbsp;args)&nbsp;(CADR&nbsp;args))
                 </span><br/>
 <span class="not-covered" title="0 out of 20 forms covered">
-                241&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;function&nbsp;&#x27;ATOM)&nbsp;(if&nbsp;(ATOM?&nbsp;(CAR&nbsp;args))&nbsp;T&nbsp;NIL)
+                250&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;function&nbsp;&#x27;ATOM)&nbsp;(if&nbsp;(ATOM?&nbsp;(CAR&nbsp;args))&nbsp;T&nbsp;NIL)
                 </span><br/>
 <span class="not-covered" title="0 out of 15 forms covered">
-                242&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;function&nbsp;&#x27;EQ)&nbsp;(if&nbsp;(=&nbsp;(CAR&nbsp;args)&nbsp;(CADR&nbsp;args))&nbsp;T&nbsp;NIL)
+                251&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;function&nbsp;&#x27;EQ)&nbsp;(if&nbsp;(=&nbsp;(CAR&nbsp;args)&nbsp;(CADR&nbsp;args))&nbsp;T&nbsp;NIL)
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                243&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else
+                252&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else
                 </span><br/>
 <span class="not-covered" title="0 out of 2 forms covered">
-                244&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(APPLY
+                253&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(APPLY
                 </span><br/>
 <span class="not-covered" title="0 out of 4 forms covered">
-                245&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(EVAL&nbsp;function&nbsp;environment)
+                254&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(EVAL&nbsp;function&nbsp;environment)
                 </span><br/>
 <span class="not-covered" title="0 out of 1 forms covered">
-                246&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args
+                255&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args
                 </span><br/>
 <span class="not-covered" title="0 out of 1 forms covered">
-                247&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;environment))
+                256&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;environment))
                 </span><br/>
 <span class="not-covered" title="0 out of 8 forms covered">
-                248&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(first&nbsp;function)&nbsp;&#x27;LAMBDA)&nbsp;(EVAL
+                257&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(first&nbsp;function)&nbsp;&#x27;LAMBDA)&nbsp;(EVAL
                 </span><br/>
 <span class="not-covered" title="0 out of 3 forms covered">
-                249&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CADDR&nbsp;function)
+                258&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CADDR&nbsp;function)
                 </span><br/>
 <span class="not-covered" title="0 out of 7 forms covered">
-                250&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(PAIRLIS&nbsp;(CADR&nbsp;function)&nbsp;args&nbsp;environment))
+                259&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(PAIRLIS&nbsp;(CADR&nbsp;function)&nbsp;args&nbsp;environment))
                 </span><br/>
 <span class="not-covered" title="0 out of 8 forms covered">
-                251&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(first&nbsp;function)&nbsp;&#x27;LABEL)&nbsp;(APPLY
+                260&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(first&nbsp;function)&nbsp;&#x27;LABEL)&nbsp;(APPLY
                 </span><br/>
 <span class="not-covered" title="0 out of 3 forms covered">
-                252&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CADDR&nbsp;function)
+                261&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CADDR&nbsp;function)
                 </span><br/>
 <span class="not-covered" title="0 out of 1 forms covered">
-                253&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args
+                262&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args
                 </span><br/>
 <span class="not-covered" title="0 out of 1 forms covered">
-                254&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell
+                263&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell
                 </span><br/>
 <span class="not-covered" title="0 out of 1 forms covered">
-                255&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell
+                264&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell
                 </span><br/>
 <span class="not-covered" title="0 out of 3 forms covered">
-                256&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CADR&nbsp;function)
+                265&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CADR&nbsp;function)
                 </span><br/>
 <span class="not-covered" title="0 out of 3 forms covered">
-                257&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CADDR&nbsp;function))
+                266&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CADDR&nbsp;function))
                 </span><br/>
 <span class="not-covered" title="0 out of 1 forms covered">
-                258&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;environment))))
+                267&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;environment))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                259&nbsp;&nbsp;
+                268&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
-                260&nbsp;&nbsp;(defn-&nbsp;EVCON
+                269&nbsp;&nbsp;(defn-&nbsp;EVCON
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                261&nbsp;&nbsp;&nbsp;&nbsp;&quot;Inner&nbsp;guts&nbsp;of&nbsp;primitive&nbsp;COND.&nbsp;All&nbsp;args&nbsp;are&nbsp;assumed&nbsp;to&nbsp;be
+                270&nbsp;&nbsp;&nbsp;&nbsp;&quot;Inner&nbsp;guts&nbsp;of&nbsp;primitive&nbsp;COND.&nbsp;All&nbsp;args&nbsp;are&nbsp;assumed&nbsp;to&nbsp;be
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                262&nbsp;&nbsp;&nbsp;&nbsp;`beowulf.cons-cell&#x2F;ConsCell`&nbsp;objects.
+                271&nbsp;&nbsp;&nbsp;&nbsp;`beowulf.cons-cell&#x2F;ConsCell`&nbsp;objects.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                263&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;page&nbsp;13&nbsp;of&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;Programmers&nbsp;Manual.&quot;
+                272&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;page&nbsp;13&nbsp;of&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;Programmers&nbsp;Manual.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                264&nbsp;&nbsp;&nbsp;&nbsp;[clauses&nbsp;env]
+                273&nbsp;&nbsp;&nbsp;&nbsp;[clauses&nbsp;env]
                 </span><br/>
 <span class="not-covered" title="0 out of 1 forms covered">
-                265&nbsp;&nbsp;&nbsp;&nbsp;(if
+                274&nbsp;&nbsp;&nbsp;&nbsp;(if
                 </span><br/>
 <span class="not-covered" title="0 out of 9 forms covered">
-                266&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(not=&nbsp;(EVAL&nbsp;(CAAR&nbsp;clauses)&nbsp;env)&nbsp;NIL)
+                275&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(not=&nbsp;(EVAL&nbsp;(CAAR&nbsp;clauses)&nbsp;env)&nbsp;NIL)
                 </span><br/>
 <span class="not-covered" title="0 out of 6 forms covered">
-                267&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(EVAL&nbsp;(CADAR&nbsp;clauses)&nbsp;env)
+                276&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(EVAL&nbsp;(CADAR&nbsp;clauses)&nbsp;env)
                 </span><br/>
 <span class="not-covered" title="0 out of 6 forms covered">
-                268&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(EVCON&nbsp;(CDR&nbsp;clauses)&nbsp;env)))
+                277&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(EVCON&nbsp;(CDR&nbsp;clauses)&nbsp;env)))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                269&nbsp;&nbsp;
+                278&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
-                270&nbsp;&nbsp;(defn-&nbsp;EVLIS
+                279&nbsp;&nbsp;(defn-&nbsp;EVLIS
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                271&nbsp;&nbsp;&nbsp;&nbsp;&quot;Map&nbsp;`EVAL`&nbsp;across&nbsp;this&nbsp;list&nbsp;of&nbsp;`args`&nbsp;in&nbsp;the&nbsp;context&nbsp;of&nbsp;this
+                280&nbsp;&nbsp;&nbsp;&nbsp;&quot;Map&nbsp;`EVAL`&nbsp;across&nbsp;this&nbsp;list&nbsp;of&nbsp;`args`&nbsp;in&nbsp;the&nbsp;context&nbsp;of&nbsp;this
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                272&nbsp;&nbsp;&nbsp;&nbsp;`env`ironment.All&nbsp;args&nbsp;are&nbsp;assumed&nbsp;to&nbsp;be&nbsp;`beowulf.cons-cell&#x2F;ConsCell`&nbsp;objects.
+                281&nbsp;&nbsp;&nbsp;&nbsp;`env`ironment.All&nbsp;args&nbsp;are&nbsp;assumed&nbsp;to&nbsp;be&nbsp;`beowulf.cons-cell&#x2F;ConsCell`&nbsp;objects.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                273&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;page&nbsp;13&nbsp;of&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;Programmers&nbsp;Manual.&quot;
+                282&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;page&nbsp;13&nbsp;of&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;Programmers&nbsp;Manual.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                274&nbsp;&nbsp;&nbsp;&nbsp;[args&nbsp;env]
+                283&nbsp;&nbsp;&nbsp;&nbsp;[args&nbsp;env]
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
-                275&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                284&nbsp;&nbsp;&nbsp;&nbsp;(cond
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                276&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;NIL&nbsp;args)&nbsp;NIL
+                285&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;NIL&nbsp;args)&nbsp;NIL
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                277&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else
+                286&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                278&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell
+                287&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell
                 </span><br/>
 <span class="covered" title="6 out of 6 forms covered">
-                279&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(EVAL&nbsp;(CAR&nbsp;args)&nbsp;env)
+                288&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(EVAL&nbsp;(CAR&nbsp;args)&nbsp;env)
                 </span><br/>
 <span class="covered" title="6 out of 6 forms covered">
-                280&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(EVLIS&nbsp;(CDR&nbsp;args)&nbsp;env))))
+                289&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(EVLIS&nbsp;(CDR&nbsp;args)&nbsp;env))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                281&nbsp;&nbsp;
+                290&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="11 out of 11 forms covered">
-                282&nbsp;&nbsp;(deftrace&nbsp;traced-eval
+                291&nbsp;&nbsp;(deftrace&nbsp;traced-eval
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                283&nbsp;&nbsp;&nbsp;&nbsp;&quot;Essentially,&nbsp;identical&nbsp;to&nbsp;EVAL&nbsp;except&nbsp;traced.&quot;
+                292&nbsp;&nbsp;&nbsp;&nbsp;&quot;Essentially,&nbsp;identical&nbsp;to&nbsp;EVAL&nbsp;except&nbsp;traced.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                284&nbsp;&nbsp;&nbsp;&nbsp;[expr&nbsp;env]
+                293&nbsp;&nbsp;&nbsp;&nbsp;[expr&nbsp;env]
                 </span><br/>
 <span class="partial" title="2 out of 3 forms covered">
-                285&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                294&nbsp;&nbsp;&nbsp;&nbsp;(cond
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
-                286&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=
+                295&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=
                 </span><br/>
 <span class="partial" title="9 out of 10 forms covered">
-                287&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ATOM?&nbsp;expr)&nbsp;T)
+                296&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ATOM?&nbsp;expr)&nbsp;T)
                 </span><br/>
 <span class="not-covered" title="0 out of 6 forms covered">
-                288&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CDR&nbsp;(ASSOC&nbsp;expr&nbsp;env))
+                297&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CDR&nbsp;(ASSOC&nbsp;expr&nbsp;env))
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
-                289&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=
+                298&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=
                 </span><br/>
 <span class="partial" title="9 out of 13 forms covered">
-                290&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ATOM?&nbsp;(CAR&nbsp;expr))
+                299&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ATOM?&nbsp;(CAR&nbsp;expr))
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                291&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T)(cond
+                300&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T)(cond
                 </span><br/>
 <span class="covered" title="9 out of 9 forms covered">
-                292&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(CAR&nbsp;expr)&nbsp;&#x27;QUOTE)&nbsp;(CADR&nbsp;expr)
+                301&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(CAR&nbsp;expr)&nbsp;&#x27;QUOTE)&nbsp;(CADR&nbsp;expr)
                 </span><br/>
 <span class="partial" title="6 out of 12 forms covered">
-                293&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(CAR&nbsp;expr)&nbsp;&#x27;COND)&nbsp;(EVCON&nbsp;(CDR&nbsp;expr)&nbsp;env)
+                302&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(CAR&nbsp;expr)&nbsp;&#x27;COND)&nbsp;(EVCON&nbsp;(CDR&nbsp;expr)&nbsp;env)
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
-                294&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;(APPLY
+                303&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;(APPLY
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                295&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CAR&nbsp;expr)
+                304&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CAR&nbsp;expr)
                 </span><br/>
 <span class="covered" title="6 out of 6 forms covered">
-                296&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(EVLIS&nbsp;(CDR&nbsp;expr)&nbsp;env)
+                305&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(EVLIS&nbsp;(CDR&nbsp;expr)&nbsp;env)
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                297&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;env))
+                306&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;env))
                 </span><br/>
 <span class="not-covered" title="0 out of 2 forms covered">
-                298&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;(APPLY
+                307&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;(APPLY
                 </span><br/>
 <span class="not-covered" title="0 out of 3 forms covered">
-                299&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CAR&nbsp;expr)
+                308&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CAR&nbsp;expr)
                 </span><br/>
 <span class="not-covered" title="0 out of 6 forms covered">
-                300&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(EVLIS&nbsp;(CDR&nbsp;expr)&nbsp;env)
+                309&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(EVLIS&nbsp;(CDR&nbsp;expr)&nbsp;env)
                 </span><br/>
 <span class="not-covered" title="0 out of 1 forms covered">
-                301&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;env)))
+                310&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;env)))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                302&nbsp;&nbsp;
+                311&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                303&nbsp;&nbsp;(defn&nbsp;EVAL
+                312&nbsp;&nbsp;(defn&nbsp;EVAL
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                304&nbsp;&nbsp;&nbsp;&nbsp;&quot;For&nbsp;bootstrapping,&nbsp;at&nbsp;least,&nbsp;a&nbsp;version&nbsp;of&nbsp;EVAL&nbsp;written&nbsp;in&nbsp;Clojure.
+                313&nbsp;&nbsp;&nbsp;&nbsp;&quot;For&nbsp;bootstrapping,&nbsp;at&nbsp;least,&nbsp;a&nbsp;version&nbsp;of&nbsp;EVAL&nbsp;written&nbsp;in&nbsp;Clojure.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                305&nbsp;&nbsp;&nbsp;&nbsp;All&nbsp;args&nbsp;are&nbsp;assumed&nbsp;to&nbsp;be&nbsp;symbols&nbsp;or&nbsp;`beowulf.cons-cell&#x2F;ConsCell`&nbsp;objects.
+                314&nbsp;&nbsp;&nbsp;&nbsp;All&nbsp;args&nbsp;are&nbsp;assumed&nbsp;to&nbsp;be&nbsp;symbols&nbsp;or&nbsp;`beowulf.cons-cell&#x2F;ConsCell`&nbsp;objects.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                306&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;page&nbsp;13&nbsp;of&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;Programmers&nbsp;Manual.&quot;
+                315&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;page&nbsp;13&nbsp;of&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;Programmers&nbsp;Manual.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                307&nbsp;&nbsp;&nbsp;&nbsp;[expr&nbsp;env]
+                316&nbsp;&nbsp;&nbsp;&nbsp;[expr&nbsp;env]
                 </span><br/>
 <span class="partial" title="3 out of 4 forms covered">
-                308&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                317&nbsp;&nbsp;&nbsp;&nbsp;(cond
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                309&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true?&nbsp;(:trace&nbsp;*options*))
+                318&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true?&nbsp;(:trace&nbsp;*options*))
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                310&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(traced-eval&nbsp;expr&nbsp;env)
+                319&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(traced-eval&nbsp;expr&nbsp;env)
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
-                311&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=
+                320&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=
                 </span><br/>
 <span class="partial" title="9 out of 10 forms covered">
-                312&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ATOM?&nbsp;expr)&nbsp;T)
+                321&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ATOM?&nbsp;expr)&nbsp;T)
                 </span><br/>
 <span class="not-covered" title="0 out of 6 forms covered">
-                313&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CDR&nbsp;(ASSOC&nbsp;expr&nbsp;env))
+                322&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CDR&nbsp;(ASSOC&nbsp;expr&nbsp;env))
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
-                314&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=
+                323&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=
                 </span><br/>
 <span class="partial" title="9 out of 13 forms covered">
-                315&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ATOM?&nbsp;(CAR&nbsp;expr))
+                324&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ATOM?&nbsp;(CAR&nbsp;expr))
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                316&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T)(cond
+                325&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T)(cond
                 </span><br/>
 <span class="covered" title="9 out of 9 forms covered">
-                317&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(CAR&nbsp;expr)&nbsp;&#x27;QUOTE)&nbsp;(CADR&nbsp;expr)
+                326&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(CAR&nbsp;expr)&nbsp;&#x27;QUOTE)&nbsp;(CADR&nbsp;expr)
                 </span><br/>
 <span class="partial" title="6 out of 12 forms covered">
-                318&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(CAR&nbsp;expr)&nbsp;&#x27;COND)&nbsp;(EVCON&nbsp;(CDR&nbsp;expr)&nbsp;env)
+                327&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(CAR&nbsp;expr)&nbsp;&#x27;COND)&nbsp;(EVCON&nbsp;(CDR&nbsp;expr)&nbsp;env)
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
-                319&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;(APPLY
+                328&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;(APPLY
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                320&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CAR&nbsp;expr)
+                329&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CAR&nbsp;expr)
                 </span><br/>
 <span class="covered" title="6 out of 6 forms covered">
-                321&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(EVLIS&nbsp;(CDR&nbsp;expr)&nbsp;env)
+                330&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(EVLIS&nbsp;(CDR&nbsp;expr)&nbsp;env)
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                322&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;env))
+                331&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;env))
                 </span><br/>
 <span class="not-covered" title="0 out of 2 forms covered">
-                323&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;(APPLY
+                332&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;(APPLY
                 </span><br/>
 <span class="not-covered" title="0 out of 3 forms covered">
-                324&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CAR&nbsp;expr)
+                333&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CAR&nbsp;expr)
                 </span><br/>
 <span class="not-covered" title="0 out of 6 forms covered">
-                325&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(EVLIS&nbsp;(CDR&nbsp;expr)&nbsp;env)
+                334&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(EVLIS&nbsp;(CDR&nbsp;expr)&nbsp;env)
                 </span><br/>
 <span class="not-covered" title="0 out of 1 forms covered">
-                326&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;env)))
+                335&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;env)))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                327&nbsp;&nbsp;
+                336&nbsp;&nbsp;
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                328&nbsp;&nbsp;
+                337&nbsp;&nbsp;
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                329&nbsp;&nbsp;
+                338&nbsp;&nbsp;
                 </span><br/>
  </body>
 </html>
