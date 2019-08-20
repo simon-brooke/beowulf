@@ -1,30 +1,55 @@
-(ns beowulf.eval
+(ns beowulf.bootstrap
+  "Lisp as defined in Chapter 1 (pages 1-14) of the
+  `Lisp 1.5 Programmer's Manual`; that is to say, a very simple Lisp language,
+  which should, I believe, be sufficient in conjunction with the functions
+  provided by `beowulf.host`, be sufficient to bootstrap the full Lisp 1.5
+  interpreter..
+
+  The convention is adopted that functions in this file with names in
+  ALLUPPERCASE are Lisp 1.5 functions (although written in Clojure) and that
+  therefore all arguments must be numbers, symbols or `beowulf.cons_cell.ConsCell`
+  objects."
   (:require [clojure.tools.trace :refer :all]
             [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL T F]]))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; This file is essentially Lisp as defined in Chapter 1 (pages 1-14) of the
+;;; Lisp 1.5 Programmer's Manual; that is to say, a very simple Lisp language,
+;;; which should, I believe, be sufficient in conjunction with the functions
+;;; provided by `beowulf.host`, be sufficient to bootstrap the full Lisp 1.5
+;;; interpreter.
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (declare EVAL)
 
 (def oblist
-  "The default environment; modified certainly be `LABEL` (which seems to
-  be Lisp 1.5's EQuivalent of `SETQ`), possibly by other things."
+  "The default environment."
   (atom NIL))
 
-(defn NULL
-  [x]
-  (if (= x NIL) 'T 'F))
+(def ^:dynamic *options*
+  "Command line options from invocation."
+  {})
 
-(defn ATOM
-  "It is not clear to me from the documentation whether `(ATOM 7)` should return
-  `'T` or `'F`. I'm going to assume `'T`."
+(defmacro NULL
+  "Returns `T` if and only if the argument `x` is bound to `NIL`; else `F`."
   [x]
-  (if (or (symbol? x) (number? x)) 'T 'F))
+  `(if (= ~x NIL) T F))
 
-(defn ATOM?
-  "The convention of returning `'F` from predicates, rather than `NIL`, is going
+(defmacro ATOM
+  "Returns `T` if and only is the argument `x` is bound to and atom; else `F`.
+  It is not clear to me from the documentation whether `(ATOM 7)` should return
+  `T` or `F`. I'm going to assume `T`."
+  [x]
+  `(if (or (symbol? ~x) (number? ~x)) T F))
+
+(defmacro ATOM?
+  "The convention of returning `F` from predicates, rather than `NIL`, is going
   to tie me in knots. This is a variant of `ATOM` which returns `NIL`
   on failure."
   [x]
-  (if (or (symbol? x) (number? x)) 'T NIL))
+  `(if (or (symbol? ~x) (number? ~x)) T NIL))
 
 (defn CAR
   "Return the item indicated by the first pointer of a pair. NIL is treated
@@ -94,10 +119,10 @@
 (defn CDADDR [x] (uaf x (seq "dadd")))
 
 (defn EQ
-  ;; For some reason providing a doc string for this function breaks the
-  ;; Clojure parser!
+  "Returns `T` if and only if both `x` and `y` are bound to the same atom,
+  else `F`."
   [x y]
-  (if (and (= (ATOM x) 'T) (= x y)) 'T 'F))
+  (if (and (= (ATOM x) T) (= x y)) T F))
 
 (defn EQUAL
   "This is a predicate that is true if its two arguments are identical
@@ -105,20 +130,20 @@
   `EQ` is defined only for atomic arguments.) The definition of `EQUAL` is
   an example of a conditional expression inside a conditional expression.
 
-  NOTE: returns F on failure, not NIL"
+  NOTE: returns `F` on failure, not `NIL`"
   [x y]
   (cond
-    (= (ATOM x) 'T) (EQ x y)
-    (= (EQUAL (CAR x) (CAR y)) 'T) (EQUAL (CDR x) (CDR y))
-    :else 'F))
+    (= (ATOM x) T) (EQ x y)
+    (= (EQUAL (CAR x) (CAR y)) T) (EQUAL (CDR x) (CDR y))
+    :else F))
 
 (defn SUBST
   "This function gives the result of substituting the S-expression `x` for
   all occurrences of the atomic symbol `y` in the S-expression `z`."
   [x y z]
   (cond
-    (= (EQUAL y z) 'T) x
-    (= (ATOM? z) 'T) z ;; NIL is a symbol
+    (= (EQUAL y z) T) x
+    (= (ATOM? z) T) z ;; NIL is a symbol
     :else
     (make-cons-cell (SUBST x y (CAR z)) (SUBST x y (CDR z)))))
 
@@ -143,7 +168,7 @@
   [x y]
   (cond
     (= y NIL) F ;; NOTE: returns F on falsity, not NIL
-    (= (EQUAL x (CAR y)) 'T) 'T
+    (= (EQUAL x (CAR y)) T) T
     :else (MEMBER x (CDR y))))
 
 (defn PAIRLIS
@@ -177,7 +202,7 @@
   (cond
     (= NIL a) NIL ;; this clause is not present in the original but is added for
     ;; robustness.
-    (= (EQUAL (CAAR a) x) 'T) (CAR a)
+    (= (EQUAL (CAAR a) x) T) (CAR a)
     :else
     (ASSOC x (CDR a))))
 
@@ -204,11 +229,11 @@
   See page 12 of the Lisp 1.5 Programmers Manual."
   [a y]
   (cond
-    (= (ATOM? y) 'T) (SUB2 a y)
+    (= (ATOM? y) T) (SUB2 a y)
     :else
     (make-cons-cell (SUBLIS a (CAR y)) (SUBLIS a (CDR y)))))
 
-(deftrace APPLY
+(defn APPLY
   "For bootstrapping, at least, a version of APPLY written in Clojure.
   All args are assumed to be symbols or `beowulf.cons-cell/ConsCell` objects.
   See page 13 of the Lisp 1.5 Programmers Manual."
@@ -216,7 +241,9 @@
   (cond
     (=
       (ATOM? function)
-      'T)(cond
+      T)(cond
+           ;; TODO: doesn't check whether `function` is bound in the environment;
+           ;; we'll need that before we can bootstrap.
            (= function 'CAR) (CAAR args)
            (= function 'CDR) (CDAR args)
            (= function 'CONS) (make-cons-cell (CAR args) (CADR args))
@@ -261,19 +288,16 @@
       (EVAL (CAR args) env)
       (EVLIS (CDR args) env))))
 
-
-(deftrace EVAL
-  "For bootstrapping, at least, a version of EVAL written in Clojure.
-  All args are assumed to be symbols or `beowulf.cons-cell/ConsCell` objects.
-  See page 13 of the Lisp 1.5 Programmers Manual."
+(deftrace traced-eval
+  "Essentially, identical to EVAL except traced."
   [expr env]
   (cond
     (=
-      (ATOM? expr) 'T)
+      (ATOM? expr) T)
     (CDR (ASSOC expr env))
     (=
       (ATOM? (CAR expr))
-      'T)(cond
+      T)(cond
            (= (CAR expr) 'QUOTE) (CADR expr)
            (= (CAR expr) 'COND) (EVCON (CDR expr) env)
            :else (APPLY
@@ -284,4 +308,31 @@
             (CAR expr)
             (EVLIS (CDR expr) env)
             env)))
+
+(defn EVAL
+  "For bootstrapping, at least, a version of EVAL written in Clojure.
+  All args are assumed to be symbols or `beowulf.cons-cell/ConsCell` objects.
+  See page 13 of the Lisp 1.5 Programmers Manual."
+  [expr env]
+  (cond
+    (true? (:trace *options*))
+    (traced-eval expr env)
+    (=
+      (ATOM? expr) T)
+    (CDR (ASSOC expr env))
+    (=
+      (ATOM? (CAR expr))
+      T)(cond
+           (= (CAR expr) 'QUOTE) (CADR expr)
+           (= (CAR expr) 'COND) (EVCON (CDR expr) env)
+           :else (APPLY
+                   (CAR expr)
+                   (EVLIS (CDR expr) env)
+                   env))
+    :else (APPLY
+            (CAR expr)
+            (EVLIS (CDR expr) env)
+            env)))
+
+
 

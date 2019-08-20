@@ -1,6 +1,9 @@
 (ns beowulf.mexpr-test
+  "These tests are taken generally from the examples on page 10 of
+   Lisp 1.5 Programmers Manual"
   (:require [clojure.test :refer :all]
-            [beowulf.read :refer [parse simplify generate]]))
+            [beowulf.bootstrap :refer [*options*]]
+            [beowulf.read :refer [parse simplify generate gsp]]))
 
 ;; These tests are taken generally from the examples on page 10 of
 ;; Lisp 1.5 Programmers Manual:
@@ -64,4 +67,10 @@
                        (parse "label[ff;λ[[x];[atom[x]->x; T->ff[car[x]]]]]"))))]
       (is (= actual expected)))))
 
-;; (parse "equal[x;y] = [atom[x]->[atom[y]->eq[x;y]; T->F]; equal[car[x]; car[y]]->equal[cdr[x];cdr[y]];T->F]")
+(deftest strict-tests
+  (testing "Strict feature"
+    (binding [*options* {:strict true}]
+      (is (thrown-with-msg?
+            Exception
+            #"Cannot parse meta expressions in strict mode"
+            (gsp "label[ff;λ[[x];[atom[x]->x; T->ff[car[x]]]]]"))))))
