@@ -1,4 +1,6 @@
 (ns beowulf.mexpr-test
+  "These tests are taken generally from the examples on page 10 of
+   Lisp 1.5 Programmers Manual"
   (:require [clojure.test :refer :all]
             [beowulf.bootstrap :refer [*options*]]
             [beowulf.read :refer [parse simplify generate gsp]]))

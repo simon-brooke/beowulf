@@ -1,5 +1,7 @@
 (ns beowulf.cons-cell
-  )
+  "The fundamental cons cell on which all Lisp structures are built.
+  Lisp 1.5 lists do not necessarily have a sequence as their CDR, so
+  cannot be implemented on top of Clojure lists.")
 
 (def NIL (symbol "NIL"))
 
@@ -15,12 +17,13 @@
   ;; https://github.com/clojure/clojure/blob/master/src/jvm/clojure/lang/ISeq.java
   (more [this] (if
                  (seq? (.CDR this))
-                 clojure.lang.PersistentList/EMPTY
-                 (.CDR this)))
+                 (.CDR this)
+                 clojure.lang.PersistentList/EMPTY))
   (next [this] (if
                  (seq? (.CDR this))
+                 (.CDR this)
                  nil ;; next returns nil when empty
-                 (.CDR this)))
+                 ))
 
   clojure.lang.Seqable
   (seq [this] this)
@@ -31,11 +34,26 @@
 
   clojure.lang.IPersistentCollection
   (count [this] (if
-                  (seq? (.CDR this))
-                  0
-                  (inc (count (.CDR this)))))
-  (empty [this] false)
-  (equiv [this other] false))
+                  (coll? (.CDR this))
+                  (inc (.count (.CDR this)))
+                  1))
+  (empty [this] false) ;; a cons cell is by definition not empty.
+  (equiv [this other] (if
+                        (seq? other)
+                        (and
+                          (if
+                            (and
+                              (seq? (first this))
+                              (seq? (first other)))
+                            (.equiv (first this) (first other))
+                            (= (first this) (first other)))
+                          (if
+                            (and
+                              (seq? (rest this))
+                              (seq? (rest other)))
+                            (.equiv (rest this) (rest other))
+                            (= (rest this) (rest other))))
+                        false)))
 
 (defn- to-string
   "Printing ConsCells gave me a *lot* of trouble. This is an internal function
@@ -103,21 +121,29 @@
 
 
 
-(defmethod clojure.core/print-method beowulf.cons_cell.ConsCell
+(defmethod clojure.core/print-method
+  ;;; I have not worked out how to document defmethod without blowing up the world.
+  beowulf.cons_cell.ConsCell
   [this writer]
   (.write writer (to-string this)))
 
 
-(defn make-cons-cell
-  [a d]
-  (ConsCell. a d))
+(defmacro make-cons-cell
+  "Construct a new instance of cons cell with this `car` and `cdr`."
+  [car cdr]
+  `(ConsCell. ~car ~cdr))
 
 (defn make-beowulf-list
+  "Construct a linked list of cons cells with the same content as the
+  sequence `x`."
   [x]
   (cond
     (empty? x) NIL
     (coll? x) (ConsCell.
-                (first x)
+                (if
+                  (seq? (first x))
+                  (make-beowulf-list (first x))
+                  (first x))
                 (make-beowulf-list (rest x)))
     :else
     NIL))

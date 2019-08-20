@@ -176,16 +176,24 @@
 (deftest member-tests
   (testing "member"
     (let [expected 'T
-          actual (MEMBER (gsp "ALBERT") (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
+          actual (MEMBER
+                   (gsp "ALBERT")
+                   (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
       (= actual expected))
     (let [expected 'T
-          actual (MEMBER (gsp "BELINDA") (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
+          actual (MEMBER
+                   (gsp "BELINDA")
+                   (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
       (= actual expected))
     (let [expected 'T
-          actual (MEMBER (gsp "ELFREDA") (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
+          actual (MEMBER
+                   (gsp "ELFREDA")
+                   (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
       (= actual expected))
     (let [expected 'F
-          actual (MEMBER (gsp "BERTRAM") (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
+          actual (MEMBER
+                   (gsp "BERTRAM")
+                   (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
       (= actual expected))))
 
 (deftest pairlis-tests

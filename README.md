@@ -30,6 +30,10 @@ required to rehost Lisp 1.5 on a different platform would be to reimplement
 * host.clj
 * read.clj
 
+The objective this is to make it fairly easy to implement Lisp 1.5 on top of
+any of the many [Make A Lisp](https://github.com/kanaka/mal)
+implementations.
+
 #### beowulf/boostrap.clj
 
 This file is essentially Lisp as defined in Chapter 1 (pages 1-14) of the
@@ -75,6 +79,17 @@ for modern machines.
 
 Because I'm barking mad, and this is therapy.
 
+### Commentary
+
+What's surprised me in working on this is how much more polished Lisp 1.5 is
+than legend had led me to believe. The language is remarkably close to
+[Portable Standard Lisp](http://www.softwarepreservation.org/projects/LISP/standard_lisp_family/#Portable_Standard_LISP_)
+which is in my opinion one of the best and most usable early Lisp
+implementations. I'm convinced you could still use Lisp 1.5 for interesting
+and useful software (which isn't to say that some modern Lisps aren't better,
+but this is software which is almost sixty years old).
+
+
 ## Installation
 
 At present, clone the source and build it using
@@ -96,6 +111,17 @@ To end a session, type `quit` at the command prompt.
 The `Lisp 1.5 Programmer's Manual` is still
 [in print, ISBN 13 978-0-262-13011-0](https://mitpress.mit.edu/books/lisp-15-programmers-manual); but it's also
 [available online](http://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf).
+
+## Other Lisp 1.5 resources
+
+The main resource I'm aware of is the Software Preservation Society's site,
+[here](http://www.softwarepreservation.org/projects/LISP/lisp1.5). It has lots
+of fascinating stuff including full assembler listings for various obsolete
+processors, but I failed to find the Lisp source of Lisp functions as a text
+file, which is why `resources/lisp1.5.lsp` is largely copytyped and
+reconstructed from the manual.
+
+I'm not at this time aware of any other working Lisp 1.5 implementations.
 
 ## License
 
