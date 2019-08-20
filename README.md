@@ -13,6 +13,7 @@ same bahaviour - except as documented below.
 
 Boots to REPL, but few functions yet available.
 
+* [Project website](https://simon-brooke.github.io/beowulf/).
 * [Source code documentation](https://simon-brooke.github.io/beowulf/docs/codox/index.html).
 * [Test Coverage Report](https://simon-brooke.github.io/beowulf/docs/cloverage/index.html)
 
