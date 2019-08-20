@@ -1,10 +1,31 @@
 (ns beowulf.read
-  (:require [clojure.math.numeric-tower :refer [expt]]
+  "This provides the reader required for boostrapping. It's not a bad
+  reader - it provides feedback on errors found in the input - but it isn't
+  the real Lisp reader.
+
+  Intended deviations from the behaviour of the real Lisp reader are as follows:
+
+  1. It reads the meta-expression language `MEXPR` in addition to the
+      symbolic expression language `SEXPR`, which I do not believe the Lisp 1.5
+      reader ever did;
+  2. It treats everything between a semi-colon and an end of line as a comment,
+      as most modern Lisps do; but I do not believe Lisp 1.5 had this feature.
+
+  Both these extensions can be disabled by using the `--strict` command line
+  switch."
+  (:require [beowulf.bootstrap :refer [*options*]]
+            [clojure.math.numeric-tower :refer [expt]]
             [clojure.string :refer [starts-with? upper-case]]
             [instaparse.core :as i]
-            [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL]])
-;;  (:import [beowulf.cons-cell ConsCell])
-  )
+            [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL]]))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; This file provides the reader required for boostrapping. It's not a bad
+;;; reader - it provides feedback on errors found in the input - but it isn't
+;;; the real Lisp reader.
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (declare generate)
 
@@ -18,7 +39,7 @@
 
       ;; mexprs. I'm pretty clear that Lisp 1.5 could never read these,
       ;; but it's a convenience.
-      "mexpr := λexpr | fncall | defn | cond | mvar;
+      "mexpr := λexpr | fncall | defn | cond | mvar | mexpr comment;
       λexpr := λ lsqb bindings semi-colon body rsqb;
       λ := 'λ';
       bindings := lsqb args rsqb;
@@ -35,9 +56,12 @@
       mvar := #'[a-z]+';
       semi-colon := ';';"
 
+      ;; comments. I'm pretty confident Lisp 1.5 did NOT have these.
+      "comment := opt-space <';;'> #'[^\\n\\r]*';"
+
       ;; sexprs. Note it's not clear to me whether Lisp 1.5 had the quote macro,
       ;; but I've included it on the basis that it can do little harm.
-      "sexpr := quoted-expr | atom | number | dotted-pair | list;
+      "sexpr := quoted-expr | atom | number | dotted-pair | list | sexpr comment;
       list := lpar sexpr rpar | lpar (sexpr sep)* rpar | lpar (sexpr sep)* dot-terminal;
       dotted-pair := lpar dot-terminal ;
       dot := '.';
@@ -89,6 +113,11 @@
                   (= context :mexpr)
                   [:quoted-expr p]
                   p)
+          :comment (if
+                     (:strict *options*)
+                     (throw
+                       (ex-info "Cannot parse comments in strict mode"
+                                {:cause :strict})))
           :dotted-pair (if
                          (= context :mexpr)
                          [:fncall
@@ -97,7 +126,12 @@
                            (simplify (nth p 1) context)
                            (simplify (nth p 2) context)]]
                          (map simplify p))
-          :mexpr (simplify (second p) :mexpr)
+          :mexpr (if
+                   (:strict *options*)
+                   (throw
+                     (ex-info "Cannot parse meta expressions in strict mode"
+                              {:cause :strict}))
+                   (simplify (second p) :mexpr))
           :list (if
                   (= context :mexpr)
                   [:fncall
@@ -107,7 +141,6 @@
           ;;default
           p)))
     p)))
-
 
 
 ;; # From Lisp 1.5 Programmers Manual, page 10
@@ -185,9 +218,7 @@
 
 (defn gen-fn-call
   "Generate a function call from this simplified parse tree fragment `p`;
-  returns `nil` if `p` does not represent a (MEXPR) function call.
-  TODO: I'm not yet certain but it appears that args in mexprs are
-  implicitly quoted; this function does not (yet) do that."
+  returns `nil` if `p` does not represent a (MEXPR) function call."
   [p]
   (if
     (and (coll? p)(= :fncall (first p))(= :mvar (first (second p))))
@@ -278,5 +309,7 @@
   `(generate (simplify (parse ~s))))
 
 (defn READ
+  "An implementation of a Lisp reader sufficient for bootstrapping; not necessarily
+  the final Lisp reader."
   [input]
   (gsp (or input (read-line))))
