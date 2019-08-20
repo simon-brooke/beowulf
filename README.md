@@ -13,6 +13,9 @@ same bahaviour - except as documented below.
 
 Boots to REPL, but few functions yet available.
 
+* [Source code documentation](https://simon-brooke.github.io/beowulf/docs/codox/index.html).
+* [Test Coverage Report](https://simon-brooke.github.io/beowulf/docs/cloverage/index.html)
+
 ### Architectural plan
 
 Not everything documented in this section is yet built. It indicates the
