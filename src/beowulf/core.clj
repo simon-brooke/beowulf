@@ -1,5 +1,5 @@
 (ns beowulf.core
-  (:require [beowulf.bootstrap :refer [EVAL oblist *trace?*]]
+  (:require [beowulf.bootstrap :refer [EVAL oblist *options*]]
             [beowulf.read :refer [READ]]
             [clojure.java.io :as io]
             [clojure.pprint :refer [pprint]]
@@ -40,6 +40,7 @@
             data
             (case (:cause data)
               :parse-failure (println (:failure data))
+              :strict nil ;; the message, which has already been printed, is enough.
               :quit (throw e)
               ;; default
               (pprint data))))))
@@ -60,7 +61,7 @@
         (if (:errors args)
           (apply str (interpose "; " (:errors args))))
         "\nSprecan 'quit' tó laéfan\n"))
-    (binding [*trace?* (true? (:trace (:options args)))]
+    (binding [*options* (:options args)]
       (try
         (repl (str (:prompt (:options args)) " "))
         (catch

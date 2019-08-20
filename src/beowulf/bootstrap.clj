@@ -19,8 +19,8 @@
   be Lisp 1.5's EQuivalent of `SETQ`), possibly by other things."
   (atom NIL))
 
-(def ^:dynamic *trace?*
-  "Whether or not to trace `EVAL`."
+(def ^:dynamic *options*
+  "Command line options from invocation."
   false)
 
 (defn NULL
@@ -304,7 +304,8 @@
   See page 13 of the Lisp 1.5 Programmers Manual."
   [expr env]
   (cond
-    *trace?* (traced-eval expr env)
+    (true? (:trace *options*))
+    (traced-eval expr env)
     (=
       (ATOM? expr) 'T)
     (CDR (ASSOC expr env))

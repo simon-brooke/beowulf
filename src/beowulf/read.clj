@@ -1,5 +1,6 @@
 (ns beowulf.read
-  (:require [clojure.math.numeric-tower :refer [expt]]
+  (:require [beowulf.bootstrap :refer [*options*]]
+            [clojure.math.numeric-tower :refer [expt]]
             [clojure.string :refer [starts-with? upper-case]]
             [instaparse.core :as i]
             [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL]]))
@@ -24,7 +25,7 @@
 
       ;; mexprs. I'm pretty clear that Lisp 1.5 could never read these,
       ;; but it's a convenience.
-      "mexpr := λexpr | fncall | defn | cond | mvar;
+      "mexpr := λexpr | fncall | defn | cond | mvar | mexpr comment;
       λexpr := λ lsqb bindings semi-colon body rsqb;
       λ := 'λ';
       bindings := lsqb args rsqb;
@@ -41,9 +42,12 @@
       mvar := #'[a-z]+';
       semi-colon := ';';"
 
+      ;; comments. I'm pretty confident Lisp 1.5 did NOT have these.
+      "comment := opt-space <';;'> #'[^\\n\\r]*';"
+
       ;; sexprs. Note it's not clear to me whether Lisp 1.5 had the quote macro,
       ;; but I've included it on the basis that it can do little harm.
-      "sexpr := quoted-expr | atom | number | dotted-pair | list;
+      "sexpr := quoted-expr | atom | number | dotted-pair | list | sexpr comment;
       list := lpar sexpr rpar | lpar (sexpr sep)* rpar | lpar (sexpr sep)* dot-terminal;
       dotted-pair := lpar dot-terminal ;
       dot := '.';
@@ -95,6 +99,11 @@
                   (= context :mexpr)
                   [:quoted-expr p]
                   p)
+          :comment (if
+                     (:strict *options*)
+                     (throw
+                       (ex-info "Cannot parse comments in strict mode"
+                                {:cause :strict})))
           :dotted-pair (if
                          (= context :mexpr)
                          [:fncall
@@ -103,7 +112,12 @@
                            (simplify (nth p 1) context)
                            (simplify (nth p 2) context)]]
                          (map simplify p))
-          :mexpr (simplify (second p) :mexpr)
+          :mexpr (if
+                   (:strict *options*)
+                   (throw
+                     (ex-info "Cannot parse meta expressions in strict mode"
+                              {:cause :strict}))
+                   (simplify (second p) :mexpr))
           :list (if
                   (= context :mexpr)
                   [:fncall
@@ -113,7 +127,6 @@
           ;;default
           p)))
     p)))
-
 
 
 ;; # From Lisp 1.5 Programmers Manual, page 10

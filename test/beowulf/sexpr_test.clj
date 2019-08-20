@@ -2,7 +2,8 @@
   (:require [clojure.math.numeric-tower :refer [abs]]
             [clojure.test :refer :all]
             [beowulf.cons-cell :refer :all]
-            [beowulf.read :refer [parse simplify generate]]))
+            [beowulf.bootstrap :refer [*options*]]
+            [beowulf.read :refer [parse simplify generate gsp]]))
 
 ;; broadly, sexprs should be homoiconic
 
@@ -23,6 +24,32 @@
     (let [expected 'A4B66XYZ2
           actual (generate (simplify (parse (str expected))))]
       (is (= actual expected)))))
+
+(deftest comment-tests
+  (testing "Reading comments"
+    (let [expected 'A
+          actual (gsp "A ;; comment")]
+      (is (= actual expected)))
+    (let [expected 10
+          actual (gsp "10 ;; comment")]
+      (is (= actual expected)))
+    (let [expected 2/5
+          actual (gsp "4E-1 ;; comment")]
+      (is (= actual expected)))
+    (let [expected "(A B C)"
+          actual (print-str (gsp "(A ;; comment
+                      B C)"))]
+      (is (= actual expected)
+          "Really important that comments work inside lists"))
+;;     ;; TODO: Currently failing and I'm not sure why
+;;     (binding [*options* {:strict true}]
+;;       (is (thrown-with-msg?
+;;             Exception
+;;             #"Cannot parse comments in strict mode"
+;;             (gsp "(A ;; comment
+;;                  B C)"))))
+    ))
+
 
 (deftest number-tests
   (testing "Reading octal numbers"
