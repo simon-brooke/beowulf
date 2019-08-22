@@ -3,20 +3,35 @@
   Lisp 1.5 lists do not necessarily have a sequence as their CDR, so
   cannot be implemented on top of Clojure lists.")
 
-(def NIL
-  "The canonical empty list symbol."
-  (symbol "NIL"))
+;; (def NIL
+;;   "The canonical empty list symbol."
+;;   (symbol "NIL"))
 
-(def T
-  "The canonical true value."
-  (symbol "T")) ;; true.
+;; (def T
+;;   "The canonical true value."
+;;   (symbol "T")) ;; true.
 
-(def F
-  "The canonical false value - different from `NIL`, which is not canonically
-  false in Lisp 1.5."
-  (symbol "F")) ;; false as distinct from nil
+;; (def F
+;;   "The canonical false value - different from `NIL`, which is not canonically
+;;   false in Lisp 1.5."
+;;   (symbol "F")) ;; false as distinct from nil
 
-(deftype ConsCell [CAR CDR]
+(deftype ConsCell [^:unsynchronized-mutable CAR ^:unsynchronized-mutable CDR]
+
+  (rplaca [this value]
+          (if
+            (or
+              (instance? beowulf.cons_cell.ConsCell value)
+              (number? value)
+              (symbol? value))
+            (do
+              (set! (. cell CAR) value)
+              cell)
+            (throw (ex-info
+                     (str "Invalid value in RPLACA: `" value "` (" (type value) ")")
+                     {:cause :bad-value
+                      :detail :rplaca}))))
+
   clojure.lang.ISeq
   (cons [this x] (ConsCell. x this))
   (first [this] (.CAR this))
@@ -62,77 +77,77 @@
                             (= (rest this) (rest other))))
                         false)))
 
-(defn- to-string
-  "Printing ConsCells gave me a *lot* of trouble. This is an internal function
-  used by the print-method override (below) in order that the standard Clojure
-  `print` and `str` functions will print ConsCells correctly. The argument
-  `cell` must, obviously, be an instance of `ConsCell`."
-  [cell]
-  (loop [c cell
-         n 0
-         s "("]
-    (if
-      (instance? beowulf.cons_cell.ConsCell c)
-      (let [car (.CAR c)
-            cdr (.CDR c)
-            cons? (instance? beowulf.cons_cell.ConsCell cdr)
-            ss (str
-                 s
-                 (to-string car)
-                 (cond
-                   cons?
-                   " "
-                   (or (nil? cdr) (= cdr 'NIL))
-                   ")"
-                   :else
-                   (str " . " (to-string cdr) ")")))]
-        (if
-          cons?
-          (recur cdr (inc n) ss)
-          ss))
-      (str c))))
+;; (defn- to-string
+;;   "Printing ConsCells gave me a *lot* of trouble. This is an internal function
+;;   used by the print-method override (below) in order that the standard Clojure
+;;   `print` and `str` functions will print ConsCells correctly. The argument
+;;   `cell` must, obviously, be an instance of `ConsCell`."
+;;   [cell]
+;;   (loop [c cell
+;;          n 0
+;;          s "("]
+;;     (if
+;;       (instance? beowulf.cons_cell.ConsCell c)
+;;       (let [car (.CAR c)
+;;             cdr (.CDR c)
+;;             cons? (instance? beowulf.cons_cell.ConsCell cdr)
+;;             ss (str
+;;                  s
+;;                  (to-string car)
+;;                  (cond
+;;                    cons?
+;;                    " "
+;;                    (or (nil? cdr) (= cdr 'NIL))
+;;                    ")"
+;;                    :else
+;;                    (str " . " (to-string cdr) ")")))]
+;;         (if
+;;           cons?
+;;           (recur cdr (inc n) ss)
+;;           ss))
+;;       (str c))))
 
-(defn pretty-print
-  "This isn't the world's best pretty printer but it sort of works."
-  ([^beowulf.cons_cell.ConsCell cell]
-   (println (pretty-print cell 80 0)))
-  ([^beowulf.cons_cell.ConsCell cell width level]
-   (loop [c cell
-          n (inc level)
-          s "("]
-     (if
-       (instance? beowulf.cons_cell.ConsCell c)
-       (let [car (.CAR c)
-             cdr (.CDR c)
-             cons? (instance? beowulf.cons_cell.ConsCell cdr)
-             print-width (count (print-str c))
-             indent (apply str (repeat n "  "))
-             ss (str
-                  s
-                  (pretty-print car width n)
-                  (cond
-                    cons?
-                    (if
-                      (< (+ (count indent) print-width) width)
-                      " "
-                      (str "\n" indent))
-                    (or (nil? cdr) (= cdr 'NIL))
-                    ")"
-                    :else
-                    (str " . " (pretty-print cdr width n) ")")))]
-         (if
-           cons?
-           (recur cdr n ss)
-           ss))
-       (str c)))))
+;; (defn pretty-print
+;;   "This isn't the world's best pretty printer but it sort of works."
+;;   ([^beowulf.cons_cell.ConsCell cell]
+;;    (println (pretty-print cell 80 0)))
+;;   ([^beowulf.cons_cell.ConsCell cell width level]
+;;    (loop [c cell
+;;           n (inc level)
+;;           s "("]
+;;      (if
+;;        (instance? beowulf.cons_cell.ConsCell c)
+;;        (let [car (.CAR c)
+;;              cdr (.CDR c)
+;;              cons? (instance? beowulf.cons_cell.ConsCell cdr)
+;;              print-width (count (print-str c))
+;;              indent (apply str (repeat n "  "))
+;;              ss (str
+;;                   s
+;;                   (pretty-print car width n)
+;;                   (cond
+;;                     cons?
+;;                     (if
+;;                       (< (+ (count indent) print-width) width)
+;;                       " "
+;;                       (str "\n" indent))
+;;                     (or (nil? cdr) (= cdr 'NIL))
+;;                     ")"
+;;                     :else
+;;                     (str " . " (pretty-print cdr width n) ")")))]
+;;          (if
+;;            cons?
+;;            (recur cdr n ss)
+;;            ss))
+;;        (str c)))))
 
 
 
-(defmethod clojure.core/print-method
-  ;;; I have not worked out how to document defmethod without blowing up the world.
-  beowulf.cons_cell.ConsCell
-  [this writer]
-  (.write writer (to-string this)))
+;; (defmethod clojure.core/print-method
+;;   ;;; I have not worked out how to document defmethod without blowing up the world.
+;;   beowulf.cons_cell.ConsCell
+;;   [this writer]
+;;   (.write writer (to-string this)))
 
 
 (defmacro make-cons-cell
