@@ -3,20 +3,43 @@
   Lisp 1.5 lists do not necessarily have a sequence as their CDR, so
   cannot be implemented on top of Clojure lists.")
 
-(def NIL
-  "The canonical empty list symbol."
-  (symbol "NIL"))
+;; (def NIL
+;;   "The canonical empty list symbol."
+;;   'NIL)
 
-(def T
-  "The canonical true value."
-  (symbol "T")) ;; true.
+;; (def T
+;;   "The canonical true value."
+;;   'T) ;; true.
 
-(def F
-  "The canonical false value - different from `NIL`, which is not canonically
-  false in Lisp 1.5."
-  (symbol "F")) ;; false as distinct from nil
+;; (def F
+;;   "The canonical false value - different from `NIL`, which is not canonically
+;;   false in Lisp 1.5."
+;;   'F) ;; false as distinct from nil
 
-(deftype ConsCell [CAR CDR]
+(deftype ConsCell [^:unsynchronized-mutable car ^:unsynchronized-mutable cdr]
+  ;; Note that, because the CAR and CDR fields are unsynchronised mutable - i.e.
+  ;; plain old Java instance variables which can be written as well as read -
+  ;; ConsCells are NOT thread safe. This does not matter, since Lisp 1.5 is
+  ;; single threaded.
+
+  (CAR [this] (.car this))
+  (CDR [this] (.cdr this))
+  (RPLACA
+    [this value]
+    (if
+      (or
+        (instance? beowulf.cons_cell.ConsCell value)
+        (number? value)
+        (symbol? value)
+        (= value NIL))
+    (do
+      (set! (. cell CAR) value)
+      cell)
+    (throw (ex-info
+             (str "Invalid value in RPLACA: `" value "` (" (type value) ")")
+             {:cause :bad-value
+              :detail :rplaca}))))
+
   clojure.lang.ISeq
   (cons [this x] (ConsCell. x this))
   (first [this] (.CAR this))
