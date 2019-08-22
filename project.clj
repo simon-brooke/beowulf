@@ -1,4 +1,4 @@
-(defproject beowulf "0.2.1-SNAPSHOT"
+(defproject beowulf "0.2.1"
   :cloverage {:output "docs/cloverage"}
   :codox {:metadata {:doc "**TODO**: write docs"
                      :doc/format :markdown}
@@ -13,7 +13,9 @@
                  [org.clojure/tools.trace "0.7.10"]
                  [environ "1.1.0"]
                  [instaparse "1.4.10"]]
+  :java-source-paths ["src/java"]
   :main ^:skip-aot beowulf.core
+  :min-lein-version  "2.0.0"
   :plugins [[lein-cloverage "1.1.1"]
             [lein-codox "0.10.7"]
             [lein-environ "1.1.0"]]
@@ -28,7 +30,7 @@
                   ["uberjar"]
                   ["change" "version" "leiningen.release/bump-version"]
                   ["vcs" "commit"]]
-
+  :source-paths ["src/clojure"]
   :target-path "target/%s"
-  :url "https://github.com/simon-brooke/the-great-game"
+  :url "https://github.com/simon-brooke/beowulf"
   )

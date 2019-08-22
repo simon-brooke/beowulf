@@ -75,7 +75,7 @@
       (is (= actual expected) "B is CDR of (A . B)"))
     (let [expected 'B
           actual (CDR (gsp "(A B C D)"))]
-      (is (instance? beowulf.cons_cell.ConsCell actual)
+      (is (instance? beowulf.substrate.ConsCell actual)
           "CDR of (A B C D) is a cons cell")
       (is (= (CAR actual) expected) "the CAR of that cons-cell is B"))
     (is (thrown-with-msg?

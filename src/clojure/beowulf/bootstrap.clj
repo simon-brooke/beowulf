@@ -7,10 +7,12 @@
 
   The convention is adopted that functions in this file with names in
   ALLUPPERCASE are Lisp 1.5 functions (although written in Clojure) and that
-  therefore all arguments must be numbers, symbols or `beowulf.cons_cell.ConsCell`
+  therefore all arguments must be numbers, symbols or `beowulf.substrate.ConsCell`
   objects."
-  (:require [clojure.tools.trace :refer :all]
-            [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL T F]]))
+  (:require [clojure.string :as s]
+            [clojure.tools.trace :refer :all]
+            [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL T F]])
+  (:import (beowulf.substrate ConsCell)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -57,7 +59,7 @@
   [x]
   (cond
     (= x NIL) NIL
-    (instance? beowulf.cons_cell.ConsCell x) (.CAR x)
+    (instance? ConsCell x) (.getCar x)
     :else
     (throw
       (Exception.
@@ -69,7 +71,7 @@
   [x]
   (cond
     (= x NIL) NIL
-    (instance? beowulf.cons_cell.ConsCell x) (.CDR x)
+    (instance? ConsCell x) (.getCdr x)
     :else
     (throw
       (Exception.
@@ -232,6 +234,81 @@
     (= (ATOM? y) T) (SUB2 a y)
     :else
     (make-cons-cell (SUBLIS a (CAR y)) (SUBLIS a (CDR y)))))
+
+(defn interop-interpret-q-name
+  "For interoperation with Clojure, it will often be necessary to pass
+  qualified names that are not representable in Lisp 1.5. This function
+  takes a sequence in the form `(PART PART PART... NAME)` and returns
+  a symbol in the form `PART.PART.PART/NAME`. This symbol will then be
+  tried in both that form and lower-cased. Names with hyphens or
+  underscores cannot be represented with this scheme."
+  [l]
+  (if
+    (seq? l)
+    (symbol
+      (s/reverse
+        (s/replace-first
+          (s/reverse
+            (s/join "." (map str l)))
+          "."
+          "/")))
+    l))
+
+(deftrace INTEROP
+  "Clojure (or other host environment) interoperation API. `fn-symbol` is expected
+  to be either
+
+  1. a symbol bound in the host environment to a function; or
+  2. a sequence (list) of symbols forming a qualified path name bound to a
+     function.
+
+  Lower case characters cannot normally be represented in Lisp 1.5, so both the
+  upper case and lower case variants of `fn-symbol` will be tried. If the
+  function you're looking for has a mixed case name, that is not currently
+  accessible.
+
+  `args` is expected to be a Lisp 1.5 list of arguments to be passed to that
+  function. Return value must be something acceptable to Lisp 1.5, so either
+  a symbol, a number, or a Lisp 1.5 list.
+
+  If `fn-symbol` is not found (even when cast to lower case), or is not a function,
+  or the value returned cannot be represented in Lisp 1.5, an exception is thrown
+  with `:cause` bound to `:interop` and `:detail` set to a value representing the
+  actual problem."
+  [fn-symbol args]
+  (let
+    [q-name (if
+              (seq? fn-symbol)
+              (interop-interpret-q-name fn-symbol)
+              fn-symbol)
+     l-name (symbol (s/lower-case q-name))
+     f (cond
+            (try
+              (fn? (eval l-name))
+              (catch java.lang.ClassNotFoundException e nil)) (eval l-name)
+            (try
+              (fn? (eval q-name))
+              (catch java.lang.ClassNotFoundException e nil)) (eval q-name)
+             :else (throw
+                     (ex-info
+                       (str "INTEROP: unknown function `" fn-symbol "`")
+                       {:cause :interop
+                        :detail :not-found
+                         :name fn-symbol
+                         :also-tried l-name})))
+      result (eval (cons f args))]
+    (cond
+      (instance? ConsCell result) result
+      (seq? result) (make-beowulf-list result)
+      (symbol? result) result
+      (string? result) (symbol result)
+      (number? result) result
+      :else (throw
+              (ex-info
+                (str "INTEROP: Cannot return `" result "` to Lisp 1.5.")
+                {:cause :interop
+                 :detail :not-representable
+                 :result result})))))
 
 (defn APPLY
   "For bootstrapping, at least, a version of APPLY written in Clojure.
