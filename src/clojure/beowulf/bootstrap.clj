@@ -7,11 +7,12 @@
 
   The convention is adopted that functions in this file with names in
   ALLUPPERCASE are Lisp 1.5 functions (although written in Clojure) and that
-  therefore all arguments must be numbers, symbols or `beowulf.cons_cell.ConsCell`
+  therefore all arguments must be numbers, symbols or `beowulf.substrate.ConsCell`
   objects."
   (:require [clojure.string :as s]
             [clojure.tools.trace :refer :all]
-            [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL T F]]))
+            [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL T F]])
+  (:import (beowulf.substrate ConsCell)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -58,7 +59,7 @@
   [x]
   (cond
     (= x NIL) NIL
-    (instance? beowulf.cons_cell.ConsCell x) (.CAR x)
+    (instance? ConsCell x) (.getCar x)
     :else
     (throw
       (Exception.
@@ -70,7 +71,7 @@
   [x]
   (cond
     (= x NIL) NIL
-    (instance? beowulf.cons_cell.ConsCell x) (.CDR x)
+    (instance? ConsCell x) (.getCdr x)
     :else
     (throw
       (Exception.
@@ -297,7 +298,7 @@
                          :also-tried l-name})))
       result (eval (cons f args))]
     (cond
-      (instance? beowulf.cons_cell.ConsCell result) result
+      (instance? ConsCell result) result
       (seq? result) (make-beowulf-list result)
       (symbol? result) result
       (string? result) (symbol result)
