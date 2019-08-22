@@ -267,7 +267,7 @@
   (if
     (coll? p)
     (case (first p)
-      :λ "LAMBDA"
+      :λ 'LAMBDA
       :λexpr (make-cons-cell
                (generate (nth p 1))
                (make-cons-cell (generate (nth p 2))
