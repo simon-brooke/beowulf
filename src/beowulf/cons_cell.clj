@@ -3,34 +3,66 @@
   Lisp 1.5 lists do not necessarily have a sequence as their CDR, so
   cannot be implemented on top of Clojure lists.")
 
-;; (def NIL
-;;   "The canonical empty list symbol."
-;;   (symbol "NIL"))
+(def NIL
+  "The canonical empty list symbol."
+  (symbol "NIL"))
 
-;; (def T
-;;   "The canonical true value."
-;;   (symbol "T")) ;; true.
+(def T
+  "The canonical true value."
+  (symbol "T")) ;; true.
 
-;; (def F
-;;   "The canonical false value - different from `NIL`, which is not canonically
-;;   false in Lisp 1.5."
-;;   (symbol "F")) ;; false as distinct from nil
+(def F
+  "The canonical false value - different from `NIL`, which is not canonically
+  false in Lisp 1.5."
+  (symbol "F")) ;; false as distinct from nil
+
+(defprotocol MutableSequence
+  "Like a sequence, but mutable."
+  (rplaca
+    [this value]
+    "replace the first element of this sequence with this value")
+  (rplacd
+    [this value]
+    "replace the rest (but-first; cdr) of this sequence with this value")
+  (getCdr
+    [this]
+    "like `more`, q.v., but returns List `NIL` not Clojure `nil` when empty." ))
 
 (deftype ConsCell [^:unsynchronized-mutable CAR ^:unsynchronized-mutable CDR]
+  MutableSequence
 
-  (rplaca [this value]
+    (rplaca [this value]
           (if
             (or
-              (instance? beowulf.cons_cell.ConsCell value)
+              (satisfies? MutableSequence value) ;; can't reference
+                                                 ;; beowulf.cons_cell.ConsCell,
+                                                 ;; because it is not yet
+                                                 ;; defined
               (number? value)
               (symbol? value))
             (do
-              (set! (. cell CAR) value)
-              cell)
+              (set! (. this CAR) value)
+              this)
             (throw (ex-info
                      (str "Invalid value in RPLACA: `" value "` (" (type value) ")")
                      {:cause :bad-value
                       :detail :rplaca}))))
+
+  (rplacd [this value]
+          (if
+            (or
+              (satisfies? MutableSequence value)
+              (number? value)
+              (symbol? value))
+            (do
+              (set! (. this CDR) value)
+              this)
+            (throw (ex-info
+                     (str "Invalid value in RPLACD: `" value "` (" (type value) ")")
+                     {:cause :bad-value
+                      :detail :rplaca}))))
+  (getCdr [this]
+       (. this CDR))
 
   clojure.lang.ISeq
   (cons [this x] (ConsCell. x this))
@@ -38,12 +70,12 @@
   ;; next and more must return ISeq:
   ;; https://github.com/clojure/clojure/blob/master/src/jvm/clojure/lang/ISeq.java
   (more [this] (if
-                 (seq? (.CDR this))
-                 (.CDR this)
+                 (seq? (.getCdr this))
+                 (.getCdr this)
                  clojure.lang.PersistentList/EMPTY))
   (next [this] (if
-                 (seq? (.CDR this))
-                 (.CDR this)
+                 (seq? (.getCdr this))
+                 (.getCdr this)
                  nil ;; next returns nil when empty
                  ))
 
@@ -56,8 +88,8 @@
 
   clojure.lang.IPersistentCollection
   (count [this] (if
-                  (coll? (.CDR this))
-                  (inc (.count (.CDR this)))
+                  (coll? (.getCdr this))
+                  (inc (.count (.getCdr this)))
                   1))
   (empty [this] false) ;; a cons cell is by definition not empty.
   (equiv [this other] (if
@@ -71,83 +103,83 @@
                             (= (first this) (first other)))
                           (if
                             (and
-                              (seq? (rest this))
-                              (seq? (rest other)))
-                            (.equiv (rest this) (rest other))
-                            (= (rest this) (rest other))))
+                              (seq? (.getCdr this))
+                              (seq? (.getCdr other)))
+                            (.equiv (.getCdr this) (.getCdr other))
+                            (= (.getCdr this) (.getCdr other))))
                         false)))
 
-;; (defn- to-string
-;;   "Printing ConsCells gave me a *lot* of trouble. This is an internal function
-;;   used by the print-method override (below) in order that the standard Clojure
-;;   `print` and `str` functions will print ConsCells correctly. The argument
-;;   `cell` must, obviously, be an instance of `ConsCell`."
-;;   [cell]
-;;   (loop [c cell
-;;          n 0
-;;          s "("]
-;;     (if
-;;       (instance? beowulf.cons_cell.ConsCell c)
-;;       (let [car (.CAR c)
-;;             cdr (.CDR c)
-;;             cons? (instance? beowulf.cons_cell.ConsCell cdr)
-;;             ss (str
-;;                  s
-;;                  (to-string car)
-;;                  (cond
-;;                    cons?
-;;                    " "
-;;                    (or (nil? cdr) (= cdr 'NIL))
-;;                    ")"
-;;                    :else
-;;                    (str " . " (to-string cdr) ")")))]
-;;         (if
-;;           cons?
-;;           (recur cdr (inc n) ss)
-;;           ss))
-;;       (str c))))
+(defn- to-string
+  "Printing ConsCells gave me a *lot* of trouble. This is an internal function
+  used by the print-method override (below) in order that the standard Clojure
+  `print` and `str` functions will print ConsCells correctly. The argument
+  `cell` must, obviously, be an instance of `ConsCell`."
+  [cell]
+  (loop [c cell
+         n 0
+         s "("]
+    (if
+      (instance? beowulf.cons_cell.ConsCell c)
+      (let [car (.first c)
+            cdr (.getCdr c)
+            cons? (instance? beowulf.cons_cell.ConsCell cdr)
+            ss (str
+                 s
+                 (to-string car)
+                 (cond
+                   cons?
+                   " "
+                   (or (nil? cdr) (= cdr NIL))
+                   ")"
+                   :else
+                   (str " . " (to-string cdr) ")")))]
+        (if
+          cons?
+          (recur cdr (inc n) ss)
+          ss))
+      (str c))))
 
-;; (defn pretty-print
-;;   "This isn't the world's best pretty printer but it sort of works."
-;;   ([^beowulf.cons_cell.ConsCell cell]
-;;    (println (pretty-print cell 80 0)))
-;;   ([^beowulf.cons_cell.ConsCell cell width level]
-;;    (loop [c cell
-;;           n (inc level)
-;;           s "("]
-;;      (if
-;;        (instance? beowulf.cons_cell.ConsCell c)
-;;        (let [car (.CAR c)
-;;              cdr (.CDR c)
-;;              cons? (instance? beowulf.cons_cell.ConsCell cdr)
-;;              print-width (count (print-str c))
-;;              indent (apply str (repeat n "  "))
-;;              ss (str
-;;                   s
-;;                   (pretty-print car width n)
-;;                   (cond
-;;                     cons?
-;;                     (if
-;;                       (< (+ (count indent) print-width) width)
-;;                       " "
-;;                       (str "\n" indent))
-;;                     (or (nil? cdr) (= cdr 'NIL))
-;;                     ")"
-;;                     :else
-;;                     (str " . " (pretty-print cdr width n) ")")))]
-;;          (if
-;;            cons?
-;;            (recur cdr n ss)
-;;            ss))
-;;        (str c)))))
+(defn pretty-print
+  "This isn't the world's best pretty printer but it sort of works."
+  ([^beowulf.cons_cell.ConsCell cell]
+   (println (pretty-print cell 80 0)))
+  ([^beowulf.cons_cell.ConsCell cell width level]
+   (loop [c cell
+          n (inc level)
+          s "("]
+     (if
+       (instance? beowulf.cons_cell.ConsCell c)
+       (let [car (.first c)
+             cdr (.getCdr c)
+             cons? (instance? beowulf.cons_cell.ConsCell cdr)
+             print-width (count (print-str c))
+             indent (apply str (repeat n "  "))
+             ss (str
+                  s
+                  (pretty-print car width n)
+                  (cond
+                    cons?
+                    (if
+                      (< (+ (count indent) print-width) width)
+                      " "
+                      (str "\n" indent))
+                    (or (nil? cdr) (= cdr NIL))
+                    ")"
+                    :else
+                    (str " . " (pretty-print cdr width n) ")")))]
+         (if
+           cons?
+           (recur cdr n ss)
+           ss))
+       (str c)))))
 
 
 
-;; (defmethod clojure.core/print-method
-;;   ;;; I have not worked out how to document defmethod without blowing up the world.
-;;   beowulf.cons_cell.ConsCell
-;;   [this writer]
-;;   (.write writer (to-string this)))
+(defmethod clojure.core/print-method
+  ;;; I have not worked out how to document defmethod without blowing up the world.
+  beowulf.cons_cell.ConsCell
+  [this writer]
+  (.write writer (to-string this)))
 
 
 (defmacro make-cons-cell

@@ -58,7 +58,7 @@
   [x]
   (cond
     (= x NIL) NIL
-    (instance? beowulf.cons_cell.ConsCell x) (.CAR x)
+    (instance? beowulf.cons_cell.ConsCell x) (.first x)
     :else
     (throw
       (Exception.
@@ -70,7 +70,7 @@
   [x]
   (cond
     (= x NIL) NIL
-    (instance? beowulf.cons_cell.ConsCell x) (.CDR x)
+    (instance? beowulf.cons_cell.ConsCell x) (.getCdr x)
     :else
     (throw
       (Exception.
@@ -85,8 +85,8 @@
     (= l NIL) NIL
     (empty? path) l
     :else (case (last path)
-            \a (uaf (CAR l) (butlast path))
-            \d (uaf (CDR l) (butlast path)))))
+            \a (uaf (.first l) (butlast path))
+            \d (uaf (.getCdr l) (butlast path)))))
 
 (defn CAAR [x] (uaf x (seq "aa")))
 (defn CADR [x] (uaf x (seq "ad")))
