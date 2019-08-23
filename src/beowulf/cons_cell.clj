@@ -92,10 +92,6 @@
   clojure.lang.Sequential
 
   clojure.lang.IPersistentCollection
-  (count [this] (if
-                  (coll? (.getCdr this))
-                  (inc (.count (.getCdr this)))
-                  1))
   (empty [this] false) ;; a cons cell is by definition not empty.
   (equiv [this other] (if
                         (seq? other)
@@ -112,7 +108,20 @@
                               (seq? (.getCdr other)))
                             (.equiv (.getCdr this) (.getCdr other))
                             (= (.getCdr this) (.getCdr other))))
-                        false)))
+                        false))
+
+  clojure.lang.Counted
+  (count [this] (loop [cell this
+                       result 1]
+                  (if
+                    (coll? (.getCdr this))
+                    (recur (.getCdr this) (inc result))
+                    result)))
+;;          (if
+;;                   (coll? (.getCdr this))
+;;                   (inc (.count (.getCdr this)))
+;;                   1))
+  )
 
 (defn- to-string
   "Printing ConsCells gave me a *lot* of trouble. This is an internal function
@@ -186,7 +195,6 @@
   [this writer]
   (.write writer (to-string this)))
 
-
 (defmacro make-cons-cell
   "Construct a new instance of cons cell with this `car` and `cdr`."
   [car cdr]
@@ -200,7 +208,7 @@
     (empty? x) NIL
     (coll? x) (ConsCell.
                 (if
-                  (seq? (first x))
+                  (coll? (first x))
                   (make-beowulf-list (first x))
                   (first x))
                 (make-beowulf-list (rest x)))

@@ -27,13 +27,13 @@
         (number? value)
         (symbol? value)
         (= value NIL))
-    (do
-      (.rplaca cell value)
-      cell)
-    (throw (ex-info
-             (str "Invalid value in RPLACA: `" value "` (" (type value) ")")
-             {:cause :bad-value
-              :detail :rplaca})))
+      (do
+        (.rplaca cell value)
+        cell)
+      (throw (ex-info
+               (str "Invalid value in RPLACA: `" value "` (" (type value) ")")
+               {:cause :bad-value
+                :detail :rplaca})))
     (throw (ex-info
              (str "Invalid cell in RPLACA: `" cell "` (" (type cell) ")")
              {:cause :bad-value
@@ -52,38 +52,60 @@
         (number? value)
         (symbol? value)
         (= value NIL))
-    (do
-      (.rplacd cell value)
-      cell)
-    (throw (ex-info
-             (str "Invalid value in RPLACD: `" value "` (" (type value) ")")
-             {:cause :bad-value
-              :detail :rplaca})))
+      (do
+        (.rplacd cell value)
+        cell)
+      (throw (ex-info
+               (str "Invalid value in RPLACD: `" value "` (" (type value) ")")
+               {:cause :bad-value
+                :detail :rplaca})))
     (throw (ex-info
              (str "Invalid cell in RPLACD: `" cell "` (" (type cell) ")")
              {:cause :bad-value
               :detail :rplaca}))));; PLUS
 
-;; MINUS
+(defn PLUS2
+  "Lisp 1.5 `PLUS` is varargs, and implementing varargs functions in Clojure is
+   not an added complexity I want. So this is a two arg `PLUS`, on which a
+  varargs `PLUS` can be built in the Lisp 1.5 layer using `REDUCE`."
+  [x y]
+  (let [s (+ x y)]
+    (if (integer? s) s (float s))))
 
-;; DIFFERENCE
+(defn TIMES2
+  [x y]
+  (let [p (* x y)]
+    (if (integer? p) p (float p))))
 
-;; QUOTIENT
+(defn DIFFERENCE
+  [x y]
+  (let [d (- x y)]
+    (if (integer? d) d (float d))))
 
-;; REMAINDER
+(defn QUOTIENT
+  "I'm not certain from the documentation whether Lisp 1.5 `QUOTIENT` returned
+  the integer part of the quotient, or a realnum representing the whole
+  quotient. I am for now implementing the latter."
+  [x y]
+  (let [q (/ x y)]
+    (if (integer? q) q (float q))))
 
-;; ADD1
+(defn REMAINDER
+  [x y]
+  (rem x y))
 
-;; SUB1
+(defn ADD1
+  [x]
+  (inc x))
 
-;; MAX
+(defn SUB1
+  [x]
+  (dec x))
 
-;; MIN
+(defn FIXP
+  [x]
+  (if (integer? x) T F))
 
-;; RECIP
-
-;; FIXP
-
-;; NUMBERP
-
-;;
+(defn NUMBERP
+  [x]
+  (if (number? x) T F))
