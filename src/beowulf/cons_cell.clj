@@ -1,7 +1,8 @@
 (ns beowulf.cons-cell
   "The fundamental cons cell on which all Lisp structures are built.
-  Lisp 1.5 lists do not necessarily have a sequence as their CDR, so
-  cannot be implemented on top of Clojure lists.")
+  Lisp 1.5 lists do not necessarily have a sequence as their CDR, and
+  must have both CAR and CDR mutable, so cannot be implemented on top
+  of Clojure lists.")
 
 (def NIL
   "The canonical empty list symbol."
@@ -29,15 +30,19 @@
     "like `more`, q.v., but returns List `NIL` not Clojure `nil` when empty." ))
 
 (deftype ConsCell [^:unsynchronized-mutable CAR ^:unsynchronized-mutable CDR]
+  ;; Note that, because the CAR and CDR fields are unsynchronised mutable - i.e.
+  ;; plain old Java instance variables which can be written as well as read -
+  ;; ConsCells are NOT thread safe. This does not matter, since Lisp 1.5 is
+  ;; single threaded.
   MutableSequence
 
-    (rplaca [this value]
+  (rplaca [this value]
           (if
             (or
               (satisfies? MutableSequence value) ;; can't reference
-                                                 ;; beowulf.cons_cell.ConsCell,
-                                                 ;; because it is not yet
-                                                 ;; defined
+              ;; beowulf.cons_cell.ConsCell,
+              ;; because it is not yet
+              ;; defined
               (number? value)
               (symbol? value))
             (do
@@ -62,7 +67,7 @@
                      {:cause :bad-value
                       :detail :rplaca}))))
   (getCdr [this]
-       (. this CDR))
+          (. this CDR))
 
   clojure.lang.ISeq
   (cons [this x] (ConsCell. x this))
