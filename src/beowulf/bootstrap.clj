@@ -234,7 +234,7 @@
     :else
     (make-cons-cell (SUBLIS a (CAR y)) (SUBLIS a (CDR y)))))
 
-(defn interop-interpret-q-name
+(deftrace interop-interpret-q-name
   "For interoperation with Clojure, it will often be necessary to pass
   qualified names that are not representable in Lisp 1.5. This function
   takes a sequence in the form `(PART PART PART... NAME)` and returns
@@ -284,30 +284,34 @@
      f (cond
             (try
               (fn? (eval l-name))
-              (catch java.lang.ClassNotFoundException e nil)) (eval l-name)
+              (catch java.lang.ClassNotFoundException e nil)) l-name
             (try
               (fn? (eval q-name))
-              (catch java.lang.ClassNotFoundException e nil)) (eval q-name)
+              (catch java.lang.ClassNotFoundException e nil)) q-name
              :else (throw
                      (ex-info
                        (str "INTEROP: unknown function `" fn-symbol "`")
                        {:cause :interop
                         :detail :not-found
-                         :name fn-symbol
-                         :also-tried l-name})))
-      result (eval (cons f args))]
-    (cond
-      (instance? beowulf.cons_cell.ConsCell result) result
-      (seq? result) (make-beowulf-list result)
-      (symbol? result) result
-      (string? result) (symbol result)
-      (number? result) result
-      :else (throw
-              (ex-info
-                (str "INTEROP: Cannot return `" result "` to Lisp 1.5.")
-                {:cause :interop
-                 :detail :not-representable
-                 :result result})))))
+                        :name fn-symbol
+                        :also-tried l-name})))]
+    (print (str "INTEROP: evaluating `" (cons f args) "`"))
+    (flush)
+    (let [result (eval (read-string (str "(cons " f " " args ")")))] ;; this has the potential to blow up the world
+      (println (str "; returning `" result "`"))
+
+      (cond
+        (instance? beowulf.cons_cell.ConsCell result) result
+        (coll? result) (make-beowulf-list result)
+        (symbol? result) result
+        (string? result) (symbol result)
+        (number? result) result
+        :else (throw
+                (ex-info
+                  (str "INTEROP: Cannot return `" result "` to Lisp 1.5.")
+                  {:cause :interop
+                   :detail :not-representable
+                   :result result}))))))
 
 (defn APPLY
   "For bootstrapping, at least, a version of APPLY written in Clojure.
@@ -325,6 +329,7 @@
            (= function 'CONS) (make-cons-cell (CAR args) (CADR args))
            (= function 'ATOM) (if (ATOM? (CAR args)) T NIL)
            (= function 'EQ) (if (= (CAR args) (CADR args)) T NIL)
+           (= function 'INTEROP) (INTEROP (CAR args) (CDR args))
            :else
            (APPLY
              (EVAL function environment)
