@@ -58,6 +58,11 @@
   [x]
   `(if (number? ~x) T F))
 
+(defmacro CONS
+  "Construct a new instance of cons cell with this `car` and `cdr`."
+  [car cdr]
+  `(beowulf.cons_cell.ConsCell. ~car ~cdr))
+
 (defn CAR
   "Return the item indicated by the first pointer of a pair. NIL is treated
   specially: the CAR of NIL is NIL."
@@ -67,8 +72,8 @@
     (instance? beowulf.cons_cell.ConsCell x) (.first x)
     :else
     (throw
-      (Exception.
-        (str "Cannot take CAR of `" x "` (" (.getName (.getClass x)) ")")))))
+     (Exception.
+      (str "Cannot take CAR of `" x "` (" (.getName (.getClass x)) ")")))))
 
 (defn CDR
   "Return the item indicated by the second pointer of a pair. NIL is treated
@@ -79,8 +84,8 @@
     (instance? beowulf.cons_cell.ConsCell x) (.getCdr x)
     :else
     (throw
-      (Exception.
-        (str "Cannot take CDR of `" x "` (" (.getName (.getClass x)) ")")))))
+     (Exception.
+      (str "Cannot take CDR of `" x "` (" (.getName (.getClass x)) ")")))))
 
 (defn uaf
   "Universal access function; `l` is expected to be an arbitrary list, `path`
@@ -194,8 +199,8 @@
     ;; robust if `x` and `y` are not the same length.
     (or (= NIL x) (= NIL y)) a
     :else (make-cons-cell
-            (make-cons-cell (CAR x) (CAR y))
-            (PAIRLIS (CDR x) (CDR y) a))))
+           (make-cons-cell (CAR x) (CAR y))
+           (PAIRLIS (CDR x) (CDR y) a))))
 
 (defmacro QUOTE
   "Quote, but in upper case for LISP 1.5"
@@ -253,14 +258,14 @@
   underscores cannot be represented with this scheme."
   [l]
   (if
-    (seq? l)
+   (seq? l)
     (symbol
-      (s/reverse
-        (s/replace-first
-          (s/reverse
-            (s/join "." (map str l)))
-          "."
-          "/")))
+     (s/reverse
+      (s/replace-first
+       (s/reverse
+        (s/join "." (map str l)))
+       "."
+       "/")))
     l))
 
 (defn to-clojure
@@ -317,7 +322,7 @@
                       :detail     :not-found
                       :name       fn-symbol
                       :also-tried l-name})))
-    args' (to-clojure args)]
+    args'  (to-clojure args)]
     (print (str "INTEROP: evaluating `" (cons f args') "`"))
     (flush)
     (let [result (eval (conj args' f))] ;; this has the potential to blow up the world
@@ -343,32 +348,32 @@
   [function args environment]
   (cond
     (=
-      (ATOM? function)
-      T)(cond
+     (ATOM? function)
+     T) (cond
            ;; TODO: doesn't check whether `function` is bound in the environment;
            ;; we'll need that before we can bootstrap.
-           (= function 'CAR) (CAAR args)
-           (= function 'CDR) (CDAR args)
-           (= function 'CONS) (make-cons-cell (CAR args) (CADR args))
-           (= function 'ATOM) (if (ATOM? (CAR args)) T NIL)
-           (= function 'EQ) (if (= (CAR args) (CADR args)) T NIL)
-           (= function 'INTEROP) (INTEROP (CAR args) (CDR args))
-           :else
-           (APPLY
-             (EVAL function environment)
-             args
-             environment))
+          (= function 'CAR) (CAAR args)
+          (= function 'CDR) (CDAR args)
+          (= function 'CONS) (make-cons-cell (CAR args) (CADR args))
+          (= function 'ATOM) (if (ATOM? (CAR args)) T NIL)
+          (= function 'EQ) (if (= (CAR args) (CADR args)) T NIL)
+          (= function 'INTEROP) (INTEROP (CAR args) (CDR args))
+          :else
+          (APPLY
+           (EVAL function environment)
+           args
+           environment))
     (= (first function) 'LAMBDA) (EVAL
-                                   (CADDR function)
-                                   (PAIRLIS (CADR function) args environment))
-    (= (first function) 'LABEL) (APPLY
                                   (CADDR function)
-                                  args
+                                  (PAIRLIS (CADR function) args environment))
+    (= (first function) 'LABEL) (APPLY
+                                 (CADDR function)
+                                 args
+                                 (make-cons-cell
                                   (make-cons-cell
-                                    (make-cons-cell
-                                      (CADR function)
-                                      (CADDR function))
-                                    environment))))
+                                   (CADR function)
+                                   (CADDR function))
+                                  environment))))
 
 (defn- EVCON
   "Inner guts of primitive COND. All args are assumed to be
@@ -376,7 +381,7 @@
   See page 13 of the Lisp 1.5 Programmers Manual."
   [clauses env]
   (if
-    (not= (EVAL (CAAR clauses) env) NIL)
+   (not= (EVAL (CAAR clauses) env) NIL)
     (EVAL (CADAR clauses) env)
     (EVCON (CDR clauses) env)))
 
@@ -389,43 +394,16 @@
     (= NIL args) NIL
     :else
     (make-cons-cell
-      (EVAL (CAR args) env)
-      (EVLIS (CDR args) env))))
+     (EVAL (CAR args) env)
+     (EVLIS (CDR args) env))))
 
-(deftrace traced-eval
-  "Essentially, identical to EVAL except traced."
+(defn eval-internal
+  "Common guts for both EVAL and traced-eval"
   [expr env]
   (cond
-    (NUMBERP expr) expr
-    (=
-      (ATOM? expr) T)
-    (CDR (ASSOC expr env))
-    (=
-      (ATOM? (CAR expr))
-      T)(cond
-           (= (CAR expr) 'QUOTE) (CADR expr)
-           (= (CAR expr) 'COND) (EVCON (CDR expr) env)
-           :else (APPLY
-                   (CAR expr)
-                   (EVLIS (CDR expr) env)
-                   env))
-    :else (APPLY
-            (CAR expr)
-            (EVLIS (CDR expr) env)
-            env)))
-
-(defn EVAL
-  "For bootstrapping, at least, a version of EVAL written in Clojure.
-  All args are assumed to be symbols or `beowulf.cons-cell/ConsCell` objects.
-  See page 13 of the Lisp 1.5 Programmers Manual."
-  [expr env]
-  (cond
-    (true? (:trace *options*))
-    (traced-eval expr env)
-    (NUMBERP expr) expr
-    (=
-     (ATOM? expr) T)
-    (CDR (ASSOC expr env))
+    (= (NUMBERP expr) T) expr
+    ;; (symbol? expr) (CDR (ASSOC expr env))
+    (= (ATOM? expr) T) (CDR (ASSOC expr env))
     (=
      (ATOM? (CAR expr))
      T) (cond
@@ -439,6 +417,33 @@
            (CAR expr)
            (EVLIS (CDR expr) env)
            env)))
+
+(deftrace traced-eval
+  "Essentially, identical to EVAL except traced."
+  [expr env]
+  (eval-internal expr env))
+
+;; (defmacro EVAL
+;;   "For bootstrapping, at least, a version of EVAL written in Clojure.
+;;   All args are assumed to be symbols or `beowulf.cons-cell/ConsCell` objects.
+;;   See page 13 of the Lisp 1.5 Programmers Manual."
+;;   [expr env]
+;;   `(if
+;;    (:trace *options*)
+;;     (traced-eval ~expr ~env)
+;;     (eval-internal ~expr ~env)))
+
+
+(defn EVAL
+  "For bootstrapping, at least, a version of EVAL written in Clojure.
+  All args are assumed to be symbols or `beowulf.cons-cell/ConsCell` objects.
+  See page 13 of the Lisp 1.5 Programmers Manual."
+  [expr env]
+  (if
+    (:trace *options*)
+     (traced-eval expr env)
+     (eval-internal expr env)))
+
 
 
 
