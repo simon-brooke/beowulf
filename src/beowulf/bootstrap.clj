@@ -10,7 +10,7 @@
   therefore all arguments must be numbers, symbols or `beowulf.cons_cell.ConsCell`
   objects."
   (:require [clojure.string :as s]
-            [clojure.tools.trace :refer :all]
+            [clojure.tools.trace :refer [deftrace]]
             [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL T F]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -39,7 +39,7 @@
   `(if (= ~x NIL) T F))
 
 (defmacro ATOM
-  "Returns `T` if and only is the argument `x` is bound to and atom; else `F`.
+  "Returns `T` if and only if the argument `x` is bound to an atom; else `F`.
   It is not clear to me from the documentation whether `(ATOM 7)` should return
   `T` or `F`. I'm going to assume `T`."
   [x]
@@ -51,6 +51,12 @@
   on failure."
   [x]
   `(if (or (symbol? ~x) (number? ~x)) T NIL))
+
+(defmacro NUMBERP
+  "Returns `T` if and only if the argument `x` is bound to an number; else `F`.
+  TODO: check whether floating point numbers, rationals, etc were numbers in Lisp 1.5"
+  [x]
+  `(if (number? ~x) T F))
 
 (defn CAR
   "Return the item indicated by the first pointer of a pair. NIL is treated
@@ -159,7 +165,6 @@
     :else
     (make-cons-cell (CAR x) (APPEND (CDR x) y))))
 
-
 (defn MEMBER
   "This predicate is true if the S-expression `x` occurs among the elements
   of the list `y`.
@@ -191,6 +196,11 @@
     :else (make-cons-cell
             (make-cons-cell (CAR x) (CAR y))
             (PAIRLIS (CDR x) (CDR y) a))))
+
+(defmacro QUOTE
+  "Quote, but in upper case for LISP 1.5"
+  [f]
+  `(quote ~f))
 
 (defn ASSOC
   "If a is an association list such as the one formed by PAIRLIS in the above
@@ -253,6 +263,18 @@
           "/")))
     l))
 
+(defn to-clojure
+  "If l is a `beowulf.cons_cell.ConsCell`, return a Clojure list having the 
+  same members in the same order."
+  [l]
+  (cond
+    (not (instance? beowulf.cons_cell.ConsCell l))
+    l
+    (= (CDR l) NIL)
+    (list (to-clojure (CAR l)))
+    :else
+    (conj (to-clojure (CDR l)) (to-clojure (CAR l)))))
+
 (deftrace INTEROP
   "Clojure (or other host environment) interoperation API. `fn-symbol` is expected
   to be either
@@ -276,28 +298,29 @@
   actual problem."
   [fn-symbol args]
   (let
-    [q-name (if
-              (seq? fn-symbol)
-              (interop-interpret-q-name fn-symbol)
-              fn-symbol)
-     l-name (symbol (s/lower-case q-name))
-     f (cond
-            (try
-              (fn? (eval l-name))
-              (catch java.lang.ClassNotFoundException e nil)) l-name
-            (try
-              (fn? (eval q-name))
-              (catch java.lang.ClassNotFoundException e nil)) q-name
+   [q-name (if
+            (seq? fn-symbol)
+             (interop-interpret-q-name fn-symbol)
+             fn-symbol)
+    l-name (symbol (s/lower-case q-name))
+    f      (cond
+             (try
+               (fn? (eval l-name))
+               (catch java.lang.ClassNotFoundException e nil)) l-name
+             (try
+               (fn? (eval q-name))
+               (catch java.lang.ClassNotFoundException e nil)) q-name
              :else (throw
-                     (ex-info
-                       (str "INTEROP: unknown function `" fn-symbol "`")
-                       {:cause :interop
-                        :detail :not-found
-                        :name fn-symbol
-                        :also-tried l-name})))]
-    (print (str "INTEROP: evaluating `" (cons f args) "`"))
+                    (ex-info
+                     (str "INTEROP: unknown function `" fn-symbol "`")
+                     {:cause      :interop
+                      :detail     :not-found
+                      :name       fn-symbol
+                      :also-tried l-name})))
+    args' (to-clojure args)]
+    (print (str "INTEROP: evaluating `" (cons f args') "`"))
     (flush)
-    (let [result (eval (read-string (str "(cons " f " " args ")")))] ;; this has the potential to blow up the world
+    (let [result (eval (conj args' f))] ;; this has the potential to blow up the world
       (println (str "; returning `" result "`"))
 
       (cond
@@ -307,11 +330,11 @@
         (string? result) (symbol result)
         (number? result) result
         :else (throw
-                (ex-info
-                  (str "INTEROP: Cannot return `" result "` to Lisp 1.5.")
-                  {:cause :interop
-                   :detail :not-representable
-                   :result result}))))))
+               (ex-info
+                (str "INTEROP: Cannot return `" result "` to Lisp 1.5.")
+                {:cause  :interop
+                 :detail :not-representable
+                 :result result}))))))
 
 (defn APPLY
   "For bootstrapping, at least, a version of APPLY written in Clojure.
@@ -373,6 +396,7 @@
   "Essentially, identical to EVAL except traced."
   [expr env]
   (cond
+    (NUMBERP expr) expr
     (=
       (ATOM? expr) T)
     (CDR (ASSOC expr env))
@@ -398,22 +422,23 @@
   (cond
     (true? (:trace *options*))
     (traced-eval expr env)
+    (NUMBERP expr) expr
     (=
-      (ATOM? expr) T)
+     (ATOM? expr) T)
     (CDR (ASSOC expr env))
     (=
-      (ATOM? (CAR expr))
-      T)(cond
-           (= (CAR expr) 'QUOTE) (CADR expr)
-           (= (CAR expr) 'COND) (EVCON (CDR expr) env)
-           :else (APPLY
-                   (CAR expr)
-                   (EVLIS (CDR expr) env)
-                   env))
+     (ATOM? (CAR expr))
+     T) (cond
+          (= (CAR expr) 'QUOTE) (CADR expr)
+          (= (CAR expr) 'COND) (EVCON (CDR expr) env)
+          :else (APPLY
+                 (CAR expr)
+                 (EVLIS (CDR expr) env)
+                 env))
     :else (APPLY
-            (CAR expr)
-            (EVLIS (CDR expr) env)
-            env)))
+           (CAR expr)
+           (EVLIS (CDR expr) env)
+           env)))
 
 
 

@@ -8,11 +8,11 @@
 
 (deftest interop-test
   (testing "INTEROP called from Clojure"
-    (let [expected '123
+    (let [expected (symbol "123")
           actual (INTEROP (gsp "(CLOJURE CORE STR)") (gsp "(1 2 3)"))]
       (is (= actual expected))))
   (testing "INTEROP called from Lisp"
     (let [expected 'ABC
-          actual (EVAL (gsp "(INTEROP '(CLOJURE CORE STR) '('A 'B 'C)"))]
+          actual (EVAL (INTEROP '(CLOJURE CORE STR) '('A 'B 'C)) '())]
       (is (= actual expected))))
     )

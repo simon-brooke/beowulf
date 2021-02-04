@@ -17,6 +17,7 @@
             [clojure.math.numeric-tower :refer [expt]]
             [clojure.string :refer [starts-with? upper-case]]
             [instaparse.core :as i]
+            [instaparse.failure :as f]
             [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -93,7 +94,7 @@
   ([p]
    (if
      (instance? instaparse.gll.Failure p)
-     (throw (ex-info "Ic ne behæfd" {:cause :parse-failure :failure p}))
+     (throw (ex-info (str "Ic ne behæfd: " (f/pprint-failure p)) {:cause :parse-failure :failure p}))
      (simplify p :sexpr)))
   ([p context]
   (if

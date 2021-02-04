@@ -25,6 +25,9 @@
   (rplacd
     [this value]
     "replace the rest (but-first; cdr) of this sequence with this value")
+  (getCar 
+   [this]
+   "Return the first element of this sequence.")
   (getCdr
     [this]
     "like `more`, q.v., but returns List `NIL` not Clojure `nil` when empty." ))
@@ -37,37 +40,39 @@
   MutableSequence
 
   (rplaca [this value]
-          (if
-            (or
-              (satisfies? MutableSequence value) ;; can't reference
+    (if
+     (or
+      (satisfies? MutableSequence value) ;; can't reference
               ;; beowulf.cons_cell.ConsCell,
               ;; because it is not yet
               ;; defined
-              (number? value)
-              (symbol? value))
-            (do
-              (set! (. this CAR) value)
-              this)
-            (throw (ex-info
-                     (str "Invalid value in RPLACA: `" value "` (" (type value) ")")
-                     {:cause :bad-value
-                      :detail :rplaca}))))
+      (number? value)
+      (symbol? value))
+      (do
+        (set! (. this CAR) value)
+        this)
+      (throw (ex-info
+              (str "Invalid value in RPLACA: `" value "` (" (type value) ")")
+              {:cause  :bad-value
+               :detail :rplaca}))))
 
   (rplacd [this value]
-          (if
-            (or
-              (satisfies? MutableSequence value)
-              (number? value)
-              (symbol? value))
-            (do
-              (set! (. this CDR) value)
-              this)
-            (throw (ex-info
-                     (str "Invalid value in RPLACD: `" value "` (" (type value) ")")
-                     {:cause :bad-value
-                      :detail :rplaca}))))
+    (if
+     (or
+      (satisfies? MutableSequence value)
+      (number? value)
+      (symbol? value))
+      (do
+        (set! (. this CDR) value)
+        this)
+      (throw (ex-info
+              (str "Invalid value in RPLACD: `" value "` (" (type value) ")")
+              {:cause  :bad-value
+               :detail :rplaca}))))
+  (getCar [this] 
+          (. this CAR))
   (getCdr [this]
-          (. this CDR))
+    (. this CDR))
 
   clojure.lang.ISeq
   (cons [this x] (ConsCell. x this))
@@ -75,11 +80,11 @@
   ;; next and more must return ISeq:
   ;; https://github.com/clojure/clojure/blob/master/src/jvm/clojure/lang/ISeq.java
   (more [this] (if
-                 (seq? (.getCdr this))
+                (seq? (.getCdr this))
                  (.getCdr this)
                  clojure.lang.PersistentList/EMPTY))
   (next [this] (if
-                 (seq? (.getCdr this))
+                (seq? (.getCdr this))
                  (.getCdr this)
                  nil ;; next returns nil when empty
                  ))
@@ -94,27 +99,27 @@
   clojure.lang.IPersistentCollection
   (empty [this] false) ;; a cons cell is by definition not empty.
   (equiv [this other] (if
-                        (seq? other)
+                       (seq? other)
                         (and
-                          (if
-                            (and
-                              (seq? (first this))
-                              (seq? (first other)))
-                            (.equiv (first this) (first other))
-                            (= (first this) (first other)))
-                          (if
-                            (and
-                              (seq? (.getCdr this))
-                              (seq? (.getCdr other)))
-                            (.equiv (.getCdr this) (.getCdr other))
-                            (= (.getCdr this) (.getCdr other))))
+                         (if
+                          (and
+                           (seq? (first this))
+                           (seq? (first other)))
+                           (.equiv (first this) (first other))
+                           (= (first this) (first other)))
+                         (if
+                          (and
+                           (seq? (.getCdr this))
+                           (seq? (.getCdr other)))
+                           (.equiv (.getCdr this) (.getCdr other))
+                           (= (.getCdr this) (.getCdr other))))
                         false))
 
   clojure.lang.Counted
-  (count [this] (loop [cell this
+  (count [this] (loop [cell   this
                        result 1]
                   (if
-                    (coll? (.getCdr this))
+                   (coll? (.getCdr this))
                     (recur (.getCdr this) (inc result))
                     result)))
 ;;          (if
