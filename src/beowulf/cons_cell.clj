@@ -70,10 +70,10 @@
               {:cause  :bad-value
                :detail :rplaca}))))
   (getCar [this] 
-          (. this CAR))
+    (. this CAR))
   (getCdr [this]
     (. this CDR))
-
+  
   clojure.lang.ISeq
   (cons [this x] (ConsCell. x this))
   (first [this] (.CAR this))
@@ -126,6 +126,15 @@
 ;;                   (coll? (.getCdr this))
 ;;                   (inc (.count (.getCdr this)))
 ;;                   1))
+  java.lang.Object
+    (toString [this]
+              (str "("
+                   (. this CAR)
+                   (cond
+                     (instance? ConsCell (. this CDR)) (str " " (subs (.toString (. this CDR)) 1))
+                     (= NIL (. this CDR)) ")"
+                     :else (str " . " (. this CDR)))))
+
   )
 
 (defn- to-string
@@ -191,7 +200,6 @@
            (recur cdr n ss)
            ss))
        (str c)))))
-
 
 
 (defmethod clojure.core/print-method

@@ -67,37 +67,49 @@
   "Return the item indicated by the first pointer of a pair. NIL is treated
   specially: the CAR of NIL is NIL."
   [x]
-  (cond
-    (= x NIL) NIL
-    (instance? beowulf.cons_cell.ConsCell x) (.first x)
-    :else
-    (throw
-     (Exception.
-      (str "Cannot take CAR of `" x "` (" (.getName (.getClass x)) ")")))))
+  (if
+   (= x NIL) NIL
+   (try
+     (.getCar x)
+     (catch Exception any
+       (throw (Exception.
+               (str "Cannot take CAR of `" x "` (" (.getName (.getClass x)) ")") any))))))
 
 (defn CDR
   "Return the item indicated by the second pointer of a pair. NIL is treated
   specially: the CDR of NIL is NIL."
   [x]
-  (cond
-    (= x NIL) NIL
-    (instance? beowulf.cons_cell.ConsCell x) (.getCdr x)
-    :else
-    (throw
-     (Exception.
-      (str "Cannot take CDR of `" x "` (" (.getName (.getClass x)) ")")))))
+  (if
+   (= x NIL) NIL
+   (try
+     (.getCdr x)
+     (catch Exception any
+       (throw (Exception.
+               (str "Cannot take CDR of `" x "` (" (.getName (.getClass x)) ")") any))))))
 
 (defn uaf
-  "Universal access function; `l` is expected to be an arbitrary list, `path`
+  "Universal access function; `l` is expected to be an arbitrary LISP list, `path`
   a (clojure) list of the characters `a` and `d`. Intended to make declaring
   all those fiddly `#'c[ad]+r'` functions a bit easier"
   [l path]
   (cond
     (= l NIL) NIL
     (empty? path) l
-    :else (case (last path)
-            \a (uaf (.first l) (butlast path))
-            \d (uaf (.getCdr l) (butlast path)))))
+    :else
+    (try
+      (case (last path)
+        \a (uaf (.first l) (butlast path))
+        \d (uaf (.getCdr l) (butlast path))
+        (throw (ex-info (str "uaf: unexpected letter in path (only `a` and `d` permitted): " (last path))
+                        {:cause  :uaf
+                         :detail :unexpected-letter
+                         :expr   (last path)})))
+      (catch ClassCastException e 
+        (throw (ex-info
+                (str "uaf: Not a LISP list? " (type l))
+                {:cause  :uaf
+                 :detail :not-a-lisp-list
+                 :expr   l}))))))
 
 (defn CAAR [x] (uaf x (seq "aa")))
 (defn CADR [x] (uaf x (seq "ad")))
@@ -302,44 +314,50 @@
   with `:cause` bound to `:interop` and `:detail` set to a value representing the
   actual problem."
   [fn-symbol args]
-  (let
-   [q-name (if
-            (seq? fn-symbol)
-             (interop-interpret-q-name fn-symbol)
-             fn-symbol)
-    l-name (symbol (s/lower-case q-name))
-    f      (cond
-             (try
-               (fn? (eval l-name))
-               (catch java.lang.ClassNotFoundException e nil)) l-name
-             (try
-               (fn? (eval q-name))
-               (catch java.lang.ClassNotFoundException e nil)) q-name
-             :else (throw
-                    (ex-info
-                     (str "INTEROP: unknown function `" fn-symbol "`")
-                     {:cause      :interop
-                      :detail     :not-found
-                      :name       fn-symbol
-                      :also-tried l-name})))
-    args'  (to-clojure args)]
-    (print (str "INTEROP: evaluating `" (cons f args') "`"))
-    (flush)
-    (let [result (eval (conj args' f))] ;; this has the potential to blow up the world
-      (println (str "; returning `" result "`"))
+  (if-not (:strict *options*)
+    (let
+     [q-name (if
+              (seq? fn-symbol)
+               (interop-interpret-q-name fn-symbol)
+               fn-symbol)
+      l-name (symbol (s/lower-case q-name))
+      f      (cond
+               (try
+                 (fn? (eval l-name))
+                 (catch java.lang.ClassNotFoundException e nil)) l-name
+               (try
+                 (fn? (eval q-name))
+                 (catch java.lang.ClassNotFoundException e nil)) q-name
+               :else (throw
+                      (ex-info
+                       (str "INTEROP: unknown function `" fn-symbol "`")
+                       {:cause      :interop
+                        :detail     :not-found
+                        :name       fn-symbol
+                        :also-tried l-name})))
+      args'  (to-clojure args)]
+      (print (str "INTEROP: evaluating `" (cons f args') "`"))
+      (flush)
+      (let [result (eval (conj args' f))] ;; this has the potential to blow up the world
+        (println (str "; returning `" result "`"))
 
-      (cond
-        (instance? beowulf.cons_cell.ConsCell result) result
-        (coll? result) (make-beowulf-list result)
-        (symbol? result) result
-        (string? result) (symbol result)
-        (number? result) result
-        :else (throw
-               (ex-info
-                (str "INTEROP: Cannot return `" result "` to Lisp 1.5.")
-                {:cause  :interop
-                 :detail :not-representable
-                 :result result}))))))
+        (cond
+          (instance? beowulf.cons_cell.ConsCell result) result
+          (coll? result) (make-beowulf-list result)
+          (symbol? result) result
+          (string? result) (symbol result)
+          (number? result) result
+          :else (throw
+                 (ex-info
+                  (str "INTEROP: Cannot return `" result "` to Lisp 1.5.")
+                  {:cause  :interop
+                   :detail :not-representable
+                   :result result})))))
+    (throw
+     (ex-info
+      (str "INTEROP not allowed in strict mode.")
+      {:cause  :interop
+       :detail :strict}))))
 
 (defn APPLY
   "For bootstrapping, at least, a version of APPLY written in Clojure.
@@ -402,7 +420,14 @@
   [expr env]
   (cond
     (= (NUMBERP expr) T) expr
-    ;; (symbol? expr) (CDR (ASSOC expr env))
+    (string? expr) (if (:strict *options*)
+                     (throw
+                      (ex-info
+                       (str "EVAL: strings not allowed in strict mode: \"" expr "\"")
+                      {:cause  :eval
+                       :detail :strict
+                       :expr   expr}))
+                     (symbol expr))
     (= (ATOM? expr) T) (CDR (ASSOC expr env))
     (=
      (ATOM? (CAR expr))
@@ -443,7 +468,3 @@
     (:trace *options*)
      (traced-eval expr env)
      (eval-internal expr env)))
-
-
-
-

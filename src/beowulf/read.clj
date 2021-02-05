@@ -63,7 +63,7 @@
       ;; sexprs. Note it's not clear to me whether Lisp 1.5 had the quote macro,
       ;; but I've included it on the basis that it can do little harm.
       "sexpr := quoted-expr | atom | number | dotted-pair | list | sexpr comment;
-      list := lpar sexpr rpar | lpar (sexpr sep)* rpar | lpar (sexpr sep)* dot-terminal;
+      list := lpar opt-space sexpr rpar | lpar opt-space (sexpr sep)* rpar | lpar opt-space (sexpr sep)* dot-terminal;
       dotted-pair := lpar dot-terminal ;
       dot := '.';
       lpar := '(';

@@ -54,7 +54,7 @@
               (split (with-out-str (-main)) #"\n")))]
       (is (= greeting expected-greeting))
       ; (is (= error expected-error))
-      (is (= expected-result result))
+      (is (re-matches expected-result result))
       (is (= quit-message expected-quit-message))
       (is (= prompt expected-prompt))
       (is (= signoff expected-signoff))

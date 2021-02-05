@@ -17,6 +17,29 @@ Boots to REPL, but few functions yet available.
 * [Source code documentation](https://simon-brooke.github.io/beowulf/docs/codox/index.html).
 * [Test Coverage Report](https://simon-brooke.github.io/beowulf/docs/cloverage/index.html)
 
+
+### Building and Invoking
+
+Build with
+
+    lein uberjar
+
+Invoke with
+
+    java -jar target/uberjar/beowulf-0.2.1-SNAPSHOT-standalone.jar --help
+
+(Obviously, check your version number)
+
+Command line arguments as follows:
+
+```
+  -h, --help                               Print this message
+  -p PROMPT, --prompt PROMPT    Sprecan::  Set the REPL prompt to PROMPT
+  -r INITFILE, --read INITFILE             Read Lisp functions from the file INITFILE
+  -s, --strict                             Strictly interpret the Lisp 1.5 language, without extensions.
+  -t, --trace                              Trace Lisp evaluation.
+```
+
 ### Architectural plan
 
 Not everything documented in this section is yet built. It indicates the
