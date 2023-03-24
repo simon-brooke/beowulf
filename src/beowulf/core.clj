@@ -4,9 +4,11 @@
             [beowulf.read :refer [READ]]
             [clojure.java.io :as io]
             [clojure.pprint :refer [pprint]]
-            [clojure.tools.cli :refer [parse-opts]]
-            [environ.core :refer [env]])
+            [clojure.string :refer [trim]]
+            [clojure.tools.cli :refer [parse-opts]])
   (:gen-class))
+
+(def stop-word "STOP")
 
 (def cli-options
   [["-h" "--help"]
@@ -27,18 +29,20 @@
     (print prompt)
     (flush)
     (try
-      (let [input (read-line)]
+      ;; TODO: does not currently allow the reading of forms covering multiple
+      ;; lines.
+      (let [input (trim (read-line))]
         (cond
-          (= input "quit") (throw (ex-info "\nFærwell!" {:cause :quit}))
+          (= input stop-word) (throw (ex-info "\nFærwell!" {:cause :quit}))
           input (println (str ">  " (print-str (EVAL (READ input) @oblist))))
           :else (println)))
       (catch
-        Exception
-        e
+       Exception
+       e
         (let [data (ex-data e)]
           (println (.getMessage e))
           (if
-            data
+           data
             (case (:cause data)
               :parse-failure (println (:failure data))
               :strict nil ;; the message, which has already been printed, is enough.
@@ -63,7 +67,7 @@
           (:summary args))
         (when (:errors args)
           (apply str (interpose "; " (:errors args))))
-        "\nSprecan 'quit' tó laéfan\n"))
+        "\nSprecan '" stop-word "' tó laéfan\n"))
     (binding [*options* (:options args)]
       (try
         (repl (str (:prompt (:options args)) " "))

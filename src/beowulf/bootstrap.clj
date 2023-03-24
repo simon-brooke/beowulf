@@ -10,7 +10,7 @@
   therefore all arguments must be numbers, symbols or `beowulf.cons_cell.ConsCell`
   objects."
   (:require [clojure.string :as s]
-            [clojure.tools.trace :refer :all]
+            [clojure.tools.trace :refer [deftrace]]
             [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL T F]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -39,7 +39,7 @@
   `(if (= ~x NIL) T F))
 
 (defmacro ATOM
-  "Returns `T` if and only is the argument `x` is bound to and atom; else `F`.
+  "Returns `T` if and only if the argument `x` is bound to an atom; else `F`.
   It is not clear to me from the documentation whether `(ATOM 7)` should return
   `T` or `F`. I'm going to assume `T`."
   [x]
@@ -52,41 +52,64 @@
   [x]
   `(if (or (symbol? ~x) (number? ~x)) T NIL))
 
+(defmacro NUMBERP
+  "Returns `T` if and only if the argument `x` is bound to an number; else `F`.
+  TODO: check whether floating point numbers, rationals, etc were numbers in Lisp 1.5"
+  [x]
+  `(if (number? ~x) T F))
+
+(defmacro CONS
+  "Construct a new instance of cons cell with this `car` and `cdr`."
+  [car cdr]
+  `(beowulf.cons_cell.ConsCell. ~car ~cdr))
+
 (defn CAR
   "Return the item indicated by the first pointer of a pair. NIL is treated
   specially: the CAR of NIL is NIL."
   [x]
-  (cond
-    (= x NIL) NIL
-    (instance? beowulf.cons_cell.ConsCell x) (.first x)
-    :else
-    (throw
-      (Exception.
-        (str "Cannot take CAR of `" x "` (" (.getName (.getClass x)) ")")))))
+  (if
+   (= x NIL) NIL
+   (try
+     (.getCar x)
+     (catch Exception any
+       (throw (Exception.
+               (str "Cannot take CAR of `" x "` (" (.getName (.getClass x)) ")") any))))))
 
 (defn CDR
   "Return the item indicated by the second pointer of a pair. NIL is treated
   specially: the CDR of NIL is NIL."
   [x]
-  (cond
-    (= x NIL) NIL
-    (instance? beowulf.cons_cell.ConsCell x) (.getCdr x)
-    :else
-    (throw
-      (Exception.
-        (str "Cannot take CDR of `" x "` (" (.getName (.getClass x)) ")")))))
+  (if
+   (= x NIL) NIL
+   (try
+     (.getCdr x)
+     (catch Exception any
+       (throw (Exception.
+               (str "Cannot take CDR of `" x "` (" (.getName (.getClass x)) ")") any))))))
 
 (defn uaf
-  "Universal access function; `l` is expected to be an arbitrary list, `path`
+  "Universal access function; `l` is expected to be an arbitrary LISP list, `path`
   a (clojure) list of the characters `a` and `d`. Intended to make declaring
   all those fiddly `#'c[ad]+r'` functions a bit easier"
   [l path]
   (cond
     (= l NIL) NIL
     (empty? path) l
-    :else (case (last path)
-            \a (uaf (.first l) (butlast path))
-            \d (uaf (.getCdr l) (butlast path)))))
+    :else
+    (try
+      (case (last path)
+        \a (uaf (.first l) (butlast path))
+        \d (uaf (.getCdr l) (butlast path))
+        (throw (ex-info (str "uaf: unexpected letter in path (only `a` and `d` permitted): " (last path))
+                        {:cause  :uaf
+                         :detail :unexpected-letter
+                         :expr   (last path)})))
+      (catch ClassCastException e 
+        (throw (ex-info
+                (str "uaf: Not a LISP list? " (type l))
+                {:cause  :uaf
+                 :detail :not-a-lisp-list
+                 :expr   l}))))))
 
 (defmacro CAAR [x] `(uaf ~x '(\a \a)))
 (defmacro CADR [x] `(uaf ~x '(\a \d)))
@@ -159,7 +182,6 @@
     :else
     (make-cons-cell (CAR x) (APPEND (CDR x) y))))
 
-
 (defn MEMBER
   "This predicate is true if the S-expression `x` occurs among the elements
   of the list `y`.
@@ -189,8 +211,13 @@
     ;; robust if `x` and `y` are not the same length.
     (or (= NIL x) (= NIL y)) a
     :else (make-cons-cell
-            (make-cons-cell (CAR x) (CAR y))
-            (PAIRLIS (CDR x) (CDR y) a))))
+           (make-cons-cell (CAR x) (CAR y))
+           (PAIRLIS (CDR x) (CDR y) a))))
+
+(defmacro QUOTE
+  "Quote, but in upper case for LISP 1.5"
+  [f]
+  `(quote ~f))
 
 (defn ASSOC
   "If a is an association list such as the one formed by PAIRLIS in the above
@@ -234,7 +261,7 @@
     :else
     (make-cons-cell (SUBLIS a (CAR y)) (SUBLIS a (CDR y)))))
 
-(defn interop-interpret-q-name
+(deftrace interop-interpret-q-name
   "For interoperation with Clojure, it will often be necessary to pass
   qualified names that are not representable in Lisp 1.5. This function
   takes a sequence in the form `(PART PART PART... NAME)` and returns
@@ -243,15 +270,27 @@
   underscores cannot be represented with this scheme."
   [l]
   (if
-    (seq? l)
+   (seq? l)
     (symbol
-      (s/reverse
-        (s/replace-first
-          (s/reverse
-            (s/join "." (map str l)))
-          "."
-          "/")))
+     (s/reverse
+      (s/replace-first
+       (s/reverse
+        (s/join "." (map str l)))
+       "."
+       "/")))
     l))
+
+(defn to-clojure
+  "If l is a `beowulf.cons_cell.ConsCell`, return a Clojure list having the 
+  same members in the same order."
+  [l]
+  (cond
+    (not (instance? beowulf.cons_cell.ConsCell l))
+    l
+    (= (CDR l) NIL)
+    (list (to-clojure (CAR l)))
+    :else
+    (conj (to-clojure (CDR l)) (to-clojure (CAR l)))))
 
 (deftrace INTEROP
   "Clojure (or other host environment) interoperation API. `fn-symbol` is expected
@@ -275,39 +314,50 @@
   with `:cause` bound to `:interop` and `:detail` set to a value representing the
   actual problem."
   [fn-symbol args]
-  (let
-    [q-name (if
+  (if-not (:strict *options*)
+    (let
+     [q-name (if
               (seq? fn-symbol)
-              (interop-interpret-q-name fn-symbol)
-              fn-symbol)
-     l-name (symbol (s/lower-case q-name))
-     f (cond
-            (try
-              (fn? (eval l-name))
-              (catch java.lang.ClassNotFoundException e nil)) (eval l-name)
-            (try
-              (fn? (eval q-name))
-              (catch java.lang.ClassNotFoundException e nil)) (eval q-name)
-             :else (throw
-                     (ex-info
+               (interop-interpret-q-name fn-symbol)
+               fn-symbol)
+      l-name (symbol (s/lower-case q-name))
+      f      (cond
+               (try
+                 (fn? (eval l-name))
+                 (catch java.lang.ClassNotFoundException e nil)) l-name
+               (try
+                 (fn? (eval q-name))
+                 (catch java.lang.ClassNotFoundException e nil)) q-name
+               :else (throw
+                      (ex-info
                        (str "INTEROP: unknown function `" fn-symbol "`")
-                       {:cause :interop
-                        :detail :not-found
-                         :name fn-symbol
-                         :also-tried l-name})))
-      result (eval (cons f args))]
-    (cond
-      (instance? beowulf.cons_cell.ConsCell result) result
-      (seq? result) (make-beowulf-list result)
-      (symbol? result) result
-      (string? result) (symbol result)
-      (number? result) result
-      :else (throw
-              (ex-info
-                (str "INTEROP: Cannot return `" result "` to Lisp 1.5.")
-                {:cause :interop
-                 :detail :not-representable
-                 :result result})))))
+                       {:cause      :interop
+                        :detail     :not-found
+                        :name       fn-symbol
+                        :also-tried l-name})))
+      args'  (to-clojure args)]
+      (print (str "INTEROP: evaluating `" (cons f args') "`"))
+      (flush)
+      (let [result (eval (conj args' f))] ;; this has the potential to blow up the world
+        (println (str "; returning `" result "`"))
+
+        (cond
+          (instance? beowulf.cons_cell.ConsCell result) result
+          (coll? result) (make-beowulf-list result)
+          (symbol? result) result
+          (string? result) (symbol result)
+          (number? result) result
+          :else (throw
+                 (ex-info
+                  (str "INTEROP: Cannot return `" result "` to Lisp 1.5.")
+                  {:cause  :interop
+                   :detail :not-representable
+                   :result result})))))
+    (throw
+     (ex-info
+      (str "INTEROP not allowed in strict mode.")
+      {:cause  :interop
+       :detail :strict}))))
 
 (defn APPLY
   "For bootstrapping, at least, a version of APPLY written in Clojure.
@@ -316,29 +366,32 @@
   [function args environment]
   (cond
     (=
-      (ATOM? function)
-      T)(cond
-           (= function 'CAR) (CAAR args)
-           (= function 'CDR) (CDAR args)
-           (= function 'CONS) (make-cons-cell (CAR args) (CADR args))
-           (= function 'ATOM) (if (ATOM? (CAR args)) T NIL)
-           (= function 'EQ) (if (= (CAR args) (CADR args)) T NIL)
-           :else
-           (APPLY
-             (EVAL function environment)
-             args
-             environment))
+     (ATOM? function)
+     T) (cond
+           ;; TODO: doesn't check whether `function` is bound in the environment;
+           ;; we'll need that before we can bootstrap.
+          (= function 'CAR) (CAAR args)
+          (= function 'CDR) (CDAR args)
+          (= function 'CONS) (make-cons-cell (CAR args) (CADR args))
+          (= function 'ATOM) (if (ATOM? (CAR args)) T NIL)
+          (= function 'EQ) (if (= (CAR args) (CADR args)) T NIL)
+          (= function 'INTEROP) (INTEROP (CAR args) (CDR args))
+          :else
+          (APPLY
+           (EVAL function environment)
+           args
+           environment))
     (= (first function) 'LAMBDA) (EVAL
-                                   (CADDR function)
-                                   (PAIRLIS (CADR function) args environment))
-    (= (first function) 'LABEL) (APPLY
                                   (CADDR function)
-                                  args
+                                  (PAIRLIS (CADR function) args environment))
+    (= (first function) 'LABEL) (APPLY
+                                 (CADDR function)
+                                 args
+                                 (make-cons-cell
                                   (make-cons-cell
-                                    (make-cons-cell
-                                      (CADR function)
-                                      (CADDR function))
-                                    environment))))
+                                   (CADR function)
+                                   (CADDR function))
+                                  environment))))
 
 (defn- EVCON
   "Inner guts of primitive COND. All args are assumed to be
@@ -346,7 +399,7 @@
   See page 13 of the Lisp 1.5 Programmers Manual."
   [clauses env]
   (if
-    (not= (EVAL (CAAR clauses) env) NIL)
+   (not= (EVAL (CAAR clauses) env) NIL)
     (EVAL (CADAR clauses) env)
     (EVCON (CDR clauses) env)))
 
@@ -359,54 +412,59 @@
     (= NIL args) NIL
     :else
     (make-cons-cell
-      (EVAL (CAR args) env)
-      (EVLIS (CDR args) env))))
+     (EVAL (CAR args) env)
+     (EVLIS (CDR args) env))))
+
+(defn eval-internal
+  "Common guts for both EVAL and traced-eval"
+  [expr env]
+  (cond
+    (= (NUMBERP expr) T) expr
+    (string? expr) (if (:strict *options*)
+                     (throw
+                      (ex-info
+                       (str "EVAL: strings not allowed in strict mode: \"" expr "\"")
+                      {:cause  :eval
+                       :detail :strict
+                       :expr   expr}))
+                     (symbol expr))
+    (= (ATOM? expr) T) (CDR (ASSOC expr env))
+    (=
+     (ATOM? (CAR expr))
+     T) (cond
+          (= (CAR expr) 'QUOTE) (CADR expr)
+          (= (CAR expr) 'COND) (EVCON (CDR expr) env)
+          :else (APPLY
+                 (CAR expr)
+                 (EVLIS (CDR expr) env)
+                 env))
+    :else (APPLY
+           (CAR expr)
+           (EVLIS (CDR expr) env)
+           env)))
 
 (deftrace traced-eval
   "Essentially, identical to EVAL except traced."
   [expr env]
-  (cond
-    (=
-      (ATOM? expr) T)
-    (CDR (ASSOC expr env))
-    (=
-      (ATOM? (CAR expr))
-      T)(cond
-           (= (CAR expr) 'QUOTE) (CADR expr)
-           (= (CAR expr) 'COND) (EVCON (CDR expr) env)
-           :else (APPLY
-                   (CAR expr)
-                   (EVLIS (CDR expr) env)
-                   env))
-    :else (APPLY
-            (CAR expr)
-            (EVLIS (CDR expr) env)
-            env)))
+  (eval-internal expr env))
+
+;; (defmacro EVAL
+;;   "For bootstrapping, at least, a version of EVAL written in Clojure.
+;;   All args are assumed to be symbols or `beowulf.cons-cell/ConsCell` objects.
+;;   See page 13 of the Lisp 1.5 Programmers Manual."
+;;   [expr env]
+;;   `(if
+;;    (:trace *options*)
+;;     (traced-eval ~expr ~env)
+;;     (eval-internal ~expr ~env)))
+
 
 (defn EVAL
   "For bootstrapping, at least, a version of EVAL written in Clojure.
   All args are assumed to be symbols or `beowulf.cons-cell/ConsCell` objects.
   See page 13 of the Lisp 1.5 Programmers Manual."
   [expr env]
-  (cond
-    (true? (:trace *options*))
-    (traced-eval expr env)
-    (=
-      (ATOM? expr) T)
-    (CDR (ASSOC expr env))
-    (=
-      (ATOM? (CAR expr))
-      T)(cond
-           (= (CAR expr) 'QUOTE) (CADR expr)
-           (= (CAR expr) 'COND) (EVCON (CDR expr) env)
-           :else (APPLY
-                   (CAR expr)
-                   (EVLIS (CDR expr) env)
-                   env))
-    :else (APPLY
-            (CAR expr)
-            (EVLIS (CDR expr) env)
-            env)))
-
-
-
+  (if
+    (:trace *options*)
+     (traced-eval expr env)
+     (eval-internal expr env)))

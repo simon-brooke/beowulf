@@ -14,11 +14,15 @@
   Both these extensions can be disabled by using the `--strict` command line
   switch."
   (:require [beowulf.bootstrap :refer [*options*]]
+            [clojure.java.io :refer [file reader]]
             [clojure.math.numeric-tower :refer [expt]]
             [clojure.pprint :refer [pprint]]
             [clojure.string :refer [join split starts-with? upper-case]]
             [instaparse.core :as i]
-            [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL]]))
+            [instaparse.failure :as f]
+            [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL]])
+  (:import [java.io InputStream PushbackReader]
+           [instaparse.gll Failure]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -35,8 +39,10 @@
   be operated upon further."
   (i/parser
    (str
-      ;; top level: we accept mexprs as well as sexprs.
-    "expr := mexpr | sexpr | opt-space expr opt-space;"
+    ;; we tolerate whitespace and comments around legitimate input
+    "raw := expr | opt-comment expr opt-comment;"
+        ;; top level: we accept mexprs as well as sexprs.
+    "expr := mexpr | sexpr ;"
 
       ;; comments. I'm pretty confident Lisp 1.5 did NOT have these.
     "comment := opt-space <';;'> opt-space #'[^\\n\\r]*';"
@@ -69,10 +75,15 @@
       mvar := #'[a-z]+';
       semi-colon := ';';"
 
+      ;; comments. I'm pretty confident Lisp 1.5 did NOT have these.
+    "opt-comment := opt-space | comment;"
+    "comment := opt-space <';;'> #'[^\\n\\r]*' opt-space;"
+
       ;; sexprs. Note it's not clear to me whether Lisp 1.5 had the quote macro,
       ;; but I've included it on the basis that it can do little harm.
     "sexpr := quoted-expr | atom | number | dotted-pair | list | sexpr comment;
       list := lpar sexpr rpar | lpar (sexpr sep)* rpar | lpar (sexpr sep)* dot-terminal | lbrace exprs rbrace;
+      list := lpar opt-space sexpr rpar | lpar opt-space (sexpr sep)* rpar | lpar opt-space (sexpr sep)* dot-terminal;
       dotted-pair := lpar dot-terminal ;
       dot := '.';
       lpar := '(';
@@ -102,8 +113,9 @@
   an `ex-info`, with `p` as the value of its `:failure` key."
   ([p]
    (if
-    (instance? instaparse.gll.Failure p)
-     (throw (ex-info "Ic ne behæfd" {:cause :parse-failure :failure p}))
+    (instance? Failure p)
+     (throw (ex-info (str "Ic ne behæfd: " (f/pprint-failure p)) {:cause   :parse-failure
+                                                                  :failure p}))
      (simplify p :sexpr)))
   ([p context]
    (if
@@ -111,7 +123,7 @@
      (apply
       vector
       (remove
-       #(when (coll? %) (empty? %))
+       #(if (coll? %) (empty? %))
        (case (first p)
          (:arg :expr :coefficient :fn-name :number :sexpr) (simplify (second p) context)
          (:λexpr
@@ -123,7 +135,7 @@
                 (= context :mexpr)
                  [:quoted-expr p]
                  p)
-         :comment (when
+         (:comment :opt-comment) (if
                    (:strict *options*)
                     (throw
                      (ex-info "Cannot parse comments in strict mode"
@@ -148,10 +160,9 @@
                   [:mvar "list"]
                   [:args (apply vector (map simplify (rest p)))]]
                  (map #(simplify % context) p))
+         :raw (first (remove empty? (map simplify (rest p))))
           ;;default
-         (if (coll? (first p))
-           (map #(simplify % context) p)
-           p))))
+         p)))
      p)))
 
 
@@ -332,6 +343,10 @@
 
 (defn READ
   "An implementation of a Lisp reader sufficient for bootstrapping; not necessarily
-  the final Lisp reader."
+  the final Lisp reader. `input` should be either a string representation of a LISP
+  expression, or else an input stream. A single form will be read."
   [input]
-  (gsp (or input (read-line))))
+  (cond
+    (string? input) (gsp (or input (read-line)))
+    (instance? InputStream input)    (READ (slurp input))
+    :else    (throw (ex-info "READ: `input` should be a string or an input stream" {}))))

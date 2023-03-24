@@ -51,6 +51,21 @@
           actual (ATOM? (gsp "(A B C D)"))]
       (is (= actual expected) "A list is explicitly not an atom"))))
 
+(deftest numberp-tests
+  (testing "NUMBERP"
+    (let [expected T
+          actual   (NUMBERP 7)]
+      (is (= actual expected) "7 is a number"))
+    (let [expected T
+          actual   (NUMBERP 3.14)]
+      (is (= actual expected) "3.14 is a number"))
+    (let [expected F
+          actual   (NUMBERP NIL)]
+      (is (= actual expected) "NIL is not a number"))
+    (let [expected F
+          actual   (NUMBERP (gsp "HELLO"))]
+      (is (= actual expected) "HELLO is not a number"))))
+
 (deftest access-function-tests
   (testing "CAR"
     (let [expected 'A
