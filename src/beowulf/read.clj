@@ -14,14 +14,12 @@
   Both these extensions can be disabled by using the `--strict` command line
   switch."
   (:require [beowulf.bootstrap :refer [*options*]]
-            [clojure.java.io :refer [file reader]]
             [clojure.math.numeric-tower :refer [expt]]
-            [clojure.pprint :refer [pprint]]
             [clojure.string :refer [join split starts-with? upper-case]]
             [instaparse.core :as i]
             [instaparse.failure :as f]
             [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL]])
-  (:import [java.io InputStream PushbackReader]
+  (:import [java.io InputStream]
            [instaparse.gll Failure]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -347,6 +345,7 @@
   expression, or else an input stream. A single form will be read."
   [input]
   (cond
-    (string? input) (gsp (or input (read-line)))
-    (instance? InputStream input)    (READ (slurp input))
+    (empty? input) (gsp (read-line))
+    (string? input) (gsp input)
+    (instance? InputStream input) (READ (slurp input))
     :else    (throw (ex-info "READ: `input` should be a string or an input stream" {}))))
