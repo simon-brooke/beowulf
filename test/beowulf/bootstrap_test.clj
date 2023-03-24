@@ -179,22 +179,22 @@
           actual (MEMBER
                    (gsp "ALBERT")
                    (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
-      (= actual expected))
+      (is (= actual expected)))
     (let [expected 'T
           actual (MEMBER
                    (gsp "BELINDA")
                    (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
-      (= actual expected))
+       (is (= actual expected)))
     (let [expected 'T
           actual (MEMBER
                    (gsp "ELFREDA")
                    (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
-      (= actual expected))
+       (is (= actual expected)))
     (let [expected 'F
           actual (MEMBER
                    (gsp "BERTRAM")
                    (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
-      (= actual expected))))
+       (is (= actual expected)))))
 
 (deftest pairlis-tests
   (testing "pairlis"

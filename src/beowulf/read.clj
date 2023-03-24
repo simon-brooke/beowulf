@@ -15,7 +15,8 @@
   switch."
   (:require [beowulf.bootstrap :refer [*options*]]
             [clojure.math.numeric-tower :refer [expt]]
-            [clojure.string :refer [starts-with? upper-case]]
+            [clojure.pprint :refer [pprint]]
+            [clojure.string :refer [join split starts-with? upper-case]]
             [instaparse.core :as i]
             [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL]]))
 
@@ -33,13 +34,23 @@
   "Parse a string presented as argument into a parse tree which can then
   be operated upon further."
   (i/parser
-    (str
+   (str
       ;; top level: we accept mexprs as well as sexprs.
-      "expr := mexpr | sexpr;"
+    "expr := mexpr | sexpr | opt-space expr opt-space;"
 
+      ;; comments. I'm pretty confident Lisp 1.5 did NOT have these.
+    "comment := opt-space <';;'> opt-space #'[^\\n\\r]*';"
+
+     ;; there's a notation comprising a left brace followed by mexprs
+     ;; followed by a right brace which doesn't seem to be documented 
+     ;; but I think must represent a prog(?)
+
+    ;; "prog := lbrace exprs rbrace;"
       ;; mexprs. I'm pretty clear that Lisp 1.5 could never read these,
       ;; but it's a convenience.
-      "mexpr := λexpr | fncall | defn | cond | mvar | mexpr comment;
+
+    "exprs := expr | exprs;"
+    "mexpr := λexpr | fncall | defn | cond | mvar | mexpr comment;
       λexpr := λ lsqb bindings semi-colon body rsqb;
       λ := 'λ';
       bindings := lsqb args rsqb;
@@ -47,6 +58,8 @@
       fncall := fn-name lsqb args rsqb;
       lsqb := '[';
       rsqb := ']';
+       lbrace := '{';
+       rbrace := '}';
       defn := mexpr opt-space '=' opt-space mexpr;
       cond := lsqb (cond-clause semi-colon opt-space)* cond-clause rsqb;
       cond-clause := expr opt-space arrow opt-space expr;
@@ -56,13 +69,10 @@
       mvar := #'[a-z]+';
       semi-colon := ';';"
 
-      ;; comments. I'm pretty confident Lisp 1.5 did NOT have these.
-      "comment := opt-space <';;'> #'[^\\n\\r]*';"
-
       ;; sexprs. Note it's not clear to me whether Lisp 1.5 had the quote macro,
       ;; but I've included it on the basis that it can do little harm.
-      "sexpr := quoted-expr | atom | number | dotted-pair | list | sexpr comment;
-      list := lpar sexpr rpar | lpar (sexpr sep)* rpar | lpar (sexpr sep)* dot-terminal;
+    "sexpr := quoted-expr | atom | number | dotted-pair | list | sexpr comment;
+      list := lpar sexpr rpar | lpar (sexpr sep)* rpar | lpar (sexpr sep)* dot-terminal | lbrace exprs rbrace;
       dotted-pair := lpar dot-terminal ;
       dot := '.';
       lpar := '(';
@@ -76,7 +86,7 @@
       atom := #'[A-Z][A-Z0-9]*';"
 
       ;; Lisp 1.5 supported octal as well as decimal and scientific notation
-      "number := integer | decimal | scientific | octal;
+    "number := integer | decimal | scientific | octal;
       integer := #'-?[1-9][0-9]*';
       decimal := #'-?[1-9][0-9]*\\.?[0-9]*' | #'0.[0-9]*';
       scientific := coefficient e exponent;
@@ -92,55 +102,57 @@
   an `ex-info`, with `p` as the value of its `:failure` key."
   ([p]
    (if
-     (instance? instaparse.gll.Failure p)
+    (instance? instaparse.gll.Failure p)
      (throw (ex-info "Ic ne behæfd" {:cause :parse-failure :failure p}))
      (simplify p :sexpr)))
   ([p context]
-  (if
+   (if
     (coll? p)
-    (apply
+     (apply
       vector
       (remove
-        #(if (coll? %) (empty? %))
-        (case (first p)
-          (:arg :expr :coefficient :fn-name :number :sexpr) (simplify (second p) context)
-          (:λexpr
-            :args :bindings :body :cond :cond-clause :dot-terminal
-            :fncall :octal :quoted-expr :scientific) (map #(simplify % context) p)
-          (:arrow :dot :e :lpar :lsqb :opt-space :q :quote :rpar :rsqb
-            :semi-colon :sep :space) nil
-          :atom (if
-                  (= context :mexpr)
-                  [:quoted-expr p]
-                  p)
-          :comment (if
-                     (:strict *options*)
-                     (throw
-                       (ex-info "Cannot parse comments in strict mode"
-                                {:cause :strict})))
-          :dotted-pair (if
-                         (= context :mexpr)
-                         [:fncall
-                          [:mvar "cons"]
-                          [:args
-                           (simplify (nth p 1) context)
-                           (simplify (nth p 2) context)]]
-                         (map simplify p))
-          :mexpr (if
+       #(when (coll? %) (empty? %))
+       (case (first p)
+         (:arg :expr :coefficient :fn-name :number :sexpr) (simplify (second p) context)
+         (:λexpr
+          :args :bindings :body :cond :cond-clause :dot-terminal
+          :fncall :octal :quoted-expr :scientific) (map #(simplify % context) p)
+         (:arrow :dot :e :lpar :lsqb :opt-space :q :quote :rpar :rsqb
+                 :semi-colon :sep :space) nil
+         :atom (if
+                (= context :mexpr)
+                 [:quoted-expr p]
+                 p)
+         :comment (when
                    (:strict *options*)
-                   (throw
-                     (ex-info "Cannot parse meta expressions in strict mode"
-                              {:cause :strict}))
-                   (simplify (second p) :mexpr))
-          :list (if
-                  (= context :mexpr)
-                  [:fncall
-                   [:mvar "list"]
-                   [:args (apply vector (map simplify (rest p)))]]
-                  (map #(simplify % context) p))
+                    (throw
+                     (ex-info "Cannot parse comments in strict mode"
+                              {:cause :strict})))
+         :dotted-pair (if
+                       (= context :mexpr)
+                        [:fncall
+                         [:mvar "cons"]
+                         [:args
+                          (simplify (nth p 1) context)
+                          (simplify (nth p 2) context)]]
+                        (map simplify p))
+         :mexpr (if
+                 (:strict *options*)
+                  (throw
+                   (ex-info "Cannot parse meta expressions in strict mode"
+                            {:cause :strict}))
+                  (simplify (second p) :mexpr))
+         :list (if
+                (= context :mexpr)
+                 [:fncall
+                  [:mvar "list"]
+                  [:args (apply vector (map simplify (rest p)))]]
+                 (map #(simplify % context) p))
           ;;default
-          p)))
-    p)))
+         (if (coll? (first p))
+           (map #(simplify % context) p)
+           p))))
+     p)))
 
 
 ;; # From Lisp 1.5 Programmers Manual, page 10
@@ -197,34 +209,36 @@
   "Generate a cond clause from this simplified parse tree fragment `p`;
   returns `nil` if `p` does not represent a cond clause."
   [p]
-  (if
-    (and (coll? p)(= :cond-clause (first p)))
+  (when
+   (and (coll? p) (= :cond-clause (first p)))
     (make-beowulf-list
-      (list (generate (nth p 1))
-                     (generate (nth p 2))))))
+     (list (if (= (nth p 1) [:quoted-expr [:atom "T"]])
+             'T
+             (generate (nth p 1)))
+           (generate (nth p 2))))))
 
 (defn gen-cond
   "Generate a cond statement from this simplified parse tree fragment `p`;
   returns `nil` if `p` does not represent a (MEXPR) cond statement."
   [p]
-  (if
-    (and (coll? p)(= :cond (first p)))
+  (when
+   (and (coll? p) (= :cond (first p)))
     (make-beowulf-list
-      (cons
-        'COND
-        (map
-          gen-cond-clause
-          (rest p))))))
+     (cons
+      'COND
+      (map
+       generate
+       (rest p))))))
 
 (defn gen-fn-call
   "Generate a function call from this simplified parse tree fragment `p`;
   returns `nil` if `p` does not represent a (MEXPR) function call."
   [p]
-  (if
-    (and (coll? p)(= :fncall (first p))(= :mvar (first (second p))))
+  (when
+   (and (coll? p) (= :fncall (first p)) (= :mvar (first (second p))))
     (make-cons-cell
-      (generate (second p))
-      (generate (nth p 2)))))
+     (generate (second p))
+     (generate (nth p 2)))))
 
 
 (defn gen-dot-terminated-list
@@ -238,12 +252,12 @@
     (and (coll? (first p)) (= :dot-terminal (first (first p))))
     (let [dt (first p)]
       (make-cons-cell
-        (generate (nth dt 1))
-        (generate (nth dt 2))))
+       (generate (nth dt 1))
+       (generate (nth dt 2))))
     :else
     (make-cons-cell
-      (generate (first p))
-      (gen-dot-terminated-list (rest p)))))
+     (generate (first p))
+     (gen-dot-terminated-list (rest p)))))
 
 
 (defn strip-leading-zeros
@@ -254,52 +268,60 @@
    (strip-leading-zeros s ""))
   ([s prefix]
    (if
-     (empty? s) "0"
-     (case (first s)
-       (\+ \-)(strip-leading-zeros (subs s 1) (str (first s) prefix))
-       "0" (strip-leading-zeros (subs s 1) prefix)
-       (str prefix s)))))
+    (empty? s) "0"
+    (case (first s)
+      (\+ \-) (strip-leading-zeros (subs s 1) (str (first s) prefix))
+      "0" (strip-leading-zeros (subs s 1) prefix)
+      (str prefix s)))))
 
 (defn generate
   "Generate lisp structure from this parse tree `p`. It is assumed that
   `p` has been simplified."
   [p]
-  (if
-    (coll? p)
-    (case (first p)
-      :λ "LAMBDA"
-      :λexpr (make-cons-cell
-               (generate (nth p 1))
-               (make-cons-cell (generate (nth p 2))
-                               (generate (nth p 3))))
-      (:args :list) (gen-dot-terminated-list (rest p))
-      :atom (symbol (second p))
-      :bindings (generate (second p))
-      :body (make-beowulf-list (map generate (rest p)))
-      :cond (gen-cond p)
-      (:decimal :integer) (read-string (strip-leading-zeros (second p)))
-      :dotted-pair (make-cons-cell
-                     (generate (nth p 1))
-                     (generate (nth p 2)))
-      :exponent (generate (second p))
-      :fncall (gen-fn-call p)
-      :mvar (symbol (upper-case (second p)))
-      :octal (let [n (read-string (strip-leading-zeros (second p) "0"))
-                   scale (generate (nth p 2))]
-               (* n (expt 8 scale)))
+  (try
+    (if
+     (coll? p)
+      (case (first p)
+        :λ "LAMBDA"
+        :λexpr (make-cons-cell
+                (generate (nth p 1))
+                (make-cons-cell (generate (nth p 2))
+                                (generate (nth p 3))))
+        :args (make-beowulf-list (map generate (rest p)))
+        :atom (symbol (second p))
+        :bindings (generate (second p))
+        :body (make-beowulf-list (map generate (rest p)))
+        :cond (gen-cond p)
+        :cond-clause (gen-cond-clause p)
+        (:decimal :integer) (read-string (strip-leading-zeros (second p)))
+        :dotted-pair (make-cons-cell
+                      (generate (nth p 1))
+                      (generate (nth p 2)))
+        :exponent (generate (second p))
+        :fncall (gen-fn-call p)
+        :list (gen-dot-terminated-list (rest p))
+        :mvar (symbol (upper-case (second p)))
+        :octal (let [n (read-string (strip-leading-zeros (second p) "0"))
+                     scale (generate (nth p 2))]
+                 (* n (expt 8 scale)))
 
       ;; the quote read macro (which probably didn't exist in Lisp 1.5, but...)
-      :quoted-expr (make-beowulf-list (list 'QUOTE (generate (second p))))
-      :scale-factor (if
-                      (empty? (second p)) 0
-                      (read-string (strip-leading-zeros (second p))))
-      :scientific (let [n (generate (second p))
-                        exponent (generate (nth p 2))]
-                    (* n (expt 10 exponent)))
+        :quoted-expr (make-beowulf-list (list 'QUOTE (generate (second p))))
+        :scale-factor (if
+                       (empty? (second p)) 0
+                       (read-string (strip-leading-zeros (second p))))
+        :scientific (let [n (generate (second p))
+                          exponent (generate (nth p 2))]
+                      (* n (expt 10 exponent)))
 
       ;; default
-      (throw (Exception. (str "Cannot yet generate " (first p)))))
-    p))
+        (throw (ex-info (str "Unrecognised head: " (first p))
+                        {:generating p})))
+      p)
+    (catch Throwable any
+      (throw (ex-info "Could not generate"
+                      {:generating p}
+                      any)))))
 
 (defmacro gsp
   "Shortcut macro - the internals of read; or, if you like, read-string.

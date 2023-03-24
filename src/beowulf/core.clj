@@ -55,13 +55,13 @@
     (println
       (str
         "\nHider wilcuman. Béowulf is mín nama.\n"
-        (if
+        (when
           (System/getProperty "beowulf.version")
           (str "Síðe " (System/getProperty "beowulf.version") "\n"))
-        (if
+        (when
           (:help (:options args))
           (:summary args))
-        (if (:errors args)
+        (when (:errors args)
           (apply str (interpose "; " (:errors args))))
         "\nSprecan 'quit' tó laéfan\n"))
     (binding [*options* (:options args)]

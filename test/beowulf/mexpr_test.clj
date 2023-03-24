@@ -25,10 +25,10 @@
 (deftest variable-tests
   (testing "Variable translation"
     (let [expected "X"
-          actual (print-str (generate (simplify (parse "x"))))]
+          actual (print-str (gsp "x"))]
       (is (= actual expected)))
     (let [expected "CAR"
-          actual (print-str (generate (simplify (parse "car"))))]
+          actual (print-str (gsp "car"))]
       (is (= actual expected)))
     ))
 
@@ -39,28 +39,30 @@
     ;; Wrapping in a function call puts us into mexpr contest;
     ;; "T" would be interpreted as a sexpr, which would not be
     ;; quoted.
-    (let [expected "(ATOM (QUOTE T))"
-          actual (print-str (generate (simplify (parse "atom[T]"))))]
-      (is (= actual expected)))
+    (let [expected "(ATOM (QUOTE A))"
+          actual (print-str (gsp "atom[A]"))]
+      (is (= actual expected)
+          "Atoms should normally be quoted"))
     ;; I'm not clear how `car[(A B C)]` should be translated, but
     ;; I suspect as (CAR (LIST 'A 'B 'C)).
+
     ))
 
 (deftest fncall-tests
   (testing "Function calls"
     (let [expected "(CAR X)"
-          actual (print-str (generate (simplify (parse "car[x]"))))]
+          actual (print-str (gsp "car[x]"))]
       (is (= actual expected)))
     (let [expected "(FF (CAR X))"
-          actual (print-str (generate (simplify (parse "ff[car[x]]"))))]
+          actual (print-str (gsp "ff[car[x]]"))]
       (is (= actual expected)))))
 
 (deftest conditional-tests
   (testing "Conditional expressions"
-    (let [expected "(COND ((ATOM X) X) ((QUOTE T) (FF (CAR X))))"
-          actual (print-str (generate (simplify (parse "[atom[x]->x; T->ff[car[x]]]"))))]
+    (let [expected "(COND ((ATOM X) X) (T (FF (CAR X))))"
+          actual (print-str (gsp "[atom[x]->x; T->ff[car[x]]]"))]
       (is (= actual expected)))
-    (let [expected "(LABEL FF (LAMBDA (X) (COND ((ATOM X) X) ((QUOTE T) (FF (CAR X))))))"
+    (let [expected "(LABEL FF (LAMBDA (X) (COND ((ATOM X) X) (T (FF (CAR X))))))"
           actual (print-str
                    (generate
                      (simplify

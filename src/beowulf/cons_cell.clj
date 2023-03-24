@@ -195,16 +195,21 @@
   [this writer]
   (.write writer (to-string this)))
 
-(defmacro make-cons-cell
+(defn make-cons-cell
   "Construct a new instance of cons cell with this `car` and `cdr`."
   [car cdr]
-  `(ConsCell. ~car ~cdr))
+  (try
+     (ConsCell. car cdr)
+     (catch Exception any
+       (throw (ex-info "Cound not construct cons cell" {:car car
+                                                        :cdr cdr} any)))))
 
 (defn make-beowulf-list
   "Construct a linked list of cons cells with the same content as the
   sequence `x`."
   [x]
-  (cond
+  (try
+    (cond
     (empty? x) NIL
     (coll? x) (ConsCell.
                 (if
@@ -213,4 +218,8 @@
                   (first x))
                 (make-beowulf-list (rest x)))
     :else
-    NIL))
+    NIL)
+    (catch Exception any 
+      (throw (ex-info "Could not construct Beowulf list" 
+                      {:content x} 
+                      any)))))
