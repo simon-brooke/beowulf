@@ -11,7 +11,7 @@
   objects."
   (:require [clojure.string :as s]
             [clojure.tools.trace :refer [deftrace]]
-            [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL T F]]))
+            [beowulf.cons-cell :refer [cons-cell? make-beowulf-list make-cons-cell NIL pretty-print T F]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -37,6 +37,11 @@
   "Returns `T` if and only if the argument `x` is bound to `NIL`; else `F`."
   [x]
   `(if (= ~x NIL) T F))
+
+(defmacro NILP
+  "Not part of LISP 1.5: `T` if `o` is `NIL`, else `NIL`."
+  [x]
+  `(if (= ~x NIL) T NIL))
 
 (defmacro ATOM
   "Returns `T` if and only if the argument `x` is bound to an atom; else `F`.
@@ -280,6 +285,16 @@
        "/")))
     l))
 
+(defn to-beowulf
+  "Return a beowulf-native representation of the Clojure object `o`.
+  Numbers and symbols are unaffected. Collections have to be converted;
+  strings must be converted to symbols."
+  [o]
+  (cond
+    (coll? o) (make-beowulf-list o)
+    (string? o) (symbol (s/upper-case o))
+    :else o))
+
 (defn to-clojure
   "If l is a `beowulf.cons_cell.ConsCell`, return a Clojure list having the 
   same members in the same order."
@@ -359,6 +374,33 @@
       {:cause  :interop
        :detail :strict}))))
 
+(defn OBLIST
+  "Not certain whether or not this is part of LISP 1.5; adapted from PSL. 
+  return the current value of the object list. Note that in PSL this function
+  returns a list of the symbols bound, not the whole association list."
+  [args]
+  (@oblist))
+
+(deftrace DEFINE
+  "Bootstrap-only version of `DEFINE` which, post boostrap, can be overwritten 
+  in LISP. 
+
+  The single argument to `DEFINE` should be an assoc list which should be 
+  nconc'ed onto the front of the oblist. Broadly, 
+  (SETQ OBLIST (NCONC ARG1 OBLIST))"
+  [args]
+  (swap!
+   oblist
+   (fn [ob arg1]
+     (loop [cursor arg1 a arg1]
+       (if (= (CDR cursor) NIL)
+         (do
+           (.rplacd cursor @oblist)
+           (pretty-print a)
+           a)
+         (recur (CDR cursor) a))))
+     (CAR args)))
+
 (defn APPLY
   "For bootstrapping, at least, a version of APPLY written in Clojure.
   All args are assumed to be symbols or `beowulf.cons-cell/ConsCell` objects.
@@ -373,6 +415,7 @@
           (= function 'CAR) (CAAR args)
           (= function 'CDR) (CDAR args)
           (= function 'CONS) (make-cons-cell (CAR args) (CADR args))
+          (= function 'DEFINE) (DEFINE args)
           (= function 'ATOM) (if (ATOM? (CAR args)) T NIL)
           (= function 'EQ) (if (= (CAR args) (CADR args)) T NIL)
           (= function 'INTEROP) (INTEROP (CAR args) (CDR args))
@@ -381,6 +424,8 @@
            (EVAL function environment)
            args
            environment))
+    (fn? function) ;; i.e., it's a Clojure function
+    (apply function (to-clojure args))
     (= (first function) 'LAMBDA) (EVAL
                                   (CADDR function)
                                   (PAIRLIS (CADR function) args environment))
@@ -424,9 +469,9 @@
                      (throw
                       (ex-info
                        (str "EVAL: strings not allowed in strict mode: \"" expr "\"")
-                      {:cause  :eval
-                       :detail :strict
-                       :expr   expr}))
+                       {:cause  :eval
+                        :detail :strict
+                        :expr   expr}))
                      (symbol expr))
     (= (ATOM? expr) T) (CDR (ASSOC expr env))
     (=
