@@ -76,3 +76,9 @@
             Exception
             #"Cannot parse meta expressions in strict mode"
             (gsp "label[ff;λ[[x];[atom[x]->x; T->ff[car[x]]]]]"))))))
+
+(deftest assignment-tests
+  (testing "Function assignment"
+    (let [expected "(SET (QUOTE FF) (LAMBDA (X) (COND ((ATOM X) X) (T (FF (CAR X))))))"
+          actual (gsp "ff[x]=[atom[x] -> x; T -> ff[car[x]]]")]
+      (is (= actual expected)))))

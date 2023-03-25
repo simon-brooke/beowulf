@@ -5,7 +5,7 @@
 
   Intended deviations from the behaviour of the real Lisp reader are as follows:
 
-  1. It reads the meta-expression language `MEXPR` in addition to the
+  1. It reads the meta-expression language `MEXPR` in addition to fLAMthe
       symbolic expression language `SEXPR`, which I do not believe the Lisp 1.5
       reader ever did;
   2. It treats everything between a semi-colon and an end of line as a comment,
@@ -15,7 +15,7 @@
   switch."
   (:require [beowulf.bootstrap :refer [*options*]]
             [clojure.math.numeric-tower :refer [expt]]
-            [clojure.string :refer [join split starts-with? upper-case]]
+            [clojure.string :refer [join split starts-with? trim upper-case]]
             [instaparse.core :as i]
             [instaparse.failure :as f]
             [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL]])
@@ -31,6 +31,29 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (declare generate)
+
+(defn strip-line-comments
+  "Strip blank lines and comment lines from this string `s`, expected to
+   be Lisp source."
+  [^String s]
+  (join "\n"
+        (remove
+         #(or (empty? %)
+              (starts-with? (trim %) ";;"))
+         (split s #"\n"))))
+
+(defn number-lines
+  ([^String s]
+   (number-lines s nil))
+  ([^String s ^Failure e]
+   (let [l (-> e :line)
+         c (-> e :column)]
+     (join "\n"
+           (map #(str (format "%5d %s" (inc %1) %2)
+                      (when (= l (inc %1))
+                        (str "\n" (apply str (repeat c " ")) "^")))
+                (range)
+                (split s #"\n"))))))
 
 (def parse
   "Parse a string presented as argument into a parse tree which can then
@@ -54,7 +77,7 @@
       ;; but it's a convenience.
 
     "exprs := expr | exprs;"
-    "mexpr := λexpr | fncall | defn | cond | mvar | mexpr comment;
+    "mexpr := λexpr | fncall | defn | cond | mvar | iexpr | mexpr comment;
       λexpr := λ lsqb bindings semi-colon body rsqb;
       λ := 'λ';
       bindings := lsqb args rsqb;
@@ -65,13 +88,19 @@
        lbrace := '{';
        rbrace := '}';
       defn := mexpr opt-space '=' opt-space mexpr;
-      cond := lsqb (cond-clause semi-colon opt-space)* cond-clause rsqb;
-      cond-clause := expr opt-space arrow opt-space expr;
+      cond := lsqb (opt-space cond-clause semi-colon opt-space)* cond-clause rsqb;
+      cond-clause := expr opt-space arrow opt-space expr opt-space;
       arrow := '->';
-      args := (expr semi-colon opt-space)* expr;
+      args := (opt-space expr semi-colon opt-space)* expr;
       fn-name := mvar;
       mvar := #'[a-z]+';
       semi-colon := ';';"
+
+    ;; Infix operators appear in mexprs, e.g. on page 7. Ooops!
+    ;; I do not know what infix operators are considered legal.
+    "iexpr := iexp iop iexp;
+     iexp := mexpr | mvar | number | mexpr | opt-space iexp opt-space;
+    iop := '>' | '<' | '+' | '-' | '/' | '=' ;"
 
       ;; comments. I'm pretty confident Lisp 1.5 did NOT have these.
     "opt-comment := opt-space | comment;"
@@ -106,6 +135,38 @@
       q := 'Q';
       scale-factor := #'[0-9]*'")))
 
+(declare simplify)
+
+(defn simplify-second-of-two
+  "There are a number of possible simplifications such that if the `tree` has
+  only two elements, the second is semantically sufficient."
+  [tree context]
+  (if (= (count tree) 2)
+    (simplify (second tree) context)
+    tree))
+
+(defn remove-optional-space
+  [tree]
+  (if (vector? tree)
+    (if (= :opt-space (first tree))
+      nil
+      (remove nil?
+              (map remove-optional-space tree)))
+    tree))
+
+(defn remove-nesting
+  [tree]
+  (let [tree' (remove-optional-space tree)]
+    (if-let [key (when (and (vector? tree') (keyword? (first tree'))) (first tree'))]
+    (loop [r tree']
+      (if (and r (vector? r) (keyword? (first r)))
+        (if (= (first r) key)
+          (recur (simplify (second r) :foo))
+          r)
+        r))
+    tree')))
+
+
 (defn simplify
   "Simplify this parse tree `p`. If `p` is an instaparse failure object, throw
   an `ex-info`, with `p` as the value of its `:failure` key."
@@ -113,27 +174,28 @@
    (if
     (instance? Failure p)
      (throw (ex-info (str "Ic ne behæfd: " (f/pprint-failure p)) {:cause   :parse-failure
+                                                                  :phase   :simplify
                                                                   :failure p}))
-     (simplify p :sexpr)))
+     (simplify p :expr)))
   ([p context]
    (if
     (coll? p)
      (apply
       vector
       (remove
-       #(if (coll? %) (empty? %))
+       #(when (coll? %) (empty? %))
        (case (first p)
-         (:arg :expr :coefficient :fn-name :number :sexpr) (simplify (second p) context)
          (:λexpr
-          :args :bindings :body :cond :cond-clause :dot-terminal
-          :fncall :octal :quoted-expr :scientific) (map #(simplify % context) p)
-         (:arrow :dot :e :lpar :lsqb :opt-space :q :quote :rpar :rsqb
+          :args :bindings :body :cond :cond-clause :defn :dot-terminal
+          :fncall :lhs :octal :quoted-expr :rhs :scientific) (map #(simplify % context) p)
+         (:arg :expr :coefficient :fn-name :number) (simplify (second p) context)
+         (:arrow :dot :e :lpar :lsqb  :opt-comment :opt-space :q :quote :rpar :rsqb
                  :semi-colon :sep :space) nil
          :atom (if
                 (= context :mexpr)
                  [:quoted-expr p]
                  p)
-         (:comment :opt-comment) (if
+         :comment (when
                    (:strict *options*)
                     (throw
                      (ex-info "Cannot parse comments in strict mode"
@@ -146,6 +208,11 @@
                           (simplify (nth p 1) context)
                           (simplify (nth p 2) context)]]
                         (map simplify p))
+         :iexp (second (remove-nesting p))
+         :iexpr [:iexpr
+                 [:lhs (simplify (second p) context)]
+                 (simplify (nth p 2) context) ;; really should be the operator
+                 [:rhs (simplify (nth p 3) context)]]
          :mexpr (if
                  (:strict *options*)
                   (throw
@@ -159,6 +226,7 @@
                   [:args (apply vector (map simplify (rest p)))]]
                  (map #(simplify % context) p))
          :raw (first (remove empty? (map simplify (rest p))))
+         :sexpr (simplify (second p) :sexpr)
           ;;default
          p)))
      p)))
@@ -268,6 +336,29 @@
      (generate (first p))
      (gen-dot-terminated-list (rest p)))))
 
+(defn generate-defn
+  [tree]
+  (make-beowulf-list
+   (list 'SET
+         (list 'QUOTE (generate (-> tree second second)))
+         (list 'QUOTE
+               (cons 'LAMBDA
+                     (cons (generate (nth (second tree) 2))
+                           (map generate (-> tree rest rest rest))))))))
+
+(defn generate-set
+  "Actually not sure what the mexpr representation of set looks like"
+  [tree]
+  (throw (ex-info "Not Yet Implemented" {:feature "generate-set"})))
+
+(defn generate-assign
+  "Generate an assignment statement based on this `tree`. If the thing 
+   being assigned to is a function signature, then we have to do something 
+   different to if it's an atom."
+  [tree]
+  (case (first (second tree))
+    :fncall (generate-defn tree)
+    (:mvar :atom) (generate-set tree)))
 
 (defn strip-leading-zeros
   "`read-string` interprets strings with leading zeros as octal; strip
@@ -303,6 +394,7 @@
         :cond (gen-cond p)
         :cond-clause (gen-cond-clause p)
         (:decimal :integer) (read-string (strip-leading-zeros (second p)))
+        :defn (generate-assign p)
         :dotted-pair (make-cons-cell
                       (generate (nth p 1))
                       (generate (nth p 2)))
@@ -332,20 +424,38 @@
                       {:generating p}
                       any)))))
 
-(defmacro gsp
+;; (defn parse
+;;   "Parse string `s` into a parse tree which can then be operated upon further."
+;;   [s]
+;;   (let [r (parse-internal s)]
+;;     (when (instance? Failure r)
+;;       (throw
+;;        (ex-info "Parse failed"
+;;                 (merge {:fail r :source s} r))))
+;;     r))
+
+
+(defn gsp
   "Shortcut macro - the internals of read; or, if you like, read-string.
   Argument `s` should be a string representation of a valid Lisp
   expression."
   [s]
-  `(generate (simplify (parse ~s))))
+  (let [source (strip-line-comments s)
+        parse-tree (parse source)]
+    (if (instance? Failure parse-tree)
+      (doall (println (number-lines source parse-tree))
+             (throw (ex-info "Parse failed" (assoc parse-tree :source source))))
+      (generate (simplify parse-tree)))))
 
 (defn READ
   "An implementation of a Lisp reader sufficient for bootstrapping; not necessarily
   the final Lisp reader. `input` should be either a string representation of a LISP
   expression, or else an input stream. A single form will be read."
-  [input]
-  (cond
-    (empty? input) (gsp (read-line))
-    (string? input) (gsp input)
-    (instance? InputStream input) (READ (slurp input))
-    :else    (throw (ex-info "READ: `input` should be a string or an input stream" {}))))
+  ([]
+   (gsp (read-line)))
+  ([input]
+   (cond
+     (empty? input) (gsp (read-line))
+     (string? input) (gsp input)
+     (instance? InputStream input) (READ (slurp input))
+     :else    (throw (ex-info "READ: `input` should be a string or an input stream" {})))))

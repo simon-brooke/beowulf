@@ -19,4 +19,3 @@ apply[fn;args;a] = [
     eq[car[fn]; FUNARG] -> apply[cadr[fn]; args; caddr[fn]];
     eq[car[fn]; LAMBDA] -> eval[caddr[fn]; nconc[pair[cadr[fn]; args]; a]];
     T -> apply[eval[fn;a]; args; a]]
-
