@@ -4,6 +4,8 @@
   must have both CAR and CDR mutable, so cannot be implemented on top
   of Clojure lists.")
 
+(declare cons-cell?)
+
 (def NIL
   "The canonical empty list symbol."
   (symbol "NIL"))
@@ -46,6 +48,7 @@
               ;; beowulf.cons_cell.ConsCell,
               ;; because it is not yet
               ;; defined
+      (cons-cell? value)
       (number? value)
       (symbol? value))
       (do
@@ -60,6 +63,7 @@
     (if
      (or
       (satisfies? MutableSequence value)
+      (cons-cell? value)
       (number? value)
       (symbol? value))
       (do
@@ -216,6 +220,11 @@
      (catch Exception any
        (throw (ex-info "Cound not construct cons cell" {:car car
                                                         :cdr cdr} any)))))
+
+(defn cons-cell?
+  "Is this object `o` a beowulf cons-cell?"
+  [o]
+  (instance? beowulf.cons_cell.ConsCell o))
 
 (defn make-beowulf-list
   "Construct a linked list of cons cells with the same content as the
