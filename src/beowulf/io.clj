@@ -28,12 +28,13 @@
      (str (:filepath *options*) (java.io.File/separator))
      "")
    (if (and (string? fp)
-            (> (count fp) 0))
+            (> (count fp) 0)
+            (not= fp "NIL"))
      fp
      (str "Sysout-" (local-date)))
    (if (ends-with? fp ".lsp")
-     fp
-     (str fp ".lsp"))))
+     ""
+     ".lsp")))
 
 (defn SYSOUT
   "Dump the current content of the object list to file. If no `filepath` is
