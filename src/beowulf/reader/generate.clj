@@ -1,58 +1,65 @@
 (ns beowulf.reader.generate
+  "Generating S-Expressions from parse trees. 
+   
+   ## From Lisp 1.5 Programmers Manual, page 10
+   *Note that I've retyped much of this, since copy/pasting out of PDF is less
+   than reliable. Any typos are mine.*
+   
+   *Quote starts:*
+
+   We are now in a position to define the universal LISP function
+   `evalquote[fn;args]`, When evalquote is given a function and a list of arguments
+   for that function, it computes the value of the function applied to the arguments.
+   LISP functions have S-expressions as arguments. In particular, the argument `fn`
+   of the function evalquote must be an S-expression. Since we have been
+   writing functions as M-expressions, it is necessary to translate them into
+   S-expressions.
+
+   The following rules define a method of translating functions written in the
+   meta-language into S-expressions.
+   1. If the function is represented by its name, it is translated by changing
+      all of the letters to upper case, making it an atomic symbol. Thus `car` is 
+      translated to `CAR`.
+   2. If the function uses the lambda notation, then the expression
+      `λ[[x ..;xn]; ε]` is translated into `(LAMBDA (X1 ...XN) ε*)`, where ε* is the translation
+      of ε.
+   3. If the function begins with label, then the translation of
+      `label[α;ε]` is `(LABEL α* ε*)`.
+
+   Forms are translated as follows:
+   1. A variable, like a function name, is translated by using uppercase letters.
+      Thus the translation of `var1` is `VAR1`.
+   2. The obvious translation of letting a constant translate into itself will not
+      work. Since the translation of `x` is `X`, the translation of `X` must be something
+      else to avoid ambiguity. The solution is to quote it. Thus `X` is translated
+      into `(QUOTE X)`.
+   3. The form `fn[argl;. ..;argn]` is translated into `(fn* argl* ...argn*)`
+   4. The conditional expression `[pl-el;...;pn-en]` is translated into
+      `(COND (p1* e1*)...(pn* en*))`
+
+   ## Examples
+   ```
+     M-expressions                                  S-expressions             
+  
+     x                                              X                         
+     car                                            CAR                       
+     car[x]                                         (CAR X)                   
+     T                                              (QUOTE T)                 
+     ff[car [x]]                                    (FF (CAR X))              
+     [atom[x]->x; T->ff[car[x]]]                    (COND ((ATOM X) X) 
+                                                        ((QUOTE T)(FF (CAR X))))
+     label[ff;λ[[x];[atom[x]->x;                    (LABEL FF (LAMBDA (X) 
+          T->ff[car[x]]]]]                              (COND ((ATOM X) X) 
+                                                            ((QUOTE T)(FF (CAR X))))))
+   ```
+
+   *quote ends*
+"
   (:require [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL]]
             [beowulf.reader.macros :refer [expand-macros]]
             [clojure.math.numeric-tower :refer [expt]]
             [clojure.string :refer [upper-case]]))
 
-;; # From Lisp 1.5 Programmers Manual, page 10
-;; Note that I've retyped much of this, since copy/pasting out of PDF is less
-;; than reliable. Any typos are mine. Quote starts [[
-
-;; We are now in a position to define the universal LISP function
-;; evalquote[fn;args], When evalquote is given a function and a list of arguments
-;; for that function, it computes the value of the function applied to the arguments.
-;; LISP functions have S-expressions as arguments. In particular, the argument "fn"
-;; of the function evalquote must be an S-expression. Since we have been
-;; writing functions as M-expressions, it is necessary to translate them into
-;; S-expressions.
-
-;; The following rules define a method of translating functions written in the
-;; meta-language into S-expressions.
-;; 1. If the function is represented by its name, it is translated by changing
-;;    all of the letters to upper case, making it an atomic symbol. Thus is
-;;    translated to CAR.
-;; 2. If the function uses the lambda notation, then the expression
-;;    λ[[x ..;xn]; ε] is translated into (LAMBDA (X1 ...XN) ε*), where ε* is the translation
-;;    of ε.
-;; 3. If the function begins with label, then the translation of
-;;    label[α;ε] is (LABEL α* ε*).
-
-;; Forms are translated as follows:
-;; 1. A variable, like a function name, is translated by using uppercase letters.
-;;    Thus the translation of varl is VAR1.
-;; 2. The obvious translation of letting a constant translate into itself will not
-;;    work. Since the translation of x is X, the translation of X must be something
-;;    else to avoid ambiguity. The solution is to quote it. Thus X is translated
-;;    into (QUOTE X).
-;; 3. The form fn[argl;. ..;argn] is translated into (fn* argl* ...argn*)
-;; 4. The conditional expression [pl-el;...;pn-en] is translated into
-;;    (COND (p1* e1*)...(pn* en*))
-
-;; ## Examples
-
-;; M-expressions                                S-expressions
-;; x                                            X
-;; car                                          CAR
-;; car[x]                                       (CAR X)
-;; T                                            (QUOTE T)
-;; ff[car [x]]                                  (FF (CAR X))
-;; [atom[x]->x; T->ff[car[x]]]                  (COND ((ATOM X) X)
-;;                                                ((QUOTE T)(FF (CAR X))))
-;; label[ff;λ[[x];[atom[x]->x; T->ff[car[x]]]]] (LABEL FF (LAMBDA (X) (COND
-;;                                                ((ATOM X) X)
-;;                                                ((QUOTE T)(FF (CAR X))))))
-
-;; ]] quote ends
 
 (declare generate)
 
