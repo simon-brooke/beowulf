@@ -114,6 +114,6 @@
 
 (deftest list-tests
   (testing "Reading arbitrarily structured lists"
-    (let [expected "(DEFUN FACT (X) (COND ((ZEROP X) 1) (T (TIMES X (FACT (SUB1 X))))))"
+    (let [expected "(SET (QUOTE FACT) (LAMBDA (X) (COND ((ZEROP X) 1) (T (TIMES X (FACT (SUB1 X)))))))"
           actual (print-str (gsp expected))]
       (is (= actual expected)))))

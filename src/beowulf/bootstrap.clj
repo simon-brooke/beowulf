@@ -61,10 +61,10 @@
   [x]
   `(if (or (symbol? ~x) (number? ~x)) T NIL))
 
-(defmacro CONS
+(defn CONS
   "Construct a new instance of cons cell with this `car` and `cdr`."
   [car cdr]
-  `(beowulf.cons_cell.ConsCell. ~car ~cdr))
+  (beowulf.cons_cell.ConsCell. car cdr (gensym "c")))
 
 (defn CAR
   "Return the item indicated by the first pointer of a pair. NIL is treated
@@ -406,12 +406,12 @@
   "Implementation of SET in Clojure. Add to the `oblist` a binding of the
    value of `var` to the value of `val`. NOTE WELL: this is not SETQ!"
   [symbol val]
-  (doall
+  (when
    (swap!
     oblist
     (fn [ob s v] (make-cons-cell (make-cons-cell s v) ob))
     symbol val)
-   NIL))
+    NIL))
 
 (defn APPLY
   "For bootstrapping, at least, a version of APPLY written in Clojure.
@@ -426,7 +426,7 @@
      (ATOM? function)
      T) (cond
           ;; (fn? (eval function)) (apply (eval function) args)
-          (not= 
+          (not=
            (ASSOC function environment)
            NIL) (APPLY (CDR (ASSOC function environment)) args environment)
           (= function 'ATOM) (if (ATOM? (CAR args)) T NIL)
@@ -436,15 +436,15 @@
           (= function 'DEFINE) (DEFINE args)
           (= function 'EQ) (apply EQ args)
           (= function 'INTEROP) (INTEROP (CAR args) (CDR args))
-          (= function 'SET) (SET (CAR args) (CADR args)) 
-          (EVAL function environment)(APPLY
-           (EVAL function environment)
-           args
-           environment)
+          (= function 'SET) (SET (CAR args) (CADR args))
+          (EVAL function environment) (APPLY
+                                       (EVAL function environment)
+                                       args
+                                       environment)
           :else
           (throw (ex-info "No function found" {:context "APPLY"
-                                                   :function function
-                                                   :args args})))
+                                               :function function
+                                               :args args})))
     (fn? function) ;; i.e., it's a Clojure function
     (apply function (to-clojure args))
     (= (first function) 'LAMBDA) (EVAL

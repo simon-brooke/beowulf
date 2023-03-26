@@ -1,5 +1,6 @@
 (ns beowulf.reader.generate
   (:require [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL]]
+            [beowulf.reader.macros :refer [expand-macros]]
             [clojure.math.numeric-tower :refer [expt]]
             [clojure.string :refer [upper-case]]))
 
@@ -119,6 +120,15 @@
                      (cons (generate (nth (second tree) 2))
                            (map generate (-> tree rest rest rest))))))))
 
+(defn gen-iexpr
+  [tree]
+  (let [bundle (reduce #(assoc %1 (first %2) (nth %2 1)) 
+                       {} 
+                       (rest tree))]
+    (list (generate (:iop bundle))
+          (generate (:lhs bundle))
+          (generate (:rhs bundle)))))
+
 (defn generate-set
   "Actually not sure what the mexpr representation of set looks like"
   [tree]
@@ -152,46 +162,51 @@
   `p` has been simplified."
   [p]
   (try
-    (if
-     (coll? p)
-      (case (first p)
-        :λ "LAMBDA"
-        :λexpr (make-cons-cell
-                (generate (nth p 1))
-                (make-cons-cell (generate (nth p 2))
-                                (generate (nth p 3))))
-        :args (make-beowulf-list (map generate (rest p)))
-        :atom (symbol (second p))
-        :bindings (generate (second p))
-        :body (make-beowulf-list (map generate (rest p)))
-        :cond (gen-cond p)
-        :cond-clause (gen-cond-clause p)
-        (:decimal :integer) (read-string (strip-leading-zeros (second p)))
-        :defn (generate-assign p)
-        :dotted-pair (make-cons-cell
-                      (generate (nth p 1))
-                      (generate (nth p 2)))
-        :exponent (generate (second p))
-        :fncall (gen-fn-call p)
-        :list (gen-dot-terminated-list (rest p))
-        :mvar (symbol (upper-case (second p)))
-        :octal (let [n (read-string (strip-leading-zeros (second p) "0"))
-                     scale (generate (nth p 2))]
-                 (* n (expt 8 scale)))
+    (expand-macros
+     (if
+      (coll? p)
+       (case (first p)
+         ">" 'GREATERP
+         :λ "LAMBDA"
+         :λexpr (make-cons-cell
+                 (generate (nth p 1))
+                 (make-cons-cell (generate (nth p 2))
+                                 (generate (nth p 3))))
+         :args (make-beowulf-list (map generate (rest p)))
+         :atom (symbol (second p))
+         :bindings (generate (second p))
+         :body (make-beowulf-list (map generate (rest p)))
+         :cond (gen-cond p)
+         :cond-clause (gen-cond-clause p)
+         (:decimal :integer) (read-string (strip-leading-zeros (second p)))
+         :defn (generate-assign p)
+         :dotted-pair (make-cons-cell
+                       (generate (nth p 1))
+                       (generate (nth p 2)))
+         :exponent (generate (second p))
+         :fncall (gen-fn-call p)
+         :iexpr (gen-iexpr p)
+         :list (gen-dot-terminated-list (rest p))
+         (:lhs :rhs) (generate (second p))
+         :mexpr (generate (second p))
+         :mvar (symbol (upper-case (second p)))
+         :octal (let [n (read-string (strip-leading-zeros (second p) "0"))
+                      scale (generate (nth p 2))]
+                  (* n (expt 8 scale)))
 
       ;; the quote read macro (which probably didn't exist in Lisp 1.5, but...)
-        :quoted-expr (make-beowulf-list (list 'QUOTE (generate (second p))))
-        :scale-factor (if
-                       (empty? (second p)) 0
-                       (read-string (strip-leading-zeros (second p))))
-        :scientific (let [n (generate (second p))
-                          exponent (generate (nth p 2))]
-                      (* n (expt 10 exponent)))
+         :quoted-expr (make-beowulf-list (list 'QUOTE (generate (second p))))
+         :scale-factor (if
+                        (empty? (second p)) 0
+                        (read-string (strip-leading-zeros (second p))))
+         :scientific (let [n (generate (second p))
+                           exponent (generate (nth p 2))]
+                       (* n (expt 10 exponent)))
 
       ;; default
-        (throw (ex-info (str "Unrecognised head: " (first p))
-                        {:generating p})))
-      p)
+         (throw (ex-info (str "Unrecognised head: " (first p))
+                         {:generating p})))
+       p))
     (catch Throwable any
       (throw (ex-info "Could not generate"
                       {:generating p}

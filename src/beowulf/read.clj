@@ -15,7 +15,7 @@
   switch."
   (:require [beowulf.reader.generate :refer [generate]]
             [beowulf.reader.parser :refer [parse]]
-            [beowulf.reader.simplify :refer [simplify]]
+            [beowulf.reader.simplify :refer [remove-optional-space simplify]]
             [clojure.string :refer [join split starts-with? trim]])
   (:import [java.io InputStream]
            [instaparse.gll Failure]))
@@ -61,7 +61,7 @@
     (if (instance? Failure parse-tree)
       (doall (println (number-lines source parse-tree))
              (throw (ex-info "Parse failed" (assoc parse-tree :source source))))
-      (generate (simplify parse-tree)))))
+      (generate (simplify (remove-optional-space parse-tree))))))
 
 (defn read-from-console
   "Attempt to read a complete lisp expression from the console."

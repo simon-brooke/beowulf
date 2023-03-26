@@ -2,7 +2,7 @@
   "provides Lisp 1.5 functions which can't be (or can't efficiently
    be) implemented in Lisp 1.5, which therefore need to be implemented in the
    host language, in this case Clojure."
-  (:require [beowulf.cons-cell :refer [T NIL F]]
+  (:require [beowulf.cons-cell :refer [F make-beowulf-list NIL T]]
             ;; note hyphen - this is Clojure...
             )
   (:import [beowulf.cons_cell ConsCell]
@@ -12,7 +12,6 @@
 ;; these are CANDIDATES to be host-implemented. only a subset of them MUST be.
 ;; those which can be implemented in Lisp should be, since that aids
 ;; portability.
-
 
 (defn RPLACA
   "Replace the CAR pointer of this `cell` with this `value`. Dangerous, should
@@ -109,3 +108,7 @@
 (defn NUMBERP
   [x]
   (if (number? x) T F))
+
+(defn LIST
+  [& args]
+  (make-beowulf-list args))

@@ -89,9 +89,9 @@ Intended deviations from the behaviour of the real Lisp reader are as follows:
 1. It reads the meta-expression language `MEXPR` in addition to the
     symbolic expression language `SEXPR`, which I do not believe the Lisp 1.5
     reader ever did;
-2. It treats everything between a semi-colon and an end of line as a comment,
-    as most modern Lisps do; but I do not believe Lisp 1.5 had this feature.
-
+2. It treats everything between a double semi-colon and an end of line as 
+    a comment, as most modern Lisps do; but I do not believe Lisp 1.5 had 
+    this feature.
 
 ### BUT WHY?!!?!
 
@@ -115,7 +115,6 @@ which is in my opinion one of the best and most usable early Lisp
 implementations. I'm convinced you could still use Lisp 1.5 for interesting
 and useful software (which isn't to say that some modern Lisps aren't better,
 but this is software which is almost sixty years old).
-
 
 ## Installation
 

@@ -46,7 +46,7 @@
     ;; Infix operators appear in mexprs, e.g. on page 7. Ooops!
     ;; I do not know what infix operators are considered legal.
     "iexpr := iexp iop iexp;
-     iexp := mexpr | mvar | number | mexpr | opt-space iexp opt-space;
+     iexp := mexpr | number | opt-space iexp opt-space;
     iop := '>' | '<' | '+' | '-' | '/' | '=' ;"
 
       ;; comments. I'm pretty confident Lisp 1.5 did NOT have these.
