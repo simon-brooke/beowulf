@@ -5,10 +5,10 @@
 
   Intended deviations from the behaviour of the real Lisp reader are as follows:
 
-  1. It reads the meta-expression language `MEXPR` in addition to fLAMthe
+  1. It reads the meta-expression language `MEXPR` in addition to the
       symbolic expression language `SEXPR`, which I do not believe the Lisp 1.5
       reader ever did;
-  2. It treats everything between a semi-colon and an end of line as a comment,
+  2. It treats everything between a double semi-colon and an end of line as a comment,
       as most modern Lisps do; but I do not believe Lisp 1.5 had this feature.
 
   Both these extensions can be disabled by using the `--strict` command line
@@ -64,7 +64,8 @@
       (generate (simplify (remove-optional-space parse-tree))))))
 
 (defn read-from-console
-  "Attempt to read a complete lisp expression from the console."
+  "Attempt to read a complete lisp expression from the console. NOTE that this
+   will only really work for S-Expressions, not M-Expressions."
   []
   (loop [r (read-line)]
     (if (= (count (re-seq #"\(" r))

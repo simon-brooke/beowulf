@@ -1,6 +1,5 @@
 (ns beowulf.sexpr-test
   (:require [clojure.test :refer [deftest is testing]]
-            [beowulf.bootstrap :refer [*options*]]
             [beowulf.cons-cell :refer []]
             [beowulf.read :refer [gsp]]))
 

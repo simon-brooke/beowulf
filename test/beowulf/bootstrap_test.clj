@@ -1,9 +1,10 @@
 (ns beowulf.bootstrap-test
   (:require [clojure.test :refer [deftest testing is]]
-            [beowulf.cons-cell :refer [make-cons-cell NIL T F]]
-            [beowulf.bootstrap :refer [APPEND ASSOC ATOM ATOM? CAR CAAAAR CADR
-                                       CADDR CADDDR CDR EQ EQUAL MEMBER 
+            [beowulf.cons-cell :refer [CAR CDR make-cons-cell T F]]
+            [beowulf.bootstrap :refer [APPEND ASSOC ATOM ATOM? CAAAAR CADR
+                                       CADDR CADDDR EQ EQUAL MEMBER 
                                        PAIRLIS SUBLIS SUBST]]
+            [beowulf.oblist :refer [NIL]]
             [beowulf.read :refer [gsp]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

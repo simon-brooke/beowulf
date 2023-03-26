@@ -2,7 +2,7 @@
   "These tests are taken generally from the examples on page 10 of
    Lisp 1.5 Programmers Manual"
   (:require [clojure.test :refer [deftest is testing]]
-            [beowulf.bootstrap :refer [*options*]] 
+            [beowulf.oblist :refer [*options*]] 
             [beowulf.read :refer [gsp]]
             [beowulf.reader.generate :refer [generate]]
             [beowulf.reader.parser :refer [parse]]

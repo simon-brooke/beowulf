@@ -1,8 +1,6 @@
 (ns beowulf.reader.macros
   "Can I implement reader macros? let's see!"
-  (:require [beowulf.bootstrap :refer [CADR CADDR CDDR CONS]]
-            [beowulf.cons-cell :refer [make-beowulf-list]]
-            [beowulf.host :refer [LIST]]
+  (:require [beowulf.cons-cell :refer [CONS LIST make-beowulf-list]]
             [clojure.string :refer [join]])
   (:import [beowulf.cons_cell ConsCell]))
 
@@ -14,9 +12,9 @@
 
 (def ^:dynamic *readmacros*
   {:car {'DEFUN (fn [f]
-                  (LIST 'SET (LIST 'QUOTE (CADR f))
-                        (CONS 'LAMBDA (CDDR f))))
-         'SETQ (fn [f] (LIST 'SET (LIST 'QUOTE (CADR f)) (CADDR f)))}})
+                  (LIST 'SET (LIST 'QUOTE (second f))
+                        (CONS 'LAMBDA (rest (rest f)))))
+         'SETQ (fn [f] (LIST 'SET (LIST 'QUOTE (second f)) (nth f 2)))}})
 
 (defn expand-macros
   [form]

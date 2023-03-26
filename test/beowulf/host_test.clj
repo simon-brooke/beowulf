@@ -1,8 +1,8 @@
 (ns beowulf.host-test
   (:require [clojure.test :refer [deftest is testing]]
-            [beowulf.bootstrap :refer [CDR]]
-            [beowulf.cons-cell :refer [F make-beowulf-list NIL T]] 
+            [beowulf.cons-cell :refer [CDR F make-beowulf-list T]] 
             [beowulf.host :refer [DIFFERENCE NUMBERP PLUS2 RPLACA RPLACD TIMES2]]
+            [beowulf.oblist :refer [NIL]]
             [beowulf.read :refer [gsp]]))
 
 (deftest destructive-change-test

@@ -2,9 +2,10 @@
   "The fundamental cons cell on which all Lisp structures are built.
   Lisp 1.5 lists do not necessarily have a sequence as their CDR, and
   must have both CAR and CDR mutable, so cannot be implemented on top
-  of Clojure lists.")
+  of Clojure lists."
+  (:require [beowulf.oblist :refer [NIL]]))
 
-(declare cons-cell? NIL)
+(declare cons-cell?)
 
 (def T
   "The canonical true value."
@@ -222,10 +223,6 @@
       (throw (ex-info "Cound not construct cons cell" {:car car
                                                        :cdr cdr} any)))))
 
-(def NIL
-  "The canonical empty list symbol."
-  'NIL)
-
 (defn cons-cell?
   "Is this object `o` a beowulf cons-cell?"
   [o]
@@ -251,3 +248,36 @@
       (throw (ex-info "Could not construct Beowulf list"
                       {:content x}
                       any)))))
+
+(defn CONS
+  "Construct a new instance of cons cell with this `car` and `cdr`."
+  [car cdr]
+  (beowulf.cons_cell.ConsCell. car cdr (gensym "c")))
+
+(defn CAR
+  "Return the item indicated by the first pointer of a pair. NIL is treated
+  specially: the CAR of NIL is NIL."
+  [x]
+  (if
+   (= x NIL) NIL
+   (try
+     (or (.getCar x) NIL)
+     (catch Exception any
+       (throw (Exception.
+               (str "Cannot take CAR of `" x "` (" (.getName (.getClass x)) ")") any))))))
+
+(defn CDR
+  "Return the item indicated by the second pointer of a pair. NIL is treated
+  specially: the CDR of NIL is NIL."
+  [x]
+  (if
+   (= x NIL) NIL
+   (try
+     (.getCdr x)
+     (catch Exception any
+       (throw (Exception.
+               (str "Cannot take CDR of `" x "` (" (.getName (.getClass x)) ")") any))))))
+
+(defn LIST
+  [& args]
+  (make-beowulf-list args))

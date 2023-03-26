@@ -55,8 +55,9 @@
 
    *quote ends*
 "
-  (:require [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL]]
+  (:require [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell]]
             [beowulf.reader.macros :refer [expand-macros]]
+            [beowulf.oblist :refer [NIL]]
             [clojure.math.numeric-tower :refer [expt]]
             [clojure.string :refer [upper-case]]))
 

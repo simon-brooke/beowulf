@@ -2,9 +2,9 @@
   "provides Lisp 1.5 functions which can't be (or can't efficiently
    be) implemented in Lisp 1.5, which therefore need to be implemented in the
    host language, in this case Clojure."
-  (:require [beowulf.cons-cell :refer [F make-beowulf-list NIL T]]
+  (:require [beowulf.cons-cell :refer [F make-beowulf-list T]]
             ;; note hyphen - this is Clojure...
-            )
+            [beowulf.oblist :refer [NIL]])
   (:import [beowulf.cons_cell ConsCell]
            ;; note underscore - same namespace, but Java.
            ))
@@ -108,7 +108,3 @@
 (defn NUMBERP
   [x]
   (if (number? x) T F))
-
-(defn LIST
-  [& args]
-  (make-beowulf-list args))

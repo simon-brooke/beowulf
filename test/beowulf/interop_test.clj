@@ -1,6 +1,6 @@
 (ns beowulf.interop-test
   (:require [clojure.test :refer [deftest is testing]]
-            [beowulf.bootstrap :refer [EVAL INTEROP QUOTE]]
+            [beowulf.bootstrap :refer [EVAL INTEROP]]
             [beowulf.read :refer [gsp]]))
 
 
@@ -9,8 +9,8 @@
     (let [expected (symbol "123")
           actual (INTEROP (gsp "(CLOJURE CORE STR)") (gsp "(1 2 3)"))]
       (is (= actual expected))))
-  ;; (testing "INTEROP called from Lisp"
-  ;;   (let [expected 'ABC
-  ;;         actual (EVAL (gsp "(INTEROP '(CLOJURE CORE STR) '(A B C))") (gsp "((A . A)(B . B)(C . C))"))]
-  ;;     (is (= actual expected))))
+  ;;  (testing "INTEROP called from Lisp"
+  ;;    (let [expected 'ABC
+  ;;          actual (EVAL (gsp "(INTEROP '(CLOJURE CORE STR) '(QUOTE (A B C)))") (gsp "((A . P)(B . Q)(C . R))"))]
+      ;;  (is (= actual expected))))
     )

@@ -1,8 +1,7 @@
 (ns beowulf.reader.simplify
   "Simplify parse trees. Be aware that this is very tightly coupled
    with the parser."
-  (:require [beowulf.bootstrap :refer [*options*]]
-            [clojure.tools.trace :refer [deftrace]]
+  (:require [beowulf.oblist :refer [*options*]]
             [instaparse.failure :as f])
   (:import [instaparse.gll Failure]))
 

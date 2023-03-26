@@ -11,10 +11,12 @@
   objects."
   (:require [clojure.string :as s]
             [clojure.tools.trace :refer [deftrace]]
-            [beowulf.cons-cell :refer [cons-cell? make-beowulf-list make-cons-cell
-                                       NIL pretty-print T F]]
+            [beowulf.cons-cell :refer [CAR CDR CONS LIST make-beowulf-list make-cons-cell
+                                       pretty-print T F]]
             [beowulf.host :refer [ADD1 DIFFERENCE FIXP NUMBERP PLUS2 QUOTIENT
-                                  REMAINDER RPLACA RPLACD SUB1 TIMES2]])
+                                  REMAINDER RPLACA RPLACD SUB1 TIMES2]]
+            [beowulf.io :refer [SYSIN SYSOUT]]
+            [beowulf.oblist :refer [*options* oblist NIL]])
   (:import [beowulf.cons_cell ConsCell]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -29,13 +31,6 @@
 
 (declare EVAL)
 
-(def oblist
-  "The default environment."
-  (atom NIL))
-
-(def ^:dynamic *options*
-  "Command line options from invocation."
-  {})
 
 (defmacro NULL
   "Returns `T` if and only if the argument `x` is bound to `NIL`; else `F`."
@@ -60,35 +55,6 @@
   on failure."
   [x]
   `(if (or (symbol? ~x) (number? ~x)) T NIL))
-
-(defn CONS
-  "Construct a new instance of cons cell with this `car` and `cdr`."
-  [car cdr]
-  (beowulf.cons_cell.ConsCell. car cdr (gensym "c")))
-
-(defn CAR
-  "Return the item indicated by the first pointer of a pair. NIL is treated
-  specially: the CAR of NIL is NIL."
-  [x]
-  (if
-   (= x NIL) NIL
-   (try
-     (or (.getCar x) NIL)
-     (catch Exception any
-       (throw (Exception.
-               (str "Cannot take CAR of `" x "` (" (.getName (.getClass x)) ")") any))))))
-
-(defn CDR
-  "Return the item indicated by the second pointer of a pair. NIL is treated
-  specially: the CDR of NIL is NIL."
-  [x]
-  (if
-   (= x NIL) NIL
-   (try
-     (.getCdr x)
-     (catch Exception any
-       (throw (Exception.
-               (str "Cannot take CDR of `" x "` (" (.getName (.getClass x)) ")") any))))))
 
 (defn uaf
   "Universal access function; `l` is expected to be an arbitrary LISP list, `path`
@@ -267,7 +233,7 @@
     :else
     (make-cons-cell (SUBLIS a (CAR y)) (SUBLIS a (CDR y)))))
 
-(deftrace interop-interpret-q-name
+(defn interop-interpret-q-name
   "For interoperation with Clojure, it will often be necessary to pass
   qualified names that are not representable in Lisp 1.5. This function
   takes a sequence in the form `(PART PART PART... NAME)` and returns
@@ -308,7 +274,7 @@
     :else
     (conj (to-clojure (CDR l)) (to-clojure (CAR l)))))
 
-(deftrace INTEROP
+(defn INTEROP
   "Clojure (or other host environment) interoperation API. `fn-symbol` is expected
   to be either
 
@@ -437,6 +403,8 @@
           (= function 'EQ) (apply EQ args)
           (= function 'INTEROP) (INTEROP (CAR args) (CDR args))
           (= function 'SET) (SET (CAR args) (CADR args))
+          (= function 'SYSIN) (SYSIN (CAR args))
+          (= function 'SYSOUT) (SYSOUT (CAR args))
           (EVAL function environment) (APPLY
                                        (EVAL function environment)
                                        args
