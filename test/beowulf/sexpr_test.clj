@@ -1,28 +1,27 @@
 (ns beowulf.sexpr-test
-  (:require [clojure.math.numeric-tower :refer [abs]]
-            [clojure.test :refer :all]
-            [beowulf.cons-cell :refer :all]
+  (:require [clojure.test :refer [deftest is testing]]
             [beowulf.bootstrap :refer [*options*]]
-            [beowulf.read :refer [parse simplify generate gsp]]))
+            [beowulf.cons-cell :refer []]
+            [beowulf.read :refer [gsp]]))
 
 ;; broadly, sexprs should be homoiconic
 
 (deftest atom-tests
   (testing "Reading atoms"
     (let [expected 'A
-          actual (gsp(str expected))]
+          actual (gsp (str expected))]
       (is (= actual expected)))
     (let [expected 'APPLE
-          actual (gsp(str expected))]
+          actual (gsp (str expected))]
       (is (= actual expected)))
     (let [expected 'PART2
-          actual (gsp(str expected))]
+          actual (gsp (str expected))]
       (is (= actual expected)))
     (let [expected 'EXTRALONGSTRINGOFLETTERS
-          actual (gsp(str expected))]
+          actual (gsp (str expected))]
       (is (= actual expected)))
     (let [expected 'A4B66XYZ2
-          actual (gsp(str expected))]
+          actual (gsp (str expected))]
       (is (= actual expected)))))
 
 (deftest comment-tests
@@ -41,13 +40,13 @@
                       B C)"))]
       (is (= actual expected)
           "Really important that comments work inside lists"))
-;;     ;; TODO: Currently failing and I'm not sure why
-;;     (binding [*options* {:strict true}]
-;;       (is (thrown-with-msg?
-;;             Exception
-;;             #"Cannot parse comments in strict mode"
-;;             (gsp "(A ;; comment
-;;                  B C)"))))
+    ;;  ;; TODO: Currently failing and I'm not sure why
+    ;;  (binding [*options* {:strict true}]
+    ;;    (is (thrown-with-msg?
+    ;;          Exception
+    ;;          #"Cannot parse comments in strict mode"
+    ;;          (gsp "(A ;; comment
+    ;;               B C)"))))
     ))
 
 

@@ -11,7 +11,11 @@
   objects."
   (:require [clojure.string :as s]
             [clojure.tools.trace :refer [deftrace]]
-            [beowulf.cons-cell :refer [cons-cell? make-beowulf-list make-cons-cell NIL pretty-print T F]]))
+            [beowulf.cons-cell :refer [cons-cell? make-beowulf-list make-cons-cell
+                                       NIL pretty-print T F]]
+            [beowulf.host :refer [ADD1 DIFFERENCE FIXP NUMBERP PLUS2 QUOTIENT
+                                  REMAINDER RPLACA RPLACD SUB1 TIMES2]])
+  (:import [beowulf.cons_cell ConsCell]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -57,12 +61,6 @@
   [x]
   `(if (or (symbol? ~x) (number? ~x)) T NIL))
 
-(defmacro NUMBERP
-  "Returns `T` if and only if the argument `x` is bound to an number; else `F`.
-  TODO: check whether floating point numbers, rationals, etc were numbers in Lisp 1.5"
-  [x]
-  `(if (number? ~x) T F))
-
 (defmacro CONS
   "Construct a new instance of cons cell with this `car` and `cdr`."
   [car cdr]
@@ -75,7 +73,7 @@
   (if
    (= x NIL) NIL
    (try
-     (.getCar x)
+     (or (.getCar x) NIL)
      (catch Exception any
        (throw (Exception.
                (str "Cannot take CAR of `" x "` (" (.getName (.getClass x)) ")") any))))))
@@ -109,7 +107,7 @@
                         {:cause  :uaf
                          :detail :unexpected-letter
                          :expr   (last path)})))
-      (catch ClassCastException e 
+      (catch ClassCastException e
         (throw (ex-info
                 (str "uaf: Not a LISP list? " (type l))
                 {:cause  :uaf
@@ -149,9 +147,12 @@
 
 (defn EQ
   "Returns `T` if and only if both `x` and `y` are bound to the same atom,
-  else `F`."
+  else `NIL`."
   [x y]
-  (if (and (= (ATOM x) T) (= x y)) T F))
+  (cond (and (instance? ConsCell x)
+             (.equals x y)) T
+        (and (= (ATOM x) T) (= x y)) T
+        :else NIL))
 
 (defn EQUAL
   "This is a predicate that is true if its two arguments are identical
@@ -162,7 +163,7 @@
   NOTE: returns `F` on failure, not `NIL`"
   [x y]
   (cond
-    (= (ATOM x) T) (EQ x y)
+    (= (ATOM x) T) (if (= x y) T F)
     (= (EQUAL (CAR x) (CAR y)) T) (EQUAL (CDR x) (CDR y))
     :else F))
 
@@ -378,10 +379,10 @@
   "Not certain whether or not this is part of LISP 1.5; adapted from PSL. 
   return the current value of the object list. Note that in PSL this function
   returns a list of the symbols bound, not the whole association list."
-  [args]
-  (@oblist))
+  []
+  (make-beowulf-list (map CAR @oblist)))
 
-(deftrace DEFINE
+(defn DEFINE
   "Bootstrap-only version of `DEFINE` which, post boostrap, can be overwritten 
   in LISP. 
 
@@ -399,7 +400,18 @@
            (pretty-print a)
            a)
          (recur (CDR cursor) a))))
-     (CAR args)))
+   (CAR args)))
+
+(defn SET
+  "Implementation of SET in Clojure. Add to the `oblist` a binding of the
+   value of `var` to the value of `val`. NOTE WELL: this is not SETQ!"
+  [symbol val]
+  (doall
+   (swap!
+    oblist
+    (fn [ob s v] (make-cons-cell (make-cons-cell s v) ob))
+    symbol val)
+   NIL))
 
 (defn APPLY
   "For bootstrapping, at least, a version of APPLY written in Clojure.
@@ -407,23 +419,32 @@
   See page 13 of the Lisp 1.5 Programmers Manual."
   [function args environment]
   (cond
+    (= NIL function) (throw (ex-info "NIL is not a function" {:context "APPLY"
+                                                              :function "NIL"
+                                                              :args args}))
     (=
      (ATOM? function)
      T) (cond
-           ;; TODO: doesn't check whether `function` is bound in the environment;
-           ;; we'll need that before we can bootstrap.
+          ;; (fn? (eval function)) (apply (eval function) args)
+          (not= 
+           (ASSOC function environment)
+           NIL) (APPLY (CDR (ASSOC function environment)) args environment)
+          (= function 'ATOM) (if (ATOM? (CAR args)) T NIL)
           (= function 'CAR) (CAAR args)
           (= function 'CDR) (CDAR args)
           (= function 'CONS) (make-cons-cell (CAR args) (CADR args))
           (= function 'DEFINE) (DEFINE args)
-          (= function 'ATOM) (if (ATOM? (CAR args)) T NIL)
-          (= function 'EQ) (if (= (CAR args) (CADR args)) T NIL)
+          (= function 'EQ) (apply EQ args)
           (= function 'INTEROP) (INTEROP (CAR args) (CDR args))
-          :else
-          (APPLY
+          (= function 'SET) (SET (CAR args) (CADR args)) 
+          (EVAL function environment)(APPLY
            (EVAL function environment)
            args
-           environment))
+           environment)
+          :else
+          (throw (ex-info "No function found" {:context "APPLY"
+                                                   :function function
+                                                   :args args})))
     (fn? function) ;; i.e., it's a Clojure function
     (apply function (to-clojure args))
     (= (first function) 'LAMBDA) (EVAL
@@ -508,8 +529,11 @@
   "For bootstrapping, at least, a version of EVAL written in Clojure.
   All args are assumed to be symbols or `beowulf.cons-cell/ConsCell` objects.
   See page 13 of the Lisp 1.5 Programmers Manual."
-  [expr env]
-  (if
+  ([expr]
+   (EVAL expr @oblist))
+  ([expr env]
+   (if
     (:trace *options*)
      (traced-eval expr env)
-     (eval-internal expr env)))
+     (eval-internal expr env))))
+

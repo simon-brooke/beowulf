@@ -1,11 +1,12 @@
 (ns beowulf.cons-cell-test
-  (:require [clojure.test :refer :all]
-            [beowulf.cons-cell :refer :all]))
+  (:require [clojure.test :refer [deftest is testing]]
+            [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell pretty-print]])
+  (:import [beowulf.cons_cell ConsCell]))
 
 (deftest cons-cell-tests
   (testing "make-cons-cell"
     (let [expected "(A . B)"
-          actual (print-str (beowulf.cons_cell.ConsCell. 'A 'B))]
+          actual (print-str (ConsCell. 'A 'B (gensym "c")))]
       (is (= actual expected) "Cons cells should print as cons cells, natch."))
     (let [expected "(A . B)"
           actual (print-str (make-cons-cell 'A 'B))]

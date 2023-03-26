@@ -1,7 +1,7 @@
 (ns beowulf.core
   "Essentially, the `-main` function and the bootstrap read-eval-print loop."
   (:require [beowulf.bootstrap :refer [EVAL oblist *options*]]
-            [beowulf.read :refer [READ]]
+            [beowulf.read :refer [READ read-from-console]]
             [clojure.java.io :as io]
             [clojure.pprint :refer [pprint]]
             [clojure.string :refer [trim]]
@@ -31,7 +31,7 @@
     (try
       ;; TODO: does not currently allow the reading of forms covering multiple
       ;; lines.
-      (let [input (trim (read-line))]
+      (let [input (trim (read-from-console))]
         (cond
           (= input stop-word) (throw (ex-info "\nFærwell!" {:cause :quit}))
           input (println (str ">  " (print-str (EVAL (READ input) @oblist))))
@@ -41,7 +41,7 @@
        e
         (let [data (ex-data e)]
           (println (.getMessage e))
-          (if
+          (when
            data
             (case (:cause data)
               :parse-failure (println (:failure data))

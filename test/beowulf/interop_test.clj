@@ -1,8 +1,6 @@
 (ns beowulf.interop-test
-  (:require [clojure.test :refer :all]
-            [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL T F]]
+  (:require [clojure.test :refer [deftest is testing]]
             [beowulf.bootstrap :refer [EVAL INTEROP QUOTE]]
-            [beowulf.host :refer :all]
             [beowulf.read :refer [gsp]]))
 
 

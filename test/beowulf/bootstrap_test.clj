@@ -1,8 +1,9 @@
 (ns beowulf.bootstrap-test
-  (:require [clojure.math.numeric-tower :refer [abs]]
-            [clojure.test :refer :all]
-            [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL T F]]
-            [beowulf.bootstrap :refer :all]
+  (:require [clojure.test :refer [deftest testing is]]
+            [beowulf.cons-cell :refer [make-cons-cell NIL T F]]
+            [beowulf.bootstrap :refer [APPEND ASSOC ATOM ATOM? CAR CAAAAR CADR
+                                       CADDR CADDDR CDR EQ EQUAL MEMBER 
+                                       PAIRLIS SUBLIS SUBST]]
             [beowulf.read :refer [gsp]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -50,21 +51,6 @@
     (let [expected NIL
           actual (ATOM? (gsp "(A B C D)"))]
       (is (= actual expected) "A list is explicitly not an atom"))))
-
-(deftest numberp-tests
-  (testing "NUMBERP"
-    (let [expected T
-          actual   (NUMBERP 7)]
-      (is (= actual expected) "7 is a number"))
-    (let [expected T
-          actual   (NUMBERP 3.14)]
-      (is (= actual expected) "3.14 is a number"))
-    (let [expected F
-          actual   (NUMBERP NIL)]
-      (is (= actual expected) "NIL is not a number"))
-    (let [expected F
-          actual   (NUMBERP (gsp "HELLO"))]
-      (is (= actual expected) "HELLO is not a number"))))
 
 (deftest access-function-tests
   (testing "CAR"
@@ -132,13 +118,18 @@
     (let [expected 'T
           actual (EQ 'FRED 'FRED)]
       (is (= actual expected) "identical symbols"))
-    (let [expected 'F
+    (let [expected 'NIL
           actual (EQ 'FRED 'ELFREDA)]
       (is (= actual expected) "different symbols"))
-    (let [expected 'F
+    (let [expected 'T
           l (gsp "(NOT AN ATOM)")
           actual (EQ l l)]
-      (is (= actual expected) "identical lists (EQ is not defined for lists)")))
+      (is (= actual expected) "identically the same list"))
+    (let [expected 'NIL
+          l1 (gsp "(NOT AN ATOM)")
+          l2 (gsp "(NOT AN ATOM)")
+          actual (EQ l1 l2)]
+      (is (= actual expected) "different lists with the same content")))
   (testing "equal"
     (let [expected 'T
           actual (EQUAL 'FRED 'FRED)]

@@ -1,8 +1,8 @@
 (ns beowulf.core-test
   (:require [clojure.java.io :refer [reader]]
             [clojure.string :refer [split]]
-            [clojure.test :refer :all]
-            [beowulf.core :refer :all]))
+            [clojure.test :refer [deftest is testing]]
+            [beowulf.core :refer [-main repl stop-word]]))
 
 ;; (deftest a-test
 ;;   (testing "FIXME, I fail."
@@ -36,7 +36,7 @@
   (testing "No flags"
     (let [expected-greeting "Hider wilcuman. Béowulf is mín nama."
           expected-quit-message (str "Sprecan '" stop-word "' tó laéfan")
-          expected-result #".*\(A \. B\)"
+          expected-result #".*\(3 \. 4\)"
           expected-prompt "Sprecan:: "
           expected-signoff "Færwell!"
           ;; anticipated output (note blank lines):
@@ -45,11 +45,11 @@
           
           ; Sprecan 'STOP' tó laéfan
           
-          ; Sprecan:: >  (A . B)
+          ; Sprecan:: >  (3 . 4)
           ; Sprecan:: 
           ; Færwell!
           [_ greeting _ _ quit-message _ result prompt signoff]
-          (with-open [r (reader (string->stream (str "cons[A; B]\n" stop-word)))]
+          (with-open [r (reader (string->stream (str "cons[3; 4]\n" stop-word)))]
             (binding [*in* r]
               (split (with-out-str (-main)) #"\n")))]
       (is (= greeting expected-greeting))
@@ -63,11 +63,11 @@
     (let [expected-greeting "Hider wilcuman. Béowulf is mín nama."
           expected-quit-message (str "Sprecan '" stop-word "' tó laéfan")
           expected-error #"Unknown option:.*"
-          expected-result #".*\(A \. B\)"
+          expected-result #".*\(5 \. 6\)"
           expected-prompt "Sprecan:: "
           expected-signoff "Færwell!"
           [_ greeting _ error quit-message _ result prompt signoff]
-          (with-open [r (reader (string->stream (str "cons[A; B]\n" stop-word)))]
+          (with-open [r (reader (string->stream (str "cons[5; 6]\n" stop-word)))]
             (binding [*in* r]
               (split (with-out-str (-main "--unknown")) #"\n")))]
       (is (= greeting expected-greeting))

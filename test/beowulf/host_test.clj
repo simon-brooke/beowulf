@@ -1,9 +1,8 @@
 (ns beowulf.host-test
-  (:require [clojure.math.numeric-tower :refer [abs]]
-            [clojure.test :refer :all]
-            [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell NIL T F]]
+  (:require [clojure.test :refer [deftest is testing]]
             [beowulf.bootstrap :refer [CDR]]
-            [beowulf.host :refer :all]
+            [beowulf.cons-cell :refer [F make-beowulf-list NIL T]] 
+            [beowulf.host :refer [DIFFERENCE NUMBERP PLUS2 RPLACA RPLACD TIMES2]]
             [beowulf.read :refer [gsp]]))
 
 (deftest destructive-change-test
@@ -34,6 +33,21 @@
       (is (= actual expected)))
     )
   )
+
+(deftest numberp-tests
+  (testing "NUMBERP"
+    (let [expected T
+          actual   (NUMBERP 7)]
+      (is (= actual expected) "7 is a number"))
+    (let [expected T
+          actual   (NUMBERP 3.14)]
+      (is (= actual expected) "3.14 is a number"))
+    (let [expected F
+          actual   (NUMBERP NIL)]
+      (is (= actual expected) "NIL is not a number"))
+    (let [expected F
+          actual   (NUMBERP (gsp "HELLO"))]
+      (is (= actual expected) "HELLO is not a number"))))
 
 (deftest arithmetic-test
   ;; These are just sanity-test tests; they're by no means exhaustive.
