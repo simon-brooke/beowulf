@@ -1,11 +1,35 @@
 ;; Test comment
-(DEFINE
- (APPEND
-  (LAMBDA
-   (X Y)
-   (COND ((NULL X) Y) (T (CONS (CAR X) (APPEND (CDR X Y)))))))
- (CONC
-  (LAMBDA
-   (X Y)
-   (COND ((NULL (CDR X)) (RPLACD X Y)) (T (CONC (CDR X) Y)))
-   X)))
+((NIL . NIL)
+(T . T)
+;; many functions return 'F on fail, but to make this mean fail I'm binding 
+;; it to NIL
+(F . NIL)
+;; Binding all system functions to NIL so that you can see on the OBLIST that
+;; they exist
+(ADD1 . NIL)
+(APPEND . NIL)
+(APPLY . NIL)
+(ATOM . NIL)
+(CAR . NIL)
+(CDR . NIL)
+(CONS . NIL)
+(DEFINE . NIL)
+(DIFFERENCE . NIL)
+(EQ . NIL)
+(EQUAL . NIL)
+(EVAL)
+(FIXP . NIL)
+(INTEROP . NIL)
+(NUMBERP . NIL)
+(OBLIST . NIL)
+(PLUS . NIL)
+(PRETTY . NIL)
+(QUOTIENT . NIL)
+(REMAINDER)
+(RPLACA . NIL)
+(RPLACD . NIL)
+(SET . NIL)
+(SYSIN . NIL)
+(SYSOUT . NIL)
+(TIMES . NIL)
+)

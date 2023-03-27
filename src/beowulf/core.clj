@@ -1,6 +1,7 @@
 (ns beowulf.core
   "Essentially, the `-main` function and the bootstrap read-eval-print loop."
   (:require [beowulf.bootstrap :refer [EVAL]]
+            [beowulf.io :refer [SYSIN]]
             [beowulf.read :refer [READ read-from-console]]
             [beowulf.oblist :refer [*options* oblist]]
             [clojure.java.io :as io]
@@ -22,7 +23,8 @@
    ["-h" "--help"]
    ["-p PROMPT" "--prompt PROMPT" "Set the REPL prompt to PROMPT"
     :default "Sprecan::"]
-   ["-r INITFILE" "--read INITFILE" "Read Lisp functions from the file INITFILE"
+   ["-r INITFILE" "--read INITFILE" "Read Lisp system from file INITFILE"
+    :default "resources/lisp1.5.lsp"
     :validate [#(and
                  (.exists (io/file %))
                  (.canRead (io/file %)))
@@ -74,7 +76,12 @@
       (when (:errors args)
         (apply str (interpose "; " (:errors args))))
       "\nSprecan '" stop-word "' tó laéfan\n"))
+    
     (binding [*options* (:options args)]
+      (when (:read *options*)
+        (try (SYSIN (:read *options*))
+             (catch Throwable any
+               (println any))))
       (try
         (repl (str (:prompt (:options args)) " "))
         (catch

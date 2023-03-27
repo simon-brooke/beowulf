@@ -347,7 +347,9 @@
   return the current value of the object list. Note that in PSL this function
   returns a list of the symbols bound, not the whole association list."
   []
-  (make-beowulf-list (map CAR @oblist)))
+  (if (instance? ConsCell @oblist)
+    (make-beowulf-list (map CAR @oblist))
+    NIL))
 
 (defn DEFINE
   "Bootstrap-only version of `DEFINE` which, post boostrap, can be overwritten 
@@ -400,10 +402,12 @@
         DEFINE (DEFINE (CAR args))
         DIFFERENCE (DIFFERENCE (CAR args) (CADR args))
         EQ (apply EQ args)
+        EQUAL (apply EQUAL args)
         ;; think about EVAL. Getting the environment right is subtle
         FIXP (apply FIXP args)
         INTEROP (apply INTEROP args)
         NUMBERP (apply NUMBERP args)
+        OBLIST (OBLIST)
         PLUS (apply PLUS args)
         PRETTY (apply pretty-print args)
         QUOTIENT (apply QUOTIENT args)
@@ -469,13 +473,16 @@
 
 (defn- EVCON
   "Inner guts of primitive COND. All `clauses` are assumed to be
-  `beowulf.cons-cell/ConsCell` objects.
-  See page 13 of the Lisp 1.5 Programmers Manual."
+  `beowulf.cons-cell/ConsCell` objects. Note that tests in Lisp 1.5
+   often return `F`, not `NIL`, on failure.
+
+   See page 13 of the Lisp 1.5 Programmers Manual."
   [clauses env]
-  (if
-   (not= (EVAL (CAAR clauses) env) NIL)
-    (EVAL (CADAR clauses) env)
-    (EVCON (CDR clauses) env)))
+  (let [test (EVAL (CAAR clauses) env)]
+    (if
+     (and (not= test NIL) (not= test 'F))
+      (EVAL (CADAR clauses) env)
+      (EVCON (CDR clauses) env))))
 
 (defn- EVLIS
   "Map `EVAL` across this list of `args` in the context of this
@@ -490,12 +497,12 @@
      (EVLIS (CDR args) env))))
 
 (defn- eval-symbolic [^Symbol s env]
-  (let [binding (CDR (ASSOC s env))]
+  (let [binding (ASSOC s env)]
     (if (= binding NIL)
       (throw (ex-info (format "No binding for symbol `%s`" s)
                       {:phase :eval
                        :symbol s}))
-      binding)))
+      (CDR binding))))
 
 (defn- eval-internal
   "Common guts for both EVAL and traced-eval. Evaluate this `expr`

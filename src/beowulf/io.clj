@@ -18,6 +18,7 @@
   (:require [beowulf.cons-cell :refer [pretty-print]]
             [beowulf.oblist :refer [*options* oblist]]
             [beowulf.read :refer [READ]]
+            [clojure.java.io :refer [file resource]]
             [clojure.string :refer [ends-with?]]
             [java-time.api :refer [local-date local-date-time]]))
 
@@ -57,20 +58,27 @@
            (pretty-print @oblist)))))
 
 (defn SYSIN
-  "Read the contents of the file at this `filepath` into the object list. 
+  "Read the contents of the file at this `filename` into the object list. 
    
    If the file is not a valid Beowulf sysout file, this will probably 
    corrupt the system, you have been warned. File paths will be considered 
    relative to the filepath set when starting Lisp.
+
+   It is intended that sysout files can be read both from resources within
+   the jar file, and from the file system. If a named file exists in both the
+   file system and the resources, the file system will be preferred.
    
-   **NOTE THAT** if the provided `filepath` does not end with `.lsp` (which,
-   if you're writing it from the Lisp REPL it won't), the extension `.lsp`
+   **NOTE THAT** if the provided `filename` does not end with `.lsp` (which,
+   if you're writing it from the Lisp REPL, it won't), the extension `.lsp`
    will be appended."
-  [filepath]
-  (let [fp (full-path (str filepath))
-        content (try (READ (slurp fp))
+  [filename]
+  (let [fp (file (full-path (str filename)))
+        file (when (and (.exists fp) (.canRead fp)) fp)
+        res (try (resource filename)
+                 (catch Throwable _ nil)) 
+        content (try (READ (slurp (or file res)))
                      (catch Throwable any
-                       (throw (ex-info "Could not read from sysout"
+                       (throw (ex-info "Could not read from file"
                                        {:context "SYSIN"
                                         :filepath fp}
                                        any))))]
