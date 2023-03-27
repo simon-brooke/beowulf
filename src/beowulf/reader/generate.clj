@@ -130,7 +130,7 @@
 
 (defn gen-iexpr
   [tree]
-  (let [bundle (reduce #(assoc %1 (first %2) (nth %2 1)) 
+  (let [bundle (reduce #(assoc %1 (first %2) %2) 
                        {} 
                        (rest tree))]
     (list (generate (:iop bundle))
@@ -194,9 +194,22 @@
          :exponent (generate (second p))
          :fncall (gen-fn-call p)
          :iexpr (gen-iexpr p)
+         :iop (case (second p)
+                "/" 'DIFFERENCE
+                "=" 'EQUAL
+                ">" 'GREATERP
+                "<" 'LESSP
+                "+" 'PLUS
+                "*" 'TIMES
+                ;; else
+                (throw (ex-info "Unrecognised infix operator symbol"
+                                {:phase :generate
+                                 :fragment p})))
          :list (gen-dot-terminated-list (rest p))
          (:lhs :rhs) (generate (second p))
          :mexpr (generate (second p))
+         :mconst (make-beowulf-list 
+                  (list 'QUOTE (symbol (upper-case (second p)))))
          :mvar (symbol (upper-case (second p)))
          :octal (let [n (read-string (strip-leading-zeros (second p) "0"))
                       scale (generate (nth p 2))]

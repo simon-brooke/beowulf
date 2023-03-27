@@ -24,11 +24,11 @@
       ;; but it's a convenience.
 
     "exprs := expr | exprs;"
-    "mexpr := λexpr | fncall | defn | cond | mvar | iexpr | mexpr comment;
+    "mexpr := λexpr | fncall | defn | cond | mvar | mconst | iexpr | mexpr comment;
       λexpr := λ lsqb bindings semi-colon body rsqb;
       λ := 'λ';
       bindings := lsqb args rsqb;
-      body := (expr semi-colon opt-space)* expr;
+      body := (mexpr semi-colon opt-space)* mexpr;
       fncall := fn-name lsqb args rsqb;
       lsqb := '[';
       rsqb := ']';
@@ -36,18 +36,21 @@
        rbrace := '}';
       defn := mexpr opt-space '=' opt-space mexpr;
       cond := lsqb (opt-space cond-clause semi-colon opt-space)* cond-clause rsqb;
-      cond-clause := expr opt-space arrow opt-space expr opt-space;
+      cond-clause := mexpr opt-space arrow opt-space mexpr opt-space;
       arrow := '->';
-      args := (opt-space expr semi-colon opt-space)* expr;
+      args := (opt-space mexpr semi-colon opt-space)* mexpr;
       fn-name := mvar;
       mvar := #'[a-z]+';
+      mconst := #'[A-Z]+';
       semi-colon := ';';"
 
     ;; Infix operators appear in mexprs, e.g. on page 7. Ooops!
     ;; I do not know what infix operators are considered legal.
+    ;; In particular I do not know what symbol was used for
+    ;; multiply
     "iexpr := iexp iop iexp;
      iexp := mexpr | number | opt-space iexp opt-space;
-    iop := '>' | '<' | '+' | '-' | '/' | '=' ;"
+    iop := '>' | '<' | '+' | '-' | '*' '/' | '=' ;"
 
       ;; comments. I'm pretty confident Lisp 1.5 did NOT have these.
     "opt-comment := opt-space | comment;"

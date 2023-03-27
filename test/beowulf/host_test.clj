@@ -1,7 +1,7 @@
 (ns beowulf.host-test
   (:require [clojure.test :refer [deftest is testing]]
             [beowulf.cons-cell :refer [CDR F make-beowulf-list T]] 
-            [beowulf.host :refer [DIFFERENCE NUMBERP PLUS2 RPLACA RPLACD TIMES2]]
+            [beowulf.host :refer [DIFFERENCE NUMBERP PLUS RPLACA RPLACD TIMES]]
             [beowulf.oblist :refer [NIL]]
             [beowulf.read :refer [gsp]]))
 
@@ -51,18 +51,18 @@
 
 (deftest arithmetic-test
   ;; These are just sanity-test tests; they're by no means exhaustive.
-  (testing "PLUS2"
+  (testing "PLUS"
     (let [expected 3
-          actual (PLUS2 1 2)]
+          actual (PLUS 1 2)]
       (is (= actual expected))
       (is (integer? actual)))
     (let [expected 3.5
-          actual (PLUS2 1.25 9/4)]
+          actual (PLUS 1.25 9/4)]
       (is (= actual expected))
       (is (float? actual))))
-  (testing "TIMES2"
+  (testing "TIMES"
     (let [expected 6
-          actual (TIMES2 2 3)]
+          actual (TIMES 2 3)]
       (is (= actual expected))))
   (testing DIFFERENCE
     (let [expected -1

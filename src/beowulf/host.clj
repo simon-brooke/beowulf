@@ -63,17 +63,14 @@
              {:cause :bad-value
               :detail :rplaca}))));; PLUS
 
-(defn PLUS2
-  "Lisp 1.5 `PLUS` is varargs, and implementing varargs functions in Clojure is
-   not an added complexity I want. So this is a two arg `PLUS`, on which a
-  varargs `PLUS` can be built in the Lisp 1.5 layer using `REDUCE`."
-  [x y]
-  (let [s (+ x y)]
+(defn PLUS
+  [& args]
+  (let [s (apply + args)]
     (if (integer? s) s (float s))))
 
-(defn TIMES2
-  [x y]
-  (let [p (* x y)]
+(defn TIMES
+  [& args]
+  (let [p (apply * args)]
     (if (integer? p) p (float p))))
 
 (defn DIFFERENCE

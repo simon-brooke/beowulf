@@ -35,7 +35,10 @@
 
 (defn simplify
   "Simplify this parse tree `p`. If `p` is an instaparse failure object, throw
-  an `ex-info`, with `p` as the value of its `:failure` key."
+   an `ex-info`, with `p` as the value of its `:failure` key.
+   
+   **NOTE THAT** it is assumed that `remove-optional-space` has been run on the
+   parse tree **BEFORE** it is passed to `simplify`."
   ([p]
    (if
     (instance? Failure p)
@@ -55,7 +58,7 @@
                  (case (first p)
                    (:λexpr
                     :args :bindings :body :cond :cond-clause :defn :dot-terminal
-                    :fncall :lhs :octal :quoted-expr :rhs :scientific) (map #(simplify % context) p)
+                    :fncall :lhs :quoted-expr :rhs ) (map #(simplify % context) p)
                    (:arg :expr :coefficient :fn-name :number) (simplify (second p) context)
                    (:arrow :dot :e :lpar :lsqb  :opt-comment :opt-space :q :quote :rpar :rsqb
                            :semi-colon :sep :space) nil
@@ -68,7 +71,7 @@
                               (throw
                                (ex-info "Cannot parse comments in strict mode"
                                         {:cause :strict})))
-                   :decimal p
+                   (:decimal :integer :mconst :octal :scientific) p
                    :dotted-pair (if
                                  (= context :mexpr)
                                   [:fncall

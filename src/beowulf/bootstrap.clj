@@ -13,11 +13,12 @@
             [clojure.tools.trace :refer [deftrace]]
             [beowulf.cons-cell :refer [CAR CDR CONS LIST make-beowulf-list make-cons-cell
                                        pretty-print T F]]
-            [beowulf.host :refer [ADD1 DIFFERENCE FIXP NUMBERP PLUS2 QUOTIENT
-                                  REMAINDER RPLACA RPLACD SUB1 TIMES2]]
+            [beowulf.host :refer [ADD1 DIFFERENCE FIXP NUMBERP PLUS QUOTIENT
+                                  REMAINDER RPLACA RPLACD SUB1 TIMES]]
             [beowulf.io :refer [SYSIN SYSOUT]]
             [beowulf.oblist :refer [*options* oblist NIL]])
-  (:import [beowulf.cons_cell ConsCell]))
+  (:import [beowulf.cons_cell ConsCell]
+           [clojure.lang Symbol]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -29,7 +30,7 @@
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(declare EVAL)
+(declare APPLY EVAL)
 
 
 (defmacro NULL
@@ -379,42 +380,62 @@
     symbol val)
     NIL))
 
-(defn APPLY
-  "For bootstrapping, at least, a version of APPLY written in Clojure.
-  All args are assumed to be symbols or `beowulf.cons-cell/ConsCell` objects.
-  See page 13 of the Lisp 1.5 Programmers Manual."
+(defn- apply-symbolic
+  "Apply this `funtion-symbol` to these `args` in this `environment` and 
+   return the result."
+  [^Symbol function-symbol ^ConsCell args ^ConsCell environment]
+  (let [fn (try (EVAL function-symbol environment)
+                (catch Throwable any (when (:trace *options*)
+                                       (println any))))]
+    (if (and fn (not= fn NIL))
+      (APPLY fn args environment)
+      (case function-symbol ;; there must be a better way of doing this!
+        ADD1 (apply ADD1 args)
+        APPEND (apply APPEND args)
+        APPLY (apply APPLY args)
+        ATOM (ATOM? (CAR args))
+        CAR (CAAR args)
+        CDR (CDAR args)
+        CONS (make-cons-cell (CAR args) (CADR args))
+        DEFINE (DEFINE (CAR args))
+        DIFFERENCE (DIFFERENCE (CAR args) (CADR args))
+        EQ (apply EQ args)
+        ;; think about EVAL. Getting the environment right is subtle
+        FIXP (apply FIXP args)
+        INTEROP (apply INTEROP args)
+        NUMBERP (apply NUMBERP args)
+        PLUS (apply PLUS args)
+        PRETTY (apply pretty-print args)
+        QUOTIENT (apply QUOTIENT args)
+        REMAINDER (apply REMAINDER args)
+        RPLACA (apply RPLACA args)
+        RPLACD (apply RPLACD args)
+        SET (apply SET args)
+        SYSIN (apply SYSIN args)
+        SYSOUT (apply SYSOUT args)
+        TIMES (apply TIMES args)
+        ;; else
+        (ex-info "No function found"
+                 {:context "APPLY"
+                  :function function-symbol
+                  :args args})))))
+
+(defn apply-internal
+  "Internal guts of both `APPLY` and `traced-apply`. Apply this `function` to 
+   these `arguments` in this `environment` and return the result.
+   
+   For bootstrapping, at least, a version of APPLY written in Clojure.
+   All args are assumed to be symbols or `beowulf.cons-cell/ConsCell` objects.
+   See page 13 of the Lisp 1.5 Programmers Manual."
   [function args environment]
   (cond
-    (= NIL function) (throw (ex-info "NIL is not a function" {:context "APPLY"
-                                                              :function "NIL"
-                                                              :args args}))
-    (=
-     (ATOM? function)
-     T) (cond
-          ;; (fn? (eval function)) (apply (eval function) args)
-          (not=
-           (ASSOC function environment)
-           NIL) (APPLY (CDR (ASSOC function environment)) args environment)
-          (= function 'ATOM) (if (ATOM? (CAR args)) T NIL)
-          (= function 'CAR) (CAAR args)
-          (= function 'CDR) (CDAR args)
-          (= function 'CONS) (make-cons-cell (CAR args) (CADR args))
-          (= function 'DEFINE) (DEFINE args)
-          (= function 'EQ) (apply EQ args)
-          (= function 'INTEROP) (INTEROP (CAR args) (CDR args))
-          (= function 'SET) (SET (CAR args) (CADR args))
-          (= function 'SYSIN) (SYSIN (CAR args))
-          (= function 'SYSOUT) (SYSOUT (CAR args))
-          (EVAL function environment) (APPLY
-                                       (EVAL function environment)
-                                       args
-                                       environment)
-          :else
-          (throw (ex-info "No function found" {:context "APPLY"
-                                               :function function
-                                               :args args})))
-    (fn? function) ;; i.e., it's a Clojure function
-    (apply function (to-clojure args))
+    (= NIL function) (if (:strict *options*)
+                       NIL
+                       (throw (ex-info "NIL is not a function"
+                                       {:context "APPLY"
+                                        :function "NIL"
+                                        :args args})))
+    (= (ATOM? function) T) (apply-symbolic function args environment)
     (= (first function) 'LAMBDA) (EVAL
                                   (CADDR function)
                                   (PAIRLIS (CADR function) args environment))
@@ -427,8 +448,27 @@
                                    (CADDR function))
                                   environment))))
 
+(deftrace traced-apply
+  "Traced wrapper for `internal-apply`, q.v. Apply this `function` to 
+   these `arguments` in this `environment` and return the result."
+  [function args environment]
+  (apply-internal function args environment))
+
+(defn APPLY
+  "Despatcher for APPLY, selects beteen `traced-apply` and `apply-internal`
+   based on the value of `:trace` in `*options*`. Apply this `function` to 
+   these `arguments` and return the result. If `environment` is not passed,
+   if defaults to the current value of the global object list."
+  ([function args]
+   (APPLY function args @oblist))
+  ([function args environment]
+   (if
+    (:trace *options*)
+     (traced-apply function args environment)
+     (apply-internal function args environment))))
+
 (defn- EVCON
-  "Inner guts of primitive COND. All args are assumed to be
+  "Inner guts of primitive COND. All `clauses` are assumed to be
   `beowulf.cons-cell/ConsCell` objects.
   See page 13 of the Lisp 1.5 Programmers Manual."
   [clauses env]
@@ -449,20 +489,33 @@
      (EVAL (CAR args) env)
      (EVLIS (CDR args) env))))
 
-(defn eval-internal
-  "Common guts for both EVAL and traced-eval"
+(defn- eval-symbolic [^Symbol s env]
+  (let [binding (CDR (ASSOC s env))]
+    (if (= binding NIL)
+      (throw (ex-info (format "No binding for symbol `%s`" s)
+                      {:phase :eval
+                       :symbol s}))
+      binding)))
+
+(defn- eval-internal
+  "Common guts for both EVAL and traced-eval. Evaluate this `expr`
+   and return the result. 
+   
+   For bootstrapping, at least, this is a version of EVAL written in Clojure.
+   All args are assumed to be symbols or `beowulf.cons-cell/ConsCell` objects.
+   See page 13 of the Lisp 1.5 Programmers Manual."
   [expr env]
   (cond
     (= (NUMBERP expr) T) expr
+    (symbol? expr) (eval-symbolic expr env)
     (string? expr) (if (:strict *options*)
                      (throw
                       (ex-info
                        (str "EVAL: strings not allowed in strict mode: \"" expr "\"")
-                       {:cause  :eval
+                       {:phase  :eval
                         :detail :strict
                         :expr   expr}))
                      (symbol expr))
-    (= (ATOM? expr) T) (CDR (ASSOC expr env))
     (=
      (ATOM? (CAR expr))
      T) (cond
@@ -494,9 +547,11 @@
 
 
 (defn EVAL
-  "For bootstrapping, at least, a version of EVAL written in Clojure.
-  All args are assumed to be symbols or `beowulf.cons-cell/ConsCell` objects.
-  See page 13 of the Lisp 1.5 Programmers Manual."
+  "Despatcher for EVAL, selects beteen `traced-eval` and `eval-internal`
+   based on the value of `:trace` in `*options*`. Evaluate this `expr`
+   and return the result. If `environment` is not passed,
+   if defaults to the current value of the global object list.
+   All args are assumed to be symbols or `beowulf.cons-cell/ConsCell` objects."
   ([expr]
    (EVAL expr @oblist))
   ([expr env]
