@@ -186,13 +186,14 @@
          (:coefficient :exponent) (generate (second p))
          :cond (gen-cond p)
          :cond-clause (gen-cond-clause p)
-         (:decimal :integer) (read-string (strip-leading-zeros (second p)))
+         :decimal (read-string (apply str (map second (rest p))))
          :defn (generate-assign p)
          :dotted-pair (make-cons-cell
                        (generate (nth p 1))
                        (generate (nth p 2)))
          :fncall (gen-fn-call p)
          :iexpr (gen-iexpr p)
+         :integer (read-string (strip-leading-zeros (second p)))
          :iop (case (second p)
                 "/" 'DIFFERENCE
                 "=" 'EQUAL
@@ -210,6 +211,7 @@
          :mconst (make-beowulf-list 
                   (list 'QUOTE (symbol (upper-case (second p)))))
          :mvar (symbol (upper-case (second p)))
+         :number (generate (second p))
          :octal (let [n (read-string (strip-leading-zeros (second p) "0"))
                       scale (generate (nth p 3))]
                   (* n (expt 8 scale)))

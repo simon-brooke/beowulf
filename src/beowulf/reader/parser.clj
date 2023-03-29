@@ -24,7 +24,7 @@
       ;; but it's a convenience.
 
     "exprs := expr | exprs;"
-    "mexpr := λexpr | fncall | defn | cond | mvar | mconst | iexpr | mexpr comment;
+    "mexpr := λexpr | fncall | defn | cond | mvar | mconst | iexpr | number | mexpr comment;
       λexpr := λ lsqb bindings semi-colon body rsqb;
       λ := 'λ';
       bindings := lsqb args rsqb;
@@ -76,9 +76,9 @@
       ;; Lisp 1.5 supported octal as well as decimal and scientific notation
     "number := integer | decimal | scientific | octal;
       integer := #'-?[1-9][0-9]*';
-      decimal := #'-?[1-9][0-9]*\\.?[0-9]*' | #'0.[0-9]*';
+      decimal := integer dot integer;
       scientific := coefficient e exponent;
-      coefficient := integer | decimal;
+      coefficient := decimal | integer;
       exponent := integer;
       e := 'E';
       octal := #'[+-]?[0-7]+{1,12}' q scale-factor;
