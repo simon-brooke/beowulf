@@ -1,1 +1,0 @@
-(DEFUN COUNT (L) (COND ((EQ '() L) 0) (T (PLUS 1 (COUNT (CDR L))))))

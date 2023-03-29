@@ -7,6 +7,7 @@
 ;; Binding all system functions to NIL so that you can see on the OBLIST that
 ;; they exist.
 (ADD1 . NIL)
+(AND . NIL)
 (APPEND . NIL)
 (APPLY . NIL)
 (ATOM . NIL)

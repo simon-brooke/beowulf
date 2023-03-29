@@ -13,6 +13,17 @@
 ;; those which can be implemented in Lisp should be, since that aids
 ;; portability.
 
+(defn AND 
+  "True if and only if none of my `args` evaluate to either `F` or `NIL`,
+   else `F`.
+   
+   In `beowulf.host` principally because I don't yet feel confident to define
+   varargs functions in Lisp."
+  [& args]
+  (if (empty? (filter #(or (= 'F %) (empty? %)) args))
+    'T
+    'F))
+
 (defn RPLACA
   "Replace the CAR pointer of this `cell` with this `value`. Dangerous, should
   really not exist, but does in Lisp 1.5 (and was important for some

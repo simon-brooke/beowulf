@@ -13,7 +13,7 @@
             [clojure.tools.trace :refer [deftrace]]
             [beowulf.cons-cell :refer [CAR CDR CONS LIST make-beowulf-list make-cons-cell
                                        pretty-print T F]]
-            [beowulf.host :refer [ADD1 DIFFERENCE FIXP NUMBERP PLUS QUOTIENT
+            [beowulf.host :refer [AND ADD1 DIFFERENCE FIXP NUMBERP PLUS QUOTIENT
                                   REMAINDER RPLACA RPLACD SUB1 TIMES]]
             [beowulf.io :refer [SYSIN SYSOUT]]
             [beowulf.oblist :refer [*options* oblist NIL]]
@@ -404,6 +404,7 @@
       (APPLY fn args environment)
       (case function-symbol ;; there must be a better way of doing this!
         ADD1 (apply ADD1 args)
+        AND (apply AND args)
         APPEND (apply APPEND args)
         APPLY (apply APPLY args)
         ATOM (ATOM? (CAR args))
@@ -417,6 +418,7 @@
         ;; think about EVAL. Getting the environment right is subtle
         FIXP (apply FIXP args)
         INTEROP (when (lax? INTEROP) (apply INTEROP args))
+        LIST (apply LIST args)
         NUMBERP (apply NUMBERP args)
         OBLIST (OBLIST)
         PLUS (apply PLUS args)
