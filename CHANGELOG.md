@@ -1,24 +1,17 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
-## [Unreleased]
+## [0.2.1] - 2023-03-??
+
 ### Changed
-- Add a new arity to `make-widget-async` to provide a different widget shape.
+- this is fundamentally a working Lisp. The reader reads S-Expressions fully and M-Expressions at least partially. It is not (yet) a feature complete Lisp 1.5.
 
-## [0.1.1] - 2019-08-12
-### Changed
-- Documentation on how to make the widgets.
-
-### Removed
-- `make-widget-sync` - we're all async, all the time.
-
-### Fixed
-- Fixed widget maker to keep working when daylight savings switches over.
-
-## 0.1.0 - 2019-08-12
 ### Added
-- Files from the new template.
-- Widget maker public API - `make-widget-sync`.
+- working EVAL, APPLY, READ and 24 other basic functions, of which at least four are not actually parts of the Lisp 1.5 specification. However, sufficient are present to allow the
+vast majority of Lisp 1.5 functions to be defined.
+
+### Known to be missing
+- property lists.
 
 [Unreleased]: https://github.com/your-name/beowulf/compare/0.1.1...HEAD
 [0.1.1]: https://github.com/your-name/beowulf/compare/0.1.0...0.1.1

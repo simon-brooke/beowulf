@@ -32,6 +32,15 @@
 
 (declare APPLY EVAL)
 
+(defn lax?
+  "Are we in lax mode? If so. return true; is not, throw an exception with 
+   this `symbol`."
+  [symbol]
+  (when (:strict *options*)
+    (throw (ex-info (format "%s is not available in Lisp 1.5" symbol)
+                    {:cause :strict
+                     :extension symbol})))
+  true)
 
 (defmacro NULL
   "Returns `T` if and only if the argument `x` is bound to `NIL`; else `F`."
@@ -347,9 +356,10 @@
   return the current value of the object list. Note that in PSL this function
   returns a list of the symbols bound, not the whole association list."
   []
-  (if (instance? ConsCell @oblist)
-    (make-beowulf-list (map CAR @oblist))
-    NIL))
+  (when (lax? 'OBLIST)
+    (if (instance? ConsCell @oblist)
+      (make-beowulf-list (map CAR @oblist))
+      NIL)))
 
 (defn DEFINE
   "Bootstrap-only version of `DEFINE` which, post boostrap, can be overwritten 
@@ -405,18 +415,19 @@
         EQUAL (apply EQUAL args)
         ;; think about EVAL. Getting the environment right is subtle
         FIXP (apply FIXP args)
-        INTEROP (apply INTEROP args)
+        INTEROP (when (lax? INTEROP) (apply INTEROP args))
         NUMBERP (apply NUMBERP args)
         OBLIST (OBLIST)
         PLUS (apply PLUS args)
-        PRETTY (apply pretty-print args)
+        PRETTY (when (lax? 'PRETTY)
+                 (apply pretty-print args))
         QUOTIENT (apply QUOTIENT args)
         REMAINDER (apply REMAINDER args)
         RPLACA (apply RPLACA args)
         RPLACD (apply RPLACD args)
         SET (apply SET args)
-        SYSIN (apply SYSIN args)
-        SYSOUT (apply SYSOUT args)
+        SYSIN (when (lax? 'SYSIN) (apply SYSIN args))
+        SYSOUT (when (lax? 'SYSOUT) (apply SYSOUT args))
         TIMES (apply TIMES args)
         ;; else
         (ex-info "No function found"
