@@ -5,7 +5,7 @@
 ;; it to NIL
 (F . NIL)
 ;; Binding all system functions to NIL so that you can see on the OBLIST that
-;; they exist
+;; they exist.
 (ADD1 . NIL)
 (APPEND . NIL)
 (APPLY . NIL)
@@ -25,6 +25,7 @@
 (PLUS . NIL)
 (PRETTY . NIL)
 (QUOTIENT . NIL)
+(READ . NIL)
 (REMAINDER)
 (RPLACA . NIL)
 (RPLACD . NIL)

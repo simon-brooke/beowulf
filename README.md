@@ -130,7 +130,34 @@ You will require to have [Leiningen](https://leiningen.org/) installed.
 
 This will start a Lisp 1.5 read/eval/print loop (REPL).
 
-To end a session, type `quit` at the command prompt.
+Command line arguments are as follows:
+
+```
+  -f FILEPATH, --file-path FILEPATH                         Set the path to the directory for reading and writing Lisp files.
+  -h, --help
+  -p PROMPT, --prompt PROMPT         Sprecan::              Set the REPL prompt to PROMPT
+  -r INITFILE, --read INITFILE       resources/lisp1.5.lsp  Read Lisp system from file INITFILE
+  -s, --strict                                              Strictly interpret the Lisp 1.5 language, without extensions.
+  -t, --trace                                               Trace Lisp evaluation.
+```
+
+To end a session, type `STOP` at the command prompt.
+
+### Input/output
+
+Lisp 1.5 greatly predates modern computers. It had a facility to print to a line printer, or to punch cards on a punch-card machine, and it had a facility to read system images in from tape; but there's no file I/O as we would currently understand it, and, because there are no character strings and the valid characters within an atom are limited, it isn't easy to compose a sensible filename.
+
+I've provided two functions to work around this problem.
+
+#### SYSOUT
+
+`SYSOUT` dumps the global object list to disk as a single S Expression (specifically: an association list). This allows you to persist your session, with all your current work, to disk. The function takes one argument, expected to be a symbol, and, if that argument is provided, writes a file whose name is that symbol with `.lsp` appended. If no argument is provided, it will construct a filename comprising the token `Sysout`, followed by the current date, followed by `.lsp`. In either case the file will be written to the directory given in the FILEPATH argument at startup time, or by default the current directory.
+
+Obviously, `SYSOUT` may be called interactively (and this is the expected practice).
+
+#### SYSIN
+
+`SYSIN` reads a file from disk and overwrites the global object list with its contents. The expected practice is that this will be a file created by `SYSOUT`. A command line flag `--read` is provided so that you can specify   
 
 ## Learning Lisp 1.5
 

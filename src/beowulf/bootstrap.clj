@@ -16,7 +16,8 @@
             [beowulf.host :refer [ADD1 DIFFERENCE FIXP NUMBERP PLUS QUOTIENT
                                   REMAINDER RPLACA RPLACD SUB1 TIMES]]
             [beowulf.io :refer [SYSIN SYSOUT]]
-            [beowulf.oblist :refer [*options* oblist NIL]])
+            [beowulf.oblist :refer [*options* oblist NIL]]
+            [beowulf.read :refer [READ]])
   (:import [beowulf.cons_cell ConsCell]
            [clojure.lang Symbol]))
 
@@ -411,6 +412,7 @@
         PLUS (apply PLUS args)
         PRETTY (apply pretty-print args)
         QUOTIENT (apply QUOTIENT args)
+        READ (READ)
         REMAINDER (apply REMAINDER args)
         RPLACA (apply RPLACA args)
         RPLACD (apply RPLACD args)

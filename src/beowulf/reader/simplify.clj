@@ -57,7 +57,7 @@
                  #(when (coll? %) (empty? %))
                  (case (first p)
                    (:λexpr
-                    :args :bindings :body :cond :cond-clause :defn :dot-terminal
+                    :args :bindings :body :cond :cond-clause :defn :dot-terminal 
                     :fncall :lhs :quoted-expr :rhs ) (map #(simplify % context) p)
                    (:arg :expr :coefficient :fn-name :number) (simplify (second p) context)
                    (:arrow :dot :e :lpar :lsqb  :opt-comment :opt-space :q :quote :rpar :rsqb

@@ -78,7 +78,7 @@
       integer := #'-?[1-9][0-9]*';
       decimal := #'-?[1-9][0-9]*\\.?[0-9]*' | #'0.[0-9]*';
       scientific := coefficient e exponent;
-      coefficient := decimal;
+      coefficient := integer | decimal;
       exponent := integer;
       e := 'E';
       octal := #'[+-]?[0-7]+{1,12}' q scale-factor;

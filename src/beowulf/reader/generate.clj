@@ -174,7 +174,6 @@
      (if
       (coll? p)
        (case (first p)
-         ">" 'GREATERP
          :λ "LAMBDA"
          :λexpr (make-cons-cell
                  (generate (nth p 1))
@@ -184,6 +183,7 @@
          :atom (symbol (second p))
          :bindings (generate (second p))
          :body (make-beowulf-list (map generate (rest p)))
+         (:coefficient :exponent) (generate (second p))
          :cond (gen-cond p)
          :cond-clause (gen-cond-clause p)
          (:decimal :integer) (read-string (strip-leading-zeros (second p)))
@@ -191,7 +191,6 @@
          :dotted-pair (make-cons-cell
                        (generate (nth p 1))
                        (generate (nth p 2)))
-         :exponent (generate (second p))
          :fncall (gen-fn-call p)
          :iexpr (gen-iexpr p)
          :iop (case (second p)
@@ -212,7 +211,7 @@
                   (list 'QUOTE (symbol (upper-case (second p)))))
          :mvar (symbol (upper-case (second p)))
          :octal (let [n (read-string (strip-leading-zeros (second p) "0"))
-                      scale (generate (nth p 2))]
+                      scale (generate (nth p 3))]
                   (* n (expt 8 scale)))
 
       ;; the quote read macro (which probably didn't exist in Lisp 1.5, but...)
@@ -221,7 +220,7 @@
                         (empty? (second p)) 0
                         (read-string (strip-leading-zeros (second p))))
          :scientific (let [n (generate (second p))
-                           exponent (generate (nth p 2))]
+                           exponent (generate (nth p 3))]
                        (* n (expt 10 exponent)))
 
       ;; default
