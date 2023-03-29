@@ -78,6 +78,7 @@
       "\nSprecan '" stop-word "' tó laéfan\n"))
     
     (binding [*options* (:options args)]
+      (pprint *options*)
       (when (:read *options*)
         (try (SYSIN (:read *options*))
              (catch Throwable any
