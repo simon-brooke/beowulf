@@ -1,1 +1,0 @@
-(DEFUN LENGTH (L) (COND ((EQ NIL L) 0) (T (ADD1 (LENGTH (CDR L))))))

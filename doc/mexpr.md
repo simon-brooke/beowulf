@@ -53,7 +53,9 @@ Is the value of `NIL` the atom `NIL`, or is it the empty list `()`? If the forme
 
 > This is a predicate useful for deciding when a list is exhausted. It is true if and only if its argument is `NIL`.
 
-I think there is an ambiguity in referencing constants which are not bound to themselves in the M-Expression notation as given in the manual. This is particularly problematic with regards to `NIL`, but there may be others instances.
+`NIL` is used explicitly in an M-Expression for example in the definition of `intersection` (Ibid, p15).
+
+I think there is an ambiguity in referencing constants which are not bound to themselves in the M-Expression notation as given in the manual. This is particularly problematic with regards to `NIL` and `F`, but there may be others instances.
 
 ### Curly braces
 

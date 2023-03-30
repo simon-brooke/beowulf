@@ -2,7 +2,8 @@
   "provides Lisp 1.5 functions which can't be (or can't efficiently
    be) implemented in Lisp 1.5, which therefore need to be implemented in the
    host language, in this case Clojure."
-  (:require [beowulf.cons-cell :refer [F make-beowulf-list T]]
+  (:require [clojure.string :refer [upper-case]]
+            [beowulf.cons-cell :refer [F make-beowulf-list T]]
             ;; note hyphen - this is Clojure...
             [beowulf.oblist :refer [NIL]])
   (:import [beowulf.cons_cell ConsCell]
@@ -14,13 +15,13 @@
 ;; portability.
 
 (defn AND 
-  "True if and only if none of my `args` evaluate to either `F` or `NIL`,
+  "`T` if and only if none of my `args` evaluate to either `F` or `NIL`,
    else `F`.
    
    In `beowulf.host` principally because I don't yet feel confident to define
    varargs functions in Lisp."
   [& args]
-  (if (empty? (filter #(or (= 'F %) (empty? %)) args))
+  (if (empty? (filter #(or (= 'F %) (= NIL %) (nil? %)) args))
     'T
     'F))
 
@@ -116,3 +117,22 @@
 (defn NUMBERP
   [x]
   (if (number? x) T F))
+
+(defn GENSYM
+  "Generate a unique symbol."
+  []
+  (symbol (upper-case (str (gensym "SYM")))))
+
+(defn ERROR
+  "Throw an error"
+  [& args]
+  (throw (ex-info "LISP ERROR" {:cause (apply vector args)
+                                :phase :eval})))
+
+(defn LESSP
+  [x y]
+  (< x y))
+
+(defn GREATERP
+  [x y]
+  (> x y))

@@ -13,7 +13,8 @@
 
   Both these extensions can be disabled by using the `--strict` command line
   switch."
-  (:require [beowulf.reader.generate :refer [generate]]
+  (:require [beowulf.reader.char-reader :refer [read-chars]]
+            [beowulf.reader.generate :refer [generate]]
             [beowulf.reader.parser :refer [parse]]
             [beowulf.reader.simplify :refer [remove-optional-space simplify]]
             [clojure.string :refer [join split starts-with? trim]])
@@ -78,10 +79,10 @@
   the final Lisp reader. `input` should be either a string representation of a LISP
   expression, or else an input stream. A single form will be read."
   ([]
-   (gsp (read-from-console)))
+   (gsp (read-chars)))
   ([input]
    (cond
-     (empty? input) (gsp (read-from-console))
+     (empty? input) (READ)
      (string? input) (gsp input)
      (instance? InputStream input) (READ (slurp input))
      :else    (throw (ex-info "READ: `input` should be a string or an input stream" {})))))

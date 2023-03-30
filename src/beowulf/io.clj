@@ -83,4 +83,3 @@
                                         :filepath fp}
                                        any))))]
     (swap! oblist #(when (or % (seq content)) content))))
-

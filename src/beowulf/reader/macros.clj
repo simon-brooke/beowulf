@@ -10,6 +10,9 @@
 ;; LABEL does it, which I'm not yet sure of) we're not yet able to implement
 ;; things which don't evaluate arguments.
 
+;; TODO: at this stage, the following should probably also be read macros:
+;; DEFINE
+
 (def ^:dynamic *readmacros*
   {:car {'DEFUN (fn [f]
                   (LIST 'SET (LIST 'QUOTE (second f))

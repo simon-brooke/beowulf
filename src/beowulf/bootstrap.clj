@@ -13,7 +13,8 @@
             [clojure.tools.trace :refer [deftrace]]
             [beowulf.cons-cell :refer [CAR CDR CONS LIST make-beowulf-list make-cons-cell
                                        pretty-print T F]]
-            [beowulf.host :refer [AND ADD1 DIFFERENCE FIXP NUMBERP PLUS QUOTIENT
+            [beowulf.host :refer [AND ADD1 DIFFERENCE ERROR FIXP GENSYM GREATERP LESSP 
+                                  NUMBERP PLUS QUOTIENT
                                   REMAINDER RPLACA RPLACD SUB1 TIMES]]
             [beowulf.io :refer [SYSIN SYSOUT]]
             [beowulf.oblist :refer [*options* oblist NIL]]
@@ -353,9 +354,11 @@
        :detail :strict}))))
 
 (defn OBLIST
-  "Not certain whether or not this is part of LISP 1.5; adapted from PSL. 
-  return the current value of the object list. Note that in PSL this function
-  returns a list of the symbols bound, not the whole association list."
+  "Return a list of the symbols currently bound on the object list.
+   
+   **NOTE THAT** in the Lisp 1.5 manual, footnote at the bottom of page 69, it implies 
+   that an argument can be passed but I'm not sure of the semantics of
+   this."
   []
   (when (lax? 'OBLIST)
     (if (instance? ConsCell @oblist)
@@ -415,23 +418,33 @@
         DIFFERENCE (DIFFERENCE (CAR args) (CADR args))
         EQ (apply EQ args)
         EQUAL (apply EQUAL args)
+        ERROR (apply ERROR args)
         ;; think about EVAL. Getting the environment right is subtle
         FIXP (apply FIXP args)
+        GENSYM (GENSYM)
+        GREATERP (apply GREATERP args)
         INTEROP (when (lax? INTEROP) (apply INTEROP args))
+        LESSP (apply LESSP args)
         LIST (apply LIST args)
         NUMBERP (apply NUMBERP args)
         OBLIST (OBLIST)
         PLUS (apply PLUS args)
         PRETTY (when (lax? 'PRETTY)
                  (apply pretty-print args))
+        PRINT (apply print args)
         QUOTIENT (apply QUOTIENT args)
         READ (READ)
         REMAINDER (apply REMAINDER args)
         RPLACA (apply RPLACA args)
         RPLACD (apply RPLACD args)
         SET (apply SET args)
-        SYSIN (when (lax? 'SYSIN) (apply SYSIN args))
-        SYSOUT (when (lax? 'SYSOUT) (apply SYSOUT args))
+        SYSIN (when (lax? 'SYSIN) 
+                (apply SYSIN args))
+        SYSOUT (when (lax? 'SYSOUT)
+                 (if (empty? args)
+                   (SYSOUT)
+                   (apply SYSOUT args)))
+        TERPRI (println)
         TIMES (apply TIMES args)
         ;; else
         (ex-info "No function found"

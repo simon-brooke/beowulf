@@ -27,9 +27,9 @@
     "mexpr := λexpr | fncall | defn | cond | mvar | mconst | iexpr | number | mexpr comment;
       λexpr := λ lsqb bindings semi-colon body rsqb;
       λ := 'λ';
-      bindings := lsqb args rsqb;
+      bindings := lsqb args rsqb | lsqb rsqb;
       body := (mexpr semi-colon opt-space)* mexpr;
-      fncall := fn-name lsqb args rsqb;
+      fncall := fn-name bindings;
       lsqb := '[';
       rsqb := ']';
        lbrace := '{';
@@ -38,7 +38,7 @@
       cond := lsqb (opt-space cond-clause semi-colon opt-space)* cond-clause rsqb;
       cond-clause := mexpr opt-space arrow opt-space mexpr opt-space;
       arrow := '->';
-      args := (opt-space mexpr semi-colon opt-space)* mexpr;
+      args := mexpr | (opt-space mexpr semi-colon opt-space)* opt-space mexpr opt-space;
       fn-name := mvar;
       mvar := #'[a-z]+';
       mconst := #'[A-Z]+';
@@ -75,7 +75,7 @@
 
       ;; Lisp 1.5 supported octal as well as decimal and scientific notation
     "number := integer | decimal | scientific | octal;
-      integer := #'-?[1-9][0-9]*';
+      integer := #'-?[0-9]+';
       decimal := integer dot integer;
       scientific := coefficient e exponent;
       coefficient := decimal | integer;

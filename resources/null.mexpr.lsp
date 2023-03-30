@@ -1,1 +1,0 @@
-null[x] = [x = NIL -> T; T -> F]
