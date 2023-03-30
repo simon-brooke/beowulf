@@ -1,4 +1,4 @@
-(defproject beowulf "0.2.1-SNAPSHOT"
+(defproject beowulf "0.2.1"
   :cloverage {:output "docs/cloverage"
               :ns-exclude-regex [#"beowulf\.gendoc"]}
   :codox {:metadata {:doc "**TODO**: write docs"
