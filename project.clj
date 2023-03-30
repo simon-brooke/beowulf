@@ -1,5 +1,6 @@
 (defproject beowulf "0.2.1-SNAPSHOT"
-  :cloverage {:output "docs/cloverage"}
+  :cloverage {:output "docs/cloverage"
+              :ns-exclude-regex [#"beowulf\.gendoc"]}
   :codox {:metadata {:doc "**TODO**: write docs"
                      :doc/format :markdown}
           :output-path "docs/codox"
@@ -18,7 +19,7 @@
                  [rhizome "0.2.9"] ;; not needed in production builds
                  ]
   :main ^:skip-aot beowulf.core
-  :plugins [[lein-cloverage "1.1.1"]
+  :plugins [[lein-cloverage "1.2.2"]
             [lein-codox "0.10.7"]
             [lein-environ "1.1.0"]]
   :profiles {:uberjar {:aot :all}}
@@ -28,7 +29,6 @@
                   ["vcs" "tag" "v." "--no-sign"]
                   ["clean"]
                   ["codox"]
-                  ["cloverage"]
                   ["uberjar"]
                   ["change" "version" "leiningen.release/bump-version"]
                   ["vcs" "commit"]]
