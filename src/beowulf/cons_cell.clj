@@ -138,7 +138,7 @@
          (cond
            (instance? ConsCell (. this CDR)) (str " " (subs (.toString (. this CDR)) 1))
            (= NIL (. this CDR)) ")"
-           :else (str " . " (. this CDR))))))
+           :else (str " . " (. this CDR) ")")))))
 
 (defn- to-string
   "Printing ConsCells gave me a *lot* of trouble. This is an internal function
@@ -161,12 +161,9 @@
                 s
                 (to-string car)
                 (cond
-                  (or (nil? cdr) (= cdr NIL))
-                  ")"
-                  cons?
-                  " "
-                  :else
-                  (str " . " (to-string cdr) ")")))]
+                  (or (nil? cdr) (= cdr NIL)) ")"
+                  cons?  " "
+                  :else (str " . " (to-string cdr) ")")))]
         (if
          cons?
           (recur cdr (inc n) ss)

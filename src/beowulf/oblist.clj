@@ -6,7 +6,12 @@
   )
 
 (def NIL
-  "The canonical empty list symbol."
+  "The canonical empty list symbol.
+   
+   TODO: this doesn't really work, because (from Clojure) `(empty? NIL)` throws
+   an exception. It might be better to subclass beowulf.cons_cell.ConsCell to create
+   a new singleton class Nil which overrides the `empty` method of 
+   IPersistentCollection?"
   'NIL)
 
 (def oblist

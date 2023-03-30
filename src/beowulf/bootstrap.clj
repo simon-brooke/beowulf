@@ -360,10 +360,9 @@
    that an argument can be passed but I'm not sure of the semantics of
    this."
   []
-  (when (lax? 'OBLIST)
-    (if (instance? ConsCell @oblist)
-      (make-beowulf-list (map CAR @oblist))
-      NIL)))
+  (if (instance? ConsCell @oblist)
+    (make-beowulf-list (map CAR @oblist))
+    NIL))
 
 (defn DEFINE
   "Bootstrap-only version of `DEFINE` which, post boostrap, can be overwritten 
@@ -396,70 +395,83 @@
     symbol val)
     NIL))
 
+(defn- traced-apply
+  "Like `APPLY`, but with trace output to console."
+  [function-symbol args lisp-fn environment depth]
+  (let [indent (apply str (repeat depth "-"))]
+    (println (str indent "> " function-symbol " " args))
+    (let [r (APPLY lisp-fn args environment depth)]
+      (println (str "<" indent " " r))
+      r)))
+
+(defn- safe-apply 
+  "We've a real problem with varargs functions when `args` is `NIL`, because
+   Clojure does not see `NIL` as an empty sequence."
+  [clj-fn args]
+  (let [args' (when (instance? ConsCell args) args)]
+    (apply clj-fn args')))
+
 (defn- apply-symbolic
   "Apply this `funtion-symbol` to these `args` in this `environment` and 
    return the result."
-  [^Symbol function-symbol ^ConsCell args ^ConsCell environment depth]
-  (let [fn (try (EVAL function-symbol environment depth)
-                (catch Throwable any (when (:trace *options*)
-                                       (println any))))
-        indent (apply str (repeat depth "-"))]
-    (if (and fn (not= fn NIL))
-      (if (traced? function-symbol)
-        (do
-         (println (str indent "> " function-symbol " " args))
-         (let [r (APPLY fn args environment depth)]
-           (println (str "<" indent " " r))
-           r))
-        (APPLY fn args environment depth))
-      (case function-symbol ;; there must be a better way of doing this!
-        ADD1 (apply ADD1 args)
-        AND (apply AND args)
-        APPEND (apply APPEND args)
-        APPLY (apply APPLY args)
-        ATOM (ATOM? (CAR args))
-        CAR (CAAR args)
-        CDR (CDAR args)
-        CONS (make-cons-cell (CAR args) (CADR args))
-        DEFINE (DEFINE (CAR args))
-        DIFFERENCE (DIFFERENCE (CAR args) (CADR args))
-        EQ (apply EQ args)
-        EQUAL (apply EQUAL args)
-        ERROR (apply ERROR args)
+  [^Symbol function-symbol args ^ConsCell environment depth]
+  (let [lisp-fn (try (EVAL function-symbol environment depth)
+                     (catch Throwable any (when (:trace *options*)
+                                            (println any))))]
+    (if (and lisp-fn
+             (not= lisp-fn NIL)) (if (traced? function-symbol)
+                                   (traced-apply function-symbol
+                                                 args
+                                                 lisp-fn
+                                                 environment
+                                                 depth)
+                                   (APPLY lisp-fn args environment depth))
+        (case function-symbol ;; there must be a better way of doing this!
+          ADD1 (safe-apply ADD1 args)
+          AND (safe-apply AND args)
+          APPEND (safe-apply APPEND args)
+          APPLY (safe-apply APPLY args) ;; TODO: need to pass the environment and depth
+          ATOM (ATOM? (CAR args))
+          CAR (CAAR args)
+          CDR (CDAR args)
+          CONS (make-cons-cell (CAR args) (CADR args))
+          DEFINE (DEFINE (CAR args))
+          DIFFERENCE (DIFFERENCE (CAR args) (CADR args))
+          EQ (safe-apply EQ args)
+          EQUAL (safe-apply EQUAL args)
+          ERROR (safe-apply ERROR args)
         ;; think about EVAL. Getting the environment right is subtle
-        FIXP (apply FIXP args)
-        GENSYM (GENSYM)
-        GREATERP (apply GREATERP args)
-        INTEROP (when (lax? INTEROP) (apply INTEROP args))
-        LESSP (apply LESSP args)
-        LIST (apply LIST args)
-        NUMBERP (apply NUMBERP args)
-        OBLIST (OBLIST)
-        PLUS (apply PLUS args)
-        PRETTY (when (lax? 'PRETTY)
-                 (apply pretty-print args))
-        PRINT (apply print args)
-        QUOTIENT (apply QUOTIENT args)
-        READ (READ)
-        REMAINDER (apply REMAINDER args)
-        RPLACA (apply RPLACA args)
-        RPLACD (apply RPLACD args)
-        SET (apply SET args)
-        SYSIN (when (lax? 'SYSIN)
-                (apply SYSIN args))
-        SYSOUT (when (lax? 'SYSOUT)
-                 (if (empty? args)
-                   (SYSOUT)
-                   (apply SYSOUT args)))
-        TERPRI (println)
-        TIMES (apply TIMES args)
-        TRACE (apply TRACE args)
-        UNTRACE (apply UNTRACE args)
+          FIXP (safe-apply FIXP args)
+          GENSYM (GENSYM)
+          GREATERP (safe-apply GREATERP args)
+          INTEROP (when (lax? INTEROP) (safe-apply INTEROP args))
+          LESSP (safe-apply LESSP args)
+          LIST (safe-apply LIST args)
+          NUMBERP (safe-apply NUMBERP args)
+          OBLIST (OBLIST)
+          PLUS (safe-apply PLUS args)
+          PRETTY (when (lax? 'PRETTY)
+                   (safe-apply pretty-print args))
+          PRINT (safe-apply print args)
+          QUOTIENT (safe-apply QUOTIENT args)
+          READ (READ)
+          REMAINDER (safe-apply REMAINDER args)
+          RPLACA (safe-apply RPLACA args)
+          RPLACD (safe-apply RPLACD args)
+          SET (safe-apply SET args)
+          SYSIN (when (lax? 'SYSIN)
+                  (safe-apply SYSIN args))
+          SYSOUT (when (lax? 'SYSOUT)
+                   (safe-apply SYSOUT args))
+          TERPRI (println)
+          TIMES (safe-apply TIMES args)
+          TRACE (safe-apply TRACE args)
+          UNTRACE (safe-apply UNTRACE args)
         ;; else
-        (ex-info "No function found"
-                 {:context "APPLY"
-                  :function function-symbol
-                  :args args})))))
+          (ex-info "No function found"
+                   {:context "APPLY"
+                    :function function-symbol
+                    :args args})))))
 
 (defn APPLY
   "Apply this `function` to these `arguments` in this `environment` and return

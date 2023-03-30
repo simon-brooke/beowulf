@@ -15,8 +15,6 @@ Boots to REPL, but few functions yet available.
 
 * [Project website](https://simon-brooke.github.io/beowulf/).
 * [Source code documentation](https://simon-brooke.github.io/beowulf/docs/codox/index.html).
-* [Test Coverage Report](https://simon-brooke.github.io/beowulf/docs/cloverage/index.html)
-
 
 ### Building and Invoking
 
@@ -100,6 +98,14 @@ The following functions and symbols are implemented:
 | TRACE | ? | null | ? |
 | UNTRACE | ? | null | ? |
 | ZEROP | Lisp function | (N) | ? |
+
+Functions described as 'Lisp function' above are defined in the default 
+sysout file, `resources/lisp1.5.lsp`, which will be loaded by default unless 
+you specify another initfile on the command line.
+
+Functions described as 'Host function' are implemented in Clojure, but if you're 
+brave you can redefine them in Lisp and the Lisp definitions will take precedence
+over the Clojure implementations.
 
 ### Architectural plan
 

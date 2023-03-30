@@ -71,7 +71,9 @@
    **NOTE THAT** if the provided `filename` does not end with `.lsp` (which,
    if you're writing it from the Lisp REPL, it won't), the extension `.lsp`
    will be appended."
-  [filename]
+  ([]
+   (SYSIN (or (:read *options*) "resources/lisp1.5.lsp")))
+  ([filename]
   (let [fp (file (full-path (str filename)))
         file (when (and (.exists fp) (.canRead fp)) fp)
         res (try (resource filename)
@@ -82,4 +84,4 @@
                                        {:context "SYSIN"
                                         :filepath fp}
                                        any))))]
-    (swap! oblist #(when (or % (seq content)) content))))
+    (swap! oblist #(when (or % (seq content)) content)))))

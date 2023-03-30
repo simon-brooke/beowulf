@@ -53,7 +53,7 @@
     ;; I suspect as (CAR (LIST A B C)).
 
     (let [expected "(CAR (LIST A B C))"
-          actual (print-str (gsp "car[(A B C)]"))]
+          actual (print-str (gsp "car[ list[a; b; c]]"))]
       (is (= actual expected)))
     ))
 

@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
-## [0.2.1] - 2023-03-??
+## [0.2.1] - 2023-03-30
 
 ### Changed
 - this is fundamentally a working Lisp. The reader reads S-Expressions fully and M-Expressions at least partially. It is not (yet) a feature complete Lisp 1.5.
