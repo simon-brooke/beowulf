@@ -74,4 +74,6 @@
   (SYSOUT) 
   (TERPRI)
   (TIMES)
+  (TRACE)
+  (UNTRACE)
   (ZEROP LAMBDA (N) (EQ N 0)))

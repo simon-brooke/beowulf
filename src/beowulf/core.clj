@@ -29,8 +29,7 @@
                  (.exists (io/file %))
                  (.canRead (io/file %)))
                "Could not find initfile"]]
-   ["-s" "--strict" "Strictly interpret the Lisp 1.5 language, without extensions."]
-   ["-t" "--trace" "Trace Lisp evaluation."]])
+   ["-s" "--strict" "Strictly interpret the Lisp 1.5 language, without extensions."]])
 
 (defn repl
   "Read/eval/print loop."
@@ -42,7 +41,7 @@
       (let [input (trim (read-from-console))]
         (cond
           (= input stop-word) (throw (ex-info "\nFærwell!" {:cause :quit}))
-          input (println (str ">  " (print-str (EVAL (READ input) @oblist))))
+          input (println (str ">  " (print-str (EVAL (READ input) @oblist 0))))
           :else (println)))
       (catch
        Exception

@@ -37,7 +37,6 @@ Command line arguments as follows:
   -p PROMPT, --prompt PROMPT    Sprecan::  Set the REPL prompt to PROMPT
   -r INITFILE, --read INITFILE             Read Lisp functions from the file INITFILE
   -s, --strict                             Strictly interpret the Lisp 1.5 language, without extensions.
-  -t, --trace                              Trace Lisp evaluation.
 ```
 
 ### Architectural plan
@@ -66,8 +65,7 @@ implementations.
 This file is essentially Lisp as defined in Chapter 1 (pages 1-14) of the
 Lisp 1.5 Programmer's Manual; that is to say, a very simple Lisp language,
 which should, I believe, be sufficient in conjunction with the functions
-provided by `beowulf.host`, be sufficient to bootstrap the full Lisp 1.5
-interpreter.
+provided by `beowulf.host`, to bootstrap the full Lisp 1.5 interpreter.
 
 In addition it contains the function `INTEROP`, which allows host language
 functions to be called from Lisp.
