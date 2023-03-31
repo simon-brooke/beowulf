@@ -1,7 +1,7 @@
 (ns beowulf.core
   "Essentially, the `-main` function and the bootstrap read-eval-print loop."
   (:require [beowulf.bootstrap :refer [EVAL]]
-            [beowulf.io :refer [SYSIN]]
+            [beowulf.io :refer [default-sysout SYSIN]]
             [beowulf.read :refer [READ read-from-console]]
             [beowulf.oblist :refer [*options* oblist]]
             [clojure.java.io :as io]
@@ -9,6 +9,26 @@
             [clojure.string :refer [trim]]
             [clojure.tools.cli :refer [parse-opts]])
   (:gen-class))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Copyright (C) 2022-2023 Simon Brooke
+;;;
+;;; This program is free software; you can redistribute it and/or
+;;; modify it under the terms of the GNU General Public License
+;;; as published by the Free Software Foundation; either version 2
+;;; of the License, or (at your option) any later version.
+;;; 
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;; 
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def stop-word "STOP")
 
@@ -24,7 +44,7 @@
    ["-p PROMPT" "--prompt PROMPT" "Set the REPL prompt to PROMPT"
     :default "Sprecan::"]
    ["-r INITFILE" "--read INITFILE" "Read Lisp system from file INITFILE"
-    :default "resources/lisp1.5.lsp"
+    :default default-sysout
     :validate [#(and
                  (.exists (io/file %))
                  (.canRead (io/file %)))

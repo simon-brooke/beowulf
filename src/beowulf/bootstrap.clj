@@ -10,63 +10,45 @@
   therefore all arguments must be numbers, symbols or `beowulf.cons_cell.ConsCell`
   objects."
   (:require [clojure.string :as s]
-            [beowulf.cons-cell :refer [CAR CDR CONS LIST make-beowulf-list make-cons-cell
+            [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell
                                        pretty-print T F]]
-            [beowulf.host :refer [AND ADD1 DIFFERENCE ERROR FIXP GENSYM GREATERP LESSP
-                                  NUMBERP PLUS QUOTIENT
-                                  REMAINDER RPLACA RPLACD TIMES]]
+            [beowulf.host :refer [ADD1 AND ASSOC ATOM ATOM? CAR CDR CONS DEFINE 
+                                  DIFFERENCE EQ EQUAL ERROR FIXP GENSYM 
+                                  GREATERP lax? LESSP LIST NUMBERP OBLIST
+                                  PAIRLIS PLUS QUOTIENT REMAINDER RPLACA RPLACD SET 
+                                  TIMES TRACE traced? UNTRACE]]
             [beowulf.io :refer [SYSIN SYSOUT]]
             [beowulf.oblist :refer [*options* oblist NIL]]
-            [beowulf.read :refer [READ]]
-            [beowulf.trace :refer [TRACE traced? UNTRACE]])
+            [beowulf.read :refer [READ]])
   (:import [beowulf.cons_cell ConsCell]
            [clojure.lang Symbol]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; This file is essentially Lisp as defined in Chapter 1 (pages 1-14) of the
-;;; Lisp 1.5 Programmer's Manual; that is to say, a very simple Lisp language,
-;;; which should, I believe, be sufficient in conjunction with the functions
-;;; provided by `beowulf.host`, be sufficient to bootstrap the full Lisp 1.5
-;;; interpreter.
+;;; Copyright (C) 2022-2023 Simon Brooke
+;;;
+;;; This program is free software; you can redistribute it and/or
+;;; modify it under the terms of the GNU General Public License
+;;; as published by the Free Software Foundation; either version 2
+;;; of the License, or (at your option) any later version.
+;;; 
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;; 
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (declare APPLY EVAL)
 
-(defn lax?
-  "Are we in lax mode? If so. return true; is not, throw an exception with 
-   this `symbol`."
-  [symbol]
-  (when (:strict *options*)
-    (throw (ex-info (format "%s is not available in Lisp 1.5" symbol)
-                    {:cause :strict
-                     :extension symbol})))
-  true)
-
-(defmacro NULL
-  "Returns `T` if and only if the argument `x` is bound to `NIL`; else `F`."
-  [x]
-  `(if (= ~x NIL) T F))
-
-(defmacro NILP
-  "Not part of LISP 1.5: `T` if `o` is `NIL`, else `NIL`."
-  [x]
-  `(if (= ~x NIL) T NIL))
-
-(defmacro ATOM
-  "Returns `T` if and only if the argument `x` is bound to an atom; else `F`.
-  It is not clear to me from the documentation whether `(ATOM 7)` should return
-  `T` or `F`. I'm going to assume `T`."
-  [x]
-  `(if (or (symbol? ~x) (number? ~x)) T F))
-
-(defmacro ATOM?
-  "The convention of returning `F` from predicates, rather than `NIL`, is going
-  to tie me in knots. This is a variant of `ATOM` which returns `NIL`
-  on failure."
-  [x]
-  `(if (or (symbol? ~x) (number? ~x)) T NIL))
+(defmacro QUOTE
+  "Quote, but in upper case for LISP 1.5"
+  [f]
+  `(quote ~f))
 
 (defn uaf
   "Universal access function; `l` is expected to be an arbitrary LISP list, `path`
@@ -123,127 +105,7 @@
 (defmacro CDAADR [x] `(uaf ~x '(\d \a \a \d)))
 (defmacro CDADDR [x] `(uaf ~x '(\d \a \d \d)))
 
-(defn EQ
-  "Returns `T` if and only if both `x` and `y` are bound to the same atom,
-  else `NIL`."
-  [x y]
-  (cond (and (instance? ConsCell x)
-             (.equals x y)) T
-        (and (= (ATOM x) T) (= x y)) T
-        :else NIL))
-
-(defn EQUAL
-  "This is a predicate that is true if its two arguments are identical
-  S-expressions, and false if they are different. (The elementary predicate
-  `EQ` is defined only for atomic arguments.) The definition of `EQUAL` is
-  an example of a conditional expression inside a conditional expression.
-
-  NOTE: returns `F` on failure, not `NIL`"
-  [x y]
-  (cond
-    (= (ATOM x) T) (if (= x y) T F)
-    (= (EQUAL (CAR x) (CAR y)) T) (EQUAL (CDR x) (CDR y))
-    :else F))
-
-(defn SUBST
-  "This function gives the result of substituting the S-expression `x` for
-  all occurrences of the atomic symbol `y` in the S-expression `z`."
-  [x y z]
-  (cond
-    (= (EQUAL y z) T) x
-    (= (ATOM? z) T) z ;; NIL is a symbol
-    :else
-    (make-cons-cell (SUBST x y (CAR z)) (SUBST x y (CDR z)))))
-
-(defn APPEND
-  "Append the the elements of `y` to the elements of `x`.
-
-  All args are assumed to be `beowulf.cons-cell/ConsCell` objects.
-  See page 11 of the Lisp 1.5 Programmers Manual."
-  [x y]
-  (cond
-    (= x NIL) y
-    :else
-    (make-cons-cell (CAR x) (APPEND (CDR x) y))))
-
-(defn MEMBER
-  "This predicate is true if the S-expression `x` occurs among the elements
-  of the list `y`.
-
-  All args are assumed to be symbols or `beowulf.cons-cell/ConsCell` objects.
-  See page 11 of the Lisp 1.5 Programmers Manual."
-  [x y]
-  (cond
-    (= y NIL) F ;; NOTE: returns F on falsity, not NIL
-    (= (EQUAL x (CAR y)) T) T
-    :else (MEMBER x (CDR y))))
-
-(defn PAIRLIS
-  "This function gives the list of pairs of corresponding elements of the
-  lists `x` and `y`, and APPENDs this to the list `a`. The resultant list
-  of pairs, which is like a table with two columns, is called an
-  association list.
-
-  Eessentially, it builds the environment on the stack, implementing shallow
-  binding.
-
-  All args are assumed to be `beowulf.cons-cell/ConsCell` objects.
-  See page 12 of the Lisp 1.5 Programmers Manual."
-  [x y a]
-  (cond
-    ;; the original tests only x; testing y as well will be a little more
-    ;; robust if `x` and `y` are not the same length.
-    (or (= NIL x) (= NIL y)) a
-    :else (make-cons-cell
-           (make-cons-cell (CAR x) (CAR y))
-           (PAIRLIS (CDR x) (CDR y) a))))
-
-(defmacro QUOTE
-  "Quote, but in upper case for LISP 1.5"
-  [f]
-  `(quote ~f))
-
-(defn ASSOC
-  "If a is an association list such as the one formed by PAIRLIS in the above
-  example, then assoc will produce the first pair whose first term is x. Thus
-  it is a table searching function.
-
-  All args are assumed to be `beowulf.cons-cell/ConsCell` objects.
-  See page 12 of the Lisp 1.5 Programmers Manual."
-  [x a]
-  (cond
-    (= NIL a) NIL ;; this clause is not present in the original but is added for
-    ;; robustness.
-    (= (EQUAL (CAAR a) x) T) (CAR a)
-    :else
-    (ASSOC x (CDR a))))
-
-(defn- SUB2
-  "Internal to `SUBLIS`, q.v., which SUBSTitutes into a list from a store.
-  ? I think this is doing variable binding in the stack frame?"
-  [a z]
-  (cond
-    (= NIL a) z
-    (= (CAAR a) z) (CDAR a) ;; TODO: this looks definitely wrong
-    :else
-    (SUB2 (CDR a) z)))
-
-(defn SUBLIS
-  "Here `a` is assumed to be an association list of the form
-  `((ul . vl)...(un . vn))`, where the `u`s are atomic, and `y` is any
-  S-expression. What `SUBLIS` does, is to treat the `u`s as variables when
-  they occur in `y`, and to SUBSTitute the corresponding `v`s from the pair
-  list.
-
-  My interpretation is that this is variable binding in the stack frame.
-
-  All args are assumed to be `beowulf.cons-cell/ConsCell` objects.
-  See page 12 of the Lisp 1.5 Programmers Manual."
-  [a y]
-  (cond
-    (= (ATOM? y) T) (SUB2 a y)
-    :else
-    (make-cons-cell (SUBLIS a (CAR y)) (SUBLIS a (CDR y)))))
+;;;; INTEROP feature ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn interop-interpret-q-name
   "For interoperation with Clojure, it will often be necessary to pass
@@ -318,10 +180,10 @@
       f      (cond
                (try
                  (fn? (eval l-name))
-                 (catch java.lang.ClassNotFoundException e nil)) l-name
+                 (catch java.lang.ClassNotFoundException _ nil)) l-name
                (try
                  (fn? (eval q-name))
-                 (catch java.lang.ClassNotFoundException e nil)) q-name
+                 (catch java.lang.ClassNotFoundException _ nil)) q-name
                :else (throw
                       (ex-info
                        (str "INTEROP: unknown function `" fn-symbol "`")
@@ -352,48 +214,6 @@
       (str "INTEROP not allowed in strict mode.")
       {:cause  :interop
        :detail :strict}))))
-
-(defn OBLIST
-  "Return a list of the symbols currently bound on the object list.
-   
-   **NOTE THAT** in the Lisp 1.5 manual, footnote at the bottom of page 69, it implies 
-   that an argument can be passed but I'm not sure of the semantics of
-   this."
-  []
-  (if (instance? ConsCell @oblist)
-    (make-beowulf-list (map CAR @oblist))
-    NIL))
-
-(defn DEFINE
-  "Bootstrap-only version of `DEFINE` which, post boostrap, can be overwritten 
-  in LISP. 
-
-  The single argument to `DEFINE` should be an assoc list which should be 
-  nconc'ed onto the front of the oblist. Broadly, 
-  (SETQ OBLIST (NCONC ARG1 OBLIST))"
-  [args]
-  (swap!
-   oblist
-   (fn [ob arg1]
-     (loop [cursor arg1 a arg1]
-       (if (= (CDR cursor) NIL)
-         (do
-           (.rplacd cursor @oblist)
-           (pretty-print a)
-           a)
-         (recur (CDR cursor) a))))
-   (CAR args)))
-
-(defn SET
-  "Implementation of SET in Clojure. Add to the `oblist` a binding of the
-   value of `var` to the value of `val`. NOTE WELL: this is not SETQ!"
-  [symbol val]
-  (when
-   (swap!
-    oblist
-    (fn [ob s v] (make-cons-cell (make-cons-cell s v) ob))
-    symbol val)
-    NIL))
 
 (defn- traced-apply
   "Like `APPLY`, but with trace output to console."
@@ -429,12 +249,11 @@
         (case function-symbol ;; there must be a better way of doing this!
           ADD1 (safe-apply ADD1 args)
           AND (safe-apply AND args)
-          APPEND (safe-apply APPEND args)
           APPLY (safe-apply APPLY args) ;; TODO: need to pass the environment and depth
           ATOM (ATOM? (CAR args))
-          CAR (CAAR args)
-          CDR (CDAR args)
-          CONS (make-cons-cell (CAR args) (CADR args))
+          CAR (safe-apply CAR args)
+          CDR (safe-apply CDR args)
+          CONS (safe-apply CONS args)
           DEFINE (DEFINE (CAR args))
           DIFFERENCE (DIFFERENCE (CAR args) (CADR args))
           EQ (safe-apply EQ args)

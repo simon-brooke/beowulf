@@ -1,8 +1,8 @@
 (ns beowulf.bootstrap-test
   (:require [clojure.test :refer [deftest testing is]]
-            [beowulf.cons-cell :refer [CAR CDR make-cons-cell T F]]
-            [beowulf.bootstrap :refer [APPEND ASSOC ATOM ATOM? CAAAAR CADR
-                                       CADDR CADDDR EQ EQUAL MEMBER 
+            [beowulf.cons-cell :refer [make-cons-cell T F]]
+            [beowulf.host :refer [ASSOC ATOM ATOM? CAR CAAAAR CADR
+                                       CADDR CADDDR CDR EQ EQUAL 
                                        PAIRLIS SUBLIS SUBST]]
             [beowulf.oblist :refer [NIL]]
             [beowulf.read :refer [gsp]]))
@@ -164,44 +164,6 @@
                      (gsp "B")
                      (gsp "((A . B) . C)")))]
       (is (= actual expected)))))
-
-(deftest append-tests
-  (testing "append"
-    (let [expected "(A B C . D)"
-          actual (print-str
-                   (APPEND
-                     (gsp "(A B)")
-                     (gsp "(C . D)")))]
-      (is (= actual expected)))
-    (let [expected "(A B C D E)"
-          actual (print-str
-                   (APPEND
-                     (gsp "(A B)")
-                     (gsp "(C D E)")))]
-      (is (= actual expected)))))
-
-(deftest member-tests
-  (testing "member"
-    (let [expected 'T
-          actual (MEMBER
-                   (gsp "ALBERT")
-                   (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
-      (is (= actual expected)))
-    (let [expected 'T
-          actual (MEMBER
-                   (gsp "BELINDA")
-                   (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
-       (is (= actual expected)))
-    (let [expected 'T
-          actual (MEMBER
-                   (gsp "ELFREDA")
-                   (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
-       (is (= actual expected)))
-    (let [expected 'F
-          actual (MEMBER
-                   (gsp "BERTRAM")
-                   (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
-       (is (= actual expected)))))
 
 (deftest pairlis-tests
   (testing "pairlis"

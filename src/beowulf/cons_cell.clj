@@ -5,6 +5,26 @@
   of Clojure lists."
   (:require [beowulf.oblist :refer [NIL]]))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Copyright (C) 2022-2023 Simon Brooke
+;;;
+;;; This program is free software; you can redistribute it and/or
+;;; modify it under the terms of the GNU General Public License
+;;; as published by the Free Software Foundation; either version 2
+;;; of the License, or (at your option) any later version.
+;;; 
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;; 
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (declare cons-cell?)
 
 (def T
@@ -15,6 +35,8 @@
   "The canonical false value - different from `NIL`, which is not canonically
   false in Lisp 1.5."
   (symbol "F")) ;; false as distinct from nil
+
+;;;; The actual cons-cell ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defprotocol MutableSequence
   "Like a sequence, but mutable."
@@ -31,9 +53,8 @@
     [this]
     "like `more`, q.v., but returns List `NIL` not Clojure `nil` when empty.")
   (getUid
-   [this]
-   "Returns a unique identifier for this object")
-  )
+    [this]
+    "Returns a unique identifier for this object"))
 
 (deftype ConsCell [^:unsynchronized-mutable CAR ^:unsynchronized-mutable CDR uid]
   ;; Note that, because the CAR and CDR fields are unsynchronised mutable - i.e.
@@ -74,11 +95,11 @@
               (str "Invalid value in RPLACD: `" value "` (" (type value) ")")
               {:cause  :bad-value
                :detail :rplaca}))))
-  
+
   (getCar [this]
     (. this CAR))
   (getCdr [this]
-    (. this CDR)) 
+    (. this CDR))
   (getUid [this]
     (. this uid))
 
@@ -140,11 +161,17 @@
            (= NIL (. this CDR)) ")"
            :else (str " . " (. this CDR) ")")))))
 
+;;;; Printing. Here be dragons! ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn- to-string
   "Printing ConsCells gave me a *lot* of trouble. This is an internal function
   used by the print-method override (below) in order that the standard Clojure
   `print` and `str` functions will print ConsCells correctly. The argument
   `cell` must, obviously, be an instance of `ConsCell`."
+  ;; TODO: I am deeply suspicious both of this and the defmethod which depends 
+  ;; on it. I *think* they are implicated in the `COPY` bug. If the `toString`
+  ;; override in `ConsCell` was right, neither of these would be necessary.
+  ;; see https://github.com/simon-brooke/beowulf/issues/5
   [cell]
   (loop [c cell
          n 0
@@ -169,6 +196,12 @@
           (recur cdr (inc n) ss)
           ss))
       (str c))))
+
+(defmethod clojure.core/print-method
+  ;;; I have not worked out how to document defmethod without blowing up the world.
+  beowulf.cons_cell.ConsCell
+  [this writer]
+  (.write writer (to-string this)))
 
 (defn pretty-print
   "This isn't the world's best pretty printer but it sort of works."
@@ -204,12 +237,10 @@
            ss))
        (str c)))))
 
-
-(defmethod clojure.core/print-method
-  ;;; I have not worked out how to document defmethod without blowing up the world.
-  beowulf.cons_cell.ConsCell
-  [this writer]
-  (.write writer (to-string this)))
+(defn cons-cell?
+  "Is this object `o` a beowulf cons-cell?"
+  [o]
+  (instance? beowulf.cons_cell.ConsCell o))
 
 (defn make-cons-cell
   "Construct a new instance of cons cell with this `car` and `cdr`."
@@ -219,11 +250,6 @@
     (catch Exception any
       (throw (ex-info "Cound not construct cons cell" {:car car
                                                        :cdr cdr} any)))))
-
-(defn cons-cell?
-  "Is this object `o` a beowulf cons-cell?"
-  [o]
-  (instance? beowulf.cons_cell.ConsCell o))
 
 (defn make-beowulf-list
   "Construct a linked list of cons cells with the same content as the
@@ -245,36 +271,3 @@
       (throw (ex-info "Could not construct Beowulf list"
                       {:content x}
                       any)))))
-
-(defn CONS
-  "Construct a new instance of cons cell with this `car` and `cdr`."
-  [car cdr]
-  (beowulf.cons_cell.ConsCell. car cdr (gensym "c")))
-
-(defn CAR
-  "Return the item indicated by the first pointer of a pair. NIL is treated
-  specially: the CAR of NIL is NIL."
-  [x]
-  (if
-   (= x NIL) NIL
-   (try
-     (or (.getCar x) NIL)
-     (catch Exception any
-       (throw (Exception.
-               (str "Cannot take CAR of `" x "` (" (.getName (.getClass x)) ")") any))))))
-
-(defn CDR
-  "Return the item indicated by the second pointer of a pair. NIL is treated
-  specially: the CDR of NIL is NIL."
-  [x]
-  (if
-   (= x NIL) NIL
-   (try
-     (.getCdr x)
-     (catch Exception any
-       (throw (Exception.
-               (str "Cannot take CDR of `" x "` (" (.getName (.getClass x)) ")") any))))))
-
-(defn LIST
-  [& args]
-  (make-beowulf-list args))

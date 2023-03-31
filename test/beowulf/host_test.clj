@@ -1,7 +1,7 @@
 (ns beowulf.host-test
   (:require [clojure.test :refer [deftest is testing]]
-            [beowulf.cons-cell :refer [CDR F make-beowulf-list T]] 
-            [beowulf.host :refer [DIFFERENCE NUMBERP PLUS RPLACA RPLACD TIMES]]
+            [beowulf.cons-cell :refer [F make-beowulf-list T]] 
+            [beowulf.host :refer [CDR DIFFERENCE NUMBERP PLUS RPLACA RPLACD TIMES]]
             [beowulf.oblist :refer [NIL]]
             [beowulf.read :refer [gsp]]))
 
