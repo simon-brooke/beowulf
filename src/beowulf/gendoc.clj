@@ -78,12 +78,12 @@
   [symbol arglists]
   (join
    "; "
-   (map
-    (fn [l]
-      (str
-       (cons symbol
-             (map #(upper-case (str %)) l))))
-    arglists)))
+   (doall
+    (map
+     (fn [l]
+       (join (concat (list "("  symbol " ")
+                     (join " " (map #(upper-case (str %)) l)) (list ")"))))
+     arglists))))
 
 (defn infer-signature
   "Infer the signature of the function value of this oblist `entry`, if any."

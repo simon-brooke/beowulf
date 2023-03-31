@@ -49,7 +49,8 @@
                  (.exists (io/file %))
                  (.canRead (io/file %)))
                "Could not find initfile"]]
-   ["-s" "--strict" "Strictly interpret the Lisp 1.5 language, without extensions."]])
+   ["-s" "--strict" "Strictly interpret the Lisp 1.5 language, without extensions."]
+   ["-t" "--time" "Time evaluations."]])
 
 (defn repl
   "Read/eval/print loop."
@@ -58,11 +59,15 @@
     (print prompt)
     (flush)
     (try
-      (let [input (trim (read-from-console))]
-        (cond
-          (= input stop-word) (throw (ex-info "\nFærwell!" {:cause :quit}))
-          input (println (str ">  " (print-str (EVAL (READ input) @oblist 0))))
-          :else (println)))
+      (if-let [input (trim (read-from-console))]
+        (if (= input stop-word)
+          (throw (ex-info "\nFærwell!" {:cause :quit}))
+          (println 
+           (str ">  " 
+                (print-str (if (:time *options*)
+                             (time (EVAL (READ input) @oblist 0))
+                             (EVAL (READ input) @oblist 0)))))) 
+        (println))
       (catch
        Exception
        e
@@ -97,7 +102,7 @@
       "\nSprecan '" stop-word "' tó laéfan\n"))
     
     (binding [*options* (:options args)]
-;;      (pprint *options*)
+      ;; (pprint *options*)
       (when (:read *options*)
         (try (SYSIN (:read *options*))
              (catch Throwable any

@@ -17,3 +17,4 @@ pom.xml.asc
 .lsp/
 resources/scratch.lsp
 Sysout*.lsp
+*.pdf
