@@ -4,7 +4,10 @@
    NOTE: this is *very* hacky. You almost certainly do not want to 
    use this!"
   (:require [beowulf.io :refer [default-sysout SYSIN]]
-            [beowulf.oblist :refer [oblist]]
+            [beowulf.host :refer [ASSOC]]
+            [beowulf.manual :refer [format-page-references index *manual-url*]]
+            [beowulf.oblist :refer [NIL oblist]]
+            [clojure.java.browse :refer [browse-url]]
             [clojure.string :refer [join replace upper-case]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -95,34 +98,56 @@
     (= (second entry) 'LAMBDA) (str (cons (first entry) (nth entry 2)))
     :else "?"))
 
+(defn infer-implementation
+  [entry] 
+  (case (second entry)
+    LAMBDA (format "%s-fn" (second entry))
+    LABEL (format "%s-fn" (second entry))
+    (or (:implementation (index (keyword (first entry)))) (str entry))))
+
 (defn find-documentation
   "Find appropriate documentation for this `entry` from the oblist."
   [entry]
-  (cond
-    (= (count entry) 1) (if-let [doc (get-metadata-for-entry entry :doc)]
-                          (replace doc "\n" " ")
-                          "?")
-    :else "?"))
+  (let [k (keyword (first entry))]
+    (cond
+      (= (count entry) 1) (if-let [doc (get-metadata-for-entry entry :doc)]
+                            (replace doc "\n" " ")
+                            "?")
+      (k index) (str "see manual pages " (format-page-references k))
+      :else "?")))
 
 (defn gen-doc-table
   ([]
    (gen-doc-table default-sysout))
   ([sysfile]
-   (try (SYSIN sysfile)
-        (catch Throwable any
-          (println (.getMessage any) " while reading " sysfile)))
+   (when (= NIL @oblist)
+     (try (SYSIN sysfile)
+          (catch Throwable any
+            (println (.getMessage any) " while reading " sysfile))))
    (join
     "\n"
     (doall
      (concat
-      '("| Symbol | Type | Signature | Documentation |"
-        "|--------|------|-----------|---------------|")
+      '("| Function     | Type           | Signature        | Implementation | Documentation        |"
+        "|--------------|----------------|------------------|----------------|----------------------|")
       (map
-       #(format "| %s | %s | %s | %s |"
+       #(format "| %-12s | %-14s | %-16s | %-14s | %-20s |"
                 (first %)
                 (infer-type %)
                 (infer-signature %)
+                (infer-implementation %)
                 (find-documentation %))
        @oblist))))))
 
-;; (println (gen-doc-table))
+(defn gen-index
+  ([] (gen-index "" "resources/scratch/manual.md"))
+  ([url destination]
+   (binding [*manual-url* url]
+     (spit destination
+           (with-out-str
+             (doall
+              (map
+               println
+               (list "## Index"
+                     ""
+                     (gen-doc-table)))))))))

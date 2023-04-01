@@ -47,8 +47,8 @@
 (def ^:dynamic *readmacros*
   {:car {'DEFUN (fn [f]
                   (LIST 'SET (LIST 'QUOTE (second f))
-                        (CONS 'LAMBDA (rest (rest f)))))
-         'SETQ (fn [f] (LIST 'SET (LIST 'QUOTE (second f)) (nth f 2)))}})
+                        (LIST 'QUOTE (CONS 'LAMBDA (rest (rest f))))))
+         'SETQ (fn [f] (LIST 'SET (LIST 'QUOTE (second f)) (LIST 'QUOTE (nth f 2))))}})
 
 (defn expand-macros
   [form]

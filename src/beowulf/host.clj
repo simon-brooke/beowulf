@@ -389,11 +389,11 @@
 
 (defn LESSP
   [x y]
-  (< x y))
+  (if (< x y) T F))
 
 (defn GREATERP
   [x y]
-  (> x y))
+  (if (> x y) T F))
 
 ;;;; Miscellaneous ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -405,8 +405,11 @@
 (defn ERROR
   "Throw an error"
   [& args]
-  (throw (ex-info "LISP ERROR" {:cause (apply vector args)
-                                :phase :eval})))
+  (throw (ex-info "LISP ERROR" {:args args
+                                :phase :eval
+                                :function 'ERROR
+                                :type :lisp
+                                :code (or (first args) 'A1)})))
 
 ;;;; Assignment and the object list ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

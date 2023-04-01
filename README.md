@@ -43,63 +43,93 @@ To end a session, type `STOP` at the command prompt.
 
 The following functions and symbols are implemented:
 
-| Symbol | Type | Signature | Documentation |
-|--------|------|-----------|---------------|
-| NIL | Lisp variable |  | ? |
-| T | Lisp variable |  | ? |
-| F | Lisp variable |  | ? |
-| ADD1 | Host function | (ADD1 X) | ? |
-| AND | Host function | (AND & ARGS) | `T` if and only if none of my `args` evaluate to either `F` or `NIL`,    else `F`.        In `beowulf.host` principally because I don't yet feel confident to define    varargs functions in Lisp. |
-| APPEND | Lisp function | (APPEND X Y) | ? |
-| APPLY | Host function | (APPLY FUNCTION ARGS ENVIRONMENT DEPTH) | Apply this `function` to these `arguments` in this `environment` and return    the result.        For bootstrapping, at least, a version of APPLY written in Clojure.    All args are assumed to be symbols or `beowulf.cons-cell/ConsCell` objects.    See page 13 of the Lisp 1.5 Programmers Manual. |
-| ATOM | Host function | (ATOM X) | Returns `T` if and only if the argument `x` is bound to an atom; else `F`.   It is not clear to me from the documentation whether `(ATOM 7)` should return   `T` or `F`. I'm going to assume `T`. |
-| CAR | Host function | (CAR X) | Return the item indicated by the first pointer of a pair. NIL is treated   specially: the CAR of NIL is NIL. |
-| CDR | Host function | (CDR X) | Return the item indicated by the second pointer of a pair. NIL is treated   specially: the CDR of NIL is NIL. |
-| CONS | Host function | (CONS CAR CDR) | Construct a new instance of cons cell with this `car` and `cdr`. |
-| COPY | Lisp function | (COPY X) | ? |
-| DEFINE | Host function | (DEFINE ARGS) | Bootstrap-only version of `DEFINE` which, post boostrap, can be overwritten    in LISP.     The single argument to `DEFINE` should be an assoc list which should be    nconc'ed onto the front of the oblist. Broadly,    (SETQ OBLIST (NCONC ARG1 OBLIST)) |
-| DIFFERENCE | Host function | (DIFFERENCE X Y) | ? |
-| DIVIDE | Lisp function | (DIVIDE X Y) | ? |
-| ERROR | Host function | (ERROR & ARGS) | Throw an error |
-| EQ | Host function | (EQ X Y) | Returns `T` if and only if both `x` and `y` are bound to the same atom,   else `NIL`. |
-| EQUAL | Host function | (EQUAL X Y) | This is a predicate that is true if its two arguments are identical   S-expressions, and false if they are different. (The elementary predicate   `EQ` is defined only for atomic arguments.) The definition of `EQUAL` is   an example of a conditional expression inside a conditional expression.    NOTE: returns `F` on failure, not `NIL` |
-| EVAL | Host function | (EVAL EXPR); (EVAL EXPR ENV DEPTH) | Evaluate this `expr` and return the result. If `environment` is not passed,    it defaults to the current value of the global object list. The `depth`    argument is part of the tracing system and should not be set by user code.     All args are assumed to be numbers, symbols or `beowulf.cons-cell/ConsCell`     objects. |
-| FACTORIAL | Lisp function | (FACTORIAL N) | ? |
-| FIXP | Host function | (FIXP X) | ? |
-| GENSYM | Host function | (GENSYM ) | Generate a unique symbol. |
-| GET | Lisp function | (GET X Y) | ? |
-| GREATERP | Host function | (GREATERP X Y) | ? |
-| INTEROP | Host function | (INTEROP FN-SYMBOL ARGS) | Clojure (or other host environment) interoperation API. `fn-symbol` is expected   to be either    1. a symbol bound in the host environment to a function; or   2. a sequence (list) of symbols forming a qualified path name bound to a      function.    Lower case characters cannot normally be represented in Lisp 1.5, so both the   upper case and lower case variants of `fn-symbol` will be tried. If the   function you're looking for has a mixed case name, that is not currently   accessible.    `args` is expected to be a Lisp 1.5 list of arguments to be passed to that   function. Return value must be something acceptable to Lisp 1.5, so either   a symbol, a number, or a Lisp 1.5 list.    If `fn-symbol` is not found (even when cast to lower case), or is not a function,   or the value returned cannot be represented in Lisp 1.5, an exception is thrown   with `:cause` bound to `:interop` and `:detail` set to a value representing the   actual problem. |
-| INTERSECTION | Lisp function | (INTERSECTION X Y) | ? |
-| LENGTH | Lisp function | (LENGTH L) | ? |
-| LESSP | Host function | (LESSP X Y) | ? |
-| MEMBER | Lisp function | (MEMBER A X) | ? |
-| MINUSP | Lisp function | (MINUSP X) | ? |
-| NOT | Lisp function | (NOT X) | ? |
-| NULL | Lisp function | (NULL X) | ? |
-| NUMBERP | Host function | (NUMBERP X) | ? |
-| OBLIST | Host function | (OBLIST ) | Return a list of the symbols currently bound on the object list.        **NOTE THAT** in the Lisp 1.5 manual, footnote at the bottom of page 69, it implies     that an argument can be passed but I'm not sure of the semantics of    this. |
-| ONEP | Lisp function | (ONEP X) | ? |
-| PAIR | Lisp function | (PAIR X Y) | ? |
-| PLUS | Host function | (PLUS & ARGS) | ? |
-| PRETTY | Lisp variable |  | ? |
-| PRINT | Lisp variable |  | ? |
-| PROP | Lisp function | (PROP X Y U) | ? |
-| QUOTIENT | Host function | (QUOTIENT X Y) | I'm not certain from the documentation whether Lisp 1.5 `QUOTIENT` returned   the integer part of the quotient, or a realnum representing the whole   quotient. I am for now implementing the latter. |
-| READ | Host function | (READ ); (READ INPUT) | An implementation of a Lisp reader sufficient for bootstrapping; not necessarily   the final Lisp reader. `input` should be either a string representation of a LISP   expression, or else an input stream. A single form will be read. |
-| REMAINDER | Host function | (REMAINDER X Y) | ? |
-| REPEAT | Lisp function | (REPEAT N X) | ? |
-| RPLACA | Host function | (RPLACA CELL VALUE) | Replace the CAR pointer of this `cell` with this `value`. Dangerous, should   really not exist, but does in Lisp 1.5 (and was important for some   performance hacks in early Lisps) |
-| RPLACD | Host function | (RPLACD CELL VALUE) | Replace the CDR pointer of this `cell` with this `value`. Dangerous, should   really not exist, but does in Lisp 1.5 (and was important for some   performance hacks in early Lisps) |
-| SET | Host function | (SET SYMBOL VAL) | Implementation of SET in Clojure. Add to the `oblist` a binding of the    value of `var` to the value of `val`. NOTE WELL: this is not SETQ! |
-| SUB1 | Lisp function | (SUB1 N) | ? |
-| SYSIN | Host function | (SYSIN ); (SYSIN FILENAME) | Read the contents of the file at this `filename` into the object list.         If the file is not a valid Beowulf sysout file, this will probably     corrupt the system, you have been warned. File paths will be considered     relative to the filepath set when starting Lisp.     It is intended that sysout files can be read both from resources within    the jar file, and from the file system. If a named file exists in both the    file system and the resources, the file system will be preferred.        **NOTE THAT** if the provided `filename` does not end with `.lsp` (which,    if you're writing it from the Lisp REPL, it won't), the extension `.lsp`    will be appended. |
-| SYSOUT | Host function | (SYSOUT ); (SYSOUT FILEPATH) | Dump the current content of the object list to file. If no `filepath` is    specified, a file name will be constructed of the symbol `Sysout` and     the current date. File paths will be considered relative to the filepath    set when starting Lisp. |
-| TERPRI | Lisp variable |  | ? |
-| TIMES | Host function | (TIMES & ARGS) | ? |
-| TRACE | Host function | (TRACE S) | Add this symbol `s` to the set of symbols currently being traced. If `s`    is not a symbol, does nothing. |
-| UNTRACE | Host function | (UNTRACE S) | ? |
-| ZEROP | Lisp function | (ZEROP N) | ? |
+| Function     | Type           | Signature        | Implementation | Documentation        |
+|--------------|----------------|------------------|----------------|----------------------|
+| NIL          | Lisp variable  |                  |                | ?                    |
+| T            | Lisp variable  |                  |                | ?                    |
+| F            | Lisp variable  |                  |                | ?                    |
+| ADD1         | Host function  | (ADD1 X)         |                | ?                    |
+| AND          | Host function  | (AND & ARGS)     | PREDICATE      | `T` if and only if none of my `args` evaluate to either `F` or `NIL`,    else `F`.        In `beowulf.host` principally because I don't yet feel confident to define    varargs functions in Lisp. |
+| APPEND       | Lisp function  | (APPEND X Y)     | LAMBDA-fn      | see manual pages <a href='https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=19'>11</a>, <a href='https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=69'>61</a> |
+| APPLY        | Host function  | (APPLY FUNCTION ARGS ENVIRONMENT DEPTH) |                | Apply this `function` to these `arguments` in this `environment` and return    the result.        For bootstrapping, at least, a version of APPLY written in Clojure.    All args are assumed to be symbols or `beowulf.cons-cell/ConsCell` objects.    See page 13 of the Lisp 1.5 Programmers Manual. |
+| ATOM         | Host function  | (ATOM X)         | PREDICATE      | Returns `T` if and only if the argument `x` is bound to an atom; else `F`.   It is not clear to me from the documentation whether `(ATOM 7)` should return   `T` or `F`. I'm going to assume `T`. |
+| CAR          | Host function  | (CAR X)          |                | Return the item indicated by the first pointer of a pair. NIL is treated   specially: the CAR of NIL is NIL. |
+| CAAAAR       | Lisp function  | (CAAAAR X)       | LAMBDA-fn      | ?                    |
+| CAAADR       | Lisp function  | (CAAADR X)       | LAMBDA-fn      | ?                    |
+| CAAAR        | Lisp function  | (CAAAR X)        | LAMBDA-fn      | ?                    |
+| CAADAR       | Lisp function  | (CAADAR X)       | LAMBDA-fn      | ?                    |
+| CAADDR       | Lisp function  | (CAADDR X)       | LAMBDA-fn      | ?                    |
+| CAADR        | Lisp function  | (CAADR X)        | LAMBDA-fn      | ?                    |
+| CAAR         | Lisp function  | (CAAR X)         | LAMBDA-fn      | ?                    |
+| CADAAR       | Lisp function  | (CADAAR X)       | LAMBDA-fn      | ?                    |
+| CADADR       | Lisp function  | (CADADR X)       | LAMBDA-fn      | ?                    |
+| CADAR        | Lisp function  | (CADAR X)        | LAMBDA-fn      | ?                    |
+| CADDAR       | Lisp function  | (CADDAR X)       | LAMBDA-fn      | ?                    |
+| CADDDR       | Lisp function  | (CADDDR X)       | LAMBDA-fn      | ?                    |
+| CADDR        | Lisp function  | (CADDR X)        | LAMBDA-fn      | ?                    |
+| CADR         | Lisp function  | (CADR X)         | LAMBDA-fn      | ?                    |
+| CDAAAR       | Lisp function  | (CDAAAR X)       | LAMBDA-fn      | ?                    |
+| CDAADR       | Lisp function  | (CDAADR X)       | LAMBDA-fn      | ?                    |
+| CDAAR        | Lisp function  | (CDAAR X)        | LAMBDA-fn      | ?                    |
+| CDADAR       | Lisp function  | (CDADAR X)       | LAMBDA-fn      | ?                    |
+| CDADDR       | Lisp function  | (CDADDR X)       | LAMBDA-fn      | ?                    |
+| CDADR        | Lisp function  | (CDADR X)        | LAMBDA-fn      | ?                    |
+| CDAR         | Lisp function  | (CDAR X)         | LAMBDA-fn      | ?                    |
+| CDDAAR       | Lisp function  | (CDDAAR X)       | LAMBDA-fn      | ?                    |
+| CDDADR       | Lisp function  | (CDDADR X)       | LAMBDA-fn      | ?                    |
+| CDDAR        | Lisp function  | (CDDAR X)        | LAMBDA-fn      | ?                    |
+| CDDDAR       | Lisp function  | (CDDDAR X)       | LAMBDA-fn      | ?                    |
+| CDDDDR       | Lisp function  | (CDDDDR X)       | LAMBDA-fn      | ?                    |
+| CDDDR        | Lisp function  | (CDDDR X)        | LAMBDA-fn      | ?                    |
+| CDDR         | Lisp function  | (CDDR X)         | LAMBDA-fn      | ?                    |
+| CDR          | Host function  | (CDR X)          |                | Return the item indicated by the second pointer of a pair. NIL is treated   specially: the CDR of NIL is NIL. |
+| CONS         | Host function  | (CONS CAR CDR)   |                | Construct a new instance of cons cell with this `car` and `cdr`. |
+| COPY         | Lisp function  | (COPY X)         | LAMBDA-fn      | see manual pages <a href='https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=70'>62</a> |
+| DEFINE       | Host function  | (DEFINE ARGS)    | PSEUDO-FUNCTION | Bootstrap-only version of `DEFINE` which, post boostrap, can be overwritten    in LISP.     The single argument to `DEFINE` should be an assoc list which should be    nconc'ed onto the front of the oblist. Broadly,    (SETQ OBLIST (NCONC ARG1 OBLIST)) |
+| DIFFERENCE   | Host function  | (DIFFERENCE X Y) |                | ?                    |
+| DIVIDE       | Lisp function  | (DIVIDE X Y)     | LAMBDA-fn      | see manual pages <a href='https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=34'>26</a>, <a href='https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=72'>64</a> |
+| ERROR        | Host function  | (ERROR & ARGS)   | PSEUDO-FUNCTION | Throw an error       |
+| EQ           | Host function  | (EQ X Y)         | PREDICATE      | Returns `T` if and only if both `x` and `y` are bound to the same atom,   else `NIL`. |
+| EQUAL        | Host function  | (EQUAL X Y)      | PREDICATE      | This is a predicate that is true if its two arguments are identical   S-expressions, and false if they are different. (The elementary predicate   `EQ` is defined only for atomic arguments.) The definition of `EQUAL` is   an example of a conditional expression inside a conditional expression.    NOTE: returns `F` on failure, not `NIL` |
+| EVAL         | Host function  | (EVAL EXPR); (EVAL EXPR ENV DEPTH) |                | Evaluate this `expr` and return the result. If `environment` is not passed,    it defaults to the current value of the global object list. The `depth`    argument is part of the tracing system and should not be set by user code.     All args are assumed to be numbers, symbols or `beowulf.cons-cell/ConsCell`     objects. |
+| FACTORIAL    | Lisp function  | (FACTORIAL N)    | LAMBDA-fn      | ?                    |
+| FIXP         | Host function  | (FIXP X)         | PREDICATE      | ?                    |
+| GENSYM       | Host function  | (GENSYM )        |                | Generate a unique symbol. |
+| GET          | Lisp function  | (GET X Y)        | LAMBDA-fn      | see manual pages <a href='https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=49'>41</a>, <a href='https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=67'>59</a> |
+| GREATERP     | Host function  | (GREATERP X Y)   | PREDICATE      | ?                    |
+| INTEROP      | Host function  | (INTEROP FN-SYMBOL ARGS) | (INTEROP)      | Clojure (or other host environment) interoperation API. `fn-symbol` is expected   to be either    1. a symbol bound in the host environment to a function; or   2. a sequence (list) of symbols forming a qualified path name bound to a      function.    Lower case characters cannot normally be represented in Lisp 1.5, so both the   upper case and lower case variants of `fn-symbol` will be tried. If the   function you're looking for has a mixed case name, that is not currently   accessible.    `args` is expected to be a Lisp 1.5 list of arguments to be passed to that   function. Return value must be something acceptable to Lisp 1.5, so either   a symbol, a number, or a Lisp 1.5 list.    If `fn-symbol` is not found (even when cast to lower case), or is not a function,   or the value returned cannot be represented in Lisp 1.5, an exception is thrown   with `:cause` bound to `:interop` and `:detail` set to a value representing the   actual problem. |
+| INTERSECTION | Lisp function  | (INTERSECTION X Y) | LAMBDA-fn      | ?                    |
+| LENGTH       | Lisp function  | (LENGTH L)       | LAMBDA-fn      | see manual pages <a href='https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=70'>62</a> |
+| LESSP        | Host function  | (LESSP X Y)      | PREDICATE      | ?                    |
+| MEMBER       | Lisp function  | (MEMBER A X)     | LAMBDA-fn      | see manual pages <a href='https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=19'>11</a>, <a href='https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=70'>62</a> |
+| MINUSP       | Lisp function  | (MINUSP X)       | LAMBDA-fn      | see manual pages <a href='https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=34'>26</a>, <a href='https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=72'>64</a> |
+| NOT          | Lisp function  | (NOT X)          | LAMBDA-fn      | see manual pages <a href='https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=29'>21</a>, <a href='https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=31'>23</a>, <a href='https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=66'>58</a> |
+| NULL         | Lisp function  | (NULL X)         | LAMBDA-fn      | see manual pages <a href='https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=19'>11</a>, <a href='https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=65'>57</a> |
+| NUMBERP      | Host function  | (NUMBERP X)      | PREDICATE      | ?                    |
+| OBLIST       | Host function  | (OBLIST )        |                | Return a list of the symbols currently bound on the object list.        **NOTE THAT** in the Lisp 1.5 manual, footnote at the bottom of page 69, it implies     that an argument can be passed but I'm not sure of the semantics of    this. |
+| ONEP         | Lisp function  | (ONEP X)         | LAMBDA-fn      | see manual pages <a href='https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=34'>26</a>, <a href='https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=72'>64</a> |
+| PAIR         | Lisp function  | (PAIR X Y)       | LAMBDA-fn      | see manual pages <a href='https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=68'>60</a> |
+| PLUS         | Host function  | (PLUS & ARGS)    |                | ?                    |
+| PRETTY       | Lisp variable  |                  | (PRETTY)       | ?                    |
+| PRINT        | Lisp variable  |                  | PSEUDO-FUNCTION  | ?                    |
+| PROP         | Lisp function  | (PROP X Y U)     | LAMBDA-fn      | see manual pages <a href='https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=67'>59</a> |
+| QUOTIENT     | Host function  | (QUOTIENT X Y)   |                | I'm not certain from the documentation whether Lisp 1.5 `QUOTIENT` returned   the integer part of the quotient, or a realnum representing the whole   quotient. I am for now implementing the latter. |
+| RANGE        | Lisp variable  | ?                | (RANGE (LAMBDA (N M) (COND ((LESSP M N) (QUOTE NIL)) ((QUOTE T) (CONS N (RANGE (ADD1 N) M)))))) | ?                    |
+| READ         | Host function  | (READ ); (READ INPUT) | PSEUDO-FUNCTION  | An implementation of a Lisp reader sufficient for bootstrapping; not necessarily   the final Lisp reader. `input` should be either a string representation of a LISP   expression, or else an input stream. A single form will be read. |
+| REMAINDER    | Host function  | (REMAINDER X Y)  |                | ?                    |
+| REPEAT       | Lisp function  | (REPEAT N X)     | LAMBDA-fn      | ?                    |
+| RPLACA       | Host function  | (RPLACA CELL VALUE) | PSEUDO-FUNCTION | Replace the CAR pointer of this `cell` with this `value`. Dangerous, should   really not exist, but does in Lisp 1.5 (and was important for some   performance hacks in early Lisps) |
+| RPLACD       | Host function  | (RPLACD CELL VALUE) | PSEUDO-FUNCTION | Replace the CDR pointer of this `cell` with this `value`. Dangerous, should   really not exist, but does in Lisp 1.5 (and was important for some   performance hacks in early Lisps) |
+| SET          | Host function  | (SET SYMBOL VAL) | PSEUDO-FUNCTION | Implementation of SET in Clojure. Add to the `oblist` a binding of the    value of `var` to the value of `val`. NOTE WELL: this is not SETQ! |
+| SUB1         | Lisp function  | (SUB1 N)         | LAMBDA-fn      | see manual pages <a href='https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=34'>26</a>, <a href='https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=72'>64</a> |
+| SYSIN        | Host function  | (SYSIN ); (SYSIN FILENAME) | (SYSIN)        | Read the contents of the file at this `filename` into the object list.         If the file is not a valid Beowulf sysout file, this will probably     corrupt the system, you have been warned. File paths will be considered     relative to the filepath set when starting Lisp.     It is intended that sysout files can be read both from resources within    the jar file, and from the file system. If a named file exists in both the    file system and the resources, the file system will be preferred.        **NOTE THAT** if the provided `filename` does not end with `.lsp` (which,    if you're writing it from the Lisp REPL, it won't), the extension `.lsp`    will be appended. |
+| SYSOUT       | Host function  | (SYSOUT ); (SYSOUT FILEPATH) | (SYSOUT)       | Dump the current content of the object list to file. If no `filepath` is    specified, a file name will be constructed of the symbol `Sysout` and     the current date. File paths will be considered relative to the filepath    set when starting Lisp. |
+| TERPRI       | Lisp variable  |                  | PSEUDO-FUNCTION | ?                    |
+| TIMES        | Host function  | (TIMES & ARGS)   |                | ?                    |
+| TRACE        | Host function  | (TRACE S)        | PSEUDO-FUNCTION | Add this symbol `s` to the set of symbols currently being traced. If `s`    is not a symbol, does nothing. |
+| UNTRACE      | Host function  | (UNTRACE S)      | PSEUDO-FUNCTION | ?                    |
+| ZEROP        | Lisp function  | (ZEROP N)        | LAMBDA-fn      | see manual pages <a href='https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=34'>26</a>, <a href='https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=72'>64</a> |
+
 
 Functions described as 'Lisp function' above are defined in the default 
 sysout file, `resources/lisp1.5.lsp`, which will be loaded by default unless 

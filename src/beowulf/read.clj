@@ -16,7 +16,7 @@
   (:require [beowulf.reader.char-reader :refer [read-chars]]
             [beowulf.reader.generate :refer [generate]]
             [beowulf.reader.parser :refer [parse]]
-            [beowulf.reader.simplify :refer [remove-optional-space simplify]]
+            [beowulf.reader.simplify :refer [simplify]]
             [clojure.string :refer [join split starts-with? trim]])
   (:import [java.io InputStream]
            [instaparse.gll Failure]))
@@ -80,15 +80,17 @@
     (if (instance? Failure parse-tree)
       (doall (println (number-lines source parse-tree))
              (throw (ex-info "Parse failed" (assoc parse-tree :source source))))
-      (generate (simplify (remove-optional-space parse-tree))))))
+      (generate (simplify parse-tree)))))
 
 (defn read-from-console
   "Attempt to read a complete lisp expression from the console. NOTE that this
    will only really work for S-Expressions, not M-Expressions."
   []
   (loop [r (read-line)]
-    (if (= (count (re-seq #"\(" r))
+    (if (and (= (count (re-seq #"\(" r))
            (count (re-seq #"\)" r)))
+             (= (count (re-seq #"\[" r))
+                (count (re-seq #"\]" r))))
       r
       (recur (str r "\n" (read-line))))))
 

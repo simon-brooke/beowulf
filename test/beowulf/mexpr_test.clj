@@ -6,7 +6,7 @@
             [beowulf.read :refer [gsp]]
             [beowulf.reader.generate :refer [generate]]
             [beowulf.reader.parser :refer [parse]]
-            [beowulf.reader.simplify :refer [simplify]]))
+            [beowulf.reader.simplify :refer [simplify-tree]]))
 
 ;; These tests are taken generally from the examples on page 10 of
 ;; Lisp 1.5 Programmers Manual:
@@ -74,7 +74,7 @@
     (let [expected "(LABEL FF (LAMBDA (X) (COND ((ATOM X) X) ((QUOTE T) (FF (CAR X))))))"
           actual (print-str
                    (generate
-                     (simplify
+                     (simplify-tree
                        (parse "label[ff;λ[[x];[atom[x]->x; T->ff[car[x]]]]]"))))]
       (is (= actual expected)))))
 

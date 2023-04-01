@@ -1,6 +1,7 @@
 /target
 /classes
 /checkouts
+resources/scratch/
 profiles.clj
 pom.xml
 pom.xml.asc
@@ -18,3 +19,5 @@ pom.xml.asc
 resources/scratch.lsp
 Sysout*.lsp
 *.pdf
+
+src/beowulf/scratch.clj

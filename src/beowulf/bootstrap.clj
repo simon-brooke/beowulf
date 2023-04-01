@@ -249,7 +249,7 @@
         (case function-symbol ;; there must be a better way of doing this!
           ADD1 (safe-apply ADD1 args)
           AND (safe-apply AND args)
-          APPLY (safe-apply APPLY args) ;; TODO: need to pass the environment and depth
+          APPLY (APPLY (first args) (rest args) environment depth) ;; TODO: need to pass the environment and depth
           ATOM (ATOM? (CAR args))
           CAR (safe-apply CAR args)
           CDR (safe-apply CDR args)

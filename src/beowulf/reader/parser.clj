@@ -60,8 +60,8 @@
       arrow := '->';
       args := mexpr | (opt-space mexpr semi-colon opt-space)* opt-space mexpr opt-space;
       fn-name := mvar;
-      mvar := #'[a-z]+';
-      mconst := #'[A-Z]+';
+      mvar := #'[a-z][a-z0-9]*';
+      mconst := #'[A-Z][A-Z0-9]*';
       semi-colon := ';';"
 
     ;; Infix operators appear in mexprs, e.g. on page 7. Ooops!

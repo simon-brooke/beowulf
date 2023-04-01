@@ -331,20 +331,28 @@ It Is important to become familiar with the results of elementary functions on
 S-expressions written in list notation. These can always be determined by translating
 into dot notation.
 
-#### Examples - lisp notation 2
-car[(^ B c)]=A
-cdr[(~ I3 c)]=(B C)
-cons[^; (B c)]=(A B C)
-car[((^ B) c)]*(A B)
-c~~[(A)]=NIL
-car[cdr[(~ B C)]]=B
-It is convenient to abbreviate multiple car's and,=s. This is done by forming
-function names that begin with c, end with r, qnd have several a's and dl s between
+#### Examples - list notation 2
+
+```
+car[(A B C)] = A
+cdr[(A B C)] = (B C)
+cons[A; (B C)] = (A B C)
+car[((A B) C)] = (A B)
+cdr[(A)] = NIL
+car[cdr[(A B C)]] = B
+```
+
+It is convenient to abbreviate multiple `car`s and `cdr`s. This is done by forming
+function names that begin with `c`, end with `r`, and have several `a`s and `d`s between
 them.
-Examples
-cadr[(~ B ~)]scar[cdrl(A B C)I=B
-caddr[(A B C )I=c
-cadadr[(A (B C) D)]=c
+
+### Examples - composed accessor functions
+
+```
+cadr[(A B C)] = car[cdr[(A B C)]] = B
+caddr[(A B C )] = C
+cadadr[(A (B C) D)] = C
+```
 
 The last a or d in the name actually signifies the first operation in order to be
 performed, since it is nearest to the argument.
@@ -4842,576 +4850,156 @@ SW6 on to return to overlord after accumulator printout resulting from
 error *I? 5*. SW6 off for error printout.
 ```
 
-```
-INDEX TO FUNCTION DESCRIPTIONS
-```
+## Index
 
-Function
-
-```
-ADD 1
-ADVANCE
-AND
-APPEND
-APPLY
-ARRAY
-ATOM
-ATTRIB
-BLANK
-CAR
-CDR
-CHARCOUNT
-CLEARBUFF
-COMMA
-COMMON
-COMPILE
-CONC
-COND
-CONS
-COPY
-COUNT
-CP1
-CSET
-CSETQ
-CURCHAR
-DASH
-DEFINE
-DEFLIST
-DIFFERENCE
-DIGIT
-DIVIDE
-DOLLAR
-DUMP
-EFFACE
-ENDREAD
-EOF
-EOR
-EQ
-EQSIGN
-EQUAL
-ERROR
-ERROR1
-ERRORSET
-EVAL
-EVLIS
-EXCISE
-EXPT
-F
-FIXP
-FLAG
-FLOATP
-FUNCTION
-GENSYM
-GET
-GO
-GREATERP
-INTERN
-```
-
-```
-SUBR
-SUBR
-FSUBR
-SUBR
-SUBR
-SUBR
-SUBR
-SUBR
-APVAL
-SUBR
-SUBR
-APVAL
-SUBR
-APVAL
-SUBR
-SUBR
-FEXPR
-FSUBR
-SUBR
-SUBR
-SUBR
-SUBR
-EXPR
-FEXPR
-APVAL
-SUBR
-EXPR
-EXPR
-SUBR
-SUBR
-SUBR
-APVAL
-SUBR
-SUBR
-SUBR
-APVAL
-APVAL
-SUBR
-APVAL
-SUBR
-SUBR
-SUBR
-SUBR
-SUBR
-SUBR
-SUBR
-SUBR
-APVAL
-SUBR
-EXPR
-SUBR
-FSUBR
-SUBR
-SUBR
-FSUBR
-SUBR
-SUBR
-```
-
-```
-PSEUDO-FUNCTION
-PREDICATE
-```
-
-```
-PSEUDO-FUNCTION
-PREDICATE
-PSEUDO-FUNCTION
-```
-
-```
-PSEUDO-FUNCTION
-PSEUDO-FUNCTION
-PSEUDO-FUNCTION
-```
-
-```
-PSEUDO-FUNCTION
-PSEUDO-FUNCTION
-PSEUDO-FUNCTION
-PREDICATE
-PSEUDO-FUNCTION
-PSEUDO-FUNCTION
-PREDICATE
-```
-
-```
-PSEUDO-FUNCTION
-PSEUDO- FUNC TION
-PSEUDO-FUNCTION
-```
-
-```
-PREDICATE
-PREDICATE
-PSEUDO-FUNCTION
-PSEUDO-FUNCTION
-PSEUDO-FUNCTION
-```
-
-```
-PSEUDO-FUNCTION
-```
-
-```
-PREDICATE
-PSEUDO-FUNCTION
-PREDICATE
-```
-
-```
-PSEUDO-FUNCTION
-PREDICATE
-PSEUDO-FUNCTION
-```
-
-```
-Page -
-26,64
-88
-21, 58
-11,61
-70
-27,64
-3, 57
-59
-69,85
-2, 56
-3,56
-69,87
-8 6
-69,85
-64, 78
-64,76
-6 1
-18
-2, 56
-62
-34,66
-66
-17, 59
-59
-69,87
-APVAL 15, 85,87 18, 58
-41, 58
-26, 64
-87
-26, 64
-69,85
-67
-63
-8 8
-69,88
-69,88
-3, 23, 57
-69,85
-11, 26, 57
-32,66
-88
-35,66
-71
-71
-67,77
-26, 64
-22,69
-26, 64
-41, 60
-26,64
-21,71
-66
-41,59
-30,72
-26, 64
-67,87
-```
-
-```
-INDEX TO FUNCTION DESCRIPTIONS
-```
-
-Function
-LABEL
-LAP
-LEFTSHIFT
-LENGTH
-LESSP
-LIST
-LITER
-LOAD
-LOG AND
-LOGOR
-LOGXOR
-LPAR
-MAP
-MAPCON
-MAPLIST
-MAX
-MEMBER
-MIN
-MINUS
-MINUSP
-MKNAM
-NCONC
-NIL
-NOT
-NULL
-NUMBERP
-NUMOB
-OBLIST
-ONE P
-OPCHAR
-OPDEFINE
-OR
-PACK
-PAIR
-PAUSE
-PERIOD
-PLB
-PLUS
-PLUSS
-PRIN 1
-PRINT
-PRINTPROP
-PROG
-PROG2
-PROP
-PUNCH
-PUNCHDEF
-PUNCHLAP
-QUOTE
-QUOTIENT
-READ
-READLAP
-RECIP
-RECLAIM
-REMAINDER
-REMFLAG
-REMOB
-
-```
-FSUBR
-SUBR
-SUBR
-SUBR
-SUBR
-FSUBR
-SUBR
-SUBR
-FSUBR
-FSUBR
-FSUBR
-APVAL
-SUBR
-SUBR
-SUBR
-FSUBR
-SUBR
-FSUBR
-SUBR
-SUBR
-SUBR
-SUBR
-APVAL
-SUBR
-SUBR
-SUBR
-SUBR
-APVAL
-SUBR
-SUBR
-EXPR
-FSUBR
-SUBR
-SUBR
-SUBR
-APVAL
-SUBR
-FSUBR
-APVAL
-SUBR
-SUBR
-EXPR
-FSUBR
-SUBR
-SUBR
-SUBR
-EXPR
-EXPR
-FSUBR
-SUBR
-SUBR
-SUBR
-SUBR
-SUBR
-SUBR
-SUBR
-SUBR
-```
-
-```
-Page -
-8, 18,70
-PSEUDO-FUNCTION 65,73
-27, 64
-62
-PREDICATE 26,64
-57
-PREDICATE 87
-PSEUDO-FUNCTION 67
-27,64
-26,64
-27, 64
-69,85
-FUNCTIONAL 63
-FUNCTIONAL PSEUDO- FUNCTION 6 3
-FUNCTIONAL 20, 21, 63
-26,64
-PREDICATE 11,62
-26, 64
-26,63
-PREDICATE 26,64
-86
-PSEUDO-FUNCTION 62
-22,69
-PREDICATE 21, 23,^58
-PREDICATE 11,57
-PREDICATE 26, 64
-PSEUDO-FUNCTION 86
-69
-PREDICATE 26, 64
-PREDICATE 8 7
-PSEUDO-FUNCTION 65,75
-PREDICATE 21, 58
-PSEUDO-FUNCTION 86
-60
-PSEUDO-FUNCTION 67
-69,85
-PSEUDO- FUNCTION 67
-25,63
-69,85
-PSEUDO-FUNCTION 65,84
-PSEUDO-FUNCTION 65,84
-PSEUDO-FUNCTION LIBRARY 68
-29,71
-42,66
-FUNCTIONAL 59
-PSEUDO-FUNCTION 65,84
-PSEUDO-FUNCTION LIBRARY 6 8
-PSEUDO-FUNCTION LIBRARY 68,76
-10, 22, 71
-26,64
-PSEUDO-FUNCTION 65,84
-PSEUDO-FUNCTION 65,76
-26,64
-PSEUDO-FUNCTION 67
-26, 64
-PSEUDO-FUNCTION 41, 60
-PSEUDO-FUNCTION 67
-```
-
-```
-INDEX TO FUNCTION DESCRIPTIONS
-```
-
-Function
-
-```
-REMPROP
-RETURN
-REVERSE
-RPAR
-RPLACA
-RPLACD
-SASSOC
-SEARCH
-SELECT
-SET
-SETQ
-SLASH
-SPEAK
-SPECIAL
-STAR
-STARTREAD
-SUB1
-SUB LIS
-SUBST
-T
-TEMPUS-FUGIT
-TERPRI
-TIMES
-TRACE
-TRACESET
-UNCOMMON
-UNCOUNT
-UNPACK
-UNSPECIAL
-UNTRACE
-UNTRACESET
-ZEROP
-*T*
-```
-
-```
-SUBR
-SUBR
-SUBR
-APVAL
-SUBR
-SUBR
-SUBR
-SUBR
-FEXPR
-SUBR
-FSUBR
-APVAL
-SUBR
-SUBR
-APVAL
-SUBR
-SUBR
-SUBR
-SUBR
-APVAL
-SUBR
-SUBR
-FSUBR
-EXPR
-EXPR
-SUBR
-SUBR
-SUBR
-SUBR
-EXPR
-EXPR
-SUBR
-APVAL
-```
-
-```
-PSEUDO-FUNCTION
-PSEUDO-FUNCTION
-```
-
-```
-PSEUDO-FUNCTION
-PSEUDO-FUNCTION
-FUNCTIONAL
-FUNCTIONAL
-PSEUDO-FUNCTION
-PSEUDO-FUNCTION
-PSEUDO-FUNCTION
-PSEUDO-FUNCTION
-PSEUDO-FUNCTION
-```
-
-```
-PSEUDO-FUNCTION
-PSEUDO-FUNCTION
-PSEUDO-FUNCTION
-PSEUDO-FUNCTION
-PSETJDO-FUNCTION
-PSEUDO-FUNCTION
-PSEUDO-FUNCTION
-PSEUDO-FUNCTION
-PSEUDO- FUNC TION
-PREDICATE
-```
-
-```
-Page
-41,59
-30,72
-6 2
-69,85
-41,58
-41,58
-60
-63
-66
-30, 71
-30, 71
-69,85
-34,66 64, 78
-69,85
-87
-26, 64
-12,61
-11, 61
-22,69
-67
-65,84
-26,64
-32,66, 79
-LIBRARY 6 8
-64, 78
-34,66
-87
-64,78
-32,66
-68
-26,64
-22,69
-```
+| Function     | Call type  | Implementation   | Pages                        |
+|--------------|------------|------------------|------------------------------|
+| ADD1         | SUBR       |                  | [26](#page26), [64](#page64) |
+| ADVANCE      | SUBR       | PSEUDO-FUNCTION  | [88](#page88)        |
+| AND          | FSUBR      | PREDICATE        | [21](#page21), [58](#page58) |
+| APPEND       | SUBR       |                  | [11](#page11), [61](#page61) |
+| APPLY        | SUBR       |                  | [70](#page70)        |
+| ARRAY        | SUBR       | PSEUDO-FUNCTION  | [27](#page27), [64](#page64) |
+| ATOM         | SUBR       | PREDICATE        | [3](#page3), [57](#page57) |
+| ATTRIB       | SUBR       | PSEUDO-FUNCTION  | [59](#page59)        |
+| BLANK        | APVAL      |                  | [69](#page69), [85](#page85) |
+| CAR          | SUBR       |                  | [2](#page2), [56](#page56) |
+| CDR          | SUBR       |                  | [3](#page3), [56](#page56) |
+| CHARCOUNT    | APVAL      |                  | [69](#page69), [87](#page87) |
+| CLEARBUFF    | SUBR       | PSEUDO-FUNCTION  | [86](#page86)        |
+| COMMA        | APVAL      |                  | [69](#page69), [85](#page85) |
+| COMMON       | SUBR       | PSEUDO-FUNCTION  | [64](#page64), [78](#page78) |
+| COMPILE      | SUBR       | PSEUDO-FUNCTION  | [64](#page64), [76](#page76) |
+| CONC         | FEXPR      |                  | [61](#page61)        |
+| COND         | FSUBR      |                  | [18](#page18)        |
+| CONS         | SUBR       |                  | [2](#page2), [56](#page56) |
+| COPY         | SUBR       |                  | [62](#page62)        |
+| COUNT        | SUBR       | PSEUDO-FUNCTION  | [34](#page34), [66](#page66) |
+| CP1          | SUBR       |                  | [66](#page66)        |
+| CSET         | EXPR       | PSEUDO-FUNCTION  | [17](#page17), [59](#page59) |
+| CSETQ        | FEXPR      | PSEUDO-FUNCTION  | [59](#page59)        |
+| CURCHAR      | APVAL      |                  | [69](#page69), [87](#page87) |
+| DASH         | SUBR       | PREDICATE APVAL  | [85](#page85), [87](#page87) |
+| DEFINE       | EXPR       | PSEUDO-FUNCTION  | [15](#page15), [18](#page18), [58](#page58) |
+| DEFLIST      | EXPR       | PSEUDO-FUNCTION  | [41](#page41), [58](#page58) |
+| DIFFERENCE   | SUBR       |                  | [26](#page26), [64](#page64) |
+| DIGIT        | SUBR       | PREDICATE        | [87](#page87)        |
+| DIVIDE       | SUBR       |                  | [26](#page26), [64](#page64) |
+| DOLLAR       | APVAL      |                  | [69](#page69), [85](#page85) |
+| DUMP         | SUBR       | PSEUDO-FUNCTION  | [67](#page67)        |
+| EFFACE       | SUBR       | PSEUDO-FUNCTION  | [63](#page63)        |
+| ENDREAD      | SUBR       | PSEUDO-FUNCTION  | [8 8](#page8 8)      |
+| EOF          | APVAL      |                  | [69](#page69), [88](#page88) |
+| EOR          | APVAL      |                  | [69](#page69), [88](#page88) |
+| EQ           | SUBR       | PREDICATE        | [3](#page3), [23](#page23), [57](#page57) |
+| EQSIGN       | APVAL      |                  | [69](#page69), [85](#page85) |
+| EQUAL        | SUBR       | PREDICATE        | [11](#page11), [26](#page26), [57](#page57) |
+| ERROR        | SUBR       | PSEUDO-FUNCTION  | [32](#page32), [66](#page66) |
+| ERROR1       | SUBR       | PSEUDO-FUNCTION  | [88](#page88)        |
+| ERRORSET     | SUBR       | PSEUDO-FUNCTION  | [35](#page35), [66](#page66) |
+| EVAL         | SUBR       |                  | [71](#page71)        |
+| EVLIS        | SUBR       |                  | [71](#page71)        |
+| EXCISE       | SUBR       | PSEUDO-FUNCTION  | [67](#page67), [77](#page77) |
+| EXPT         | SUBR       |                  | [26](#page26), [64](#page64) |
+| F            | APVAL      |                  | [22](#page22), [69](#page69) |
+| FIXP         | SUBR       | PREDICATE        | [26](#page26), [64](#page64) |
+| FLAG         | EXPR       | PSEUDO-FUNCTION  | [41](#page41), [60](#page60) |
+| FLOATP       | SUBR       | PREDICATE        | [26](#page26), [64](#page64) |
+| FUNCTION     | FSUBR      |                  | [21](#page21), [71](#page71) |
+| GENSYM       | SUBR       |                  | [66](#page66)        |
+| GET          | SUBR       |                  | [41](#page41), [59](#page59) |
+| GO           | FSUBR      | PSEUDO-FUNCTION  | [30](#page30), [72](#page72) |
+| GREATERP     | SUBR       | PREDICATE        | [26](#page26), [64](#page64) |
+| INTERN       | SUBR       | PSEUDO-FUNCTION  | [67](#page67), [87](#page87) |
+| LABEL        | FSUBR      |                  | [8](#page8), [18](#page18), [70](#page70) |
+| LAP          | SUBR       | PSEUDO-FUNCTION  | [65](#page65), [73](#page73) |
+| LEFTSHIFT    | SUBR       |                  | [27](#page27), [64](#page64) |
+| LENGTH       | SUBR       |                  | [62](#page62)        |
+| LESSP        | SUBR       | PREDICATE        | [26](#page26), [64](#page64) |
+| LIST         | FSUBR      |                  | [57](#page57)        |
+| LITER        | SUBR       | PREDICATE        | [87](#page87)        |
+| LOAD         | SUBR       | PSEUDO-FUNCTION  | [67](#page67)        |
+| LOGAND       | FSUBR      |                  | [27](#page27), [64](#page64) |
+| LOGOR        | FSUBR      |                  | [26](#page26), [64](#page64) |
+| LOGXOR       | FSUBR      |                  | [27](#page27), [64](#page64) |
+| LPAR         | APVAL      |                  | [69](#page69), [85](#page85) |
+| MAP          | SUBR       | FUNCTIONAL       | [63](#page63)        |
+| MAPCON       | SUBR       | FUNCTIONAL PSEUDO- FUNCTION | [63](#page63)        |
+| MAPLIST      | SUBR       | FUNCTIONAL       | [20](#page20), [21](#page21), [63](#page63) |
+| MAX          | FSUBR      |                  | [26](#page26), [64](#page64) |
+| MEMBER       | SUBR       | PREDICATE        | [11](#page11), [62](#page62) |
+| MIN          | FSUBR      |                  | [26](#page26), [64](#page64) |
+| MINUS        | SUBR       |                  | [26](#page26), [63](#page63) |
+| MINUSP       | SUBR       | PREDICATE        | [26](#page26), [64](#page64) |
+| MKNAM        | SUBR       |                  | [86](#page86)        |
+| NCONC        | SUBR       | PSEUDO-FUNCTION  | [62](#page62)        |
+| NIL          | APVAL      |                  | [22](#page22), [69](#page69) |
+| NOT          | SUBR       | PREDICATE        | [21](#page21), [23](#page23), [58](#page58) |
+| NULL         | SUBR       | PREDICATE        | [11](#page11), [57](#page57) |
+| NUMBERP      | SUBR       | PREDICATE        | [26](#page26), [64](#page64) |
+| NUMOB        | SUBR       | PSEUDO-FUNCTION  | [86](#page86)        |
+| OBLIST       | APVAL      |                  | [69](#page69)        |
+| ONEP         | SUBR       | PREDICATE        | [26](#page26), [64](#page64) |
+| OPCHAR       | SUBR       | PREDICATE        | [87](#page87)        |
+| OPDEFINE     | EXPR       | PSEUDO-FUNCTION  | [65](#page65), [75](#page75) |
+| OR           | FSUBR      | PREDICATE        | [21](#page21), [58](#page58) |
+| PACK         | SUBR       | PSEUDO-FUNCTION  | [86](#page86)        |
+| PAIR         | SUBR       |                  | [60](#page60)        |
+| PAUSE        | SUBR       | PSEUDO-FUNCTION  | [67](#page67)        |
+| PERIOD       | APVAL      |                  | [69](#page69), [85](#page85) |
+| PLB          | SUBR       | PSEUDO- FUNCTION | [67](#page67)        |
+| PLUS         | FSUBR      |                  | [25](#page25), [63](#page63) |
+| PLUSS        | APVAL      |                  | [69](#page69), [85](#page85) |
+| PRIN1        | SUBR       | PSEUDO-FUNCTION  | [65](#page65), [84](#page84) |
+| PRINT        | SUBR       | PSEUDO-FUNCTION  | [65](#page65), [84](#page84) |
+| PRINTPROP    | EXPR       | PSEUDO-FUNCTION LIBRARY  | [68](#page68)        |
+| PROG         | FSUBR      |                  | [29](#page29), [71](#page71) |
+| PROG2        | SUBR       |                  | [42](#page42), [66](#page66) |
+| PROP         | SUBR       | FUNCTIONAL       | [59](#page59)        |
+| PUNCH        | SUBR       | PSEUDO-FUNCTION  | [65](#page65), [84](#page84) |
+| PUNCHDEF     | EXPR       | PSEUDO-FUNCTION LIBRARY | [68](#page68)        |
+| PUNCHLAP     | EXPR       | PSEUDO-FUNCTION LIBRARY | [68](#page68), [76](#page76) |
+| QUOTE        | FSUBR      |                  | [10](#page10), [22](#page22), [71](#page71) |
+| QUOTIENT     | SUBR       |                  | [26](#page26), [64](#page64) |
+| READ         | SUBR       | PSEUDO-FUNCTION  | [5](#page5), [84](#page84) |
+| READLAP      | SUBR       | PSEUDO-FUNCTION  | [65](#page65), [76](#page76) |
+| RECIP        | SUBR       |                  | [26](#page26), [64](#page64) |
+| RECLAIM      | SUBR       | PSEUDO-FUNCTION  | [67](#page67)        |
+| REMAINDER    | SUBR       |                  | [26](#page26), [64](#page64) |
+| REMFLAG      | SUBR       | PSEUDO-FUNCTION  | [41](#page41), [60](#page60) |
+| REMOB        | SUBR       | PSEUDO-FUNCTION  | [67](#page67)        |
+| REMPROP      | SUBR       | PSEUDO-FUNCTION  | [41](#page41), [59](#page59) |
+| RETURN       | SUBR       | PSEUDO-FUNCTION  | [30](#page30), [72](#page72) |
+| REVERSE      | SUBR       |                  | [6 2](#page6 2)      |
+| RPAR         | APVAL      |                  | [69](#page69), [85](#page85) |
+| RPLACA       | SUBR       | PSEUDO-FUNCTION  | [41](#page41), [58](#page58) |
+| RPLACD       | SUBR       | PSEUDO-FUNCTION  | [41](#page41), [58](#page58) |
+| SASSOC       | SUBR       | FUNCTIONAL       | [60](#page60)        |
+| SEARCH       | SUBR       | FUNCTIONAL       | [63](#page63)        |
+| SELECT       | FEXPR      |                  | [66](#page66)        |
+| SET          | SUBR       | PSEUDO-FUNCTION  | [30](#page30), [71](#page71) |
+| SETQ         | FSUBR      | PSEUDO-FUNCTION  | [30](#page30), [71](#page71) |
+| SLASH        | APVAL      |                  | [69](#page69), [85](#page85) |
+| SPEAK        | SUBR       | PSEUDO-FUNCTION  | [34](#page34), [66](#page66) |
+| SPECIAL      | SUBR       | PSEUDO-FUNCTION  | [64](#page64), [78](#page78) |
+| STAR         | APVAL      |                  | [69](#page69), [85](#page85) |
+| STARTREAD    | SUBR       | PSEUDO-FUNCTION  | [87](#page87)        |
+| SUB1         | SUBR       |                  | [26](#page26), [64](#page64) |
+| SUBLIS       | SUBR       |                  | [12](#page12), [61](#page61) |
+| SUBST        | SUBR       |                  | [11](#page11), [61](#page61) |
+| T            | APVAL      |                  | [22](#page22), [69](#page69) |
+| TEMPUS-FUGIT | SUBR       | PSEUDO-FUNCTION  | [67](#page67)        |
+| TERPRI       | SUBR       | PSEUDO-FUNCTION  | [65](#page65), [84](#page84) |
+| TIMES        | FSUBR      |                  | [26](#page26), [64](#page64) |
+| TRACE        | EXPR       | PSEUDO-FUNCTION  | [32](#page32), [66](#page66), [79](#page79) |
+| TRACESET     | EXPR       | PSEUDO-FUNCTION LIBRARY | [68](#page68)        |
+| UNCOMMON     | SUBR       | PSEUDO-FUNCTION  | [64](#page64), [78](#page78) |
+| UNCOUNT      | SUBR       | PSEUDO-FUNCTION  | [34](#page34), [66](#page66) |
+| UNPACK       | SUBR       | PSEUDO-FUNCTION  | [87](#page87)        |
+| UNSPECIAL    | SUBR       |                  | [64](#page64), [78](#page78) |
+| UNTRACE      | EXPR       | PSEUDO-FUNCTION  | [32](#page32), [66](#page66) |
+| UNTRACESET   | EXPR       | PSEUDO-FUNCTION  | [68](#page68)        |
+| ZEROP        | SUBR       | PREDICATE        | [26](#page26), [64](#page64) |
 
 ```
 Symbol or Term

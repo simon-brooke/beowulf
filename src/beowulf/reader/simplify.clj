@@ -25,7 +25,7 @@
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(declare simplify)
+(declare simplify-tree)
 
 (defn remove-optional-space
   [tree]
@@ -48,17 +48,17 @@
       (loop [r tree']
         (if (and r (vector? r) (keyword? (first r)))
           (if (= (first r) key)
-            (recur (simplify (second r) context))
+            (recur (simplify-tree (second r) context))
             r)
           r))
       tree')))
 
-(defn simplify
+(defn simplify-tree
   "Simplify this parse tree `p`. If `p` is an instaparse failure object, throw
    an `ex-info`, with `p` as the value of its `:failure` key.
    
    **NOTE THAT** it is assumed that `remove-optional-space` has been run on the
-   parse tree **BEFORE** it is passed to `simplify`."
+   parse tree **BEFORE** it is passed to `simplify-tree`."
   ([p]
    (if
     (instance? Failure p)
@@ -67,7 +67,7 @@
              {:cause :parse-failure
               :phase   :simplify
               :failure p}))
-     (simplify p :expr)))
+     (simplify-tree p :expr)))
   ([p context]
    (cond
      (string? p) p
@@ -78,8 +78,8 @@
                  (case (first p)
                    (:λexpr
                     :args :bindings :body :cond :cond-clause :defn :dot-terminal 
-                    :fncall :lhs :quoted-expr :rhs ) (map #(simplify % context) p)
-                   (:arg :expr :coefficient :fn-name :number) (simplify (second p) context)
+                    :fncall :lhs :quoted-expr :rhs ) (map #(simplify-tree % context) p)
+                   (:arg :expr :coefficient :fn-name :number) (simplify-tree (second p) context)
                    (:arrow :dot :e :lpar :lsqb  :opt-comment :opt-space :q :quote :rpar :rsqb
                            :semi-colon :sep :space) nil
                    :atom (if
@@ -97,28 +97,35 @@
                                   [:fncall
                                    [:mvar "cons"]
                                    [:args
-                                    (simplify (nth p 1) context)
-                                    (simplify (nth p 2) context)]]
-                                  (map #(simplify % context) p))
-                   :iexp (simplify (second p) context)
+                                    (simplify-tree (nth p 1) context)
+                                    (simplify-tree (nth p 2) context)]]
+                                  (map #(simplify-tree % context) p))
+                   :iexp (simplify-tree (second p) context)
                    :iexpr [:iexpr
-                           [:lhs (simplify (second p) context)]
-                           (simplify (nth p 2) context) ;; really should be the operator
-                           [:rhs (simplify (nth p 3) context)]]
+                           [:lhs (simplify-tree (second p) context)]
+                           (simplify-tree (nth p 2) context) ;; really should be the operator
+                           [:rhs (simplify-tree (nth p 3) context)]]
                    :mexpr (if
                            (:strict *options*)
                             (throw
                              (ex-info "Cannot parse meta expressions in strict mode"
                                       {:cause :strict}))
-                            (simplify (second p) :mexpr))
+                            (simplify-tree (second p) :mexpr))
                    :list (if
                           (= context :mexpr)
                            [:fncall
                             [:mvar "list"]
-                            [:args (apply vector (map simplify (rest p)))]]
-                           (map #(simplify % context) p))
-                   :raw (first (remove empty? (map simplify (rest p))))
-                   :sexpr (simplify (second p) :sexpr)
+                            [:args (apply vector (map simplify-tree (rest p)))]]
+                           (map #(simplify-tree % context) p))
+                   :raw (first (remove empty? (map simplify-tree (rest p))))
+                   :sexpr (simplify-tree (second p) :sexpr)
           ;;default
                    p)))
      :else p)))
+
+(defn simplify
+  "Simplify this parse tree `p`. If `p` is an instaparse failure object, throw
+   an `ex-info`, with `p` as the value of its `:failure` key. Calls 
+   `remove-optional-space` before processing."
+  [p]
+  (simplify-tree (remove-optional-space p)))
