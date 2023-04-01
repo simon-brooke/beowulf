@@ -6,6 +6,7 @@
             [beowulf.cons-cell :refer [F make-cons-cell make-beowulf-list 
                                        pretty-print T]]
             ;; note hyphen - this is Clojure...
+            [beowulf.gendoc :refer [open-doc]]
             [beowulf.oblist :refer [*options* oblist NIL]])
   (:import [beowulf.cons_cell ConsCell]
            ;; note underscore - same namespace, but Java.
@@ -268,8 +269,8 @@
 ;; TODO: These are candidates for moving to Lisp urgently!
 
 (defn ASSOC
-  "If a is an association list such as the one formed by PAIRLIS in the above
-  example, then assoc will produce the first pair whose first term is x. Thus
+  "If `a` is an association list such as the one formed by PAIRLIS in the above
+  example, then assoc will produce the first pair whose first term is `x`. Thus
   it is a table searching function.
 
   All args are assumed to be `beowulf.cons-cell/ConsCell` objects.
@@ -478,3 +479,24 @@
   [s]
   (when (symbol? s)
     (swap! traced-symbols #(set (remove (fn [x] (= s x)) %)))))
+
+;;;; Extensions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn DOC
+   "Open the page for this `symbol` in the Lisp 1.5 manual, if known, in the 
+    default web browser.
+   
+   **NOTE THAT** this is an extension function, not available in strct mode."
+  [symbol]
+  (when (lax? 'DOC)
+    (open-doc symbol)))
+
+(defn CONSP
+  "Return `T` if object `o` is a cons cell, else `F`.
+   
+   **NOTE THAT** this is an extension function, not available in strct mode. 
+   I believe that Lisp 1.5 did not have any mechanism for testing whether an
+   argument was, or was not, a cons cell."
+  [o]
+  (when (lax? 'CONSP)
+    (if (instance? o ConsCell) 'T 'F)))

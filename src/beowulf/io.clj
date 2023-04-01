@@ -63,7 +63,9 @@
   "Dump the current content of the object list to file. If no `filepath` is
    specified, a file name will be constructed of the symbol `Sysout` and 
    the current date. File paths will be considered relative to the filepath
-   set when starting Lisp."
+   set when starting Lisp.
+   
+   **NOTE THAT** this is an extension function, not available in strct mode."
   ([]
    (SYSOUT nil))
   ([filepath]
@@ -92,7 +94,9 @@
    
    **NOTE THAT** if the provided `filename` does not end with `.lsp` (which,
    if you're writing it from the Lisp REPL, it won't), the extension `.lsp`
-   will be appended."
+   will be appended.
+   
+   **NOTE THAT** this is an extension function, not available in strct mode."
   ([]
    (SYSIN (or (:read *options*) default-sysout)))
   ([filename]

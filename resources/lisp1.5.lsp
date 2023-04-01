@@ -11,6 +11,11 @@
   (APPEND LAMBDA
     (X Y) (COND ((NULL X) Y) ((QUOTE T) (CONS (CAR X) (APPEND (CDR X) Y)))))
   (APPLY)
+  (ASSOC LAMBDA (X L) 
+    (COND 
+      ((NULL L) (QUOTE NIL)) 
+      ((AND (CONSP (CAR L)) (EQ (CAAR L) X)) (CDAR L)) 
+      ((QUOTE T) (ASSOC X (CDR L)))))
   (ATOM)
   (CAR)
   (CAAAAR LAMBDA (X) (CAR (CAR (CAR (CAR X)))))
@@ -43,6 +48,7 @@
   (CDDR LAMBDA (X) (CDR (CDR X)))
   (CDR)
   (CONS)
+  (CONSP)
   (COPY
     LAMBDA
     (X)
@@ -53,6 +59,11 @@
   (DIFFERENCE)
   (DIVIDE
     LAMBDA (X Y) (CONS (QUOTIENT X Y) (CONS (REMAINDER X Y) (QUOTE NIL))))
+  (DOC)
+  (EFFACE 
+    LAMBDA (X L) (COND ((NULL L) (QUOTE NIL)) 
+                    ((EQUAL X (CAR L)) (CDR L)) 
+                    ((QUOTE T) (RPLACD L (EFFACE X (CDR L))))))
   (ERROR)
   (EQ)
   (EQUAL)
@@ -78,6 +89,7 @@
       ((QUOTE T) (INTERSECTION (CDR X) Y))))
   (LENGTH LAMBDA (L) (COND ((EQ NIL L) 0) (T (ADD1 (LENGTH (CDR L))))))
   (LESSP)
+  (MAPLIST LAMBDA (L F) (COND ((NULL L) NIL) ((QUOTE T) (CONS (F (CAR L)) (MAPLIST (CDR L) F)))))
   (MEMBER
     LAMBDA
     (A X)

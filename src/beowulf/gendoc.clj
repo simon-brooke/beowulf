@@ -3,12 +3,12 @@
    
    NOTE: this is *very* hacky. You almost certainly do not want to 
    use this!"
-  (:require [beowulf.io :refer [default-sysout SYSIN]]
-            [beowulf.host :refer [ASSOC]]
-            [beowulf.manual :refer [format-page-references index *manual-url*]]
-            [beowulf.oblist :refer [NIL oblist]]
-            [clojure.java.browse :refer [browse-url]]
-            [clojure.string :refer [join replace upper-case]]))
+  (:require ;; [beowulf.io :refer [default-sysout SYSIN]]
+   [beowulf.manual :refer [format-page-references index
+                           *manual-url* page-url]]
+   [beowulf.oblist :refer [NIL oblist]]
+   [clojure.java.browse :refer [browse-url]]
+   [clojure.string :refer [join replace upper-case]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -31,16 +31,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def host-functions
-  "Functions which we can infer are written in Clojure."
-  (reduce
-   merge
-   {}
-   (map
-    ns-publics
-    ['beowulf.bootstrap
-     'beowulf.host
-     'beowulf.io
-     'beowulf.read])))
+  "Functions which we can infer are written in Clojure. We need to collect these 
+   at run-time, not compile time, hence memoised function, not variable."
+  (memoize
+   (fn [] (reduce
+           merge
+           {}
+           (map
+            ns-publics
+            ['beowulf.bootstrap
+             'beowulf.host
+             'beowulf.io
+             'beowulf.read])))))
 
 ;; OK, this, improbably, works. There's probably a better way...
 ;; (:doc (meta (eval (read-string (str "#'" "beowulf.read" "/" "READ")))))
@@ -60,7 +62,7 @@
 
 
 (defn- get-metadata-for-entry [entry key]
-  (let [fn (host-functions (symbol (first entry)))]
+  (let [fn ((host-functions) (symbol (first entry)))]
     (get-metadata-for-function fn key)))
 
 (defn infer-type
@@ -70,7 +72,7 @@
   (cond
     (= (second entry) 'LAMBDA) "Lisp function"
     (= (second entry) 'LABEL) "Labeled form"
-    (host-functions (first entry)) (if (fn? (eval (symbol (host-functions (first entry)))))
+    ((host-functions) (first entry)) (if (fn? (eval (symbol ((host-functions) (first entry)))))
                                      "Host function"
                                      "Host variable")
     :else "Lisp variable"))
@@ -99,7 +101,7 @@
     :else "?"))
 
 (defn infer-implementation
-  [entry] 
+  [entry]
   (case (second entry)
     LAMBDA (format "%s-fn" (second entry))
     LABEL (format "%s-fn" (second entry))
@@ -118,12 +120,12 @@
 
 (defn gen-doc-table
   ([]
-   (gen-doc-table default-sysout))
-  ([sysfile]
-   (when (= NIL @oblist)
-     (try (SYSIN sysfile)
-          (catch Throwable any
-            (println (.getMessage any) " while reading " sysfile))))
+  ;;  (gen-doc-table default-sysout))
+  ;; ([sysfile]
+  ;;  (when (= NIL @oblist)
+  ;;    (try (SYSIN sysfile)
+  ;;         (catch Throwable any
+  ;;           (println (.getMessage any) " while reading " sysfile))))
    (join
     "\n"
     (doall
@@ -151,3 +153,18 @@
                (list "## Index"
                      ""
                      (gen-doc-table)))))))))
+
+(defn open-doc
+  "Open the documentation page for this `symbol`, if known, in the default
+   web browser."
+  [symbol]
+  (let [doc (get-metadata-for-function symbol :doc)]
+   (if-let [pages (:page-nos (index (keyword symbol)))]
+    (browse-url (page-url (first pages)))
+    (if doc
+      (println doc)
+      (throw (ex-info "No documentation found"
+                      {:phase :host
+                       :function 'DOC
+                       :args (list symbol)
+                       :type :beowulf}))))))

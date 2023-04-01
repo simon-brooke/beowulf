@@ -13,7 +13,7 @@
             [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell
                                        pretty-print T F]]
             [beowulf.host :refer [ADD1 AND ASSOC ATOM ATOM? CAR CDR CONS DEFINE 
-                                  DIFFERENCE EQ EQUAL ERROR FIXP GENSYM 
+                                  DIFFERENCE DOC EQ EQUAL ERROR FIXP GENSYM 
                                   GREATERP lax? LESSP LIST NUMBERP OBLIST
                                   PAIRLIS PLUS QUOTIENT REMAINDER RPLACA RPLACD SET 
                                   TIMES TRACE traced? UNTRACE]]
@@ -256,6 +256,7 @@
           CONS (safe-apply CONS args)
           DEFINE (DEFINE (CAR args))
           DIFFERENCE (DIFFERENCE (CAR args) (CADR args))
+          DOC (DOC (first args))
           EQ (safe-apply EQ args)
           EQUAL (safe-apply EQUAL args)
           ERROR (safe-apply ERROR args)

@@ -1,6 +1,6 @@
 # beowulf
 
-LISP 1.5 is to all Lisp dialects as Beowulf is to Emglish literature.
+LISP 1.5 is to all Lisp dialects as Beowulf is to English literature.
 
 ## What this is
 

@@ -118,5 +118,7 @@
               (case (:cause data)
                 :quit nil
                 ;; default
-                (pprint data))
+                (do
+                  (println "ERROR: " (.getMessage e))
+                  (pprint data)))
               (println e))))))))
