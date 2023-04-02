@@ -243,6 +243,7 @@
          :scientific (let [n (generate (second p))
                            exponent (generate (nth p 3))]
                        (* n (expt 10 exponent)))
+         :subr (symbol (second p))
 
       ;; default
          (throw (ex-info (str "Unrecognised head: " (first p))

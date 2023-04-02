@@ -205,9 +205,9 @@
 
 (defn pretty-print
   "This isn't the world's best pretty printer but it sort of works."
-  ([^beowulf.cons_cell.ConsCell cell]
+  ([cell]
    (println (pretty-print cell 80 0)))
-  ([^beowulf.cons_cell.ConsCell cell width level]
+  ([cell width level]
    (loop [c cell
           n (inc level)
           s "("]
@@ -215,7 +215,7 @@
       (instance? beowulf.cons_cell.ConsCell c)
        (let [car (.first c)
              cdr (.getCdr c)
-             cons? (instance? beowulf.cons_cell.ConsCell cdr)
+             tail? (instance? beowulf.cons_cell.ConsCell cdr)
              print-width (count (print-str c))
              indent (apply str (repeat n "  "))
              ss (str
@@ -224,7 +224,7 @@
                  (cond
                    (or (nil? cdr) (= cdr NIL))
                    ")"
-                   cons?
+                   tail?
                    (if
                     (< (+ (count indent) print-width) width)
                      " "
@@ -232,7 +232,7 @@
                    :else
                    (str " . " (pretty-print cdr width n) ")")))]
          (if
-          cons?
+          tail?
            (recur cdr n ss)
            ss))
        (str c)))))
@@ -258,6 +258,7 @@
   (try
     (cond
       (empty? x) NIL
+      (instance? ConsCell x) (make-cons-cell (.getCar x) (.getCdr x))
       (coll? x) (ConsCell.
                  (if
                   (coll? (first x))

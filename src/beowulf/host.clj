@@ -3,7 +3,7 @@
    be) implemented in Lisp 1.5, which therefore need to be implemented in the
    host language, in this case Clojure."
   (:require [clojure.string :refer [upper-case]]
-            [beowulf.cons-cell :refer [F make-cons-cell make-beowulf-list 
+            [beowulf.cons-cell :refer [F make-cons-cell make-beowulf-list
                                        pretty-print T]]
             ;; note hyphen - this is Clojure...
             [beowulf.gendoc :refer [open-doc]]
@@ -253,7 +253,7 @@
     (= (EQUAL (CAR x) (CAR y)) T) (EQUAL (CDR x) (CDR y))
     :else F))
 
-(defn AND 
+(defn AND
   "`T` if and only if none of my `args` evaluate to either `F` or `NIL`,
    else `F`.
    
@@ -269,12 +269,15 @@
 ;; TODO: These are candidates for moving to Lisp urgently!
 
 (defn ASSOC
-  "If `a` is an association list such as the one formed by PAIRLIS in the above
-  example, then assoc will produce the first pair whose first term is `x`. Thus
+  "If a is an association list such as the one formed by PAIRLIS in the above
+  example, then assoc will produce the first pair whose first term is x. Thus
   it is a table searching function.
 
   All args are assumed to be `beowulf.cons-cell/ConsCell` objects.
-  See page 12 of the Lisp 1.5 Programmers Manual."
+  See page 12 of the Lisp 1.5 Programmers Manual.
+   
+   **NOTE THAT** this function is overridden by an implementation in Lisp,
+   but is currently still present for bootstrapping."
   [x a]
   (cond
     (= NIL a) NIL ;; this clause is not present in the original but is added for
@@ -282,43 +285,6 @@
     (= (EQUAL (CAAR a) x) T) (CAR a)
     :else
     (ASSOC x (CDR a))))
-
-(defn- SUB2
-  "Internal to `SUBLIS`, q.v., which SUBSTitutes into a list from a store.
-  ? I think this is doing variable binding in the stack frame?"
-  [a z]
-  (cond
-    (= NIL a) z
-    (= (CAAR a) z) (CDAR a) ;; TODO: this looks definitely wrong
-    :else
-    (SUB2 (CDR a) z)))
-
-(defn SUBLIS
-  "Here `a` is assumed to be an association list of the form
-  `((ul . vl)...(un . vn))`, where the `u`s are atomic, and `y` is any
-  S-expression. What `SUBLIS` does, is to treat the `u`s as variables when
-  they occur in `y`, and to SUBSTitute the corresponding `v`s from the pair
-  list.
-
-  My interpretation is that this is variable binding in the stack frame.
-
-  All args are assumed to be `beowulf.cons-cell/ConsCell` objects.
-  See page 12 of the Lisp 1.5 Programmers Manual."
-  [a y]
-  (cond
-    (= (ATOM? y) T) (SUB2 a y)
-    :else
-    (make-cons-cell (SUBLIS a (CAR y)) (SUBLIS a (CDR y)))))
-
-(defn SUBST
-  "This function gives the result of substituting the S-expression `x` for
-  all occurrences of the atomic symbol `y` in the S-expression `z`."
-  [x y z]
-  (cond
-    (= (EQUAL y z) T) x
-    (= (ATOM? z) T) z ;; NIL is a symbol
-    :else
-    (make-cons-cell (SUBST x y (CAR z)) (SUBST x y (CDR z)))))
 
 (defn PAIRLIS
   "This function gives the list of pairs of corresponding elements of the
@@ -330,7 +296,10 @@
   binding.
 
   All args are assumed to be `beowulf.cons-cell/ConsCell` objects.
-  See page 12 of the Lisp 1.5 Programmers Manual."
+  See page 12 of the Lisp 1.5 Programmers Manual.
+   
+   **NOTE THAT** this function is overridden by an implementation in Lisp,
+   but is currently still present for bootstrapping."
   [x y a]
   (cond
     ;; the original tests only x; testing y as well will be a little more
@@ -452,9 +421,11 @@
   (when
    (swap!
     oblist
-    (fn [ob s v] (make-cons-cell (make-cons-cell s v) ob))
+    (fn [ob s v] (if-let [binding (ASSOC symbol ob)]
+                   (RPLACD binding v)
+                   (make-cons-cell (make-cons-cell s v) ob)))
     symbol val)
-    NIL))
+    val))
 
 ;;;; TRACE and friends ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -483,7 +454,7 @@
 ;;;; Extensions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn DOC
-   "Open the page for this `symbol` in the Lisp 1.5 manual, if known, in the 
+  "Open the page for this `symbol` in the Lisp 1.5 manual, if known, in the 
     default web browser.
    
    **NOTE THAT** this is an extension function, not available in strct mode."

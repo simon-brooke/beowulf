@@ -12,10 +12,11 @@
   (:require [clojure.string :as s]
             [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell
                                        pretty-print T F]]
-            [beowulf.host :refer [ADD1 AND ASSOC ATOM ATOM? CAR CDR CONS DEFINE 
-                                  DIFFERENCE DOC EQ EQUAL ERROR FIXP GENSYM 
-                                  GREATERP lax? LESSP LIST NUMBERP OBLIST
-                                  PAIRLIS PLUS QUOTIENT REMAINDER RPLACA RPLACD SET 
+            [beowulf.host :refer [ADD1 AND ASSOC ATOM ATOM? CAR CDR CONS DEFINE
+                                  DIFFERENCE DOC EQ EQUAL ERROR FIXP GENSYM
+                                  GREATERP lax? LESSP LIST NUMBERP OBLIST PAIRLIS
+                                  PLUS
+                                  QUOTIENT REMAINDER RPLACA RPLACD SET
                                   TIMES TRACE traced? UNTRACE]]
             [beowulf.io :refer [SYSIN SYSOUT]]
             [beowulf.oblist :refer [*options* oblist NIL]]
@@ -224,7 +225,7 @@
       (println (str "<" indent " " r))
       r)))
 
-(defn- safe-apply 
+(defn- safe-apply
   "We've a real problem with varargs functions when `args` is `NIL`, because
    Clojure does not see `NIL` as an empty sequence."
   [clj-fn args]
@@ -249,7 +250,7 @@
         (case function-symbol ;; there must be a better way of doing this!
           ADD1 (safe-apply ADD1 args)
           AND (safe-apply AND args)
-          APPLY (APPLY (first args) (rest args) environment depth) ;; TODO: need to pass the environment and depth
+          APPLY (APPLY (first args) (rest args) environment depth)
           ATOM (ATOM? (CAR args))
           CAR (safe-apply CAR args)
           CDR (safe-apply CDR args)
@@ -309,18 +310,25 @@
                                         :function "NIL"
                                         :args args})))
     (= (ATOM? function) T) (apply-symbolic function args environment (inc depth))
-    (= (first function) 'LAMBDA) (EVAL
-                                  (CADDR function)
-                                  (PAIRLIS (CADR function) args environment) depth)
-    (= (first function) 'LABEL) (APPLY
-                                 (CADDR function)
-                                 args
-                                 (make-cons-cell
-                                  (make-cons-cell
-                                   (CADR function)
-                                   (CADDR function))
-                                  environment)
-                                 depth)))
+    :else (case (first function)
+            LABEL (APPLY
+                   (CADDR function)
+                   args
+                   (make-cons-cell
+                    (make-cons-cell
+                     (CADR function)
+                     (CADDR function))
+                    environment)
+                   depth)
+            FUNARG (APPLY (CADR function) args (CADDR function) depth)
+            LAMBDA (EVAL
+                    (CADDR function)
+                    (PAIRLIS (CADR function) args environment) depth)
+            (throw (ex-info "Unrecognised value in function position"
+                            {:phase :apply
+                             :function function
+                             :args args
+                             :type :beowulf})))))
 
 (defn- EVCON
   "Inner guts of primitive COND. All `clauses` are assumed to be
@@ -379,14 +387,16 @@
                       (symbol expr))
      (=
       (ATOM? (CAR expr))
-      T) (cond
-           (= (CAR expr) 'QUOTE) (CADR expr)
-           (= (CAR expr) 'COND) (EVCON (CDR expr) env depth)
-           :else (APPLY
-                  (CAR expr)
-                  (EVLIS (CDR expr) env depth)
-                  env
-                  depth))
+      T) (case (CAR expr)
+           QUOTE (CADR expr)
+           FUNCTION (LIST 'FUNARG (CADR expr) )
+           COND (EVCON (CDR expr) env depth)
+           ;; else 
+           (APPLY
+            (CAR expr)
+            (EVLIS (CDR expr) env depth)
+            env
+            depth))
      :else (APPLY
             (CAR expr)
             (EVLIS (CDR expr) env depth)

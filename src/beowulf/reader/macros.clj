@@ -48,7 +48,7 @@
   {:car {'DEFUN (fn [f]
                   (LIST 'SET (LIST 'QUOTE (second f))
                         (LIST 'QUOTE (CONS 'LAMBDA (rest (rest f))))))
-         'SETQ (fn [f] (LIST 'SET (LIST 'QUOTE (second f)) (LIST 'QUOTE (nth f 2))))}})
+         'SETQ (fn [f] (LIST 'SET (LIST 'QUOTE (second f)) (nth f 2)))}})
 
 (defn expand-macros
   [form]

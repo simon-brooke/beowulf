@@ -14,7 +14,7 @@
   (ASSOC LAMBDA (X L) 
     (COND 
       ((NULL L) (QUOTE NIL)) 
-      ((AND (CONSP (CAR L)) (EQ (CAAR L) X)) (CDAR L)) 
+      ((AND (CONSP (CAR L)) (EQ (CAAR L) X)) (CAR L)) 
       ((QUOTE T) (ASSOC X (CDR L)))))
   (ATOM)
   (CAR)
@@ -110,6 +110,10 @@
       ((NULL X) (ERROR (QUOTE F2)))
       ((NULL Y) (ERROR (QUOTE F3)))
       (T (CONS (CONS (CAR X) (CAR Y)) (PAIR (CDR X) (CDR Y))))))
+  (PAIRLIS LAMBDA (X Y A) 
+    (COND 
+      ((NULL X) A) 
+      ((QUOTE T) (CONS (CONS (CAR X) (CAR Y)) (PAIRLIS (CDR X) (CDR Y) A)))))
   (PLUS)
   (PRETTY)
   (PRINT)
@@ -118,6 +122,7 @@
     (X Y U)
     (COND
       ((NULL X) (U)) ((EQ (CAR X) Y) (CDR X)) ((QUOTE T) (PROP (CDR X) Y U))))
+  (QUOTE LAMBDA (X) X)
   (QUOTIENT)
   (RANGE LAMBDA (N M) (COND ((LESSP M N) (QUOTE NIL)) ((QUOTE T) (CONS N (RANGE (ADD1 N) M)))))
   (READ)
@@ -128,5 +133,16 @@
   (RPLACD)
   (SET)
   (SUB1 LAMBDA (N) (DIFFERENCE N 1))
+  (SUB2 LAMBDA (A Z) 
+    (COND 
+      ((NULL A) Z) 
+      ((EQ (CAAR A) Z) (CDAR A)) 
+      ((QUOTE T) (SUB2 (CDAR A) Z))))
+  (SUBLIS LAMBDA (A Y) (COND ((ATOM Y) (SUB2 A Y)) ((QUOTE T) (CONS))))
+  (SUBST LAMBDA (X Y Z) 
+    (COND 
+      ((EQUAL Y Z) X) 
+      ((ATOM Z) Z) 
+      ((QUOTE T) (CONS (SUBST X Y (CAR Z)) (SUBST X Y (CDR Z))))))
   (SYSIN)
   (SYSOUT) (TERPRI) (TIMES) (TRACE) (UNTRACE) (ZEROP LAMBDA (N) (EQ N 0)))

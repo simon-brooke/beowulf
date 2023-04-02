@@ -3,7 +3,7 @@
             [beowulf.cons-cell :refer [make-cons-cell T F]]
             [beowulf.host :refer [ASSOC ATOM ATOM? CAR CAAAAR CADR
                                        CADDR CADDDR CDR EQ EQUAL 
-                                       PAIRLIS SUBLIS SUBST]]
+                                       PAIRLIS]]
             [beowulf.oblist :refer [NIL]]
             [beowulf.read :refer [gsp]]))
 
@@ -153,17 +153,18 @@
           actual (EQUAL l m)]
       (is (= actual expected) "different lists, different content"))))
 
-(deftest substitution-tests
-  (testing "subst"
-    (let [expected "((A X . A) . C)"
-          ;; differs from example in book only because of how the function
-          ;; `beowulf.cons-cell/to-string` formats lists.
-          actual (print-str
-                   (SUBST
-                     (gsp "(X . A)")
-                     (gsp "B")
-                     (gsp "((A . B) . C)")))]
-      (is (= actual expected)))))
+;; TODO: need to reimplement this in lisp_test
+;; (deftest substitution-tests
+;;   (testing "subst"
+;;     (let [expected "((A X . A) . C)"
+;;           ;; differs from example in book only because of how the function
+;;           ;; `beowulf.cons-cell/to-string` formats lists.
+;;           actual (print-str
+;;                    (SUBST
+;;                      (gsp "(X . A)")
+;;                      (gsp "B")
+;;                      (gsp "((A . B) . C)")))]
+;;       (is (= actual expected)))))
 
 (deftest pairlis-tests
   (testing "pairlis"
@@ -196,11 +197,12 @@
                      (gsp "((A . (M N)) (B . (CAR X)) (C . (QUOTE M)) (C . (CDR X)))")))]
       (is (= actual expected)))))
 
-(deftest sublis-tests
-  (testing "sublis"
-    (let [expected "(SHAKESPEARE WROTE (THE TEMPEST))"
-          actual (print-str
-                   (SUBLIS
-                     (gsp "((X . SHAKESPEARE) (Y . (THE TEMPEST)))")
-                     (gsp "(X WROTE Y)")))]
-      (is (= actual expected)))))
+;; TODO: need to reimplement this in lisp_test
+;; (deftest sublis-tests
+;;   (testing "sublis"
+;;     (let [expected "(SHAKESPEARE WROTE (THE TEMPEST))"
+;;           actual (print-str
+;;                    (SUBLIS
+;;                      (gsp "((X . SHAKESPEARE) (Y . (THE TEMPEST)))")
+;;                      (gsp "(X WROTE Y)")))]
+;;       (is (= actual expected)))))

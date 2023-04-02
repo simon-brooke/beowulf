@@ -39,6 +39,10 @@ Command line arguments as follows:
 
 To end a session, type `STOP` at the command prompt.
 
+### Reader macros
+
+Currently I don't have 
+
 ### Functions and symbols implemented
 
 The following functions and symbols are implemented:

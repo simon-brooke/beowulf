@@ -78,7 +78,7 @@
 
       ;; sexprs. Note it's not clear to me whether Lisp 1.5 had the quote macro,
       ;; but I've included it on the basis that it can do little harm.
-    "sexpr := quoted-expr | atom | number | dotted-pair | list | sexpr comment;
+    "sexpr := quoted-expr | atom | number | subr | dotted-pair | list | sexpr comment;
       list := lpar sexpr rpar | lpar (sexpr sep)* rpar | lpar (sexpr sep)* dot-terminal | lbrace exprs rbrace;
       list := lpar opt-space sexpr rpar | lpar opt-space (sexpr sep)* rpar | lpar opt-space (sexpr sep)* dot-terminal;
       dotted-pair := lpar dot-terminal ;
@@ -92,6 +92,12 @@
       opt-space := #'\\p{javaWhitespace}*';
       sep := ',' | opt-space;
       atom := #'[A-Z][A-Z0-9]*';"
+    
+    ;; we need a way of representing Clojure functions on the object list;
+    ;; subr objects aren't expected to be normally entered on the REPL, but
+    ;; must be on the object list or functions to which functions are passed
+    ;; won't be able to access them.
+    "subr := #'[a-z][a-z.]*/[A-Za-z][A-Za-z0-9]*';"
 
       ;; Lisp 1.5 supported octal as well as decimal and scientific notation
     "number := integer | decimal | scientific | octal;
