@@ -14,59 +14,40 @@
 > Massachusetts Institute of Technology
 > Cambridge, Massachusetts
 
-The Research Laboratory af Electronics is an interdepartmental
-laboratory in which faculty members and graduate students from
-numerous academic departments conduct research.
+The Research Laboratory af Electronics is an interdepartmental laboratory in which faculty members and graduate students from numerous academic departments conduct research.
 
-The research reported in this document was made possible in part
-by support extended the Massachusetts Institute of Technology, Re-
-search Laboratory of Electronics, jointly by the U.S. Army, the
-U.S. Navy (Office of Naval Research), and the U.S. Air Force
-(Office of Scientific Research) under Contract DA36-039-sc-78108,
-Department of the Army Task 3-99-25-001-08; and in part by Con-
-tract DA-SIG-36-039-61-G14; additional support was received from
-the National Science Foundation (Grant G-16526) and the National
-Institutes of Health (Grant MH-04737-02).
+The research reported in this document was made possible in part by support extended the Massachusetts Institute of Technology, Research Laboratory of Electronics, jointly by the U.S. Army, the U.S. Navy (Office of Naval Research), and the U.S. Air Force (Office of Scientific Research) under Contract DA36-039-sc-78108, Department of the Army Task 3-99-25-001-08; and in part by Contract DA-SIG-36-039-61-G14; additional support was received from the National Science Foundation (Grant G-16526) and the National Institutes of Health (Grant MH-04737-02).
 
-Reproduction in whole or in part is permitted for any purpose
-of the United States Government.
+Reproduction in whole or in part is permitted for any purpose of the United States Government.
 
 SECOND EDITION Fifteenth printing, 1985
 
 ISBN 0 262 130 1 1 4 (paperback)
 
+-----
+
 #### Note regarding this Markdown document
 
-This Markdown version of the manual was created by me, 
-[Simon Brooke](mailto:simon@journeyman.cc), by passing the PDF 
-version found at [Software Preservation](https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf) through a [PDF to 
-Markdown processor](https://pdf2md.morethan.io/), and hand-editing
-the resulting document.
+This Markdown version of the manual was created by me, [Simon Brooke](mailto:simon@journeyman.cc), by passing the PDF version found at [Software Preservation](https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf) through a [PDF to 
+Markdown processor](https://pdf2md.morethan.io/), and hand-editing the resulting document.
 
-**This document is not authorised by the copyright holders.** It was 
-made for the purposes of study, only.
+**This document is not authorised by the copyright holders.** It was made for the purposes of study, only.
 
-Notes which I have added during editing are *NOTE: given in italics, like this*.
+Generally I have tried to keep the text unaltered. Some minor headings, especially of examples, have been deliberately changed in order to aid navigation, and some apparent typographic errors have been corrected. *I have also added spaces between syntactic elements in M-expression examples to aid legibility.* Page numbers are taken from the original. Notes which I have added during editing are *NOTE: given in italics, like this*.
+
+-----
 
 ## PREFACE
 
-The over-all design of the LISP Programming System is the work of John McCarthy
-and is based on his paper NRecursive Functions of Symbolic Expressions and Their Com-
-putation by Machinett which was published in Communications of the ACM, April 1960.
+The over-all design of the LISP Programming System is the work of John McCarthy and is based on his paper "[Recursive Functions of Symbolic Expressions and Their Computation by Machine](http://www-formal.stanford.edu/jmc/recursive/recursive.html)" which was published in Communications of the ACM, April 1960.
+
 This manual was written by Michael I. Levin.
 
-The interpreter was programmed by Stephen B. Russell and Daniel J. Edwards.
-The print and read programs were written by John McCarthy, Klim Maling,
-Daniel J. Edwards, and Paul W, Abrahams.
+The interpreter was programmed by Stephen B. Russell and Daniel J. Edwards. The print and read programs were written by John McCarthy, Klim Maling, Daniel J. Edwards, and Paul W, Abrahams.
 
-The garbage collector and arithmetic features Were written by Daniel J. Edwards.
-The compiler and assembler were written by Timothy P. Hart and Michael I. Levin.
-An earlier compiler was written by Robert Brayton.
+The garbage collector and arithmetic features Were written by Daniel J. Edwards. The compiler and assembler were written by Timothy P. Hart and Michael I. Levin. An earlier compiler was written by Robert Brayton.
 
-The "LISP 1 Programmer's Manual" March 1, 1960, was written by Phyllis A. Fox.
-Additional programs and suggestions were contributed by the following members of the Artificial Intelligence Group of the Research Laboratory of Electronics:
-Marvin L. Minsky, Bertram Raphael, Louis Hodes, David M. R. Park, David C. Luckham,
-Daniel G. Bobrow, James R. Slagle, and Nathaniel Rochester.
+The "LISP 1 Programmer's Manual" March 1, 1960, was written by Phyllis A. Fox. Additional programs and suggestions were contributed by the following members of the Artificial Intelligence Group of the Research Laboratory of Electronics: Marvin L. Minsky, Bertram Raphael, Louis Hodes, David M. R. Park, David C. Luckham, Daniel G. Bobrow, James R. Slagle, and Nathaniel Rochester.
 
 August 17, 1962
 
@@ -128,39 +109,21 @@ I. LISP for SHARE Distribution
 
 ## I. THE LISP LANGUAGE
 
-The LISP language is designed primarily for symbolic data processing. It has been
-used for symbolic calculations in differential and integral calculus, electrical circuit
-theory, mathematical logic, game playing, and other fields of artificial intelligence.
-LISP is a formal mathematical language. It is therefore podsible to give a con-
-cise yet complete description of it. Such is the purpose of this first section of the
-manual. Other sections will describe ways of using LISP to advantage and will explain
-extensions of the language which make it a convenient programming system.
+The LISP language is designed primarily for symbolic data processing. It has been used for symbolic calculations in differential and integral calculus, electrical circuit theory, mathematical logic, game playing, and other fields of artificial intelligence.
 
-LISP differs from most programming languages in three important ways. The
-first way is in the nature of the data. In the LISP language, all data are in the form
-of symbolic expressions usually referred to as S-expressions. S-expressions are of
-indefinite length and have a branching tree type of structure, so that significant sub-
-expressions can be readily isolated. In the LISP programming system, the bulk of
-available memory is used for storing S-expressions in the form of list structures.
-This type of memory organization frees the programmer from the necessity of
-allocating storage for the different sections of his program.
+LISP is a formal mathematical language. It is therefore possible to give a concise yet complete description of it. Such is the purpose of this first section of the manual. Other sections will describe ways of using LISP to advantage and will explain extensions of the language which make it a convenient programming system.
 
-The second important part of the LISP language is the source language itself which
-specifies in what way the S-expressions are to be processed. This consists of recur-
-sive functions of S-expressions. Since the notation for the writing of recursive func-
-tions of S-expressions is itself outside the S-expression notation, it will be called the
-meta language. These expressions will therefore be called M-expressions.
+LISP differs from most programming languages in three important ways. The first way is in the nature of the data. In the LISP language, all data are in the form of symbolic expressions usually referred to as S-expressions. S-expressions are of indefinite length and have a branching tree type of structure, so that significant sub-expressions can be readily isolated. In the LISP programming system, the bulk of available memory is used for storing S-expressions in the form of list structures. This type of memory organization frees the programmer from the necessity of allocating storage for the different sections of his program.
 
-Third, LISP can interpret and execute programs written in the form of S-
-expressions. Thus, like machine language, and unlike most other higher level languages,
-it can be used to generate programs for further execution.
+The second important part of the LISP language is the source language itself which specifies in what way the S-expressions are to be processed. This consists of recursive functions of S-expressions. Since the notation for the writing of recursive functions of S-expressions is itself outside the S-expression notation, it will be called the meta language. These expressions will therefore be called M-expressions.
+
+Third, LISP can interpret and execute programs written in the form of S-expressions. Thus, like machine language, and unlike most other higher level languages, it can be used to generate programs for further execution.
 
 ### 1.1 Symbolic Expressions
 
 The most elementary type of S-expression is the atomic symbol.
 
-**Definition**: An atomic symbol is a string of no more than thirty numerals and capital
-letters; the first character must be a letter.
+**Definition**: An atomic symbol is a string of no more than thirty numerals and capital letters; the first character must be a letter.
 
 #### Examples - atomic symbols
 
@@ -170,22 +133,15 @@ letters; the first character must be a letter.
 * EXTRALONGSTRINGOFLETTERS
 * A4B66XYZ
 
-These symbols are called atomic because they are taken as a whole and are not
-capable of being split within LISP into individual characters, Thus A, B, and AB
-have no relation to each other except in so far as they are three distinct atomic
-symbols.
+These symbols are called atomic because they are taken as a whole and are not capable of being split within LISP into individual characters, Thus A, B, and AB have no relation to each other except in so far as they are three distinct atomic symbols.
 
 All S-expressions are built out of atomic symbols and the punctuation marks 
 
 <a name="page2">page 2</a>
 
-`(` `)` and `.`. The basic operation for forming S-expressions is to combine two
-of them to produce a larger one. From the two atomic symbols A1 and A2, one can
-form the S-expression `(A1 . A2)`.
+`(` `)` and `.`. The basic operation for forming S-expressions is to combine two of them to produce a larger one. From the two atomic symbols A1 and A2, one can form the S-expression `(A1 . A2)`.
 
-**Definition**: An S-expression is either an atomic symbol or it is composed of these
-elements in the following order: a left parenthesis, an S-expression, a dot, an S-
-expression, and a right parenthesis.
+**Definition**: An S-expression is either an atomic symbol or it is composed of these elements in the following order: a left parenthesis, an S-expression, a dot, an S-expression, and a right parenthesis.
 
 Notice that this definition is recursive.
 
@@ -200,14 +156,9 @@ Notice that this definition is recursive.
 
 ### 1.2 Elementary Functions
 
-We shall introduce some elementary functions of S-expressions. To distinguish
-the functions from the S-expressions themselves, we shall write function names in
-lower case letters, since atomic symbols consist of only upper case letters. Furthermore, 
-the arguments of functions will be grouped in square brackets rather than
-parentheses. As a separator or punctuation mark we shall use the semicolon.
+We shall introduce some elementary functions of S-expressions. To distinguish the functions from the S-expressions themselves, we shall write function names in lower case letters, since atomic symbols consist of only upper case letters. Furthermore, the arguments of functions will be grouped in square brackets rather than parentheses. As a separator or punctuation mark we shall use the semicolon.
 
-The first function that we shall introduce is the function `cons`. It has two arguments 
-and is in fact the function that is used to build S-expressions from smaller S-expressions.
+The first function that we shall introduce is the function `cons`. It has two arguments and is in fact the function that is used to build S-expressions from smaller S-expressions.
 
 #### Examples - the cons function
 
@@ -217,13 +168,11 @@ cons[(A . B); C] = ((A . B) . C)
 cons[cons[A; B]; C] = ((A . B) . C)
 ```
 
-The last example is an instance of composition of functions. It is possible to build
-any S-expression from its atomic components by compositions of the function cons.
-The next pair of functions do just the opposite of cons. They produce the subexpres-
-sions of a given expression.
+The last example is an instance of composition of functions. It is possible to build any S-expression from its atomic components by compositions of the function cons. The next pair of functions do just the opposite of cons. They produce the subexpressions of a given expression.
 
-The function `car` has one argument. Its value is the first part of its composite
-argument. `car` of an atomic symbol is undefined.
+The function `car` has one argument. Its value is the first part of its composite argument. `car` of an atomic symbol is undefined.
+
+*Note that where this says 'car of an atomic symbol is undefined', it seems to mean it literally. There seems to have been no mechanism for distinguishing cons cells from other items in memory, so that the car of, for example, a decimal number could be taken, although the result 
 
 #### Examples - the car function
 
@@ -284,13 +233,14 @@ eq[A; A] = T
 eq[A; B] = F
 eq[A; (A . B)] is undefined
 eq[(A . B);(A . B)] is undefined
+```
 
 The predicate `atom` is true if its argument is an atomic symbol, and false if its
 argument is composite.
 
 #### Examples - atom
 
-````
+```
 atom[EXTRALONGSTRINGOFLETTERS] = T
 atom[(u . v)] = F
 atom[car[(u . v)]] = T
@@ -300,25 +250,17 @@ atom[car[(u . v)]] = T
 
 ### 1.3 List Notation
 
-The S-expressions that have been used heretofore have been written in dot notation.
-It is usually more convenient to be able to write lists of expressions of indefinite length,
-such as `(A B C D E)`.
+The S-expressions that have been used heretofore have been written in dot notation. It is usually more convenient to be able to write lists of expressions of indefinite length, such as `(A B C D E)`.
 
-Any S-expression can be expressed in terms of the dot notation. However, LISP has an
-alternative form of S-expression called the list notation. The list `(m1 m2... mn)` can be
-defined in terms of dot notation. It is identical to `(m1 . (m2 . (... . (mn . NIL)... )))`.
+Any S-expression can be expressed in terms of the dot notation. However, LISP has an alternative form of S-expression called the list notation. The list `(m1 m2... mn)` can be defined in terms of dot notation. It is identical to `(m1 . (m2 . (... . (mn . NIL)... )))`.
 
-The atomic symbol NIL serves as a terminator for lists. The null list `()` is iden-
-tical to `NIL`. Lists may have sublists. The dot notation and the list notation may be
-used in the same S-expression,
+The atomic symbol NIL serves as a terminator for lists. The null list `()` is identical to `NIL`. Lists may have sublists. The dot notation and the list notation may be used in the same S-expression,
 
-Historically, the separator for elements of lists was the comma `(,)`; however, the
-blank is now generally used. The two are entirely equivalent in LISP. `(A, B, C)` is
-identical to `(A B C)`.
+Historically, the separator for elements of lists was the comma `(,)`; however, the blank is now generally used. The two are entirely equivalent in LISP. `(A, B, C)` is identical to `(A B C)`.
 
 #### Examples - list notation
 
-```
+```lisp
 (A B C) = (A . (B . (C . NIL)))
 ((A B) C) = ((A . (B . NIL)) . (C . NIL))
 (A B (C D)) = (A . (B . ((C . (D . NIL)). NIL)))
@@ -327,9 +269,7 @@ identical to `(A B C)`.
 (A (B . C)) = (A . ((B . C) . NIL))
 ```
 
-It Is important to become familiar with the results of elementary functions on
-S-expressions written in list notation. These can always be determined by translating
-into dot notation.
+It Is important to become familiar with the results of elementary functions on S-expressions written in list notation. These can always be determined by translating into dot notation.
 
 #### Examples - list notation 2
 
@@ -342,300 +282,296 @@ cdr[(A)] = NIL
 car[cdr[(A B C)]] = B
 ```
 
-It is convenient to abbreviate multiple `car`s and `cdr`s. This is done by forming
-function names that begin with `c`, end with `r`, and have several `a`s and `d`s between
-them.
+It is convenient to abbreviate multiple `car`s and `cdr`s. This is done by forming function names that begin with `c`, end with `r`, and have several `a`s and `d`s between them.
 
-### Examples - composed accessor functions
+#### Examples - composed accessor functions
 
 ```
 cadr[(A B C)] = car[cdr[(A B C)]] = B
-caddr[(A B C )] = C
+caddr[(A B C)] = C
 cadadr[(A (B C) D)] = C
 ```
 
-The last a or d in the name actually signifies the first operation in order to be
+<a name="page5">page 5</a>
+
+The last `a` or `d` in the name actually signifies the first operation in order to be
 performed, since it is nearest to the argument.
 
-1.4 The LISP Meta-language
-We have introduced a type of data called S-expressions, and five elementary func-
-tions of S-expressions. We have also discussed the following features of the meta-
-language.
+### 1.4 The LISP Meta-language
 
-1. Function names and variable names are like atortlfc symbols except that they
-use lower case letters.
-2. The arguments of a function are bound by square brackets and separated from
-each other by semicolons.
-3. Compositions of functions may be written by using nested sets of brackets.
-These rules allow one to write function definitions such as
-third[x]=car[cdr[cdr[x]]].
+We have introduced a type of data called S-expressions, and five elementary functions of S-expressions. We have also discussed the following features of the meta-language.
 
-This function selects the third item on a list. For example,
+1. Function names and variable names are like atomic symbols except that they use lower case letters.
+2. The arguments of a function are bound by square brackets and separated from each other by semicolons.
+3. Compositions of functions may be written by using nested sets of brackets. These rules allow one to write function definitions such as `third[x]=car[cdr[cdr[x]]]`.
 
-third is actually the same function as caddr.
-The class of functions that can be formed in this way is quite limited and hot Very
-interesting. A much larger class of functions can be defined by means of the con-
-ditional expression, a device for providing branches in function definitions.
-A conditional expression has the following form:
+This function selects the third item on a list. For example, `third` is actually the same function as `caddr`.
 
-```
-where each pi is an expression whose value may be truth or falsity, and each ei is
-any expression. The meaning of a conditional expression is: if pl is true. then the
-value of el is the value of the entire expression. If pl is false, then if p2 is true
-the value of e2 is the value of the entire expression. The pi are searched from left
-to right until the first true one is found. Then the corresponding ei is selected. If
-none of the pi are true, then the value of the entire expression is undefined.
-Each pi or ei can itselk be either an 6-expression, a function, ta composition of
-functions or may it self be another conditional expression.
-Example
-[eq[car[x];~]eons[~ ;cdr[x]]; T-x]
-The atomic symbol T represents truth, The value of this expression is obtained
-if one replaces car of x by B if it happens to be A, but leaving x unchanged if car of
+The class of functions that can be formed in this way is quite limited and not very interesting. A much larger class of functions can be defined by means of the conditional expression, a device for providing branches in function definitions. A conditional expression has the following form:
+
+> where each p<sub>i</sub> is an expression whose value may be truth or falsity, and each e<sub>i</sub> is
+> any expression. The meaning of a conditional expression is: if p<sub>1</sub> is true. then the
+> value of e<sub>1</sub> is the value of the entire expression. If p<sub>1</sub> is false, then if p<sub>2</sub> is true
+> the value of e<sub>2</sub> is the value of the entire expression. The p<sub>i</sub> are searched from left
+> to right until the first true one is found. Then the corresponding e<sub>i</sub> is selected. If
+> none of the p<sub>i</sub> are true, then the value of the entire expression is undefined.
+>
+> Each p<sub>i</sub> or e<sub>i</sub> can itself be either an S-expression, a function, a composition of
+> functions or may itself be another conditional expression.
+
+#### Example - conditional expression
+
+`[eq[car[x]; A] -> cons[B; cdr[x]]; T -> x]`
+
+The atomic symbol `T` represents truth. The value of this expression is obtained
+if one replaces `car` of `x` by B if it happens to be A, but leaving `x` unchanged if `car` of
 it is not A.
-```
 
-```
+<a name="page6">page 6</a>
+
 The main application of conditional expressions is in defining functions recursively.
-```
 
-Example
+#### Example
 
+`ff[x] = [atom[x] -> x; T -> ff[car[x]]]`
+
+This example defines the function `ff` which selects the first atomic symbol of any
+given expression. This expression can be read: If `x` is an atomic symbol, then `x`
+itself is the answer. Otherwise the function `ff` is to be applied to car of `x`.
+
+If `x` is atomic, then the first branch which is `x` will be selected. Otherwise, the
+second branch `ff[car[x]]` will be selected, since `T` is always true.
+
+The definition of `ff` is recursive in that `ff` is actually defined in terms of itself. If
+one keeps taking `car` of any S-expression, one will eventually produce an atomic symbol; therefore the process is always well defined.
+
+Some recursive functions may be well defined for certain arguments only, but infinitely recursive for certain other arguments. When such a function is interpreted in the LISP programming system, it will either use up all of the available memory, or loop until the program is halted artificially.
+
+We shall now work out the evaluation of `ff[((A. B). C)]`. First, we substitute the
+arguments in place of the variable `x` in the definition and obtain
 ```
-ff[x]=[atom[x]-x; T-ff[car[x]]]
-This example defines the function ff which selects the first atomic symbol of any
-given expression. This expression can be read: If x is an atomic symbol, then x
-itself is the answer. Otherwise the function ff is to be applied to car of x.
-If x is atomic, then the first branch which is x l1 will be selected. Otherwise, the
-second branch nff[car[x]]n will be selected, since T is always true.
-The definition of ff is recursive in that ff is actually deefined in terms of itself. If
-one keeps taking cay of any S-expression, one will eventually produce an atomic sym-
-bol; therefore the process is always well defined.
-Some recursive functions may be well defined for certain arguments only, but in-
-finitely recursive for certain other arguments. When such a function is interpreted in
-the LISP programming system, it will either use up all of the available memory, or
-loop until the program is halted artificially.
-We shall now work out the evaluation of ff[((A. B). c)]. First, we substitute the
-arguments in place of the variable x in the definition and obtain
-ff[((~. B). C)]=[atom[((A. B). c)]-((A. B). C); T-ff[car[((A. B). c)]]]
-but ((A. B). C) is not atomic, and so we have
-= [T-ff [car [((A. B). C )]]I
-= ff[car[((A. B). c)]]
-= ff[(~. B)]
-At this point, the definition of ff must be used recursively. Substituting (A. B)
-for x gives
-= [atom[(A. B)]-(A. B); Tdff[car[(A. B)]]]
-= [T-ff[car[(~. B)]]]
-= ff[car[(A. B)]]
+ff[((A . B) . C)]=[atom[((A . B) . C)]->((A . B) . C); T->ff[car[((A . B) . C)]]]
+```
+but `((A. B). C)` is not atomic, and so we have
+```
+= [T->ff [car[((A . B) . C)]]
+= ff[car[((A . B) . C)]]
+= ff[(A . B)]
+```
+At this point, the definition of ff must be used recursively. Substituting `(A . B)`
+for `x` gives
+```
+= [atom[(A . B)] -> (A . B); T -> ff[car[(A . B)]]]
+= [T -> ff[car[(A . B)]]]
+= ff[car[(A . B)]]
 = ff[A]
-= [atom[A]-A; T-ff [car [A 111
+= [atom[A] -> A; T -> ff[car[A]]]
+= A
 ```
 
+The conditional expression is useful for defining numerical computations, as well as computations with S-expressions. The absolute value of a number can be defined by
 ```
-The conditional expression is useful for defining numerical computations, as well
-as computations with S-expressions. The absolute value of a number can be defined by
-```
-
+|x| = [x<0 -> -x; T -> x]
 ```
 The factorial of a nonhnegative integer can be defined by
-n! =[n=0-1; T-n-[n-l]! 3
-This recursive definition does not terminate for negative arguments. A function that
 ```
+n! = [n=0 -> 1; T -> n.[n-l]!]
+```
+This recursive definition does not terminate for negative arguments. A function that
+
+<a name="page7">page 7</a>
 
 is defined only for certain arguments is called a partial function.
-The Euclidean algorithm for finding the greatest common divisor of two positive
-integers can be defined by using conditional expressions as follows:
 
-rem[u;vi is the remainder when u is divided by 2
-A detailed discussion of the theory of functions defined recursively by conditional
-expressions is found in A Basis for a Mathematical Theory of Computation " by
-J. McCarthy, Proceedings of the Western Joint Computer Conference, May 1961
-(published by the Institute of Radio Engineers).
-It is usual for most mathematicians-exclusive of those devoted to logic-to use the
-word function imprecisely, and to apply it to forms such as JI^2 ts Because we
-shall later compute with expressions that stand for functions, we need a notation that
-expresses the distinction between functions and forms. The notation that we shall use
-is the lambda notation of Alonzo Church.^1
-Let be an expression that stands for a function of two integer variables. It
-should make sense to write f[3;4] and to be able to determine the value of this expres-
-sion. For example, sum[3;4]=7. The expression y^2 tx does not meet this requirement.
-It is not at all clear whether the value of y^2 +x[3;41 is 13 or 19. An expression such as
-y^2 tx will be called a form rather than a function. A form can be converted to a func-
-tion by specifying the correspondence between the variables in the form and the argu-
-ments of the desired function.
-If E is a form in the variables x l;.. .;xn, then the expression h[[x l;.. .;xn]; €
-represents the function of n variables obtained by substituting the n arguments in
-order for the variables xl;. .;xn, respectively. For example, the function ~[[x;~];
-y^2 tx] is a function of two variables, and )i[[x;y);y2+x1[3;4]=4^2 +3=19. ~[L~;xJY~+~I[~;~I
-=3^2 +4=13.
-The variables in a lambda expression are dummy or bound variables because sys-
-tematically changing them does not alter the meaning of the expression. Thus X[[u;vk
-v^2 tu] means the same thing as A[[X;~~~^2 tx].
-We shall sometimes use expressions in which a variable is not bound by a lambda.
-For example, in the function of two variables )i[[x;y~xntyn] the variable n is not
-bound. This is called a free variable. It may be regarded as a parameter. Unless
-n has been given a value before trying to compute with this function, the value of the
-function must be undefined.
+The Euclidean algorithm for finding the greatest common divisor of two positive integers can be defined by using conditional expressions as follows:
 
-1. A. Church, The Calculi of Lambda-Conversion (Princeton University Press,
-    Princeton, New Jersey, 194r
+```
+gcd[x; y]=[x>y -> gcd[y; x];
+				rem[y;x]=0 -> x]
+```
 
-The lambda notation alone is inadequate for naming recursive functions. Not only
-must the variables be bound, but the name of the function must be bound, since it is
-used inside an expression to stand for the entire expression. The function ff was
-previously defined by the identity
+`rem[u; v]` is the remainder when `u` is divided by `v`.
+
+A detailed discussion of the theory of functions defined recursively by conditional expressions is found in [A Basis for a Mathematical Theory of Computation](http://jmc.stanford.edu/articles/basis/basis.pdf) by J. McCarthy, Proceedings of the Western Joint Computer Conference, May 1961 (published by the Institute of Radio Engineers).
+
+It is usual for most mathematicians -- exclusive of those devoted to logic -- to use the word 'function' imprecisely, and to apply it to forms such as y<sup>2</sup>+x. Because we shall later compute with expressions that stand for functions, we need a notation that expresses the distinction between functions and forms. The notation that we shall use is the [lambda notation of Alonzo Church](https://compcalc.github.io/public/church/church_calculi_1941.pdf).
+
+Let  `f`be an expression that stands for a function of two integer variables. It
+should make sense to write `f[3; 4]` and to be able to determine the value of this expres-
+sion. For example, `sum[3; 4] = 7`. The expression y<sup>2</sup> + x does not meet this requirement.
+It is not at all clear whether the value of y<sup>2</sup> + x[3; 4]  is 13 or 19. An expression such as
+y<sup>2</sup> + x will be called a form rather than a function. A form can be converted to a function by specifying the correspondence between the variables in the form and the arguments of the desired function.
+
+If &epsilon; is a form in the variables x<sub>1</sub>;... ;x<sub>n</sub>, then the expression &lambda;[[x<sub>1</sub>;... ;x<sub>n</sub>]&epsilon;] represents the function of n variables obtained by substituting the n arguments in order for the variables x<sub>1</sub>;... ;x<sub>n</sub>, respectively. For example, the function &lambda;[[x; y]; y<sup>2</sup> + x] is a function of two variables, and &lambda;[[x; y]; y<sup>2</sup> + x][3; 4] =4<sup>2</sup> + 3 = 19. &lambda;[[x; y]; y<sup>2</sup> + x][4; 3] = 3<sup>2</sup> + 4 = 13.
+
+*TODO: detail formatting in the above paragraph is still slightly wrong.*
+
+The variables in a lambda expression are dummy or bound variables because systematically changing them does not alter the meaning of the expression. Thus  &lambda;[[u; v]; u<sup>2</sup> + v] means the same thing as  &lambda;[[x; y]; y<sup>2</sup> + x].
+
+We shall sometimes use expressions in which a variable is not bound by a lambda. For example, in the function of two variables   &lambda;[[x; y]; x<sup>n</sup> +  y<sup>n</sup>] the variable `n` is not bound. This is called a free variable. It may be regarded as a parameter. Unless `n` has been given a value before trying to compute with this function, the value of the function must be undefined.
+
+<a name="page8">page 8</a>
+
+The lambda notation alone is inadequate for naming recursive functions. Not only must the variables be bound, but the name of the function must be bound, since it is used inside an expression to stand for the entire expression. The function `ff` was previously defined by the identity
+
+`ff[x] = [atom[x] -> x; T -> ff[car[x]]]`
 
 Using the lambda notation, we can write
-ff=h[[xh [atorn[x]-x; T-ff [car [x]]j)
-The equality sigq in these identities is actually not part of the LISP meta-language
-and is only a orutch until we develop the correct notation. The right side of the last
-equation cannot serve as an expression for the function &because there is nothing to
-indicate that the occurrence of ff inside it stands for the function that is being defined.
+
+`ff =` &lambda;`[x] = [atom[x] -> x; T -> ff[car[x]]]`
+
+The equality sign in these identities is actually not part of the LISP meta-languageand is only a crutch until we develop the correct notation. The right side of the last equation cannot serve as an expression for the function `ff` because there is nothing to indicate that the occurrence of `ff` inside it stands for the function that is being defined.
+
 In order to be able to write expressions that bear their own name, we introduce
-the label notatioe. If E is an expression, and o is its name, we write label[a;~].
-The function 3 can now be written without an equal sign:
+the label notation. If &epsilon; is an expression, and &alpha; is its name, we write label[&alpha;; &epsilon;].
 
-In this expression, is a bound variable, and ff is a bound function name.
+The function `ff` can now be written without an equal sign:
 
-1.5 Syntactic $ummaryl
-All parts of the LISP language have now been explained. That which follows is a
-complete gyntactic definition of the LISP language, together with semantic comments.
-The definition is given in Backus notation2 with the addition of three dots(.. .) to avoid
-naming unneccessary syntactic types.
-In Backus notation the symbols I1::=l1, I1<l1, l1 >", and It I fl are used. The rule
-<S-expression >::=<atomic symbol > I (<S-expression >. <S-expression>) means that
-an $-expression is either an atomic symbol, or it is a left parenthesis followed by an
-S-expression followed by a dot followed by an S-expression followed by a right paren-
-thesis. The vertical bar means or " , and the angular brackets always enclose ele-
-ments of the syntax that is being defined.
-The Data Language
-CLETTER>::~AIB cI... IZ
+`label[ff =` &lambda;`[[x]; [atom[x] -> x; T -> ff[car[x]]]]`
 
-## <number>::=0I112 I .,. (
+In this expression, `x` is a bound variable, and `ff` is a bound function name.
 
-```
-c atomic-symbol >::=<LETTER ,<atom pqrt >
-<atom part >::=<empty > I <LETTER ><atom part > I <number ><atom part >
-Atomic symbols are the smallest entities in LISP. Their decomposition into char-
-acter s has no significance.
+### 1.5 Syntactic Summary
+
+[This section is for completeness and may be skipped upon first reading.]
+
+All parts of the LISP language have now been explained. That which follows is a complete syntactic definition of the LISP language, together with semantic comments. The definition is given in [Backus notation](https://www.softwarepreservation.org/projects/ALGOL/paper/Backus-ICIP-1959.pdf) with the addition of three dots(...) to avoid naming unnecessary syntactic types.
+
+In Backus notation the symbols `::=`, `<`, `>`, and `|` are used. The rule
+
+```BNF
+<S-expression> ::= <atomic symbol> | (<S-expression> . <S-expression>) 
 ```
 
-1. This election is for completeness and may be skipped upon first reading.
-2. J. W. Backus, The Syntax and Semantics of the Proposed International Algebraic
-Language of the Zurich ACM-Gamm Conference. ICIP Paris, June 1959.
+means that an S-expression is either an atomic symbol, or it is a left parenthesis followed by an S-expression followed by a dot followed by an S-expression followed by a right parenthesis. The vertical bar means "or" , and the angular brackets always enclose elements of the syntax that is being defined.
 
-< S-expression >:: =<atomic symbol > (
-(<S-expression >. <S-expression >) I
-(<S-expression >. ,. <S-expression >)
-When three dots are used in this manner, they mean that any number of the given
-type of symbol may occur, including none at all. According to this rule, ( ) is a valid
-S-expression. (It is equivalent to NIL. )
-The dot notation is the fundamental notation of S-expressions, although the list
-notation is often more convenient. Any Sdexpression can be written in dot notation.
-The Meta-Language
-<letter>::=alb(cl... (z
-<identifier >::=<letter ><id part >
-<id part >::=<empty > I <letter ><id part > I <number ><id part >
-The names of functions and variables are fornied in the same manner as atomic
-symbols but with lower -case letters.
+#### The Data Language
 
+```BNF
+<LETTER> ::= A|B|C| ... |Z
+<number> ::= 0|1|2| ... |9
+<atomic-symbol> ::= <LETTER><atom part>
+<atom part> ::= <empty> | <LETTER><atom part> | <number><atom part>
 ```
-A form is an expression that can be evaluated. A form that is merely a constant
-has that constant as its value. If a form is a variable, then the value of the form is
-the S-expression that is bound to that variable at the time when we evaluate the form,
-The third part of this rule states that we may write a function followed by a list of
-arguments separated by semicolons and enclosed in square brackets. The expressions
-for the arguments are themselves forms; this indicates that cornpasitions of functions
-are permitted.
-The last part of this rule gives the format of the conditional expression. This is
-evaluated by evaluating the forms in the propositional position in order until one is
-found whose value is T. Then the form after the arrow is evaluated and give$ the
-value of the entire expression.
-<function >::=<identifier > (
-k[<var list >;<form >] I
-label[< identifier >; <function >]
-<var list >:: =[<variable >;... ; <variable >]
-A function can be simply a name. In this case its meaning must be previously
-understood. A function may be defined by using the lambda notation and establishing
-a correspondence between the arguments and the variables used in a form. If the
-function is recursive, it must be given a name by using a label.
+Atomic symbols are the smallest entities in LISP. Their decomposition into characters has no significance.
+
+<a name="page9">page 9</a>
+
+```BNF
+<S-expression> ::= <atomic symbol> |
+                    (<S-expression> . <S-expression>) |
+                    (<S-expression> ... <S-expression>)
+```
+When three dots are used in this manner, they mean that any number of the given type of symbol may occur, including none at all. According to this rule, `( )` is a valid S-expression. (It is equivalent to `NIL`. )
+
+The dot notation is the fundamental notation of S-expressions, although the list notation is often more convenient. Any S-expression can be written in dot notation.
+
+#### The Meta-Language
+
+```BNF
+<letter> ::= a|b|c| ... |z
+<identifier> ::= <letter><id part>
+<id part> ::= <empty> | <letter><id part> | <number><id part>
+```
+The names of functions and variables are fornied in the same manner as atomic symbols but with lower-case letters.
+
+```BNF
+<form> ::= <constant> |
+           <variable> |
+           <function>[<argument> ... <argument>] |
+           [<form> -> <form>; ... ; <form> -> <form>]
+<constant> ::= <S-expression>
+<variable> ::= <identifier>
+<argument> ::= <form>
+           
 ```
 
-1.6 A Universal LISP Function
-An interpreter or universal function is one that can compute the value of any given
-function applied to its arguments when given a description of that function. (Of course,
-if the function that is being interpreted has infinite recursion, the interpreter will
-recur infinitely also. )
-We are now in a position to define the universal LISP function evalquote[fn;args],
-When evalquote is given a function and a list of arguments for that function, it computes
-the value of the function applied to the arguments.
-LISP functions have S-expressions as arguments. In particular, the argument
-"fn" of the function evalquote must be an S-expression. Since we have been writing
-functions as M-expressions, it is necessary to translate them into S-expressions.
-The following rules define a method of translating functions written in the meta-
-language into S-expressions.
+A form is an expression that can be evaluated. A form that is merely a constant has that constant *[sic]* as its value. If a form is a variable, then the value of the form is the S-expression that is bound to that variable at the time when we evaluate the form,
 
-1. If the function is represented by its name, it is translated by changing
-all of the letters to upper case, making it an atomic symbol. Thus is translated
-to CAR.
-2. If the function uses the lambda notation, then the expression k[[x. .;xn]; 1
-is translated into (LAMBDA (X1... XN) e*), where E* is the translation of c.
-3. If the function begins with label, then the translation of label[= ;€I is (LABEL
-a*e*).
+The third part of this rule states that we may write a function followed by a list of arguments separated by semicolons and enclosed in square brackets. The expressions for the arguments are themselves forms; this indicates that compositions of functions are permitted.
+
+The last part of this rule gives the format of the conditional expression. This is evaluated by evaluating the forms in the propositional position in order until one is found whose value is `T`. Then the form after the arrow is evaluated and gives the value of the entire expression.
+
+`<function>::=<identifier> |` &lambda;`[<var list >;<form >] | label[<identifier>; <function>]`
+
+`<var list> ::= [<variable >; ... ; <variable>]`
+
+A function can be simply a name. In this case its meaning must be previously understood. A function may be defined by using the lambda notation and establishing a correspondence between the arguments and the variables used in a form. If the function is recursive, it must be given a name by using a label.
+
+<a name="page10">page 10</a>
+
+### 1.6 A Universal LISP Function
+An interpreter or universal function is one that can compute the value of any given function applied to its arguments when given a description of that function. (Of course, if the function that is being interpreted has infinite recursion, the interpreter will recur infinitely also. )
+
+We are now in a position to define the universal LISP function `evalquote[fn;args]`. When `evalquote` is given a function and a list of arguments for that function, it computes the value of the function applied to the arguments.
+
+LISP functions have S-expressions as arguments. In particular, the argument `fn` of the function `evalquote` must be an S-expression. Since we have been writing functions as M-expressions, it is necessary to translate them into S-expressions.
+
+The following rules define a method of translating functions written in the meta-language into S-expressions.
+
+1. If the function is represented by its name, it is translated by changing all of the letters to upper case, making it an atomic symbol. Thus `car` is translated to `CAR`.
+
+2. If the function uses the lambda notation, then the expression &lambda;`[x1; ...; xn]`&epsilon;`]` is translated into (LAMBDA (X1... XN) &epsilon;&ast;), where  &epsilon;&ast; is the translation of  &epsilon;.
+3. If the function begins with label, then the translation of label[&alpha;; &epsilon;] is (LABEL
+    &alpha;&ast; &epsilon;&ast;).
+
 Forms are translated as follows:
-1. A variable, like a function name, is translated by using uppercase letters.
-Thus the translation of varl is VAR1.
-2. The obvious translation of letting a constant translate into itself will not work.
-Since the translation of is X, the translation of X must be something else to avoid
-ambiguity. The solution is to quote it. Thus X is translated into (QUOTE X).
-3. The form fn[argl;.. .;atgn] is translated into (fn*argl*... argn*)
-4. The conditional expression [Pl-el;.. .; pn-en] is translated into (COND
-  * *
 
-```
-Examples
-M-expressions S -expressions
-X X
-car CAR
-car [x] (CAR X)
-T (QUOTE T)
-ff [car [XI] (FF (CAR X))
-[atom[x]-x; T-ff [car [x]]] (COND ((ATOM X) X)
-((QUOTE T) (FF (CAR X))))
-label[ff ;h[[x];[atom[x]-x; T-ff[car [XI]]]] (LABEL FF (LAMBDA (X) (COND
-((ATOM X) X)
-((QUOTE T) (FF (CAR X))))))
-```
+1. A variable, like a function name, is translated by using uppercase letters. Thus the translation of `var1` is `VAR1`.
 
-```
+2. The obvious translation of letting a constant translate into itself will not work. Since the translation `x` of is `X`, the translation of `X` must be something else to avoid ambiguity. The solution is to quote it. Thus `X` is translated into `(QUOTE X)`.
+
+3. The form `fn[arg`<sub>1</sub>`; ... ;arg`<sub>n</sub>`]` is translated into `(fn* arg`<sub>1</sub>&ast; `... arg`<sub>n</sub>&ast;`)`.
+
+4. The conditional expression [p<sub>1</sub> -> e<sub>1</sub>; ... ; p<sub>n</sub> -> e<sub>n</sub>] is translated into 
+
+   (COND (p<sub>1</sub>&ast; e<sub>1</sub>&ast;) ... (p<sub>n</sub>&ast; e<sub>n</sub>&ast;))
+
+#### Examples - translation, M-expressions to S-expressions
+
+| M-expressions | S -expressions |
+| ---- | ---- |
+| X    | X    |
+| car     | CAR     |
+| car[x]     | (CAR X)     |
+| T | (QUOTE T) |
+| ff[car[X]] | (FF (CAR X)) |
+| [atom[x]-x; T-ff [car [x]]] | (COND ((ATOM X) X) ((QUOTE T) (FF (CAR X)))) |
+| label[ff ;h[[x];[atom[x]-x; T-ff[car [X]]]] | (LABEL FF (LAMBDA (X) (COND ((ATOM X) X) ((QUOTE T) (FF (CAR X)))))) |
+
 Some useful functions for handling S-expressions are given below. Some of them
-```
 
-are needed as auxiliary functions for evalquote.
+<a name="page11">page 11</a>
 
-equal[x;y]
+are needed as auxiliary functions for `evalquote`.
+
+`equal[x;y]`
+
 This is a predicate that is true if its two arguments are identical S-expressions,
 and is false if they are different. (The elementary predicate - eq is defined only for
-atomic arguments. ) The definition of egual is an example of a conditional expression
+atomic arguments. ) The definition of equal is an example of a conditional expression
 inside a conditional expression.
 
 ```
-equal[x; y]=[atom[x] atom[^] -eq[x;~]; T-F];
-equal[car [x]; car [Y]]-equal[cdr [x]; cdr [y]];
-T-F]
+equal[x; y]=[atom[x] -> [atom[y] -> eq[x; y]; T -> F];
+             equal[car[x]; car[y]] -> equal[cdr[x]; cdr[y]];
+             T -> F]
 ```
 
 This can be translated into the following S-expression: ,
 
-```
-(LABEL EQUAL (LAMBDA (X Y) (COND
-((ATOM X) (COND ((ATOM Y) (EQ X Y)) ((QUOTE T) (QUOTE F))))
-((EQUAL (CAR X) (CAR Y)) (EQUAL (CDR X) (CDR Y)))
-((QUOTET)(QUOTEF)) )I)
+```lisp
+(LABEL EQUAL 
+    (LAMBDA (X Y) 
+        (COND ((ATOM X) (COND ((ATOM Y) (EQ X Y)) 
+                            ((QUOTE T) (QUOTE F))))
+            ((EQUAL (CAR X) (CAR Y)) (EQUAL (CDR X) (CDR Y)))
+            ((QUOTE T)(QUOTE F)))))
 ```
 
 - sub st[^;^; z]
     This function gives the result of substituting the S-expression x for all occurrences
-of the atomic symbol y in the S-expression z. It is defined by
+    of the atomic symbol y in the S-expression z. It is defined by
 
 ###### s~bst[x;~;z] = [eq~al[~;z] -- x;atom[z] - z;T - cons[subst
 
@@ -933,7 +869,7 @@ Section I. )
     eval will evaluate the variables and give it to cons.
     cons[^;^] = (A. B)
        The actual interpreter skips one step required by the universal function, namely,
-apply[~O~~;(A B);((X. A) (Y. B))].
+    apply[~O~~;(A B);((X. A) (Y. B))].
 
 2.2 Constants
 It is sometimes assumed that a constant stands for itself as opposed to a variable
@@ -990,8 +926,8 @@ three ways in which a subroutine can be present in the system.
 
 2. The function is hand-coded by the user in the assembly type language, LAP.
     3. The function is first defined by an S-expression, and then compiled by the LISP
-compiler. Compiled functions run from 10 to 100 times as fast as they do when they
-are interpreted.
+    compiler. Compiled functions run from 10 to 100 times as fast as they do when they
+    are interpreted.
 
 ```
 2.5 Special Forms
@@ -1309,9 +1245,9 @@ difference[^;^] has for its value the algebraic difference of its arguments.
 
 * minus[x] has for its value -x.
     times[xl;.. .;xn] is a function of any number of arguments, whose value is the product
-(with correct sign) of its arguments.
-addl[x] has xtl for its value. The value is fixed-point or floating-point, depending
-on the argument.
+    (with correct sign) of its arguments.
+    addl[x] has xtl for its value. The value is fixed-point or floating-point, depending
+    on the argument.
 * subl[x] has x-1 for its value. The value is fixed-point or floating-point, depending
 on the argument.
 * max[xl;... ;xn] chooses the largest of its arguments for its value. Note that
@@ -1429,13 +1365,13 @@ Length is a function of one argurnentL. The program uses two program variables
     by the program. In English the program is written:
        This is a function of one argument 1.
           It is a program with two program variables 2 and 1.
-Store 0 in
-Store the argument 1 in 2.
-A If g contains NIL, then the program is finished,
-and the value is whatever is now in 2.
-Store in u, cdr of what is now in g.
-Store in 1, one more than what is now in
-Go to A.
+    Store 0 in
+    Store the argument 1 in 2.
+    A If g contains NIL, then the program is finished,
+    and the value is whatever is now in 2.
+    Store in u, cdr of what is now in g.
+    Store in 1, one more than what is now in
+    Go to A.
 
 ```
 We now write this program as an M-expression, with a few new notations. This
@@ -1541,11 +1477,11 @@ the TEST by reading in a core memory image from the temporary tape.
     thesis will cause a read error and terminate reading.
        A complete card deck for a LISP run might consist of:
           a: LISP loader
-b: ID card (Optional)
-c: Several Packets
-.d: FIN card
-e: Two blank cards to prevent card reader from hanging up
-The ID card may have any information desired by the computation center. It will be
+    b: ID card (Optional)
+    c: Several Packets
+    .d: FIN card
+    e: Two blank cards to prevent card reader from hanging up
+    The ID card may have any information desired by the computation center. It will be
 
 printed at the head of the output.
 
@@ -1704,9 +1640,9 @@ the garbage collector.
 
 7. 1 Representation of List Structure
     Lists are not stored in the computer as sequences of BCD characters, but as struc-
-tural forms built out of computer words as parts of trees.
+    tural forms built out of computer words as parts of trees.
     In representing list structure, a computer word will be depicted as a rectangle
-divided into two sections, the address and decrement.
+    divided into two sections, the address and decrement.
 
 add. I dec.
 
@@ -2729,7 +2665,7 @@ es[x;y - I SUBR predicate
           CLA
           TRA
     TRUE OCT
-X PZE
+    X PZE
 
 ```
 X
@@ -2793,8 +2729,8 @@ respectively.
 
 - 0r[x1;x2... ;xn] : FSUBR predicate
     The arguments of or are evaluated in sequence from left to right, until one is found
-that is true, or until the end of the list is reached. The value of 2 is true or
-false respectively.
+    that is true, or until the end of the list is reached. The value of 2 is true or
+    false respectively.
 * not [x] SUBR predicate
 
 The value of not is true if its argument is false, and false otherwise.
@@ -2844,8 +2780,8 @@ erty list for FF.
 
 - pr~p[x;~;u] SUBR functional
     The function prop - searches the list x for an item that is - eq to y. If such an element
-is found, the value of prop is the rest of the list beginning immediately after the element.
-Otherwise the value is u[ 1, where 2 is a function of no arguments.
+    is found, the value of prop is the rest of the list beginning immediately after the element.
+    Otherwise the value is u[ 1, where 2 is a function of no arguments.
 
 ##### prop[^;^; u] = [null[x] - u[ ];eq[car[x];y] -cdr[x]
 
@@ -2905,11 +2841,11 @@ Table Buildinrr and Table Reference Functions
 
 - pair [x; y] SUBR
     The function pair has as value the list of pairs of corresponding elements of the lists
-x and y. The arguments x and y must be lists of the same number of elements. They
-should & be atomic symbols. The value is a dotted pair list, i. e. ((a (a p2)...
-pair[x;y] = [prog[u;v; m]
-u:= x;
-v:= y;
+    x and y. The arguments x and y must be lists of the same number of elements. They
+    should & be atomic symbols. The value is a dotted pair list, i. e. ((a (a p2)...
+    pair[x;y] = [prog[u;v; m]
+    u:= x;
+    v:= y;
 
 #### A [null[u] - [null[v] - return[m];~ - error[$2]]]
 
@@ -2972,8 +2908,8 @@ nconc does not copy its first argument.
 
 * conc[xl;x2;... ;x n ] : FEXPR pseudo-function
   * conc concatenates its arguments by stringing them all together on the top level. For
-example,
-conc[(~ (B C) D); (F); (G H)] = (A (B C) D F G H).
+  example,
+  conc[(~ (B C) D); (F); (G H)] = (A (B C) D F G H).
 * conc concatenates its arguments without copying them. Thus it changes existing list
 structure and is a pseudo-function. The value of conc is the resulting concatenated list.
 
@@ -3079,9 +3015,9 @@ go[~oopl1
 
 - sear~h[x;~;f;u] : SUBR functional
     The function search looks through a list x for an element that has the property p,
-and if such an element is found the function f of that element is the value of search.
-If there is no such element, the function u of one argument x is taken as the value of
-search (in this case x is, of course, NIL).
+    and if such an element is found the function f of that element is the value of search.
+    If there is no such element, the function u of one argument x is taken as the value of
+    search (in this case x is, of course, NIL).
 
 ```
 Arithmetic Functions
@@ -3258,11 +3194,11 @@ reader. The list that is read is the value of read.
 
 - print [x] SUBR pseudo-function
     The execution of - print causes the S-expression x to be printed on SYSPOT and/or
-the on-line printer. The value of print is its argument.
-punchrx] - SUBR pseudo.-function
-The execution of punch causes S-expression x to be punched in BCD card images
-on SYSPPT. The value of punch - is its argument.
-prin l [x] SUBR pseudo-function
+    the on-line printer. The value of print is its argument.
+    punchrx] - SUBR pseudo.-function
+    The execution of punch causes S-expression x to be punched in BCD card images
+    on SYSPPT. The value of punch - is its argument.
+    prin l [x] SUBR pseudo-function
 * prinl prints an atomic symbol without terminating the print line. The argument
 of - prini must be an atomic symbol.
 
@@ -4281,7 +4217,7 @@ The character-packing functions are:
 
 1. pack [c] - : SUBR pseudo-function
     The argument of packmust be a character object. - pack adds the character
-c at the end of the sequence of characters in BOFFO. The value of pack - is NIL.
+    c at the end of the sequence of characters in BOFFO. The value of pack - is NIL.
 2. clearbuff [ ] SUBR pseudo -func tion
 clearbuff is a function of no arguments. It clears BOFFO and has value NIL.
 The contents of BOFFO are undefined until a clearbuff has been performed.
@@ -4293,13 +4229,13 @@ BOFFO is automatically cleared. Note that intern [mknam[ ]I yields the object
 whose print name is in BOFFO.
 4. numob [ ] ' SUBR pseudo -function
     numob is a function of no arguments. Its value is the numerical object repre-
-sented by the sequence of characters in BOFFO. (Positive decimal integers from
-0 to 9 are converted so as to point to the corresponding character object. )
+    sented by the sequence of characters in BOFFO. (Positive decimal integers from
+    0 to 9 are converted so as to point to the corresponding character object. )
 
 5. unpack [x]: SUBR pseudo-function
     This function has as argument a pointer to a full word. unpack considers
-the full word to be a set of 6 BCD characters, and has as value a list of these
-char act er s ignoring all characters including and following the first 77.
+    the full word to be a set of 6 BCD characters, and has as value a list of these
+    char act er s ignoring all characters including and following the first 77.
 6. h~tern[~name] : SUBR pseudo-function
     This function has as argument a pointer to a PNAME type structure such as -
 
@@ -4338,7 +4274,7 @@ CURCHAR. There are three functions which affect the value of CURCHAR:
 
 1. startread [ 1: : SUBR ps eudo-function
     startread is a function of no arguments which causes a new card to be read.
-The value of startread is the first character on that card, or more precisely,
+    The value of startread is the first character on that card, or more precisely,
 
 ```
 the object corresponding to the first character on the card. If an end-of-file
@@ -4351,20 +4287,20 @@ completely read.
 
 2. advance [ 1: SUBR pseudo -function
     advance is a function of no arguments which causes the next character to be
-read. The value of advance is that character. After the 72nd character on the
-card has been read, the next advance will have value $EOR$. After reading
-$EOR$, the next advance will act like a startread, i. e., will read the first char-
-acter of the next card unless an end-of-file condition exists. The new value of
-CURCHAR is the same as the output of advance; executing advance also increases
-the value of CHARCOUNT by 1. However, CHARCOUNT is undefined when
-CURCHAR is either $EOR $ or $EOF $.
+    read. The value of advance is that character. After the 72nd character on the
+    card has been read, the next advance will have value $EOR$. After reading
+    $EOR$, the next advance will act like a startread, i. e., will read the first char-
+    acter of the next card unless an end-of-file condition exists. The new value of
+    CURCHAR is the same as the output of advance; executing advance also increases
+    the value of CHARCOUNT by 1. However, CHARCOUNT is undefined when
+    CURCHAR is either $EOR $ or $EOF $.
 3. endread [ 1: SUBR pseudo-function
     endread is a function of no arguments which causes the remainder of the
-card to be read and ignored. endread sets CURCHAR to $EOR$ and leaves
-CHARCOUNT undefined; the value of endread is always $EOR $. An advance
-following endread acts like a startread. If CURCHAR already has value $EOR $
-and endread is performed, CURCHAR will remain the same and endread will,
-as usual, have value $EOR $.
+    card to be read and ignored. endread sets CURCHAR to $EOR$ and leaves
+    CHARCOUNT undefined; the value of endread is always $EOR $. An advance
+    following endread acts like a startread. If CURCHAR already has value $EOR $
+    and endread is performed, CURCHAR will remain the same and endread will,
+    as usual, have value $EOR $.
 
 Diagnostic Function
 

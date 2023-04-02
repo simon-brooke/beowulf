@@ -421,7 +421,7 @@
   (when
    (swap!
     oblist
-    (fn [ob s v] (if-let [binding (ASSOC symbol ob)]
+    (fn [ob s v] (if-let [binding (ASSOC symbol ob)] 
                    (RPLACD binding v)
                    (make-cons-cell (make-cons-cell s v) ob)))
     symbol val)

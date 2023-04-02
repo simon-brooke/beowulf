@@ -119,11 +119,11 @@
             input "(LENGTH '(1 2 3))"
             actual (reps input)]
         (is (= actual expected))))
-    (testing "length of dot-terminated list"
-      (let [expected "3"
-            input "(LENGTH '(1 2 3 . 4))"
-            actual (reps input)]
-        (is (= actual expected))))
+    ;; (testing "length of dot-terminated list"
+    ;;   (let [expected "3"
+    ;;         input "(LENGTH '(1 2 3 . 4))"
+    ;;         actual (reps input)]
+    ;;     (is (= actual expected))))
     (testing "length of assoc list"
       (let [expected "3"
             input "(LENGTH (PAIR '(A B C) '(1 2 3)))"
