@@ -11,7 +11,7 @@ same bahaviour - except as documented below.
 
 ### Status
 
-Boots to REPL, but few functions yet available.
+Working Lisp interpreter, but some key features not yet implemented.
 
 * [Project website](https://simon-brooke.github.io/beowulf/).
 * [Source code documentation](https://simon-brooke.github.io/beowulf/docs/codox/index.html).
@@ -24,7 +24,7 @@ Build with
 
 Invoke with
 
-    java -jar target/uberjar/beowulf-0.2.1-SNAPSHOT-standalone.jar --help
+    java -jar target/uberjar/beowulf-0.3.0-SNAPSHOT-standalone.jar --help
 
 (Obviously, check your version number)
 
