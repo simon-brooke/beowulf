@@ -982,7 +982,7 @@ fn: EVAL
 args: ((CONS (CAR (QUOTE (A. B))) (CDR (QUOTE (C. D)))) NIL)
 The value of both of these is (A. D).
 
-111. EXTENSION OF THE LISP LANGUAGE
+111. ## EXTENSION OF THE LISP LANGUAGE
 
 ```
 Section I of this manual presented a purely formal mathematical system that we
@@ -994,7 +994,7 @@ shall call pure LISP. The elements of this formal system are the following.
 3. A formal mapping of M-expressions into S-expressions.
 4. A universal function (written ,IS an M-expression) for interpreting the application
 of any function written as an S-expression to its arguments.
-Section I1 introduced the LISP Programming System. The basis of the LISP Pro-
+Section II introduced the LISP Programming System. The basis of the LISP Pro-
 gramming System is the interpreter, or evalquote and its components.. A LISP program
 in fact consists of pairs of arguments for evalquote which are interpreted in sequence.
 In this section we shall introduce a number of extensions of elementary LISP. These
@@ -1304,7 +1304,7 @@ DEFINE ((
 (T (TIMES N (FACTORIAL (SUB1 N)))) )))
 ```
 
-4.4 The Array Feature
+### 4.4 The Array Feature
 
 Provision is made in LISP 1.5 for allocating blocks of storage for data. The data
 may consist of numbers, atomic symbols or other S-expressions.
@@ -1348,18 +1348,14 @@ Arrays use marginal indexing for maximum speed. For most efficient results,
 specify dimensions in increasing order. ~eta[3;4;5] is better than beta[5;3;4].
 Storage for arrays is located in an area of memory called binary program space.
 
-```
-V. THE PROGRAM FEATURE
-```
+## V. THE PROGRAM FEATURE
 
-```
 The LISP 1 .5 program feature allows the user to write an Algol-like program con-
 taining LISP statements to be executed.
 An example of the program feature is the function length, which examines a list and
 decides how many elements there are in the top level of the list. The value of length is
 an integer.
 Length is a function of one argurnentL. The program uses two program variables
-```
 
 - u and y, which can be regarded as storage locations whose contents are to be changed
     by the program. In English the program is written:
@@ -2735,37 +2731,31 @@ respectively.
 
 The value of not is true if its argument is false, and false otherwise.
 
-```
-Interpreter and Prog Feature
+### Interpreter and Prog Feature
+
 These are described elsewhere in the manual:
-APPLY, EVAL, EVLIS, QUOTE, LABEL, FUNCTION, PROG, GO, RETURN, SET,
-SETQ.
-```
+`APPLY, EVAL, EVLIS, QUOTE, LABEL, FUNCTION, PROG, GO, RETURN, SET, SETQ.`
 
-```
-Defining Functions and Functions Useful for Property Lists
-```
+### Defining Functions and Functions Useful for Property Lists
 
-- define [x] EXPR pseudo-function
+#### define [x] : EXPR pseudo-function
 
-```
-The argument of define, x, is a list of pairs
-((ul vl) (uz v2) tun vn))
-where each u is a name and each v is a A-expression for a function. For each pair,
-define puts an EXPR on the property list for u pointing to v. The function of define
-puts things on at the front of the property list. The value of define is the list of u's.
-define[x] = deflist[x; EXPR]
-```
+The argument of `define`, `x`, is a list of pairs
 
-```
+> ((u<sub>l</sub> v<sub>l</sub>) (u<sub>2</sub> v<sub>2</sub>) ... (u<sub>n</sub> v<sub>n</sub>))
+
+where each `u` is a name and each `v` is a &lambda;-expression for a function . For each `pair`, define puts an `EXPR` on the property list for `u` pointing to `v`. The function of `define` puts things on at the front of the property list. The value of `define` is the list of `u`s.
+
+> define[x] = deflist[x; EXPR]
+
+
+
 deflist [x; ind] EXPR pseudo-function
 The function deflist is a more general defining function. Its first argument is a list
 of pairs as for define. Its second argument is the indicator that is to be used. After
 deflist has been executed with (ui vi) among its first argument, the property list of ui
 will begin:
-```
 
-```
 If deflist or define is used twice on the same object with the same indicator, the old
 value will be replaced by the new one.
 attrib[x;e] - SUBR pseudo-function

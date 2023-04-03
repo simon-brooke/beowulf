@@ -1,8 +1,9 @@
-# M-Expressions
+# Interpreting M-Expressions
 
-M-Expressions ('mexprs') are the grammar which John McCarthy origininally used to write Lisp, and the grammar in which many of the function definitions in the [Lisp 1.5 Programmer's Manual](https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf) are stated. However, I have not seen anywhere a claim that Lisp 1.5 could *read* M-Expressions, and it is not clear to me whether it was even planned that it should do so.
+M-Expressions ('mexprs') are the grammar which John McCarthy origininally used to write Lisp, and the grammar in which many of the function definitions in the [Lisp 1.5 Programmer's Manual](https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf) are stated. However, I have not seen anywhere a claim that Lisp 1.5 could *read* M-Expressions, and it is not clear to me whether it was even planned that it should do so, although the discussion on [page 10](https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=18) suggests that it was.
 
-Rather, it seems to me probably that M-Expressions were only ever a grammar intended to be written on paper, like [Backus Naur Form](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form), to describe and to reason about algorithms.
+Rather, it seems to me possible that M-Expressions were only ever a grammar intended to be written on paper, like [Backus Naur Form](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form), to describe and to reason about algorithms. I think at the point
+at which the M-Expression grammar was written, the idea of the [universal Lisp function](https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=18)
 
 I set out to make Beowulf read M-Expressions essentially out of curiousity, to see whether it could be done. I had this idea that if it could be done, I could implement most of Lisp 1.5 simply by copying in the M-Expression definitions out of the manual.
 
@@ -45,7 +46,7 @@ is
             ((QUOTE T) (QUOTE F))))))
 ```
 
-This is certainly more prolix and more awkward, but it also risks being flat wrong.
+This is certainly more prolix and more awkward.
 
 Is the value of `NIL` the atom `NIL`, or is it the empty list `()`? If the former, then the translation from the M-Expression above is correct. However, that means that recursive functions which recurse down a list seeking the end will fail. So the latter must be the case.
 
@@ -57,8 +58,10 @@ Is the value of `NIL` the atom `NIL`, or is it the empty list `()`? If the forme
 
 I think there is an ambiguity in referencing constants which are not bound to themselves in the M-Expression notation as given in the manual. This is particularly problematic with regards to `NIL` and `F`, but there may be others instances.
 
+However, so long as `F` is bound to `NIL`, and `NIL` is also bound to `NIL` (both of which are true by default, although changeable by the user), and `NIL` is the special marker used in the `CDR` of the last cons cell of a flat list, this is a difference which in practice does not make a difference. I still find it worrying, though, that rebinding variables could lead to disaster.
+
 ### Curly braces
 
-The use of curly braces is not defined in the grammar as stated on page 10. They are not used in the initial definition of `APPLY` on page 13, but they are used in the more developed restatement on page 70. I believe they are to be read as indicating a `DO` statement -- a list of function calls to be made sequentially but without strict functional dependence on one another -- but I don't find the exposition here particularly clear and I'm not sure of this.
+The use of curly braces is not defined in the grammar as stated on page 10. They are not used in the initial definition of `APPLY` on page 13, but they are used in the more developed restatement on page 70. I believe they are to be read as indicating a section of assembly code to be assembled by the [Lisp Assembly Program](https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=81) -- but I don't find the exposition here particularly clear and I'm not sure of this.
 
 Consequently, the M-Expression interpreter in Beowulf does not interpret curly braces.

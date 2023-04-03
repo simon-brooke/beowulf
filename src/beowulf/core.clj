@@ -52,6 +52,11 @@
    ["-s" "--strict" "Strictly interpret the Lisp 1.5 language, without extensions."]
    ["-t" "--time" "Time evaluations."]])
 
+(defn- re 
+  "Like REPL, but it isn't a loop and doesn't print."
+  [input]
+  (EVAL (READ input) @oblist 0))
+
 (defn repl
   "Read/eval/print loop."
   [prompt]
@@ -65,8 +70,8 @@
           (println 
            (str ">  " 
                 (print-str (if (:time *options*)
-                             (time (EVAL (READ input) @oblist 0))
-                             (EVAL (READ input) @oblist 0)))))) 
+                             (time (re input))
+                             (re input)))))) 
         (println))
       (catch
        Exception

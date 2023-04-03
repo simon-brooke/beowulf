@@ -8,7 +8,7 @@
                            *manual-url* page-url]]
    [beowulf.oblist :refer [NIL oblist]]
    [clojure.java.browse :refer [browse-url]]
-   [clojure.string :refer [join replace upper-case]]))
+   [clojure.string :as s ]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -81,13 +81,13 @@
   "Format the signature of the Clojure function represented by `symbol` for
    Lisp documentation."
   [symbol arglists]
-  (join
+  (s/join
    "; "
    (doall
     (map
      (fn [l]
-       (join (concat (list "("  symbol " ")
-                     (join " " (map #(upper-case (str %)) l)) (list ")"))))
+       (s/join (concat (list "("  symbol " ")
+                     (s/join " " (map #(s/upper-case (str %)) l)) (list ")"))))
      arglists))))
 
 (defn infer-signature
@@ -113,7 +113,7 @@
   (let [k (keyword (first entry))]
     (cond
       (= (count entry) 1) (if-let [doc (get-metadata-for-entry entry :doc)]
-                            (replace doc "\n" " ")
+                            (s/replace doc "\n" " ")
                             "?")
       (k index) (str "see manual pages " (format-page-references k))
       :else "?")))
@@ -126,7 +126,7 @@
   ;;    (try (SYSIN sysfile)
   ;;         (catch Throwable any
   ;;           (println (.getMessage any) " while reading " sysfile))))
-   (join
+   (s/join
     "\n"
     (doall
      (concat
