@@ -424,6 +424,10 @@
     (make-beowulf-list (map CAR @oblist))
     NIL))
 
+(def ^:private magic-marker
+  "The unexplained magic number which marks the start of a property list."
+  (Integer/parseInt "777778" 8))
+
 (defn PUT
   "Put this `value` as the value of the property indicated by this `indicator` 
    of this `symbol`. Return `value` on success.
@@ -431,28 +435,51 @@
    NOTE THAT there is no `PUT` defined in the manual, but it would have been 
    easy to have defined it so I don't think this fully counts as an extension."
   [symbol indicator value]
-  (let [magic-marker (Integer/parseInt "777778" 8)]
-    (if-let [binding (ASSOC symbol @oblist)]
-      (if-let [prop (ASSOC indicator (CDDR binding))]
-        (RPLACD prop value)
-        (RPLACD binding
-                (make-cons-cell
-                 magic-marker
-                 (make-cons-cell
-                  indicator
-                  (make-cons-cell value (CDDR binding))))))
-      (swap!
-       oblist
-       (fn [ob s p v]
-         (make-cons-cell
-          (make-beowulf-list (list s magic-marker p v))
-          ob))
-       symbol indicator value))))
+  (if-let [binding (ASSOC symbol @oblist)]
+    (if-let [prop (ASSOC indicator (CDDR binding))]
+      (RPLACD prop value)
+      (RPLACD binding
+              (make-cons-cell
+               magic-marker
+               (make-cons-cell
+                indicator
+                (make-cons-cell value (CDDR binding))))))
+    (swap!
+     oblist
+     (fn [ob s p v]
+       (make-cons-cell
+        (make-beowulf-list (list s magic-marker p v))
+        ob))
+     symbol indicator value)))
+
+(defn GET
+  "From the manual:
+   
+   '`get` is somewhat like `prop`; however its value is car of the rest of
+   the list if the `indicator` is found, and NIL otherwise.'
+   
+   It's clear that `GET` is expected to be defined in terms of `PROP`, but
+   we can't implement `PROP` here because we lack `EVAL`; and we can't have
+   `EVAL` here because it depends on `GET`."
+  [symbol indicator]
+  (let [binding (ASSOC symbol @oblist)]
+    (cond
+      (= binding NIL) NIL
+      (= magic-marker (CADR binding)) (loop [b binding]
+                                        (cond (= b NIL) NIL
+                                              (= (CAR b) indicator) (CADR b)
+                                              :else (recur (CDR b))))
+      :else (throw
+             (ex-info "Misformatted property list (missing magic marker)"
+                      {:phase :host
+                       :function :get
+                       :args (list symbol indicator)
+                       :type :beowulf})))))
 
 (defn DEFLIST
   "For each pair in this association list `a-list`, set the property with this
    `indicator` of the symbol which is the first element of the pair to the 
-   value which is the second element of the pair."
+   value which is the second element of the pair. See page 58 of the manual."
   [a-list indicator]
   (map
    #(PUT (CAR %) indicator (CDR %))
@@ -463,7 +490,7 @@
   in LISP. 
 
   The single argument to `DEFINE` should be an association list of symbols to
-   lambda functions"
+   lambda functions. See page 58 of the manual."
   [a-list]
   (DEFLIST a-list 'EXPR))
 
