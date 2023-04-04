@@ -147,4 +147,11 @@
       ((ATOM Z) Z) 
       ((QUOTE T) (CONS (SUBST X Y (CAR Z)) (SUBST X Y (CDR Z))))))
   (SYSIN)
-  (SYSOUT) (TERPRI) (TIMES) (TRACE) (UNTRACE) (ZEROP LAMBDA (N) (EQ N 0)))
+  (SYSOUT) (TERPRI) (TIMES) (TRACE) 
+  (UNION LAMBDA (X Y) 
+    (COND 
+      ((NULL X) Y)
+      ((MEMBER (CAR X) Y) (UNION (CDR X) Y))
+      (T (CONS (CAR X) (UNION (CDR X) Y)))))
+  (UNTRACE) 
+  (ZEROP LAMBDA (N) (EQ N 0)))

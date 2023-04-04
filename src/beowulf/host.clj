@@ -164,17 +164,32 @@
       (number? value)
       (symbol? value)
       (= value NIL))
-      (do
+      (try
         (.rplaca cell value)
-        cell)
+        cell
+        (catch Throwable any
+          (throw (ex-info
+                  (str (.getMessage any) " in RPLACA: `")
+                  {:cause :upstream-error
+                   :phase :host
+                   :function :rplaca
+                   :args (list cell value)
+                   :type :beowulf}
+                  any))))
       (throw (ex-info
               (str "Invalid value in RPLACA: `" value "` (" (type value) ")")
               {:cause :bad-value
-               :detail :rplaca})))
+               :phase :host
+               :function :rplaca
+               :args (list cell value)
+               :type :beowulf})))
     (throw (ex-info
             (str "Invalid cell in RPLACA: `" cell "` (" (type cell) ")")
-            {:cause :bad-value
-             :detail :rplaca}))))
+            {:cause :bad-cell
+             :phase :host
+             :function :rplaca
+             :args (list cell value)
+             :type :beowulf}))))
 
 (defn RPLACD
   "Replace the CDR pointer of this `cell` with this `value`. Dangerous, should
@@ -189,17 +204,32 @@
       (number? value)
       (symbol? value)
       (= value NIL))
-      (do
+      (try
         (.rplacd cell value)
-        cell)
+        cell
+        (catch Throwable any
+          (throw (ex-info
+                  (str (.getMessage any) " in RPLACD: `")
+                  {:cause :upstream-error
+                   :phase :host
+                   :function :rplacd
+                   :args (list cell value)
+                   :type :beowulf}
+                  any))))
       (throw (ex-info
               (str "Invalid value in RPLACD: `" value "` (" (type value) ")")
               {:cause :bad-value
-               :detail :rplaca})))
+               :phase :host
+               :function :rplacd
+               :args (list cell value)
+               :type :beowulf})))
     (throw (ex-info
             (str "Invalid cell in RPLACD: `" cell "` (" (type cell) ")")
-            {:cause :bad-value
-             :detail :rplaca}))));; PLUS
+            {:cause :bad-cell
+             :phase :host
+             :detail :rplacd
+             :args (list cell value)
+             :type :beowulf}))));; PLUS
 
 (defn LIST
   [& args]
@@ -394,38 +424,54 @@
     (make-beowulf-list (map CAR @oblist))
     NIL))
 
+(defn PUT
+  "Put this `value` as the value of the property indicated by this `indicator` 
+   of this `symbol`. Return `value` on success.
+   
+   NOTE THAT there is no `PUT` defined in the manual, but it would have been 
+   easy to have defined it so I don't think this fully counts as an extension."
+  [symbol indicator value]
+  (let [magic-marker (Integer/parseInt "777778" 8)]
+    (if-let [binding (ASSOC symbol @oblist)]
+      (if-let [prop (ASSOC indicator (CDDR binding))]
+        (RPLACD prop value)
+        (RPLACD binding
+                (make-cons-cell
+                 magic-marker
+                 (make-cons-cell
+                  indicator
+                  (make-cons-cell value (CDDR binding))))))
+      (swap!
+       oblist
+       (fn [ob s p v]
+         (make-cons-cell
+          (make-beowulf-list (list s magic-marker p v))
+          ob))
+       symbol indicator value))))
+
+(defn DEFLIST
+  "For each pair in this association list `a-list`, set the property with this
+   `indicator` of the symbol which is the first element of the pair to the 
+   value which is the second element of the pair."
+  [a-list indicator]
+  (map
+   #(PUT (CAR %) indicator (CDR %))
+   a-list))
+
 (defn DEFINE
   "Bootstrap-only version of `DEFINE` which, post boostrap, can be overwritten 
   in LISP. 
 
-  The single argument to `DEFINE` should be an assoc list which should be 
-  nconc'ed onto the front of the oblist. Broadly, 
-  (SETQ OBLIST (NCONC ARG1 OBLIST))"
-  [args]
-  (swap!
-   oblist
-   (fn [ob arg1]
-     (loop [cursor arg1 a arg1]
-       (if (= (CDR cursor) NIL)
-         (do
-           (.rplacd cursor @oblist)
-           (pretty-print a)
-           a)
-         (recur (CDR cursor) a))))
-   (CAR args)))
+  The single argument to `DEFINE` should be an association list of symbols to
+   lambda functions"
+  [a-list]
+  (DEFLIST a-list 'EXPR))
 
 (defn SET
   "Implementation of SET in Clojure. Add to the `oblist` a binding of the
    value of `var` to the value of `val`. NOTE WELL: this is not SETQ!"
   [symbol val]
-  (when
-   (swap!
-    oblist
-    (fn [ob s v] (if-let [binding (ASSOC symbol ob)] 
-                   (RPLACD binding v)
-                   (make-cons-cell (make-cons-cell s v) ob)))
-    symbol val)
-    val))
+  (PUT symbol 'APVAL val))
 
 ;;;; TRACE and friends ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

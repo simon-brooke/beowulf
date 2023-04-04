@@ -331,7 +331,7 @@ it is not A.
 
 The main application of conditional expressions is in defining functions recursively.
 
-#### Example
+#### Example - recursive function
 
 `ff[x] = [atom[x] -> x; T -> ff[car[x]]]`
 
@@ -373,7 +373,7 @@ The conditional expression is useful for defining numerical computations, as wel
 ```
 |x| = [x<0 -> -x; T -> x]
 ```
-The factorial of a nonhnegative integer can be defined by
+The factorial of a non-negative integer can be defined by
 ```
 n! = [n=0 -> 1; T -> n.[n-l]!]
 ```
@@ -420,7 +420,7 @@ Using the lambda notation, we can write
 
 `ff =` &lambda;`[x] = [atom[x] -> x; T -> ff[car[x]]]`
 
-The equality sign in these identities is actually not part of the LISP meta-languageand is only a crutch until we develop the correct notation. The right side of the last equation cannot serve as an expression for the function `ff` because there is nothing to indicate that the occurrence of `ff` inside it stands for the function that is being defined.
+The equality sign in these identities is actually not part of the LISP meta-language and is only a crutch until we develop the correct notation. The right side of the last equation cannot serve as an expression for the function `ff` because there is nothing to indicate that the occurrence of `ff` inside it stands for the function that is being defined.
 
 In order to be able to write expressions that bear their own name, we introduce
 the label notation. If &epsilon; is an expression, and &alpha; is its name, we write label[&alpha;; &epsilon;].
@@ -569,26 +569,32 @@ This can be translated into the following S-expression: ,
             ((QUOTE T)(QUOTE F)))))
 ```
 
-- sub st[^;^; z]
-    This function gives the result of substituting the S-expression x for all occurrences
-    of the atomic symbol y in the S-expression z. It is defined by
+#### subst[x; y; z]
 
-###### s~bst[x;~;z] = [eq~al[~;z] -- x;atom[z] - z;T - cons[subst
+This function gives the result of substituting the S-expression x for all occurrences of the atomic symbol y in the S-expression z. It is defined by
 
 ```
-[x; y; car[z]]; subst[x;y; cdr[z]]]]
+subst[x; y; z] = [equal[y; z] -> x; 
+				atom[z] - z;
+				T - cons[subst
+						[x; y; car[z]]; subst[x; y; cdr[z]]]]
 ```
 
 As an example, we have
 
-SU~S~[(X. A);B;((A. B). c)] = ((A. (X. A)). C)
-null[x]
-This predicate is useful for deciding when a list is exhausted. It is true if and
-only if its argument is NIL.
+```lisp
+SUBST[(X . A); B; ((A . B) . c)] = ((A . (X . A)) . C)
+```
+
+#### null[x]
+This predicate is useful for deciding when a list is exhausted. It is true if and only if its argument is NIL.
+
 The following functions are useful when S-expressions are regarded as lists.
 
-1. append[x; y]
-append[x; y] = [n~ll[x]-~; T-cons[car [x]; append[cdr [x]; y I]]
+#### 1. append[x; y]
+``` 
+append[x; y] = [null[x] -> y; T -> cons[car [x]; append[cdr [x]; y]]]
+```
 
 An example is
 
@@ -596,175 +602,193 @@ An example is
 append[(A B);(C D E)] = (A B C D E)
 ```
 
-2. member[^;^]
-This predicate is true if the S-expression x occurs among the elements of the
-list y. We have
-memberlx; y] = [null[y ]--F;
-equal[x; car [y ]I--T;
-T-member [x; cdr [y I]]
+#### 2. member[x; y]
 
-This function gives the list of pairs of corresponding elements of the lists x and
-y, and appends this to the list a. The resultant list of pairs, which is like a table with
+This predicate is true if the S-expression `x` occurs among the elements of the list `y`. We have
+```
+member[x; y] = [null[y] -> F;
+				equal[x; car [y ]] ->T;
+				T -> member[x; cdr [y ]]]
+```
+
+#### 3. pairlis[x; y; a]
+
+<a name="page12">page 12</a>
+
+This function gives the list of pairs of corresponding elements of the lists `x` and
+`y`, and appends this to the list `a`. The resultant list of pairs, which is like a table with
 two columns, is called an association list. We have
 
 ```
-pairlis [x; y; a] = [null[x]--a; T-cons[cons[car[x]; car[y]];
-pairlis[cdr[x]; cdr [y]; a]]]
+pairlis [x; y; a] = [null[x] -> a; 
+				T -> cons[cons[car[x]; car[y]];
+						pairlis[cdr[x]; cdr [y]; a]]]
 ```
 
 An example is
 
 ```
-pairlis[(A B C);(U V w);((D. X) (E. Y))] =
-((A. U) (B. V) (C. W)(D. X) (E. Y))
+pairlis[(A B C);(U V W);((D . X) (E . Y))] =
+((A . U) (B . V) (C . W)(D . X) (E . Y))
 ```
 
-4. assoc[x; a]
-If a is an association list such as the one formed by pairlis in the above example,
-then assoc will produce the first pair whose first term is x. Thus it is a table searching
+#### 4. assoc[x; a]
+
+If `a` is an association list such as the one formed by `pairlis` in the above example,
+then `assoc` will produce the first pair whose first term is `x`. Thus it is a table searching
 function. We have
 
+```
+assoc[x; a] = [equal[caar[a]; x] -> car[a]; T -> assoc[x; cdr[a]]]
+```
+
 An example is
 
 ```
-assoc[~;((A. (M N)), (B. (CAR X)), (C. (QUOTE M)), (C. (CDR x)))]
-= (B. (CAR x))
+assoc[B; ((A . (M N)), (B . (CAR X)), (C . (QUOTE M)), (C . (CDR x)))]
+= (B . (CAR X))
 ```
 
-5. sublisla; y]
-Here a is assumed to be an association list of the form ((ul. vl)... (un. v,)),
-where the u1 s are atomic, and y is any S-expression. What sublis does, is to treat
-the u1 s as variables when they occur in y, and to substitute the corresponding v1 s
-from the pair list. In order to define sublis, we first define an auxiliary function.
-We have
-sub2[a; z] = [null[a]+z;eq[caar[a]; z]-cdar[a];~-
-sub%[cdr[a]; z]]
+##### 5. sublis[a; y]
+
+Here `a` is assumed to be an association list of the form ((u<sub>1</sub>. v<sub>1</sub>)... (u<sub>n</sub> . v<sub>n</sub>)),
+where the `u`s are atomic, and `y` is any S-expression. What `sublis` does, is to treat
+the `u`s as variables when they occur in `y`, and to substitute the corresponding `v`s
+from the pair list. In order to define `sublis`, we first define an auxiliary function. We have
+
+```
+sub2[a; z] = [null[a] -> z; eq[caar[a]; z] -> cdar[a];
+				T -> sub2[cdr[a]; z]]
+```
 and
-sublis[a; y] = [at0rn[~]-sub2[a;~]; T-cons[sublis[a; car[^]];
-sublis[a; cdr [Y]]]]
+
+```
+sublis[a; y] = [atom[y] -> sub2[a; y]; 
+				T -> cons[sublis[a; car[y]]; sublis[a; cdr[y]]]]
+```
+
 An example is
+
+```
 sublis[((X. SHAKESPEARE) (Y. (THE TEMPEST)));(X WROTE Y)] =
 (SHAKESPEARE WROTE (THE TEMPEST))
-The universal function evalquote that is about to be defined obeys the following
-identity. Let f be a function written as an M-expression, and let fn be its translation.
-(& is an S-expression. ) Let f be a function of n arguments and let args=(argl...
-argn), a list of the n S-expressions being used as arguments. Then
-
 ```
+
+The universal function `evalquote` that is about to be defined obeys the following identity. Let `f` be a function written as an M-expression, and let `fn` be its translation. (`fn` is an S-expression. ) Let `f` be a function of n arguments and let args=(arg<sub>1</sub>... arg<sub>n</sub>), a list of the `n` S-expressions being used as arguments. Then
+
+`evalquote[fn; args] = f[arg`<sub>1</sub>`... arg`<sub>n</sub>`]`
+
+<a name="page13">page 13</a>
+
 if either side of the equation is defined at all.
+
 Example
-fi ~[[x;~];cons[car[x];y]]
-fn: (LAMBDA (X Y) (CONS (CAR X) Y))
-argl: (A B)
-arg2: (C D)
-args: ((A B) (C D))
-evalquote[(LAMBDA (X Y) (CONS (CAR X) Y)); ((A B) (C D))] =
-~[[x;y];cons[car[x];y]][(A B);(C Dl]=
-(A C D)
-evalquote is defined by using two main functions, called eval and apply. apply
-handles a function and its arguments, while eval handles forms. Each of these func-
-tions also has another argument that is used as an association list for storing the val-
-ues of bound variables and f unction names.
+
+|                 |                                  |
+| --------------- | -------------------------------- |
+| f               | &lambda;[[x; y];cons[car[x]; y]] |
+| fn              | (LAMBDA (X Y) (CONS (CAR X) Y))  |
+| arg<sub>1</sub> | (A B)                            |
+| arg<sub>2</sub> | (C D)                            |
+| args            | ((A B) (C D))                    |
+
+`evalquote[(LAMBDA (X Y) (CONS (CAR X) Y)); ((A B) (C D))] =`
+&lambda;`[[x;y];cons[car[x];y]][(A B);(C D)] =`
+`(A C D)`
+
+`evalquote` is defined by using two main functions, called `eval` and `apply`. `apply` handles a function and its arguments, while `eval` handles forms. Each of these functions also has another argument that is used as an association list for storing the values of bound variables and function names.
+
+*note here that the environment -- the combination of the object list and the pushdown list -- is said to be an assoc list, where, importantly, it isn't. Of course, for the simplest possible Lisp, it would be -- But (to my surprise) Lisp 1.5 is nothing like the simplest possible Lisp.*
+
+```mexpr
+evalquote[fn; x] = apply[fn; x; NIL]
 ```
 
-```
 where
-apply [fn;x; a] =
+```mexpr
+apply[fn; x; a] =
+				[atom[fn] -> [eq[fn; CAR] -> caar[x]
+								eq[fn; CDR] -> cdar[x];
+								eq[fn; CONS] -> cons[car[x]; cadr[x]];
+								eq[fn; ATOM] -> atom[car[x]];
+								eq[fn; EQ] -> eq[car[x]; cadr[x]];
+								T -> apply[eval[fn; a]; x; a]]
+				eq[car[fn]; LAMBDA] -> eval[caddr[fn]; pairlis[cadr[fn]; x; a]];
+				eq[car[fn]; LABEL] -> apply[caddr [fn]; x; cons[cons[cadr [fn];
+																											caddr[fn]]; a]]]
+
+eval[e;a] = [atom[e] -> cdr[assoc[e;a]];
+				atom[car[e]] -> [eq[car[e]; QUOTE] -> cadr[e];
+								eq[car[e]; COND] -> evcon[cdr[e]; a];
+								T -> apply[car[e]; evlis[cdr[el; a]; a]];
+				T -> apply[car[e]; evlis [cdr[e]; a]; a]]
 ```
 
-##### [atom[fn] - [eq[fn;~~~] - caar[x]
+`pairlis` and `assoc` have been previously defined.
 
-```
-eq[fn;~~~] -- cdar[x];
-eq[fn; CONS] -- cons[car[x]; cadr[x]];
-eq[fn;~~~~] -- atom[car[x]];
-eq[fn; EQ] - eq[car[x]; cadr[x]];
+```mexpr
+evcon[c; a] = [eval[caar[c]; a] -> eval[cadar[c]; a];
+				T -> evcon[cdr [c];a]]
 ```
 
-###### T - apply[eval[fn;a];x;a]]
-
-eq[car[fn]; LAMBDA] -- eval[caddr [fn]; pairlis[cadr[fn];x;a]];
-
-###### eq[car [fn]; LABEL] - apply [caddr [fn]; x; cons [cons[cadr [fn]
-
-```
-c addr [f n]]; a]]]
-eval[e;a] = [atom[e] - cdr[assoc[e;a]];
-```
-
-###### atom[car[e]] -
-
-```
-[eq[car QUOTE] - cadr [el;
-eq[car[e]; COND] - evcon[cdr [el; a];
-T -- apply[car [el; evlis[cdr [el; a]; a]];
-T - apply[car [el; evlis [cdr [el; a]; a]]
-```
-
-pairlis and assoc have been previously defined.
-
-```
-evcon[c; a] = [eval[caar [c]; a] -- eval[cadar [c]; a];
-T -- evcon[cdr [c];a]]
 and
+
+```mexpr
+evlis[m; a] = [null[m] -> NIL;
+				T -> cons [eval[car [m];a];evlis[cdr [m];a]]]
 ```
 
-###### evlis[m;a] = [null[m] - NIL
-
-##### T - cons [eval[car [m];a];evlis[cdr [m];a]]]
+<a name="page14">page 14</a>
 
 We shall explain a number of points about these definitions.
-The first argument for - apply is a function. If it is an atomic symbol, then there
-are two possibilities. One is that it is an elementary function: car, cdr, cons, eq,
-or atom. In each case, the appropriate function is applied to the argument(s). If it is
-not one of these, then its meaning has to be looked up in the association list.
-If it begins with LAMBDA, then the arguments are paired with the bound variables,
-and the form is given to -1 to evaluate.
-If it begins with LABEL, then the function name and definition are added to the as-
-sociation list, and the inside function is evaluated by apply.
-The first argument of is a form. If it is atomic, then it must be a variable,
-and its value is looked up on the association list.
-If =of the form is QUOTE, then it is a constant, and the value is cadr of the form
-itself.
-If car of the form is CGND, then it is a conditional expression, and evcon evaluates
-the propositional terms in order, and choses the form following the first true predicate.
-In all other cases, the form must be a function followed by its arguments. The ar-
-guments are then evaluated, and the function is given to apply.
-The LISP Programming System has many added features that have not been de-
-scribed thus far. These will be treated hereafter. At this point, it is worth noting the
-following points.
 
-1. In the pure theory of LISP, all functions other than the five basic ones need to
-be defined each time they are to be used. This is unworkable in a practical sense.
-The LISP programming system has a larger stock of built-in functions known to the in-
-terpreter, and provision for adding as many more as the programmer cares to define.
-2. The basic functions car. and cdr were said to be undefined for atomic arguments.
-In the system, they always have a value, although it may not always be meaningful.
-Similarly, the basic predicate eq - always has a value. The effects of these functions
+The first argument for `apply` is a function. If it is an atomic symbol, then there are two possibilities. One is that it is an elementary function: `car`, `cdr`, `cons`, `eq`, or `atom`. In each case, the appropriate function is applied to the argument(s). If it is not one of these, then its meaning has to be looked up in the association list.
+
+If it begins with `LAMBDA`, then the arguments are paired with the bound variables, and the form is given to `eval` to evaluate.
+
+If it begins with `LABEL`, then the function name and definition are added to the as-
+sociation list, and the inside function is evaluated by apply. 
+
+The first argument of `eval` is a form. If it is atomic, then it must be a variable, and its value is looked up on the association list.
+
+If `car` of the form is `QUOTE`, then it is a constant, and the value is `cadr` of the form
+itself.
+
+If `car` of the form is `COND`, then it is a conditional expression, and `evcon` evaluates
+the propositional terms in order, and choses the form following the first true predicate.
+
+In all other cases, the form must be a function followed by its arguments. The arguments are then evaluated, and the function is given to apply.
+
+The LISP Programming System has many added features that have not been described thus far. These will be treated hereafter. At this point, it is worth noting the following points.
+
+1. In the pure theory of LISP, all functions other than the five basic ones need to be defined each time they are to be used. This is unworkable in a practical sense. The LISP programming system has a larger stock of built-in functions known to the interpreter, and provision for adding as many more as the programmer cares to define.
+2. The basic functions `car` and `cdr` were said to be undefined for atomic arguments. In the system, they always have a value, although it may not always be meaningful.
+Similarly, the basic predicate `eq` always has a value. The effects of these functions
 in unusual cases will be understood after reading the chapter on list structures in the
 computer.
-3. Except for very unusual cases, one never writes (QUOTE T) or (QUOTE F),
+3. Except for very unusual cases, one never writes `(QUOTE T)` or `(QUOTE F)`,
 but T, and F respectively.
-4. There is provision in LISP for computing with fixed and floating point numbers.
-These are introduced as psuedo-atomic symbols.
-The reader is warned that the definitions of apply and ~l given above are pedagogi-
-cal devices and are not the same functions as those built into the LISP programming
-system. Appendix B contains the computer implemented version of these functions and
-should be used to decide questions about how things really work.
+4. There is provision in LISP for computing with fixed and floating point numbers. These are introduced as psuedo-atomic symbols.
 
-11. THE LISP INTERPRETER SYSTEM
+The reader is warned that the definitions of `apply` and `eval` given above are pedagogical devices and are not the same functions as those built into the LISP programming system. Appendix B contains the computer implemented version of these functions and should be used to decide questions about how things really work.
 
-The following example is a LISP program that defines three functions union, inter-
-section, and member, and then applies these functions to some test cases. The functions
-union and intersection are to be applied to "sets," each set being represented by a list
-of atomic symbols. The functions are defined as follows. Note that they are all recur-
-sive, and both union and intersection make use of member.
+<a name="page15">page 15</a>
+
+## II. THE LISP INTERPRETER SYSTEM
+
+The following example is a LISP program that defines three functions `union`, `intersection`, and `member`, and then applies these functions to some test cases. The functions `union` and `intersection` are to be applied to "sets," each set being represented by a list of atomic symbols. The functions are defined as follows. Note that they are all recursive, and both union and intersection make use of member.
 
 ```
-member[a;x] = [null[x]-~;e~[a;car[x]]-T;T-
-member [a;cdr [x]]]
-union[^;^] = [null[x]-.y;member[car[x];y]-union
-[cdr [x];~]; T-cons [c ar [x];union[c dr [x];~]]]
+member[a; x] = [null[x] -> F; eq[a; car[x]] -> T;
+				T -> member[a; cdr[x]]]
+
+union[x; y] = [null[x] -> y;
+				member[car[x];y] -> union[cdr[x]; y]; 
+				T -> cons[car[x]; union[cdr[x]; y]]]
+
+intersection[x;y] = [null[x] -> NIL;
+    member[car[x]; y] -> cons[car[x]; intersection[cdr[x]; y]];
+    T -> intersection[cdr[x]; y]]
 ```
 
 To define these functions, we use the pseudo-function define. The program looks like
@@ -2680,7 +2704,7 @@ The function `deflist` is a more general defining function. Its first argument i
 
 If `deflist` or `define` is used twice on the same object with the same indicator, the old value will be replaced by the new one.
 
-#### attrib[x;e] : SUBR pseudo-function
+#### attrib[x; e] : SUBR pseudo-function
 
 The function attrib concatenates its two arguments by changing the last element of its first argument to point to the second argument. Thus it is commonly used to tack something onto the end of a property list. The value of attrib is the second argument.
 
@@ -2712,47 +2736,45 @@ cator is found, and NIL otherwise.
 This pseudo-function is used to create a constant by putting the indicator APVAL
 and a value on the property list of an atomic symbol. The first argument should be an
 atomic symbol; the second argument is the value is cons[val;N1~].
-```
 
-csetq[ob;val] - FEXPR pseudo-function
+#### csetq[ob; val] : FEXPR pseudo-function
 
-* csetq is like cset - except that it quotes its first argument instead of evaluating it.
-rempr op[x; ind] : SUBR pseudo-function f
+csetq is like cset - except that it quotes its first argument instead of evaluating it.
+
+#### remprop[x; ind] : SUBR pseudo-function 
+
 The pseudo-function remprop searches the list, x, looking for all occurrences of the
 indicator ind. When such an indicator is found, its name and the succeeding property
 are removed from the list. The two "endsn of the list are tied together as indicated by
 the dashed line below.
 
-```
 The value of remprop is NIL.
+
 When an indicator appears on a property list without a property following it, then
 it is called a flag. An example of a flag is the indicator TRACE which informs the inter-
 preter that the function on whose property list it appears is to be traced. There are two
 pseudo-functions for creating and removing flags respectively.
-```
 
-- flag [I; ind] EXPR pseudo-function
+#### flag [I; ind] : EXPR pseudo-function
 
-```
 The pseudo-function flag puts the flag ind on the property list of every atomic symbol
 in the list 1. Note that d cannot be an atomic symbol, and must be a list of atomic sym-
 bols. The flag is always placed immediately following the first word of the property
 list, and the rest of the property list then follows. The value of flag is NIL. No property
 list ever receives a duplicated flag.
-remflag[l; ind] : EXPR pseudo-function
+
+#### remflag[l; ind] : EXPR pseudo-function
+
 remflag removes all occurrences of the indicator ind from the property list of each
 atomic symbol in the list 8. It does this by patching around the indicator with a rplacd
 in a manner similar to the way remprop works.
-```
 
-```
-Table Buildinrr and Table Reference Functions
-```
+### Table Building and Table Reference Functions
 
-- pair [x; y] SUBR
-    The function pair has as value the list of pairs of corresponding elements of the lists
-    x and y. The arguments x and y must be lists of the same number of elements. They
-    should & be atomic symbols. The value is a dotted pair list, i. e. ((a (a p2)...
+#### pair [x; y] : SUBR
+
+The function pair has as value the list of pairs of corresponding elements of the lists x and y. The arguments x and y must be lists of the same number of elements. They should & be atomic symbols. The value is a dotted pair list, i. e. ((a (a p2)...
+
     pair[x;y] = [prog[u;v; m]
     u:= x;
     v:= y;
@@ -2765,7 +2787,10 @@ m:= cons[cons[car[u];car[v]];m];
 u:= cdr[u];
 v:= cdr[v];
 go[~Il
-sassoc[x;y;u] SUBR functional
+```
+
+#### sassoc[x; y; u] : SUBR functional
+
 The function sassoc searches y, which is a list of dotted pairs, for a pair whose first
 element that is x. If such a pair is found, the value of sassoc is this pair. Otherwise
 the function u of no arguments is taken as the value of sassoc.
@@ -2781,12 +2806,12 @@ the S-expression y in the S-expression z.
 
 T .- cons[subst[x;y;car [z]];subst [x;y;cdr[e]]]]
 
-* sublis [x ; y] SUBR
+#### sublis [x ; y] : SUBR
 
 Here x is a list of pairs,
-((ul vl) (u2 v2) (un vn))
-The value of sublis[x;y] is the result of substituting each v for the corresponding
-u in y.
+((u<sub>1</sub> . v<sub>1</sub>) (u<sub>2</sub> .  v<sub>2</sub>) (u<sub>n</sub> . v<sub>n</sub>))
+The value of `sublis[x; y]` is the result of substituting each `v` for the corresponding
+`u` in `y`.
 Note that the following M-expression is different from that given in Section I, though
 the result is the same.
 
@@ -2819,38 +2844,33 @@ nconc does not copy its first argument.
 * conc concatenates its arguments without copying them. Thus it changes existing list
 structure and is a pseudo-function. The value of conc is the resulting concatenated list.
 
-nc - onc [x;y] SUBR pseudo-function
+#### nconc [x; y] : SUBR pseudo-function
 
-```
-The function nconc concatenates its arguments without copying the first one. The
+The function `nconc` concatenates its arguments without copying the first one. The
 operation is identical to that of attrib except that the value is the entire result, (i. e. the
 modified first argument, x).
+
 The program for nconc[x;y] has the program variable m and is as follows:
+```
 nconc [x; y ] = prog [[m];
+[null[x] - return[~]]
 ```
 
-##### [null[x] - ret~rn[~]]
+#### COPY [X] : SUBR
 
-* COPY [XI SUBR
-
-```
 This function makes a copy of the list x. The value of copy is the location of the
 copied list.
-```
 
-##### copy[x] = [null[x] - ~~~;atom[x] - x;T -- cons[copy[car[x]]
+copy[x] = [null[x] - ~~~;atom[x] - x;T -- cons[copy[car[x]]
 
 ```
 co~[cdr[xllIl
 ```
 
-```
-reverseit] SUBR
-```
+#### reverse[t] : SUBR
 
-```
 This is a function to reverse the top level of a list. Thus
-reverse[(^ B (C. D))] = ((C D) B A))
+reverse[(A B (C. D))] = ((C D) B A))
 reverse[t] = prog[[v];
 u: =t;
 ```
@@ -2915,7 +2935,7 @@ m:= cdr[m];
 go[~oopl1
 
 #### search[x; p; f; u] : SUBR functional
-    
+
 The function search looks through a list x for an element that has the property p, and if such an element is found the function f of that element is the value of search. If there is no such element, the function u of one argument x is taken as the value of search (in this case x is, of course, NIL).
 
 Arithmetic Functions
