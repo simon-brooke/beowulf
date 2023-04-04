@@ -47,6 +47,22 @@ O14 (read lines O and 1)
 
 Of course, this isn't proof. If `CAR` and `CDR` used here are standard IBM 704 assembler mnemonics -- as I believe they are -- then what is `CONS`? It's used in a syntactically identical way. If it also is an assembler mnemonic, then it's hard to believe that, as legend relates, it is short for 'construct'; on the other hand, if it's a label representing an entry point into a subroutine, then why should `CAR` and `CDR` not also be labels?
 
+-----
+
+**Edited 3<sup>rd</sup> April to add:** I've found a document, not related to Lisp (although John McCarthy is credited as one of the authors), which does confirm -- or strictly, amend -- the story. This is the [CODING for the MIT-IBM 704 COMPUTER](http://bitsavers.org/pdf/mit/computer_center/Coding_for_the_MIT-IBM_704_Computer_Oct57.pdf), dating from October 1957. The registers of the 704 were divided into four parts, named respectively the prefix part, the address part, the tag part, and the decrement part, of 3, 15, 3, and 15 bits respectively. The decrement part was not used in addressing; that part of the folklore I was taught isn't right. But the names are correct. Consider [this excerpt](http://bitsavers.org/pdf/mit/computer_center/Coding_for_the_MIT-IBM_704_Computer_Oct57.pdf#page=145) :
+
+> The address, tag and decrement parts of symbolic instructions are given in that order. In some cases the decrement, tag or address parts are not necessary; therefore the following combinations where OP represents the instruction abbreviation are permissible.
+
+This doesn't prove there were individual machine instructions with the mnemonics `CAR` and `CDR`; in fact, I'm going to say with some confidence that there were not, by reference to [the table of instructions](http://bitsavers.org/pdf/mit/computer_center/Coding_for_the_MIT-IBM_704_Computer_Oct57.pdf#page=170) appended to the same document. The instructions do have three letter mnemonics, and they do use 'A' and 'D' as abbreviations for 'address' and 'decrement' respectively, but `CAR` and `CDR` are not included.
+
+So it seems probable that `CAR` and `CDR` were labels for subroutines, as I hypothesised above. But they were quite likely pre-existing subroutines, in use before the instantiation of the Lisp project, because they would be generally useful; and the suggestion that they are contractions of 'contents of the address part' and 'contents of the decrement part', respectively, seem confirmed.
+
+And, going further down the rabbit hole, [there's this](https://dl.acm.org/doi/pdf/10.1145/800055.802047#page=3). In 1957, before work on the Lisp project started, McCarthy was writing functions to add list processing to the then-new FORTRAN language, on the very same IBM 704 machine. 
+
+>  in this time any function that delivered integer values had to have a first letter X. Any function (as opposited to subroutines) had to have a last letter F in its name. Therefore the functions selecting parts of the IBM704 memory register (word) were introduced to be XCSRF, XCPRF, XCDRF, XCTRF and XCARF
+
+-----
+
 I think that the answer has to be that if `CAR` and `CDR` had been named by the early Lisp team -- John McCarthy and his immediate colleagues -- they would not have been named as they were. If not `FRST` and `REST`, as in more modern Lisps, then something like `P1` and `P2`. `CAR` and `CDR` are distinctive and memorable (and therefore in my opinion worth preserving) because they very specifically name the parts of a cons cell and of nothing else.
 
 Let's be clear, here: when `CAR` and `CDR` are used in Lisp, they are returning pointers, certainly -- but not in the sense that one points to a page and the other to a word. Each is an offset into a cell array, which is almost certainly an array of single 36 bit words held on a single page. So both are in effect being used as decrements. Their use in Lisp is an overload onto their original semantic meaning; they are no longer being used for the purpose for which they are named.
@@ -262,6 +278,49 @@ Lisp 1.5 doesn't have `PUT`, `PUTPROP` or `DEFUN` because setting properties ind
 
 -----
 
+## Deeper delving
+
+After writing, and publishing, this essay, I went on procrastinating, which is what I do when I'm sure I'm missing something; and to procrastinate, I went on reading the earliest design documents  of Lisp I could find. And so I came across the MIT AI team's first ever memo, written by John McCarthy in September 1958. And in that, I find this:
+
+> 3.2.1. First we have those that extract parts of a 704 word and form a word from parts. We shall distinguish the following parts of a word and indicate each of them by a characteristic letter.
+> 
+> | Letter | Description        |
+> | ---- | ---------------------------- |
+> | w    | the whole word               |
+> | p    | the prefix (bits s, 1, 2)    |
+> | i    | the indicator (bits 1 and 2) |
+> | s    | the sign bit                 |
+> | d    | the decrement (bits 3-17)    |
+> | t    | the tag (bits 18-20)         |
+> | a    | the address (bits 21-35)     |
+
+In the discussion of functions which access properties on [page 58 of the Lisp 1.5 programmer's manual](https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=66), the word 'indicator' is used in preference to 'symbol' for the name of a property: for example
+
+> The function `deflist` is a more general defining function. Its first argument is a list of pairs as for define. Its second argument is the *indicator* that is to be used. After `deflist` has been executed with (u<sub>i</sub> v<sub>i</sub>) among its first argument, the property list of u<sub>i</sub> will begin:
+>
+> If `deflist` or `define` is used twice on the same object with the same *indicator*, the old value will be replaced by the new one.
+
+(my emphasis).
+
+That use of 'indicator' has been nagging at me for a week. It looks like a term of art. If it's just an ordinary atomic symbol, why isn't it called a symbol?
+
+Is it an indicator in the special sense of the indicator part of the machine word? If it were, then the property list could just be a flat list of values. And what's been worrying and surprising me is that property lists are shown in the manual as flat lists. Eureka? I don't *think* so.
+
+The reason I don't think so is that there are only two bits in the indicator part of the word, so only four distinct values; whereas we know that Lisp 1.5 has (at least) five distinct indicator values, `APVAL`, `EXPR`, `FEXPR`, `SUBR` and `FSUBR`.
+
+Furthermore, on [page 39](https://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf#page=47), we have:
+
+> A property list is characterized by having the special constant 77777<sub>8</sub> (i. e., minus 1)
+> as the first element of the list. The rest of the list contains various properties of the
+> atomic symbol. Each property is preceded by an *atomic symbol* which is called its
+> *indicator*.
+
+(again, my emphasis)
+
+But I'm going to hypothesise that the properties were originally intended to be discriminated by the indicator bits in the cons cell, that they were originally coded that way, and that there was some code which depended on property lists being flat lists; and that, when it was discovered that four indicators were not enough and that something else was going to have to be used, the new format of the property list using atomic symbols as indicators was bodged in.
+
+-----
+
 So what this is about is I've spent most of a whole day procrastinating, because I'm not exactly sure how I'm going to make the change I've got to make. Versions of Beowulf up to and including 0.2.1 used the naive understanding of the architecture; version 0.3.0 *should* use the corrected version. But before it can, I need to be reasonably confident that I understand what the correct solution is.
 
-I *shall* implement `PUT`, even though it isn't in the spec, because it's a useful building block on which to build `DEFINE` and `DEFLIS`, both of which are. And also, because `PUT` would have been very easy for the Lisp 1.5 implementers to implement, if it had been relevant to their working environment.
+I *shall* implement `PUT`, even though it isn't in the spec, because it's a useful building block on which to build `DEFINE` and `DEFLIS`, both of which are. And also, because `PUT` would have been very easy for the Lisp 1.5 implementers to implement, if it had been relevant to their working environment. And I shall implement property list as flat lists of interleaved 'indicator' symbols and values, even with that nonsense 77777<sub>8</sub> as a prefix, because now I know (or think I know) that it was a bodge, it seems right in the spirit of historical reconstruction to reconstruct the bodge.

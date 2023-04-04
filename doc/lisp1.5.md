@@ -1626,19 +1626,13 @@ ables bound outside of the errorset have not been altered by using cset or set, 
 damage has been done by pseudo-functions, it may be possible to continue computation
 in a different direction when one path results in an error.
 
-```
-VII. LIST STRUCTURES
-In other sections of this manual, lists have been discussed by using the LISP input-
-output language. In this section, we discuss the representation of lists inside the com-
-puter, the nature of property lists of atomic symbols, representation of numbers, and
-the garbage collector.
-```
+## VII. LIST STRUCTURES
 
-7. 1 Representation of List Structure
-    Lists are not stored in the computer as sequences of BCD characters, but as struc-
-    tural forms built out of computer words as parts of trees.
-    In representing list structure, a computer word will be depicted as a rectangle
-    divided into two sections, the address and decrement.
+In other sections of this manual, lists have been discussed by using the LISP input-output language. In this section, we discuss the representation of lists inside the computer, the nature of property lists of atomic symbols, representation of numbers, and the garbage collector.
+
+### 7.1 Representation of List Structure
+
+Lists are not stored in the computer as sequences of BCD characters, but as structural forms built out of computer words as parts of trees. In representing list structure, a computer word will be depicted as a rectangle divided into two sections, the address and decrement.
 
 add. I dec.
 
@@ -1660,16 +1654,14 @@ in the decrement.
 Following are some diagrammed S-expressions, shown as they would appear in the
 computer. It is convenient to indicate NIL by -- - -- - instead of -- -- -F].
 
-```
 It is possible for lists to make use of common subexpressions. ((M. N) X (M. N))
 could also be represented as
-```
 
-```
+
 Circular lists are ordinarily not permitted. They may not be read in; however, they
 can occur inside the computer as the result of computations involving certain functions.
 Their printed representation is infinite in length. For example, the structure
-```
+
 
 ```
 will print as (A B C A B C A. ..
@@ -1689,9 +1681,7 @@ The advantages of list structures for the storage of symbolic expressions are:
 1. The size and even the number of expressions with which the program will have
 to deal cannot be predicted in advance. Therefore, it is difficult to arrange blocks of
 
-```
-37
-```
+<a name=="page 37">page 37</a>
 
 storage of fixed length to contain them.
 
@@ -1702,7 +1692,8 @@ available.
 3. An expression that occurs as a subexpression of several expressions need be
 represented in storage only once,
 
-7.2 Construction of List Structure
+### 7.2 Construction of List Structure
+
 The following simple example has been included to illustrate the exact construction
 of list structures. Two types of list structures are shown, and a function for deriving
 one from the other is given in LISP.
@@ -1740,26 +1731,27 @@ So rnltgrp applied to the list P1 takes each threesome, (X Y Z), in turn and app
 to it to put it in the new form, (X (Y Z)) until the list P1 has been exhausted and the new
 list P2 achieved.
 
-7.3 Property Lists
+### 7.3 Property Lists
+
 In other sections, atomic symbols have been considered only as pointers. In this
 section the property lists of atomic symbols that begin at the appointed locations are
 described.
+
 Every atomic symbol has a property list. When an atomic symbol is read in for
 the first time, a property list is created for it.
+
 A property list is characterized by having the special constant 777778 (i. e., minus 1)
 as the first element of the list. The rest of the list contains various properties of the
 atomic symbol. Each property is preceded by an atomic symbol which is called its
 indicator. Some of the indicators are:
 
-```
-PNAME - the BCD print name of the atomic symbol for input-output use.
-EXPR - S-expression defining a function whose name is the atomic symbol
-on whose property list the EXPR appears.
-SUBR - Function defined by a machine language subroutine.
-APVAL - Permanent value for the atomic symbol considered as a variable.
-```
+| Indicator | Description                                                  |
+| --------- | ------------------------------------------------------------ |
+| PNAME     | the BCD print name of the atomic symbol for input-output use. |
+| EXPR      | S-expression defining a function whose name is the atomic symbol on whose property list the EXPR appears. |
+| SUBR      | Function defined by a machine language subroutine.           |
+| APVAL     | Permanent value for the atomic symbol considered as a variable. |
 
-```
 The atomic symbol NIL has two things on its property list - its PNAME, and an
 APVAL that gives it a value of NIL. Its property list looks like this:
 ```
@@ -1805,14 +1797,13 @@ TXL 37721,, 2 1
 ```
 The indicator EXPR points to an S-expression defining a function. The function define
 puts EXPR1s on property lists. After defining ff, its property list would look like this
-```
 
 -1 I
 
 LAMBDA I
 
 The function get[x;i] can be used to find a property of x whose indicator is i. The
-value of get[~~;~G~] would be (LAMBDA (X) (COW...
+value of get[X; G] would be (LAMBDA (X) (COW...
 A property with its indicator can be removed by remprop[x;i].
 The function deflist[x;i] can be used to put any indicator on a property list. The
 first argument is a list of pairs as for define, the second argument is the indicator to
@@ -1826,45 +1817,38 @@ and what type it is, and a pointer to the number itself in the decrement of this
 Unlike atomic symbols, numbers are not stored uniquely.
 For example, the decimal number 15 is represented as follows:
 
-7.4 List Structure Operators
+### 7.4 List Structure Operators
 
-The theory of recursive functions developed in Section I will be referred to as ele-
-mentary LISP. Although this language is universal in terms of computable functions of
-symbolic expressions, it is not convenient as a programming system without additional
-tools to increase its power.
-In particular, elementary LISP has no ability to modify list structure. The only
-basic function that affects list structure is cons, and this does not change existing lists,
-but creates new lists. Functions written in pure LISP such as subst do not actually mod-
-ify their arguments, but make the modifications while copying the original.
+The theory of recursive functions developed in Section I will be referred to as elementary LISP. Although this language is universal in terms of computable functions of symbolic expressions, it is not convenient as a programming system without additional tools to increase its power.
+
+In particular, elementary LISP has no ability to modify list structure. The only basic function that affects list structure is `cons`, and this does not change existing lists, but creates new lists. Functions written in pure LISP such as `subst` do not actually modify their arguments, but make the modifications while copying the original.
+
 LISP is made general in terms of list structure by means of the basic list operators
-rplaca and rplacd. These operators can be used to replace the address or decrement
+`rplaca` and `rplacd`. These operators can be used to replace the address or decrement
 or any word in a list. They are used for their effect, as well as for their value, and
 are called pseudo-functions.
-rplaca[x;y] replaces the address of x with y. Its value is x, but x is something
-different from what it was before. In terms of value, rplaca can be described by the
-equation
+
+`rplaca[x;y]` replaces the address of `x` with `y`. Its value is `x`, but `x` is something different from what it was before. In terms of value, rplaca can be described by the equation
 rpla~a[x;~] = c~ns[~;cdr[x]]
 But the effect is quite different: there is no cons involved and a new word is not created.
-rplacd[x;y] replaces the decrement of x with y.
+
+`rplacd[x;y]` replaces the decrement of `x` with `y`.
+
 These operators must be used with caution. They can permanently alter existing
 definitions and other basic memory. They can be used to create circular lists, which
-can cause infinite printing, and look infinite to functions that search, such as equal and
-subst.
-As an example, consider the function mltgrp of section 7.2. This is a list-altering
+can cause infinite printing, and look infinite to functions that search, such as `equal` and
+`subst`.
 
-function that alters a copy of its argument. The subfunction - grp rearranges a subgroup
+As an example, consider the function mltgrp of section 7.2. This is a list-altering function that alters a copy of its argument. The subfunction - grp rearranges a subgroup
 
-```
-The original function does this by creating new list structures, and uses four cons's.
-Because there are only three words in the original, at leaSt one cons is necessary, but
-```
+The original function does this by creating new list structures, and uses four cons's. Because there are only three words in the original, at least one cons is necessary, but
+
 
 - grp can be rewritten by using rplaca and rplacd.
     The modification is
 
-```
-The new word is created by cons[cadr[x];cddr[x]]. A pointer to it is provided by
-rplaca[cdr[x];cons[cadr[x];cddr[x]]].
+The new word is created by cons[cadr[x];cddr[x]]. A pointer to it is provided by rplaca[cdr[x];cons[cadr[x];cddr[x]]].
+
 The other modification is to break the pointer from the second to the third word.
 This is done by rplacd[cdr[x];~l~].
 pgrp - is now defined as
@@ -1876,64 +1860,29 @@ pmltgrp[l] = [null[l] -. NIL;
 T -- ~rog2[~g~~[car[~Il~~~~tgr~[cdr[~1111
 prog2 is a function that evaluates its two arguments. Its value is the second argument.
 The value of pmltgrp is NIL. pgrp - and - pmltgrp are pseudo-functions.
-```
 
-```
-7.5 The Free-Storage List and the Garbage Collector
-```
 
-At any given time only a part of the memory reserved for list structures will actually
-be in use for storing S-expressions. The remaining registers are arranged in a single
-list called the free-storage list. A certain register, FREE, in the program contains the
-location of the first register in this list. When a word is required to form some addi-
-tional list structure, the first word on the free-storage list is taken and the number in
-register FREE is changed to become the location of the second word on the free-storage
+### 7.5 The Free-Storage List and the Garbage Collector
 
-```
-list. No provision need be made for the user to program the return of registers to the
-free-storage list.
-This return takes place automatically whenever the free -storage list has been
-exhausted during the running of a LISP program. The program that retrieves the storage
-is called the garbage collector.
-Any piece of list structure that is accessible to programs in the machine is consid-
-ered an active list and is not touched by the garbage collector. The active lists are
-accessible to the program through certain fixed sets of base registers, such as the reg-
-isters in the list of atomic symbols, the registers that contain partial results of the
-LISP computation in progress, etc. The list structures involved may be arbitrarily
-long but each register that is active must be connected to a base register through a car-
-cdr - chain of registers. Any register that cannot be so reached is not accessible to any
-program and is nonactive; therefore its contents are no longer of interest.
-The nonactive, i. e. , inaccessible, registers are reclaimed for the free-storage list
-by the garbage collector as follows. First, every active register that can be reached
-through a car-cdr chain is marked by setting its sign negative. Whenever a negative
-register is reached in a chain during this process, the garbage collector knows that the
-rest of the list involving that register has already been marked. Then the garbage col-
-lector does a linear sweep of the free-storage area, collecting all registers with a posi-
-tive sign into a new free-storage list, and restoring the original signs of the active
-registers.
-Sometimes list structure points to full words such as BCD print names and numbers.
-The garbage collector cannot mark these words because the sign bit may be in use. The
-garbage collector must also stop tracing because the pointers in the address and decre-
-ment of a full word are not meaningful.
-These problems are solved by putting full words in a reserved section of memory
-called full-word space. The garbage collector stops tracing as soon as it leaves the
-```
+At any given time only a part of the memory reserved for list structures will actually be in use for storing S-expressions. The remaining registers are arranged in a single list called the free-storage list. A certain register, FREE, in the program contains the location of the first register in this list. When a word is required to form some additional list structure, the first word on the free-storage list is taken and the number in register FREE is changed to become the location of the second word on the free-storage list. No provision need be made for the user to program the return of registers to the free-storage list.
 
---- free-storage space. Marking in full-word space is accomplished by a bit table.
+This return takes place automatically whenever the free -storage list has been exhausted during the running of a LISP program. The program that retrieves the storage is called the garbage collector.
 
-```
-VIII. A COMPLETE LISP PROGRAM - THE WANG ALGORITHM FOR THE
-PROPOSITIONAL CALCULUS
-```
+Any piece of list structure that is accessible to programs in the machine is considered an active list and is not touched by the garbage collector. The active lists are accessible to the program through certain fixed sets of base registers, such as the registers in the list of atomic symbols, the registers that contain partial results of the LISP computation in progress, etc. The list structures involved may be arbitrarily long but each register that is active must be connected to a base register through a car-cdr - chain of registers. Any register that cannot be so reached is not accessible to any program and is nonactive; therefore its contents are no longer of interest.
 
-This section gives an example of a complete collection of LISP function definitions
-which were written to define an algorithm. The program was then run on several test
-cases. The algorithm itself is explained, and is then written in M-expressions. The
-complete input card deck an'd the printed output of the run are reprinted here.
-The Wang Algorithm^1 is a method of deciding whether or not a formula in the prop-
-oditional calculus is a theorem. The reader will need to know something about the prop-
-ositional calculus in order to understand this discussion.
-We quote from pages 5 and 6 of Wangls paper:
+The nonactive, i. e. , inaccessible, registers are reclaimed for the free-storage list by the garbage collector as follows. First, every active register that can be reached through a car-cdr chain is marked by setting its sign negative. Whenever a negative register is reached in a chain during this process, the garbage collector knows that therest of the list involving that register has already been marked. Then the garbage collector does a linear sweep of the free-storage area, collecting all registers with a positive sign into a new free-storage list, and restoring the original signs of the active registers.
+
+Sometimes list structure points to full words such as BCD print names and numbers. The garbage collector cannot mark these words because the sign bit may be in use. The garbage collector must also stop tracing because the pointers in the address and decrement of a full word are not meaningful.
+
+These problems are solved by putting full words in a reserved section of memory called full-word space. The garbage collector stops tracing as soon as it leaves the free-storage space. Marking in full-word space is accomplished by a bit table.
+
+### VIII. A COMPLETE LISP PROGRAM - THE WANG ALGORITHM FOR THE PROPOSITIONAL CALCULUS
+
+This section gives an example of a complete collection of LISP function definitions which were written to define an algorithm. The program was then run on several test cases. The algorithm itself is explained, and is then written in M-expressions. The complete input card deck and the printed output of the run are reprinted here.
+
+The [Wang Algorithm](https://dl.acm.org/doi/abs/10.1147/rd.41.0002) is a method of deciding whether or not a formula in the propositional calculus is a theorem. The reader will need to know something about the propositional calculus in order to understand this discussion.
+
+We quote from pages 5 and 6 of Wang's paper:
 "The propositional calculus (System P)
 Since we are concerned with practical feasibility, it is preferable to use more logical
 connectives to begin with when we wish actually to apply the procedure to concrete cases.
@@ -1958,13 +1907,11 @@ vinced that these rules are indeed correct. Later on, a proof will be given of t
 pleteness, i. e., all intuitively valid sequents are provable, and of their consistency,
 i. e. , all provable sequents are intuitively valid.
 
-```
 "PI. Initial rule: if h, 5 are strings of atomic formulae, then h -. 5 is a theorem if
 some atomic formula occurs on both sides of the arrow.
 "In the ten rules listed below, h and 5 are always strings (possibly empty) of atomic
 formulae. As a proof procedure in the usual sense, each proof begins with a finite set
 of cases of P1 and continues with successive consequences obtained by the other rules .I1
-```
 
 1. Wang, Hao. "Toward Mechanical Mathematics," IBM J. Res. Develop., Vo1.4,
     No. 1. January 1960.
@@ -2554,30 +2501,14 @@ FIN END OF LISP RUN M948-1207 LEVIN
 END OF LISP JOB
 ```
 
-```
-APPENDIX A
-```
 
-```
-FUNCTIONS AND CONSTANTS IN THE LISP SYSTEM
-```
+## APPENDIX A : FUNCTIONS AND CONSTANTS IN THE LISP SYSTEM
 
-```
-This appendix contains all functions available in the LISP System as of August 1962.
-Each entry contains the name of the object, the property under which it is available
-(e. g., EXPR, FEXPR, SUBR, FSUBR, or APVAL), whether it is a pseudo-function,
-functional (function having functions as arguments), or predicate, and in some cases
-a definition of the function as an M-expression. In the case of APVALts, the value is
-given.
-The LISP Library is a file of BCD cards distributed with the LISP System. It is not
-intended to be used as input to the computer without being edited first. Have the Library
-file punched out, and then list the cards. Each Library function is preceded by a title
-card that must be removed. Some Library entries are in the form of a DEFINE, while
-some are in the form of an assembly in LAP. Note that some of them have auxiliary
-functions that must be included.
-```
+This appendix contains all functions available in the LISP System as of August 1962. Each entry contains the name of the object, the property under which it is available (e. g., EXPR, FEXPR, SUBR, FSUBR, or APVAL), whether it is a pseudo-function, functional (function having functions as arguments), or predicate, and in some cases a definition of the function as an M-expression. In the case of APVALts, the value is given.
 
-```
+The LISP Library is a file of BCD cards distributed with the LISP System. It is not intended to be used as input to the computer without being edited first. Have the Library file punched out, and then list the cards. Each Library function is preceded by a title card that must be removed. Some Library entries are in the form of a DEFINE, while some are in the form of an assembly in LAP. Note that some of them have auxiliary functions that must be included.
+
+
 Elementary Functions
 car - [x] SUBR
 cdr - [x] SUBR
@@ -2678,9 +2609,8 @@ TRUE
 TRANSFER IF EQUAL
 OTHERWISE VALUE IS NIL
 VALUE IS *T*
-```
 
-equal[^;^] - SUBR predicate
+equal[x; y] - SUBR predicate
 
 * equal is true if its arguments are the same S-expression, although they do not have
 to be identical list structure in the computer. It uses 7 eq on the atomic level and is
@@ -2702,32 +2632,28 @@ CLA TRUE
 TRA 1,4
 TRUE OCT 1000000
 ```
+<a name="page58">page 58</a>
 
-* rplaca[x;y] SUBR pseudo-function
+#### rplaca[x; y] : SUBR pseudo-function
 
-```
-rplacd[x;y] SUBR pseudo-function
+#### rplacd[x; y] : SUBR pseudo-function
+
 These list operators change list structure and can damage the system memory if not
-used properly. See page^41 for a description of usage.
-```
+used properly. See [page 41](#page41) for a description of usage.
 
-```
-Logical Connectives
-```
+### Logical Connectives
 
-- and[x ;x2... ;xn] : FSUBR predicate
+#### and[x<sub>1</sub>; x<sub>2</sub>; ... ; x<sub>n</sub>] : FSUBR predicate
 
-```
 The arguments of are evaluated in sequence, from left to right, until one is found
-that is false, or until the end of the list is reached. The value of & is false or true
+that is false, or until the end of the list is reached. The value of and is false or true
 respectively.
-```
 
-- 0r[x1;x2... ;xn] : FSUBR predicate
-    The arguments of or are evaluated in sequence from left to right, until one is found
-    that is true, or until the end of the list is reached. The value of 2 is true or
-    false respectively.
-* not [x] SUBR predicate
+#### or[x<sub>1</sub>; x<sub>2</sub>; ... ; x<sub>n</sub>] : FSUBR predicate
+
+The arguments of or are evaluated in sequence from left to right, until one is found that is true, or until the end of the list is reached. The value of or is true or false respectively.
+
+#### not [x]: SUBR predicate
 
 The value of not is true if its argument is false, and false otherwise.
 
@@ -2748,24 +2674,21 @@ where each `u` is a name and each `v` is a &lambda;-expression for a function . 
 
 > define[x] = deflist[x; EXPR]
 
+#### deflist [x; ind] : EXPR pseudo-function
 
+The function `deflist` is a more general defining function. Its first argument is a list of pairs as for define. Its second argument is the indicator that is to be used. After `deflist` has been executed with (u<sub>i</sub> v<sub>i</sub>) among its first argument, the property list of u<sub>i</sub> will begin:
 
-deflist [x; ind] EXPR pseudo-function
-The function deflist is a more general defining function. Its first argument is a list
-of pairs as for define. Its second argument is the indicator that is to be used. After
-deflist has been executed with (ui vi) among its first argument, the property list of ui
-will begin:
+If `deflist` or `define` is used twice on the same object with the same indicator, the old value will be replaced by the new one.
 
-If deflist or define is used twice on the same object with the same indicator, the old
-value will be replaced by the new one.
-attrib[x;e] - SUBR pseudo-function
-The function attrib concatenates its two arguments by changing the last element of
-its first argument to point to the second argument. Thus it is commonly used to tack
-something onto the end of a property list. The value of attrib is the second argument.
+#### attrib[x;e] : SUBR pseudo-function
+
+The function attrib concatenates its two arguments by changing the last element of its first argument to point to the second argument. Thus it is commonly used to tack something onto the end of a property list. The value of attrib is the second argument.
+
 For example
 attrib[~~; (EXPR (LAMBDA (X) (COND ((ATOM X) X) (T (FF (CAR x))))))]
 would put EXPR followed by the LAMBDA expression for FF onto the end of the prop-
 erty list for FF.
+
 ```
 
 - pr~p[x;~;u] SUBR functional
