@@ -424,9 +424,9 @@
     (make-beowulf-list (map CAR @oblist))
     NIL))
 
-(def ^:private magic-marker
+(def magic-marker
   "The unexplained magic number which marks the start of a property list."
-  (Integer/parseInt "777778" 8))
+  (Integer/parseInt "77777" 8))
 
 (defn PUT
   "Put this `value` as the value of the property indicated by this `indicator` 
@@ -460,7 +460,13 @@
    
    It's clear that `GET` is expected to be defined in terms of `PROP`, but
    we can't implement `PROP` here because we lack `EVAL`; and we can't have
-   `EVAL` here because it depends on `GET`."
+   `EVAL` here because both it and `APPLY` depends on `GET`.
+   
+   OK, It's worse than that: the statement of the definition of `GET` (and 
+   of) `PROP` on page 59 says that the first argument to each must be a list;
+   But the in the definition of `ASSOC` on page 70, when `GET` is called its
+   first argument is always an atom. Since it's `ASSOC` and `EVAL` which I 
+   need to make work, I'm going to assume that page 59 is wrong."
   [symbol indicator]
   (let [binding (ASSOC symbol @oblist)]
     (cond
