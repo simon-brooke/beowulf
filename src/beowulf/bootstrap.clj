@@ -201,6 +201,8 @@
   ([expr env depth]
    (trace-call 'EVAL (list expr env depth) depth)
    (let [result (cond
+                  (= NIL expr) NIL ;; it was probably a mistake to make Lisp 
+                                   ;; NIL distinct from Clojure nil
                   (= (NUMBERP expr) T) expr
                   (symbol? expr) (eval-symbolic expr env depth)
                   (string? expr) (if (:strict *options*)

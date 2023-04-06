@@ -12,7 +12,7 @@
     32767
     EXPR
     (LAMBDA
-      (X Y) (COND ((NULL X) Y) ((QUOTE T) (CONS (CAR X) (APPEND (CDR X) Y))))))
+      (X Y) (COND ((NULL X) Y) (T (CONS (CAR X) (APPEND (CDR X) Y))))))
   (APPLY 32767 SUBR (BEOWULF BOOTSTRAP APPLY))
   (ASSOC
     32767
@@ -20,9 +20,9 @@
     (LAMBDA
       (X L)
       (COND
-        ((NULL L) (QUOTE NIL))
+        ((NULL L) NIL)
         ((AND (CONSP (CAR L)) (EQ (CAAR L) X)) (CAR L))
-        ((QUOTE T) (ASSOC X (CDR L)))))
+        (T (ASSOC X (CDR L)))))
     SUBR (BEOWULF HOST ASSOC))
   (ATOM 32767 SUBR (BEOWULF HOST ATOM))
   (CAR 32767 SUBR (BEOWULF HOST CAR))
@@ -63,14 +63,14 @@
     (LAMBDA
       (X)
       (COND
-        ((NULL X) (QUOTE NIL))
-        ((ATOM X) X) ((QUOTE T) (CONS (COPY (CAR X)) (COPY (CDR X)))))))
+        ((NULL X) NIL)
+        ((ATOM X) X) (T (CONS (COPY (CAR X)) (COPY (CDR X)))))))
   (DEFINE 32767 SUBR (BEOWULF HOST DEFINE))
   (DIFFERENCE 32767 SUBR (BEOWULF HOST DIFFERENCE))
   (DIVIDE
     32767
     EXPR
-    (LAMBDA (X Y) (CONS (QUOTIENT X Y) (CONS (REMAINDER X Y) (QUOTE NIL)))))
+    (LAMBDA (X Y) (CONS (QUOTIENT X Y) (CONS (REMAINDER X Y) NIL))))
   (DOC 32767 SUBR (BEOWULF HOST DOC))
   (EFFACE
     32767
@@ -78,8 +78,8 @@
     (LAMBDA
       (X L)
       (COND
-        ((NULL L) (QUOTE NIL))
-        ((EQUAL X (CAR L)) (CDR L)) ((QUOTE T) (RPLACD L (EFFACE X (CDR L)))))))
+        ((NULL L) NIL)
+        ((EQUAL X (CAR L)) (CDR L)) (T (RPLACD L (EFFACE X (CDR L)))))))
   (ERROR 32767 SUBR (BEOWULF HOST ERROR))
   (EQ 32767 SUBR (BEOWULF HOST EQ))
   (EQUAL 32767 SUBR (BEOWULF HOST EQUAL))
@@ -95,8 +95,8 @@
     (LAMBDA
       (X Y)
       (COND
-        ((NULL X) (QUOTE NIL))
-        ((EQ (CAR X) Y) (CAR (CDR X))) ((QUOTE T) (GET (CDR X) Y))))
+        ((NULL X) NIL)
+        ((EQ (CAR X) Y) (CAR (CDR X))) (T (GET (CDR X) Y))))
     SUBR (BEOWULF HOST GET))
   (GREATERP 32767 SUBR (BEOWULF HOST GREATERP))
   (INTEROP 32767 SUBR (BEOWULF INTEROP INTEROP))
@@ -106,9 +106,9 @@
     (LAMBDA
       (X Y)
       (COND
-        ((NULL X) (QUOTE NIL))
+        ((NULL X) NIL)
         ((MEMBER (CAR X) Y) (CONS (CAR X) (INTERSECTION (CDR X) Y)))
-        ((QUOTE T) (INTERSECTION (CDR X) Y)))))
+        (T (INTERSECTION (CDR X) Y)))))
   (LENGTH
     32767
     EXPR
@@ -122,7 +122,7 @@
     (LAMBDA
       (L F)
       (COND
-        ((NULL L) NIL) ((QUOTE T) (CONS (F (CAR L)) (MAPLIST (CDR L) F))))))
+        ((NULL L) NIL) (T (CONS (F (CAR L)) (MAPLIST (CDR L) F))))))
   (MEMBER
     32767
     EXPR
@@ -130,11 +130,11 @@
       (A X)
       (COND
         ((NULL X) (QUOTE F))
-        ((EQ A (CAR X)) (QUOTE T)) ((QUOTE T) (MEMBER A (CDR X))))))
+        ((EQ A (CAR X)) T) (T (MEMBER A (CDR X))))))
   (MINUSP 32767 EXPR (LAMBDA (X) (LESSP X 0)))
-  (NOT 32767 EXPR (LAMBDA (X) (COND (X (QUOTE NIL)) ((QUOTE T) (QUOTE T)))))
+  (NOT 32767 EXPR (LAMBDA (X) (COND (X NIL) (T T))))
   (NULL
-    32767 EXPR (LAMBDA (X) (COND ((EQUAL X NIL) (QUOTE T)) (T (QUOTE F)))))
+    32767 EXPR (LAMBDA (X) (COND ((EQUAL X NIL) T) (T (QUOTE F)))))
   (NUMBERP 32767 SUBR (BEOWULF HOST NUMBERP))
   (OBLIST 32767 SUBR (BEOWULF HOST OBLIST))
   (ONEP 32767 EXPR (LAMBDA (X) (EQ X 1)))
@@ -155,7 +155,7 @@
       (X Y A)
       (COND
         ((NULL X) A)
-        ((QUOTE T) (CONS (CONS (CAR X) (CAR Y)) (PAIRLIS (CDR X) (CDR Y) A)))))
+        (T (CONS (CONS (CAR X) (CAR Y)) (PAIRLIS (CDR X) (CDR Y) A)))))
     SUBR (BEOWULF HOST PAIRLIS))
   (PLUS 32767 SUBR (BEOWULF HOST PLUS))
   (PRETTY 32767)
@@ -167,7 +167,7 @@
       (X Y U)
       (COND
         ((NULL X) (U))
-        ((EQ (CAR X) Y) (CDR X)) ((QUOTE T) (PROP (CDR X) Y U)))))
+        ((EQ (CAR X) Y) (CDR X)) (T (PROP (CDR X) Y U)))))
   (QUOTE 32767 EXPR (LAMBDA (X) X))
   (QUOTIENT 32767 SUBR (BEOWULF HOST QUOTIENT))
   (RANGE
@@ -176,7 +176,7 @@
     (LAMBDA
       (N M)
       (COND
-        ((LESSP M N) (QUOTE NIL)) ((QUOTE T) (CONS N (RANGE (ADD1 N) M))))))
+        ((LESSP M N) NIL) (T (CONS N (RANGE (ADD1 N) M))))))
   (READ 32767 SUBR (BEOWULF READ READ))
   (REMAINDER 32767 SUBR (BEOWULF HOST REMAINDER))
   (REPEAT
@@ -193,9 +193,9 @@
     (LAMBDA
       (A Z)
       (COND
-        ((NULL A) Z) ((EQ (CAAR A) Z) (CDAR A)) ((QUOTE T) (SUB2 (CDAR A) Z)))))
+        ((NULL A) Z) ((EQ (CAAR A) Z) (CDAR A)) (T (SUB2 (CDAR A) Z)))))
   (SUBLIS
-    32767 EXPR (LAMBDA (A Y) (COND ((ATOM Y) (SUB2 A Y)) ((QUOTE T) (CONS)))))
+    32767 EXPR (LAMBDA (A Y) (COND ((ATOM Y) (SUB2 A Y)) (T (CONS)))))
   (SUBST
     32767
     EXPR
@@ -204,7 +204,7 @@
       (COND
         ((EQUAL Y Z) X)
         ((ATOM Z) Z)
-        ((QUOTE T) (CONS (SUBST X Y (CAR Z)) (SUBST X Y (CDR Z)))))))
+        (T (CONS (SUBST X Y (CAR Z)) (SUBST X Y (CDR Z)))))))
   (SYSIN 32767 SUBR (BEOWULF IO SYSIN))
   (SYSOUT 32767 SUBR (BEOWULF IO SYSOUT))
   (TERPRI 32767)

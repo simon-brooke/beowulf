@@ -565,4 +565,4 @@
    argument was, or was not, a cons cell."
   [o]
   (when (lax? 'CONSP)
-    (if (instance? o ConsCell) 'T 'F)))
+    (if (instance? ConsCell o) 'T 'F)))
