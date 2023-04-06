@@ -2,14 +2,12 @@
   "provides Lisp 1.5 functions which can't be (or can't efficiently
    be) implemented in Lisp 1.5, which therefore need to be implemented in the
    host language, in this case Clojure."
-  (:require [clojure.string :refer [upper-case]]
-            [beowulf.cons-cell :refer [F make-cons-cell make-beowulf-list
-                                       pretty-print T]]
-            ;; note hyphen - this is Clojure...
+  (:require [beowulf.cons-cell :refer [F make-beowulf-list make-cons-cell T]] ;; note hyphen - this is Clojure...
             [beowulf.gendoc :refer [open-doc]]
-            [beowulf.oblist :refer [*options* oblist NIL]])
-  (:import [beowulf.cons_cell ConsCell]
-           ;; note underscore - same namespace, but Java.
+            [beowulf.oblist :refer [*options* NIL oblist]]
+            [clojure.set :refer [union]]
+            [clojure.string :refer [upper-case]])
+  (:import [beowulf.cons_cell ConsCell] ;; note underscore - same namespace, but Java.
            ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -290,9 +288,20 @@
    In `beowulf.host` principally because I don't yet feel confident to define
    varargs functions in Lisp."
   [& args]
-  (if (empty? (filter #(or (= 'F %) (= NIL %) (nil? %)) args))
-    'T
-    'F))
+  (cond (= NIL args) T
+        (not (#{NIL F} (.getCar args))) (AND (.getCdr args))
+        :else T))
+
+(defn OR
+  "`T` if and only if at least one of my `args` evaluates to something other
+  than either `F` or `NIL`, else `F`.
+   
+   In `beowulf.host` principally because I don't yet feel confident to define
+   varargs functions in Lisp."
+  [& args]
+  (cond (= NIL args) F
+        (not (#{NIL F} (.getCar args))) T
+        :else (OR (.getCdr args))))
 
 ;;;; Operations on lists ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -516,19 +525,26 @@
   "Return `true` iff `s` is a symbol currently being traced, else `nil`."
   [s]
   (try (contains? @traced-symbols s)
-       (catch Throwable _)))
+       (catch Throwable _ nil)))
 
 (defn TRACE
-  "Add this symbol `s` to the set of symbols currently being traced. If `s`
-   is not a symbol, does nothing."
+  "Add this `s` to the set of symbols currently being traced. If `s`
+   is not a symbol or sequence of symbols, does nothing."
   [s]
-  (when (symbol? s)
-    (swap! traced-symbols #(conj % s))))
+  (swap! traced-symbols
+         #(cond
+            (symbol? s) (conj % s)
+            (and (seq? s) (every? symbol? s)) (union % (set s))
+            :else %)))
 
 (defn UNTRACE
+  "Remove this `s` from the set of symbols currently being traced. If `s`
+   is not a symbol or sequence of symbols, does nothing."
   [s]
-  (when (symbol? s)
-    (swap! traced-symbols #(set (remove (fn [x] (= s x)) %)))))
+  (cond
+    (symbol? s) (swap! traced-symbols #(set (remove (fn [x] (= s x)) %)))
+    (and (seq? s) (every? symbol? s)) (map UNTRACE s))
+  @traced-symbols)
 
 ;;;; Extensions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

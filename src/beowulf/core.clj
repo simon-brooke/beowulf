@@ -2,8 +2,8 @@
   "Essentially, the `-main` function and the bootstrap read-eval-print loop."
   (:require [beowulf.bootstrap :refer [EVAL]]
             [beowulf.io :refer [default-sysout SYSIN]]
+            [beowulf.oblist :refer [*options* NIL]]
             [beowulf.read :refer [READ read-from-console]]
-            [beowulf.oblist :refer [*options* oblist]]
             [clojure.java.io :as io]
             [clojure.pprint :refer [pprint]]
             [clojure.string :refer [trim]]
@@ -55,7 +55,7 @@
 (defn- re 
   "Like REPL, but it isn't a loop and doesn't print."
   [input]
-  (EVAL (READ input) @oblist 0))
+  (EVAL (READ input) NIL 0))
 
 (defn repl
   "Read/eval/print loop."
