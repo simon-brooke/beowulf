@@ -331,7 +331,7 @@ it is not A.
 
 The main application of conditional expressions is in defining functions recursively.
 
-#### Example
+#### Example - recursive function
 
 `ff[x] = [atom[x] -> x; T -> ff[car[x]]]`
 
@@ -373,7 +373,7 @@ The conditional expression is useful for defining numerical computations, as wel
 ```
 |x| = [x<0 -> -x; T -> x]
 ```
-The factorial of a nonhnegative integer can be defined by
+The factorial of a non-negative integer can be defined by
 ```
 n! = [n=0 -> 1; T -> n.[n-l]!]
 ```
@@ -387,7 +387,7 @@ The Euclidean algorithm for finding the greatest common divisor of two positive 
 
 ```
 gcd[x; y]=[x>y -> gcd[y; x];
-				rem[y;x]=0 -> x]
+        rem[y;x]=0 -> x]
 ```
 
 `rem[u; v]` is the remainder when `u` is divided by `v`.
@@ -420,7 +420,7 @@ Using the lambda notation, we can write
 
 `ff =` &lambda;`[x] = [atom[x] -> x; T -> ff[car[x]]]`
 
-The equality sign in these identities is actually not part of the LISP meta-languageand is only a crutch until we develop the correct notation. The right side of the last equation cannot serve as an expression for the function `ff` because there is nothing to indicate that the occurrence of `ff` inside it stands for the function that is being defined.
+The equality sign in these identities is actually not part of the LISP meta-language and is only a crutch until we develop the correct notation. The right side of the last equation cannot serve as an expression for the function `ff` because there is nothing to indicate that the occurrence of `ff` inside it stands for the function that is being defined.
 
 In order to be able to write expressions that bear their own name, we introduce
 the label notation. If &epsilon; is an expression, and &alpha; is its name, we write label[&alpha;; &epsilon;].
@@ -569,26 +569,32 @@ This can be translated into the following S-expression: ,
             ((QUOTE T)(QUOTE F)))))
 ```
 
-- sub st[^;^; z]
-    This function gives the result of substituting the S-expression x for all occurrences
-    of the atomic symbol y in the S-expression z. It is defined by
+#### subst[x; y; z]
 
-###### s~bst[x;~;z] = [eq~al[~;z] -- x;atom[z] - z;T - cons[subst
+This function gives the result of substituting the S-expression x for all occurrences of the atomic symbol y in the S-expression z. It is defined by
 
 ```
-[x; y; car[z]]; subst[x;y; cdr[z]]]]
+subst[x; y; z] = [equal[y; z] -> x; 
+        atom[z] - z;
+        T - cons[subst
+            [x; y; car[z]]; subst[x; y; cdr[z]]]]
 ```
 
 As an example, we have
 
-SU~S~[(X. A);B;((A. B). c)] = ((A. (X. A)). C)
-null[x]
-This predicate is useful for deciding when a list is exhausted. It is true if and
-only if its argument is NIL.
+```lisp
+SUBST[(X . A); B; ((A . B) . c)] = ((A . (X . A)) . C)
+```
+
+#### null[x]
+This predicate is useful for deciding when a list is exhausted. It is true if and only if its argument is NIL.
+
 The following functions are useful when S-expressions are regarded as lists.
 
-1. append[x; y]
-append[x; y] = [n~ll[x]-~; T-cons[car [x]; append[cdr [x]; y I]]
+#### 1. append[x; y]
+``` 
+append[x; y] = [null[x] -> y; T -> cons[car [x]; append[cdr [x]; y]]]
+```
 
 An example is
 
@@ -596,175 +602,193 @@ An example is
 append[(A B);(C D E)] = (A B C D E)
 ```
 
-2. member[^;^]
-This predicate is true if the S-expression x occurs among the elements of the
-list y. We have
-memberlx; y] = [null[y ]--F;
-equal[x; car [y ]I--T;
-T-member [x; cdr [y I]]
+#### 2. member[x; y]
 
-This function gives the list of pairs of corresponding elements of the lists x and
-y, and appends this to the list a. The resultant list of pairs, which is like a table with
+This predicate is true if the S-expression `x` occurs among the elements of the list `y`. We have
+```
+member[x; y] = [null[y] -> F;
+        equal[x; car [y ]] ->T;
+        T -> member[x; cdr [y ]]]
+```
+
+#### 3. pairlis[x; y; a]
+
+<a name="page12">page 12</a>
+
+This function gives the list of pairs of corresponding elements of the lists `x` and
+`y`, and appends this to the list `a`. The resultant list of pairs, which is like a table with
 two columns, is called an association list. We have
 
 ```
-pairlis [x; y; a] = [null[x]--a; T-cons[cons[car[x]; car[y]];
-pairlis[cdr[x]; cdr [y]; a]]]
+pairlis [x; y; a] = [null[x] -> a; 
+        T -> cons[cons[car[x]; car[y]];
+            pairlis[cdr[x]; cdr [y]; a]]]
 ```
 
 An example is
 
 ```
-pairlis[(A B C);(U V w);((D. X) (E. Y))] =
-((A. U) (B. V) (C. W)(D. X) (E. Y))
+pairlis[(A B C);(U V W);((D . X) (E . Y))] =
+((A . U) (B . V) (C . W)(D . X) (E . Y))
 ```
 
-4. assoc[x; a]
-If a is an association list such as the one formed by pairlis in the above example,
-then assoc will produce the first pair whose first term is x. Thus it is a table searching
+#### 4. assoc[x; a]
+
+If `a` is an association list such as the one formed by `pairlis` in the above example,
+then `assoc` will produce the first pair whose first term is `x`. Thus it is a table searching
 function. We have
 
+```
+assoc[x; a] = [equal[caar[a]; x] -> car[a]; T -> assoc[x; cdr[a]]]
+```
+
 An example is
 
 ```
-assoc[~;((A. (M N)), (B. (CAR X)), (C. (QUOTE M)), (C. (CDR x)))]
-= (B. (CAR x))
+assoc[B; ((A . (M N)), (B . (CAR X)), (C . (QUOTE M)), (C . (CDR x)))]
+= (B . (CAR X))
 ```
 
-5. sublisla; y]
-Here a is assumed to be an association list of the form ((ul. vl)... (un. v,)),
-where the u1 s are atomic, and y is any S-expression. What sublis does, is to treat
-the u1 s as variables when they occur in y, and to substitute the corresponding v1 s
-from the pair list. In order to define sublis, we first define an auxiliary function.
-We have
-sub2[a; z] = [null[a]+z;eq[caar[a]; z]-cdar[a];~-
-sub%[cdr[a]; z]]
+##### 5. sublis[a; y]
+
+Here `a` is assumed to be an association list of the form ((u<sub>1</sub>. v<sub>1</sub>)... (u<sub>n</sub> . v<sub>n</sub>)),
+where the `u`s are atomic, and `y` is any S-expression. What `sublis` does, is to treat
+the `u`s as variables when they occur in `y`, and to substitute the corresponding `v`s
+from the pair list. In order to define `sublis`, we first define an auxiliary function. We have
+
+```
+sub2[a; z] = [null[a] -> z; eq[caar[a]; z] -> cdar[a];
+        T -> sub2[cdr[a]; z]]
+```
 and
-sublis[a; y] = [at0rn[~]-sub2[a;~]; T-cons[sublis[a; car[^]];
-sublis[a; cdr [Y]]]]
+
+```
+sublis[a; y] = [atom[y] -> sub2[a; y]; 
+        T -> cons[sublis[a; car[y]]; sublis[a; cdr[y]]]]
+```
+
 An example is
+
+```
 sublis[((X. SHAKESPEARE) (Y. (THE TEMPEST)));(X WROTE Y)] =
 (SHAKESPEARE WROTE (THE TEMPEST))
-The universal function evalquote that is about to be defined obeys the following
-identity. Let f be a function written as an M-expression, and let fn be its translation.
-(& is an S-expression. ) Let f be a function of n arguments and let args=(argl...
-argn), a list of the n S-expressions being used as arguments. Then
-
 ```
+
+The universal function `evalquote` that is about to be defined obeys the following identity. Let `f` be a function written as an M-expression, and let `fn` be its translation. (`fn` is an S-expression. ) Let `f` be a function of n arguments and let args=(arg<sub>1</sub>... arg<sub>n</sub>), a list of the `n` S-expressions being used as arguments. Then
+
+`evalquote[fn; args] = f[arg`<sub>1</sub>`... arg`<sub>n</sub>`]`
+
+<a name="page13">page 13</a>
+
 if either side of the equation is defined at all.
+
 Example
-fi ~[[x;~];cons[car[x];y]]
-fn: (LAMBDA (X Y) (CONS (CAR X) Y))
-argl: (A B)
-arg2: (C D)
-args: ((A B) (C D))
-evalquote[(LAMBDA (X Y) (CONS (CAR X) Y)); ((A B) (C D))] =
-~[[x;y];cons[car[x];y]][(A B);(C Dl]=
-(A C D)
-evalquote is defined by using two main functions, called eval and apply. apply
-handles a function and its arguments, while eval handles forms. Each of these func-
-tions also has another argument that is used as an association list for storing the val-
-ues of bound variables and f unction names.
+
+|                 |                                  |
+| --------------- | -------------------------------- |
+| f               | &lambda;[[x; y];cons[car[x]; y]] |
+| fn              | (LAMBDA (X Y) (CONS (CAR X) Y))  |
+| arg<sub>1</sub> | (A B)                            |
+| arg<sub>2</sub> | (C D)                            |
+| args            | ((A B) (C D))                    |
+
+`evalquote[(LAMBDA (X Y) (CONS (CAR X) Y)); ((A B) (C D))] =`
+&lambda;`[[x;y];cons[car[x];y]][(A B);(C D)] =`
+`(A C D)`
+
+`evalquote` is defined by using two main functions, called `eval` and `apply`. `apply` handles a function and its arguments, while `eval` handles forms. Each of these functions also has another argument that is used as an association list for storing the values of bound variables and function names.
+
+*note here that the environment -- the combination of the object list and the pushdown list -- is said to be an assoc list, where, importantly, it isn't. Of course, for the simplest possible Lisp, it would be -- But (to my surprise) Lisp 1.5 is nothing like the simplest possible Lisp.*
+
+```mexpr
+evalquote[fn; x] = apply[fn; x; NIL]
 ```
 
-```
 where
-apply [fn;x; a] =
+```mexpr
+apply[fn; x; a] =
+        [atom[fn] -> [eq[fn; CAR] -> caar[x]
+                eq[fn; CDR] -> cdar[x];
+                eq[fn; CONS] -> cons[car[x]; cadr[x]];
+                eq[fn; ATOM] -> atom[car[x]];
+                eq[fn; EQ] -> eq[car[x]; cadr[x]];
+                T -> apply[eval[fn; a]; x; a]]
+        eq[car[fn]; LAMBDA] -> eval[caddr[fn]; pairlis[cadr[fn]; x; a]];
+        eq[car[fn]; LABEL] -> apply[caddr [fn]; x; cons[cons[cadr [fn];
+                                                      caddr[fn]]; a]]]
+
+eval[e;a] = [atom[e] -> cdr[assoc[e;a]];
+        atom[car[e]] -> [eq[car[e]; QUOTE] -> cadr[e];
+                eq[car[e]; COND] -> evcon[cdr[e]; a];
+                T -> apply[car[e]; evlis[cdr[el; a]; a]];
+        T -> apply[car[e]; evlis [cdr[e]; a]; a]]
 ```
 
-##### [atom[fn] - [eq[fn;~~~] - caar[x]
+`pairlis` and `assoc` have been previously defined.
 
-```
-eq[fn;~~~] -- cdar[x];
-eq[fn; CONS] -- cons[car[x]; cadr[x]];
-eq[fn;~~~~] -- atom[car[x]];
-eq[fn; EQ] - eq[car[x]; cadr[x]];
+```mexpr
+evcon[c; a] = [eval[caar[c]; a] -> eval[cadar[c]; a];
+        T -> evcon[cdr [c];a]]
 ```
 
-###### T - apply[eval[fn;a];x;a]]
-
-eq[car[fn]; LAMBDA] -- eval[caddr [fn]; pairlis[cadr[fn];x;a]];
-
-###### eq[car [fn]; LABEL] - apply [caddr [fn]; x; cons [cons[cadr [fn]
-
-```
-c addr [f n]]; a]]]
-eval[e;a] = [atom[e] - cdr[assoc[e;a]];
-```
-
-###### atom[car[e]] -
-
-```
-[eq[car QUOTE] - cadr [el;
-eq[car[e]; COND] - evcon[cdr [el; a];
-T -- apply[car [el; evlis[cdr [el; a]; a]];
-T - apply[car [el; evlis [cdr [el; a]; a]]
-```
-
-pairlis and assoc have been previously defined.
-
-```
-evcon[c; a] = [eval[caar [c]; a] -- eval[cadar [c]; a];
-T -- evcon[cdr [c];a]]
 and
+
+```mexpr
+evlis[m; a] = [null[m] -> NIL;
+        T -> cons [eval[car [m];a];evlis[cdr [m];a]]]
 ```
 
-###### evlis[m;a] = [null[m] - NIL
-
-##### T - cons [eval[car [m];a];evlis[cdr [m];a]]]
+<a name="page14">page 14</a>
 
 We shall explain a number of points about these definitions.
-The first argument for - apply is a function. If it is an atomic symbol, then there
-are two possibilities. One is that it is an elementary function: car, cdr, cons, eq,
-or atom. In each case, the appropriate function is applied to the argument(s). If it is
-not one of these, then its meaning has to be looked up in the association list.
-If it begins with LAMBDA, then the arguments are paired with the bound variables,
-and the form is given to -1 to evaluate.
-If it begins with LABEL, then the function name and definition are added to the as-
-sociation list, and the inside function is evaluated by apply.
-The first argument of is a form. If it is atomic, then it must be a variable,
-and its value is looked up on the association list.
-If =of the form is QUOTE, then it is a constant, and the value is cadr of the form
-itself.
-If car of the form is CGND, then it is a conditional expression, and evcon evaluates
-the propositional terms in order, and choses the form following the first true predicate.
-In all other cases, the form must be a function followed by its arguments. The ar-
-guments are then evaluated, and the function is given to apply.
-The LISP Programming System has many added features that have not been de-
-scribed thus far. These will be treated hereafter. At this point, it is worth noting the
-following points.
 
-1. In the pure theory of LISP, all functions other than the five basic ones need to
-be defined each time they are to be used. This is unworkable in a practical sense.
-The LISP programming system has a larger stock of built-in functions known to the in-
-terpreter, and provision for adding as many more as the programmer cares to define.
-2. The basic functions car. and cdr were said to be undefined for atomic arguments.
-In the system, they always have a value, although it may not always be meaningful.
-Similarly, the basic predicate eq - always has a value. The effects of these functions
+The first argument for `apply` is a function. If it is an atomic symbol, then there are two possibilities. One is that it is an elementary function: `car`, `cdr`, `cons`, `eq`, or `atom`. In each case, the appropriate function is applied to the argument(s). If it is not one of these, then its meaning has to be looked up in the association list.
+
+If it begins with `LAMBDA`, then the arguments are paired with the bound variables, and the form is given to `eval` to evaluate.
+
+If it begins with `LABEL`, then the function name and definition are added to the as-
+sociation list, and the inside function is evaluated by apply. 
+
+The first argument of `eval` is a form. If it is atomic, then it must be a variable, and its value is looked up on the association list.
+
+If `car` of the form is `QUOTE`, then it is a constant, and the value is `cadr` of the form
+itself.
+
+If `car` of the form is `COND`, then it is a conditional expression, and `evcon` evaluates
+the propositional terms in order, and choses the form following the first true predicate.
+
+In all other cases, the form must be a function followed by its arguments. The arguments are then evaluated, and the function is given to apply.
+
+The LISP Programming System has many added features that have not been described thus far. These will be treated hereafter. At this point, it is worth noting the following points.
+
+1. In the pure theory of LISP, all functions other than the five basic ones need to be defined each time they are to be used. This is unworkable in a practical sense. The LISP programming system has a larger stock of built-in functions known to the interpreter, and provision for adding as many more as the programmer cares to define.
+2. The basic functions `car` and `cdr` were said to be undefined for atomic arguments. In the system, they always have a value, although it may not always be meaningful.
+Similarly, the basic predicate `eq` always has a value. The effects of these functions
 in unusual cases will be understood after reading the chapter on list structures in the
 computer.
-3. Except for very unusual cases, one never writes (QUOTE T) or (QUOTE F),
+3. Except for very unusual cases, one never writes `(QUOTE T)` or `(QUOTE F)`,
 but T, and F respectively.
-4. There is provision in LISP for computing with fixed and floating point numbers.
-These are introduced as psuedo-atomic symbols.
-The reader is warned that the definitions of apply and ~l given above are pedagogi-
-cal devices and are not the same functions as those built into the LISP programming
-system. Appendix B contains the computer implemented version of these functions and
-should be used to decide questions about how things really work.
+4. There is provision in LISP for computing with fixed and floating point numbers. These are introduced as psuedo-atomic symbols.
 
-11. THE LISP INTERPRETER SYSTEM
+The reader is warned that the definitions of `apply` and `eval` given above are pedagogical devices and are not the same functions as those built into the LISP programming system. Appendix B contains the computer implemented version of these functions and should be used to decide questions about how things really work.
 
-The following example is a LISP program that defines three functions union, inter-
-section, and member, and then applies these functions to some test cases. The functions
-union and intersection are to be applied to "sets," each set being represented by a list
-of atomic symbols. The functions are defined as follows. Note that they are all recur-
-sive, and both union and intersection make use of member.
+<a name="page15">page 15</a>
+
+## II. THE LISP INTERPRETER SYSTEM
+
+The following example is a LISP program that defines three functions `union`, `intersection`, and `member`, and then applies these functions to some test cases. The functions `union` and `intersection` are to be applied to "sets," each set being represented by a list of atomic symbols. The functions are defined as follows. Note that they are all recursive, and both union and intersection make use of member.
 
 ```
-member[a;x] = [null[x]-~;e~[a;car[x]]-T;T-
-member [a;cdr [x]]]
-union[^;^] = [null[x]-.y;member[car[x];y]-union
-[cdr [x];~]; T-cons [c ar [x];union[c dr [x];~]]]
+member[a; x] = [null[x] -> F; eq[a; car[x]] -> T;
+        T -> member[a; cdr[x]]]
+
+union[x; y] = [null[x] -> y;
+        member[car[x];y] -> union[cdr[x]; y]; 
+        T -> cons[car[x]; union[cdr[x]; y]]]
+
+intersection[x;y] = [null[x] -> NIL;
+    member[car[x]; y] -> cons[car[x]; intersection[cdr[x]; y]];
+    T -> intersection[cdr[x]; y]]
 ```
 
 To define these functions, we use the pseudo-function define. The program looks like
@@ -1626,19 +1650,13 @@ ables bound outside of the errorset have not been altered by using cset or set, 
 damage has been done by pseudo-functions, it may be possible to continue computation
 in a different direction when one path results in an error.
 
-```
-VII. LIST STRUCTURES
-In other sections of this manual, lists have been discussed by using the LISP input-
-output language. In this section, we discuss the representation of lists inside the com-
-puter, the nature of property lists of atomic symbols, representation of numbers, and
-the garbage collector.
-```
+## VII. LIST STRUCTURES
 
-7. 1 Representation of List Structure
-    Lists are not stored in the computer as sequences of BCD characters, but as struc-
-    tural forms built out of computer words as parts of trees.
-    In representing list structure, a computer word will be depicted as a rectangle
-    divided into two sections, the address and decrement.
+In other sections of this manual, lists have been discussed by using the LISP input-output language. In this section, we discuss the representation of lists inside the computer, the nature of property lists of atomic symbols, representation of numbers, and the garbage collector.
+
+### 7.1 Representation of List Structure
+
+Lists are not stored in the computer as sequences of BCD characters, but as structural forms built out of computer words as parts of trees. In representing list structure, a computer word will be depicted as a rectangle divided into two sections, the address and decrement.
 
 add. I dec.
 
@@ -1660,16 +1678,14 @@ in the decrement.
 Following are some diagrammed S-expressions, shown as they would appear in the
 computer. It is convenient to indicate NIL by -- - -- - instead of -- -- -F].
 
-```
 It is possible for lists to make use of common subexpressions. ((M. N) X (M. N))
 could also be represented as
-```
 
-```
+
 Circular lists are ordinarily not permitted. They may not be read in; however, they
 can occur inside the computer as the result of computations involving certain functions.
 Their printed representation is infinite in length. For example, the structure
-```
+
 
 ```
 will print as (A B C A B C A. ..
@@ -1689,9 +1705,7 @@ The advantages of list structures for the storage of symbolic expressions are:
 1. The size and even the number of expressions with which the program will have
 to deal cannot be predicted in advance. Therefore, it is difficult to arrange blocks of
 
-```
-37
-```
+<a name=="page 37">page 37</a>
 
 storage of fixed length to contain them.
 
@@ -1702,7 +1716,8 @@ available.
 3. An expression that occurs as a subexpression of several expressions need be
 represented in storage only once,
 
-7.2 Construction of List Structure
+### 7.2 Construction of List Structure
+
 The following simple example has been included to illustrate the exact construction
 of list structures. Two types of list structures are shown, and a function for deriving
 one from the other is given in LISP.
@@ -1740,26 +1755,27 @@ So rnltgrp applied to the list P1 takes each threesome, (X Y Z), in turn and app
 to it to put it in the new form, (X (Y Z)) until the list P1 has been exhausted and the new
 list P2 achieved.
 
-7.3 Property Lists
+### 7.3 Property Lists
+
 In other sections, atomic symbols have been considered only as pointers. In this
 section the property lists of atomic symbols that begin at the appointed locations are
 described.
+
 Every atomic symbol has a property list. When an atomic symbol is read in for
 the first time, a property list is created for it.
+
 A property list is characterized by having the special constant 777778 (i. e., minus 1)
 as the first element of the list. The rest of the list contains various properties of the
 atomic symbol. Each property is preceded by an atomic symbol which is called its
 indicator. Some of the indicators are:
 
-```
-PNAME - the BCD print name of the atomic symbol for input-output use.
-EXPR - S-expression defining a function whose name is the atomic symbol
-on whose property list the EXPR appears.
-SUBR - Function defined by a machine language subroutine.
-APVAL - Permanent value for the atomic symbol considered as a variable.
-```
+| Indicator | Description                                                  |
+| --------- | ------------------------------------------------------------ |
+| PNAME     | the BCD print name of the atomic symbol for input-output use. |
+| EXPR      | S-expression defining a function whose name is the atomic symbol on whose property list the EXPR appears. |
+| SUBR      | Function defined by a machine language subroutine.           |
+| APVAL     | Permanent value for the atomic symbol considered as a variable. |
 
-```
 The atomic symbol NIL has two things on its property list - its PNAME, and an
 APVAL that gives it a value of NIL. Its property list looks like this:
 ```
@@ -1805,14 +1821,13 @@ TXL 37721,, 2 1
 ```
 The indicator EXPR points to an S-expression defining a function. The function define
 puts EXPR1s on property lists. After defining ff, its property list would look like this
-```
 
 -1 I
 
 LAMBDA I
 
 The function get[x;i] can be used to find a property of x whose indicator is i. The
-value of get[~~;~G~] would be (LAMBDA (X) (COW...
+value of get[X; G] would be (LAMBDA (X) (COW...
 A property with its indicator can be removed by remprop[x;i].
 The function deflist[x;i] can be used to put any indicator on a property list. The
 first argument is a list of pairs as for define, the second argument is the indicator to
@@ -1826,45 +1841,38 @@ and what type it is, and a pointer to the number itself in the decrement of this
 Unlike atomic symbols, numbers are not stored uniquely.
 For example, the decimal number 15 is represented as follows:
 
-7.4 List Structure Operators
+### 7.4 List Structure Operators
 
-The theory of recursive functions developed in Section I will be referred to as ele-
-mentary LISP. Although this language is universal in terms of computable functions of
-symbolic expressions, it is not convenient as a programming system without additional
-tools to increase its power.
-In particular, elementary LISP has no ability to modify list structure. The only
-basic function that affects list structure is cons, and this does not change existing lists,
-but creates new lists. Functions written in pure LISP such as subst do not actually mod-
-ify their arguments, but make the modifications while copying the original.
+The theory of recursive functions developed in Section I will be referred to as elementary LISP. Although this language is universal in terms of computable functions of symbolic expressions, it is not convenient as a programming system without additional tools to increase its power.
+
+In particular, elementary LISP has no ability to modify list structure. The only basic function that affects list structure is `cons`, and this does not change existing lists, but creates new lists. Functions written in pure LISP such as `subst` do not actually modify their arguments, but make the modifications while copying the original.
+
 LISP is made general in terms of list structure by means of the basic list operators
-rplaca and rplacd. These operators can be used to replace the address or decrement
+`rplaca` and `rplacd`. These operators can be used to replace the address or decrement
 or any word in a list. They are used for their effect, as well as for their value, and
 are called pseudo-functions.
-rplaca[x;y] replaces the address of x with y. Its value is x, but x is something
-different from what it was before. In terms of value, rplaca can be described by the
-equation
+
+`rplaca[x;y]` replaces the address of `x` with `y`. Its value is `x`, but `x` is something different from what it was before. In terms of value, rplaca can be described by the equation
 rpla~a[x;~] = c~ns[~;cdr[x]]
 But the effect is quite different: there is no cons involved and a new word is not created.
-rplacd[x;y] replaces the decrement of x with y.
+
+`rplacd[x;y]` replaces the decrement of `x` with `y`.
+
 These operators must be used with caution. They can permanently alter existing
 definitions and other basic memory. They can be used to create circular lists, which
-can cause infinite printing, and look infinite to functions that search, such as equal and
-subst.
-As an example, consider the function mltgrp of section 7.2. This is a list-altering
+can cause infinite printing, and look infinite to functions that search, such as `equal` and
+`subst`.
 
-function that alters a copy of its argument. The subfunction - grp rearranges a subgroup
+As an example, consider the function mltgrp of section 7.2. This is a list-altering function that alters a copy of its argument. The subfunction - grp rearranges a subgroup
 
-```
-The original function does this by creating new list structures, and uses four cons's.
-Because there are only three words in the original, at leaSt one cons is necessary, but
-```
+The original function does this by creating new list structures, and uses four cons's. Because there are only three words in the original, at least one cons is necessary, but
+
 
 - grp can be rewritten by using rplaca and rplacd.
     The modification is
 
-```
-The new word is created by cons[cadr[x];cddr[x]]. A pointer to it is provided by
-rplaca[cdr[x];cons[cadr[x];cddr[x]]].
+The new word is created by cons[cadr[x];cddr[x]]. A pointer to it is provided by rplaca[cdr[x];cons[cadr[x];cddr[x]]].
+
 The other modification is to break the pointer from the second to the third word.
 This is done by rplacd[cdr[x];~l~].
 pgrp - is now defined as
@@ -1876,64 +1884,29 @@ pmltgrp[l] = [null[l] -. NIL;
 T -- ~rog2[~g~~[car[~Il~~~~tgr~[cdr[~1111
 prog2 is a function that evaluates its two arguments. Its value is the second argument.
 The value of pmltgrp is NIL. pgrp - and - pmltgrp are pseudo-functions.
-```
 
-```
-7.5 The Free-Storage List and the Garbage Collector
-```
 
-At any given time only a part of the memory reserved for list structures will actually
-be in use for storing S-expressions. The remaining registers are arranged in a single
-list called the free-storage list. A certain register, FREE, in the program contains the
-location of the first register in this list. When a word is required to form some addi-
-tional list structure, the first word on the free-storage list is taken and the number in
-register FREE is changed to become the location of the second word on the free-storage
+### 7.5 The Free-Storage List and the Garbage Collector
 
-```
-list. No provision need be made for the user to program the return of registers to the
-free-storage list.
-This return takes place automatically whenever the free -storage list has been
-exhausted during the running of a LISP program. The program that retrieves the storage
-is called the garbage collector.
-Any piece of list structure that is accessible to programs in the machine is consid-
-ered an active list and is not touched by the garbage collector. The active lists are
-accessible to the program through certain fixed sets of base registers, such as the reg-
-isters in the list of atomic symbols, the registers that contain partial results of the
-LISP computation in progress, etc. The list structures involved may be arbitrarily
-long but each register that is active must be connected to a base register through a car-
-cdr - chain of registers. Any register that cannot be so reached is not accessible to any
-program and is nonactive; therefore its contents are no longer of interest.
-The nonactive, i. e. , inaccessible, registers are reclaimed for the free-storage list
-by the garbage collector as follows. First, every active register that can be reached
-through a car-cdr chain is marked by setting its sign negative. Whenever a negative
-register is reached in a chain during this process, the garbage collector knows that the
-rest of the list involving that register has already been marked. Then the garbage col-
-lector does a linear sweep of the free-storage area, collecting all registers with a posi-
-tive sign into a new free-storage list, and restoring the original signs of the active
-registers.
-Sometimes list structure points to full words such as BCD print names and numbers.
-The garbage collector cannot mark these words because the sign bit may be in use. The
-garbage collector must also stop tracing because the pointers in the address and decre-
-ment of a full word are not meaningful.
-These problems are solved by putting full words in a reserved section of memory
-called full-word space. The garbage collector stops tracing as soon as it leaves the
-```
+At any given time only a part of the memory reserved for list structures will actually be in use for storing S-expressions. The remaining registers are arranged in a single list called the free-storage list. A certain register, FREE, in the program contains the location of the first register in this list. When a word is required to form some additional list structure, the first word on the free-storage list is taken and the number in register FREE is changed to become the location of the second word on the free-storage list. No provision need be made for the user to program the return of registers to the free-storage list.
 
---- free-storage space. Marking in full-word space is accomplished by a bit table.
+This return takes place automatically whenever the free -storage list has been exhausted during the running of a LISP program. The program that retrieves the storage is called the garbage collector.
 
-```
-VIII. A COMPLETE LISP PROGRAM - THE WANG ALGORITHM FOR THE
-PROPOSITIONAL CALCULUS
-```
+Any piece of list structure that is accessible to programs in the machine is considered an active list and is not touched by the garbage collector. The active lists are accessible to the program through certain fixed sets of base registers, such as the registers in the list of atomic symbols, the registers that contain partial results of the LISP computation in progress, etc. The list structures involved may be arbitrarily long but each register that is active must be connected to a base register through a car-cdr - chain of registers. Any register that cannot be so reached is not accessible to any program and is nonactive; therefore its contents are no longer of interest.
 
-This section gives an example of a complete collection of LISP function definitions
-which were written to define an algorithm. The program was then run on several test
-cases. The algorithm itself is explained, and is then written in M-expressions. The
-complete input card deck an'd the printed output of the run are reprinted here.
-The Wang Algorithm^1 is a method of deciding whether or not a formula in the prop-
-oditional calculus is a theorem. The reader will need to know something about the prop-
-ositional calculus in order to understand this discussion.
-We quote from pages 5 and 6 of Wangls paper:
+The nonactive, i. e. , inaccessible, registers are reclaimed for the free-storage list by the garbage collector as follows. First, every active register that can be reached through a car-cdr chain is marked by setting its sign negative. Whenever a negative register is reached in a chain during this process, the garbage collector knows that therest of the list involving that register has already been marked. Then the garbage collector does a linear sweep of the free-storage area, collecting all registers with a positive sign into a new free-storage list, and restoring the original signs of the active registers.
+
+Sometimes list structure points to full words such as BCD print names and numbers. The garbage collector cannot mark these words because the sign bit may be in use. The garbage collector must also stop tracing because the pointers in the address and decrement of a full word are not meaningful.
+
+These problems are solved by putting full words in a reserved section of memory called full-word space. The garbage collector stops tracing as soon as it leaves the free-storage space. Marking in full-word space is accomplished by a bit table.
+
+### VIII. A COMPLETE LISP PROGRAM - THE WANG ALGORITHM FOR THE PROPOSITIONAL CALCULUS
+
+This section gives an example of a complete collection of LISP function definitions which were written to define an algorithm. The program was then run on several test cases. The algorithm itself is explained, and is then written in M-expressions. The complete input card deck and the printed output of the run are reprinted here.
+
+The [Wang Algorithm](https://dl.acm.org/doi/abs/10.1147/rd.41.0002) is a method of deciding whether or not a formula in the propositional calculus is a theorem. The reader will need to know something about the propositional calculus in order to understand this discussion.
+
+We quote from pages 5 and 6 of Wang's paper:
 "The propositional calculus (System P)
 Since we are concerned with practical feasibility, it is preferable to use more logical
 connectives to begin with when we wish actually to apply the procedure to concrete cases.
@@ -1958,13 +1931,11 @@ vinced that these rules are indeed correct. Later on, a proof will be given of t
 pleteness, i. e., all intuitively valid sequents are provable, and of their consistency,
 i. e. , all provable sequents are intuitively valid.
 
-```
 "PI. Initial rule: if h, 5 are strings of atomic formulae, then h -. 5 is a theorem if
 some atomic formula occurs on both sides of the arrow.
 "In the ten rules listed below, h and 5 are always strings (possibly empty) of atomic
 formulae. As a proof procedure in the usual sense, each proof begins with a finite set
 of cases of P1 and continues with successive consequences obtained by the other rules .I1
-```
 
 1. Wang, Hao. "Toward Mechanical Mathematics," IBM J. Res. Develop., Vo1.4,
     No. 1. January 1960.
@@ -2554,30 +2525,14 @@ FIN END OF LISP RUN M948-1207 LEVIN
 END OF LISP JOB
 ```
 
-```
-APPENDIX A
-```
 
-```
-FUNCTIONS AND CONSTANTS IN THE LISP SYSTEM
-```
+## APPENDIX A : FUNCTIONS AND CONSTANTS IN THE LISP SYSTEM
 
-```
-This appendix contains all functions available in the LISP System as of August 1962.
-Each entry contains the name of the object, the property under which it is available
-(e. g., EXPR, FEXPR, SUBR, FSUBR, or APVAL), whether it is a pseudo-function,
-functional (function having functions as arguments), or predicate, and in some cases
-a definition of the function as an M-expression. In the case of APVALts, the value is
-given.
-The LISP Library is a file of BCD cards distributed with the LISP System. It is not
-intended to be used as input to the computer without being edited first. Have the Library
-file punched out, and then list the cards. Each Library function is preceded by a title
-card that must be removed. Some Library entries are in the form of a DEFINE, while
-some are in the form of an assembly in LAP. Note that some of them have auxiliary
-functions that must be included.
-```
+This appendix contains all functions available in the LISP System as of August 1962. Each entry contains the name of the object, the property under which it is available (e. g., EXPR, FEXPR, SUBR, FSUBR, or APVAL), whether it is a pseudo-function, functional (function having functions as arguments), or predicate, and in some cases a definition of the function as an M-expression. In the case of APVALts, the value is given.
 
-```
+The LISP Library is a file of BCD cards distributed with the LISP System. It is not intended to be used as input to the computer without being edited first. Have the Library file punched out, and then list the cards. Each Library function is preceded by a title card that must be removed. Some Library entries are in the form of a DEFINE, while some are in the form of an assembly in LAP. Note that some of them have auxiliary functions that must be included.
+
+
 Elementary Functions
 car - [x] SUBR
 cdr - [x] SUBR
@@ -2678,9 +2633,8 @@ TRUE
 TRANSFER IF EQUAL
 OTHERWISE VALUE IS NIL
 VALUE IS *T*
-```
 
-equal[^;^] - SUBR predicate
+equal[x; y] - SUBR predicate
 
 * equal is true if its arguments are the same S-expression, although they do not have
 to be identical list structure in the computer. It uses 7 eq on the atomic level and is
@@ -2702,32 +2656,28 @@ CLA TRUE
 TRA 1,4
 TRUE OCT 1000000
 ```
+<a name="page58">page 58</a>
 
-* rplaca[x;y] SUBR pseudo-function
+#### rplaca[x; y] : SUBR pseudo-function
 
-```
-rplacd[x;y] SUBR pseudo-function
+#### rplacd[x; y] : SUBR pseudo-function
+
 These list operators change list structure and can damage the system memory if not
-used properly. See page^41 for a description of usage.
-```
+used properly. See [page 41](#page41) for a description of usage.
 
-```
-Logical Connectives
-```
+### Logical Connectives
 
-- and[x ;x2... ;xn] : FSUBR predicate
+#### and[x<sub>1</sub>; x<sub>2</sub>; ... ; x<sub>n</sub>] : FSUBR predicate
 
-```
 The arguments of are evaluated in sequence, from left to right, until one is found
-that is false, or until the end of the list is reached. The value of & is false or true
+that is false, or until the end of the list is reached. The value of and is false or true
 respectively.
-```
 
-- 0r[x1;x2... ;xn] : FSUBR predicate
-    The arguments of or are evaluated in sequence from left to right, until one is found
-    that is true, or until the end of the list is reached. The value of 2 is true or
-    false respectively.
-* not [x] SUBR predicate
+#### or[x<sub>1</sub>; x<sub>2</sub>; ... ; x<sub>n</sub>] : FSUBR predicate
+
+The arguments of or are evaluated in sequence from left to right, until one is found that is true, or until the end of the list is reached. The value of or is true or false respectively.
+
+#### not [x]: SUBR predicate
 
 The value of not is true if its argument is false, and false otherwise.
 
@@ -2748,35 +2698,29 @@ where each `u` is a name and each `v` is a &lambda;-expression for a function . 
 
 > define[x] = deflist[x; EXPR]
 
+#### deflist [x; ind] : EXPR pseudo-function
 
+The function `deflist` is a more general defining function. Its first argument is a list of pairs as for define. Its second argument is the indicator that is to be used. After `deflist` has been executed with (u<sub>i</sub> v<sub>i</sub>) among its first argument, the property list of u<sub>i</sub> will begin:
 
-deflist [x; ind] EXPR pseudo-function
-The function deflist is a more general defining function. Its first argument is a list
-of pairs as for define. Its second argument is the indicator that is to be used. After
-deflist has been executed with (ui vi) among its first argument, the property list of ui
-will begin:
+If `deflist` or `define` is used twice on the same object with the same indicator, the old value will be replaced by the new one.
 
-If deflist or define is used twice on the same object with the same indicator, the old
-value will be replaced by the new one.
-attrib[x;e] - SUBR pseudo-function
-The function attrib concatenates its two arguments by changing the last element of
-its first argument to point to the second argument. Thus it is commonly used to tack
-something onto the end of a property list. The value of attrib is the second argument.
+#### attrib[x; e] : SUBR pseudo-function
+
+The function attrib concatenates its two arguments by changing the last element of its first argument to point to the second argument. Thus it is commonly used to tack something onto the end of a property list. The value of attrib is the second argument.
+
 For example
 attrib[~~; (EXPR (LAMBDA (X) (COND ((ATOM X) X) (T (FF (CAR x))))))]
 would put EXPR followed by the LAMBDA expression for FF onto the end of the prop-
 erty list for FF.
+
+
+#### prop[x; y; u] : SUBR functional
+
+The function `prop` searches the list `x` for an item that is `eq` to `y`. If such an element is found, the value of `prop` is the rest of the list beginning immediately after the element. Otherwise the value is `u[]`, where u is a function of no arguments.
 ```
-
-- pr~p[x;~;u] SUBR functional
-    The function prop - searches the list x for an item that is - eq to y. If such an element
-    is found, the value of prop is the rest of the list beginning immediately after the element.
-    Otherwise the value is u[ 1, where 2 is a function of no arguments.
-
-##### prop[^;^; u] = [null[x] - u[ ];eq[car[x];y] -cdr[x]
-
-###### T - prop[cdr [x];y ;u]]
-
+prop[x; y; u] = [null[x] -> u[ ];
+                   eq[car[x];y] -> cdr[x]
+                  T -> prop[cdr[x]; y; u]]
 ```
 SUBR
 ```
@@ -2792,47 +2736,45 @@ cator is found, and NIL otherwise.
 This pseudo-function is used to create a constant by putting the indicator APVAL
 and a value on the property list of an atomic symbol. The first argument should be an
 atomic symbol; the second argument is the value is cons[val;N1~].
-```
 
-csetq[ob;val] - FEXPR pseudo-function
+#### csetq[ob; val] : FEXPR pseudo-function
 
-* csetq is like cset - except that it quotes its first argument instead of evaluating it.
-rempr op[x; ind] : SUBR pseudo-function f
+csetq is like cset - except that it quotes its first argument instead of evaluating it.
+
+#### remprop[x; ind] : SUBR pseudo-function 
+
 The pseudo-function remprop searches the list, x, looking for all occurrences of the
 indicator ind. When such an indicator is found, its name and the succeeding property
 are removed from the list. The two "endsn of the list are tied together as indicated by
 the dashed line below.
 
-```
 The value of remprop is NIL.
+
 When an indicator appears on a property list without a property following it, then
 it is called a flag. An example of a flag is the indicator TRACE which informs the inter-
 preter that the function on whose property list it appears is to be traced. There are two
 pseudo-functions for creating and removing flags respectively.
-```
 
-- flag [I; ind] EXPR pseudo-function
+#### flag [I; ind] : EXPR pseudo-function
 
-```
 The pseudo-function flag puts the flag ind on the property list of every atomic symbol
 in the list 1. Note that d cannot be an atomic symbol, and must be a list of atomic sym-
 bols. The flag is always placed immediately following the first word of the property
 list, and the rest of the property list then follows. The value of flag is NIL. No property
 list ever receives a duplicated flag.
-remflag[l; ind] : EXPR pseudo-function
+
+#### remflag[l; ind] : EXPR pseudo-function
+
 remflag removes all occurrences of the indicator ind from the property list of each
 atomic symbol in the list 8. It does this by patching around the indicator with a rplacd
 in a manner similar to the way remprop works.
-```
 
-```
-Table Buildinrr and Table Reference Functions
-```
+### Table Building and Table Reference Functions
 
-- pair [x; y] SUBR
-    The function pair has as value the list of pairs of corresponding elements of the lists
-    x and y. The arguments x and y must be lists of the same number of elements. They
-    should & be atomic symbols. The value is a dotted pair list, i. e. ((a (a p2)...
+#### pair [x; y] : SUBR
+
+The function pair has as value the list of pairs of corresponding elements of the lists x and y. The arguments x and y must be lists of the same number of elements. They should & be atomic symbols. The value is a dotted pair list, i. e. ((a (a p2)...
+
     pair[x;y] = [prog[u;v; m]
     u:= x;
     v:= y;
@@ -2845,18 +2787,18 @@ m:= cons[cons[car[u];car[v]];m];
 u:= cdr[u];
 v:= cdr[v];
 go[~Il
-sassoc[x;y;u] SUBR functional
+```
+
+#### sassoc[x; y; u] : SUBR functional
+
 The function sassoc searches y, which is a list of dotted pairs, for a pair whose first
 element that is x. If such a pair is found, the value of sassoc is this pair. Otherwise
 the function u of no arguments is taken as the value of sassoc.
-```
 
-* subst[x; y;z] SUBR
+#### subst[x; y; z] : SUBR
 
-```
 The function subst has as value the result of substituting x for all occurrences of
 the S-expression y in the S-expression z.
-```
 
 ###### subst[x;y;z] = [equal[y;z] - x
 
@@ -2864,12 +2806,12 @@ the S-expression y in the S-expression z.
 
 T .- cons[subst[x;y;car [z]];subst [x;y;cdr[e]]]]
 
-* sublis [x ; y] SUBR
+#### sublis [x ; y] : SUBR
 
 Here x is a list of pairs,
-((ul vl) (u2 v2) (un vn))
-The value of sublis[x;y] is the result of substituting each v for the corresponding
-u in y.
+((u<sub>1</sub> . v<sub>1</sub>) (u<sub>2</sub> .  v<sub>2</sub>) (u<sub>n</sub> . v<sub>n</sub>))
+The value of `sublis[x; y]` is the result of substituting each `v` for the corresponding
+`u` in `y`.
 Note that the following M-expression is different from that given in Section I, though
 the result is the same.
 
@@ -2881,18 +2823,17 @@ k[[j]; equal[y;caar[j]]];
 k[[j]; cdar[j]];
 k[[j];[atom[y] - y;
 T -c cons [sublis [x;car [y]];sublis [x;cdr [y]]]]]]]
-List Handling Functions
 ```
 
-```
-append [x;y] SUBR
+### List Handling Functions
+
+#### append [x;y] : SUBR
 The function append combines its two arguments into one new list. The value of
 append is the resultant list. For example,
 append[(^ B) (a1 = (A B C)
 ```
-
-##### append [x;y] = [null[x] -. y ; T - cons [car [x]; append[cdr [x]; y I]]
-
+append [x;y] = [null[x] -. y ; T - cons [car [x]; append[cdr [x]; y I]]
+```
 Note that append copies the top level of the first list; append is like - nconc except that
 nconc does not copy its first argument.
 
@@ -2903,94 +2844,85 @@ nconc does not copy its first argument.
 * conc concatenates its arguments without copying them. Thus it changes existing list
 structure and is a pseudo-function. The value of conc is the resulting concatenated list.
 
-nc - onc [x;y] SUBR pseudo-function
+#### nconc [x; y] : SUBR pseudo-function
 
-```
-The function nconc concatenates its arguments without copying the first one. The
+The function `nconc` concatenates its arguments without copying the first one. The
 operation is identical to that of attrib except that the value is the entire result, (i. e. the
 modified first argument, x).
+
 The program for nconc[x;y] has the program variable m and is as follows:
+```
 nconc [x; y ] = prog [[m];
+[null[x] - return[~]]
 ```
 
-##### [null[x] - ret~rn[~]]
+#### COPY [X] : SUBR
 
-* COPY [XI SUBR
-
-```
 This function makes a copy of the list x. The value of copy is the location of the
 copied list.
-```
 
-##### copy[x] = [null[x] - ~~~;atom[x] - x;T -- cons[copy[car[x]]
+copy[x] = [null[x] - ~~~;atom[x] - x;T -- cons[copy[car[x]]
 
 ```
 co~[cdr[xllIl
 ```
 
-```
-reverseit] SUBR
-```
+#### reverse[t] : SUBR
 
-```
 This is a function to reverse the top level of a list. Thus
-reverse[(^ B (C. D))] = ((C D) B A))
+reverse[(A B (C. D))] = ((C D) B A))
 reverse[t] = prog[[v];
 u: =t;
 ```
-
-##### A [null[u] - return[v]]
+A [null[u] - return[v]]
 
 ```
 v:=cons[car[u];v];
 u:=cdr[u];
 so[AlI
-```
 
-```
-member[x; 8 ] SUBR predicate
-If the S-expression x is a member of the list 1, then the value of member is *T*.
+#### member[x; l ] : SUBR predicate
+
+If the S-expression x is a member of the list l, then the value of member is T.
 Otherwise, the value is NIL.
-```
 
 ##### member[x;l] = [null[l] - ~;equal[x;car[L]] -- T
 
 ##### T - member[x;cdr[l]]]
 
-```
-length[x] SUBR
-```
+#### length[x] : SUBR
 
-```
 The value of length is the number of items in the list x. The list ( ) or NIL has
 length 0.
-```
 
-* efface[x;Q] SUBR pseudo-function
+#### efface[x; Q] : SUBR pseudo-function
 
-```
 The function efface deletes the first appearance of the item x from the list 8.
+```
 efface[x;l ] = [null[l] -. NIL; /'
 equal[x;car[8]] .-. cdr[8];
 T -- rplacd[k ;effac e[x;cdr [8]]]]
-These four functionals apply a function, f, to x, then to cdr[x], then to cddr[x], etc.
-Functionals or Functions with Functions as Arguments
-maplis t [x; f ] SUBR functional
-The function maplist is a mapping of the list x onto a new list f[x].
 ```
+
+These four functionals apply a function, f, to x, then to cdr[x], then to cddr[x], etc.
+
+Functionals or Functions with Functions as Arguments
+
+#### maplist [x; f ] : SUBR functional
+
+The function maplist is a mapping of the list x onto a new list f[x].
 
 ##### maplist [x; f] = [null[x] - NIL; T - cons[f [x]; maplist [cdr [x]; f]]]
 
-```
-map on [x; f ] SUBR pseudo-functional
+#### mapcon [x; f ] : SUBR pseudo-functional
+
 The function mapcon is like the function maplist except that the resultant list is a
 concatenated one instead of having been created by cons-ing.
 ```
-
-##### mapcon[x; f ] = [null[x] - NIL; T - nconc [f [x]; mapcon[cdr [x]; f I]]
-
+mapcon[x; f ] = [null[x] -> NIL; T - nconc[f [x]; mapcon[cdr [x]; f ]]]
 ```
-map[x; f ] SUBR functional
+
+#### map[x; f ] : SUBR functional
 The function map - is like the function maplist except that the value of map is NIL,
 and map does not do a cons of the evaluated functions. map is used only when the action
 of doing f[x] is important.
@@ -3001,21 +2933,16 @@ LOOP [null[m] -. returnl~~~]];
 f [m];
 m:= cdr[m];
 go[~oopl1
-```
 
-- sear~h[x;~;f;u] : SUBR functional
-    The function search looks through a list x for an element that has the property p,
-    and if such an element is found the function f of that element is the value of search.
-    If there is no such element, the function u of one argument x is taken as the value of
-    search (in this case x is, of course, NIL).
+#### search[x; p; f; u] : SUBR functional
 
-```
+The function search looks through a list x for an element that has the property p, and if such an element is found the function f of that element is the value of search. If there is no such element, the function u of one argument x is taken as the value of search (in this case x is, of course, NIL).
+
 Arithmetic Functions
 These are discussed at length in Section IV.
 function type number of args
 plus FSUBR indef.
 minus SUBR 1
-```
 
 - value
 
@@ -3043,7 +2970,6 @@ logand
 logxor
 leftshift
 
-```
 SUBR
 FSUBR
 SUBR
@@ -3067,9 +2993,7 @@ FSUBR
 FSUBR
 FSUBR
 SUBR
-```
 
-```
 predicate
 predicate
 predicate
@@ -3091,32 +3015,22 @@ indef.
 indef.
 indef.
 1 2 2 2 1 1 1 1 1 1
-```
 
-```
 indef.
 indef.
 indef.
 2
-```
 
-```
 Xl'X2'... *X n
 list [x/~; remainder]
-```
 
-```
 remainder of x/~
-```
 
-```
 largest of xi
 smallest of xi
 [fixp[x]-0; ~-.quotient[l ;XI]
 XY
-```
 
-```
 x is negative
 x is a number
 x is a fixed point number
@@ -3126,63 +3040,55 @@ x1Ax2A... A xn ANA
 x ,*x24... Vxn ERA
 x 2Y
 array SUBR 1 declares arrays
-```
 
-The Compiler and Assembler
+### The Compiler and Assembler
 
-```
-compile[x] SUBR pseudo-function
+#### compile[x] : SUBR pseudo-function
+
 The list x contains the names of previously defined functions. They are compiled.
-special[x] SUBR pseudo-function
-The list x contains the names of variables that are to be declared SPECIAL.
-```
 
-uns pec ial[x] SUBR pseudo-function
+#### special[x] : SUBR pseudo-function
+
+The list x contains the names of variables that are to be declared SPECIAL.
+
+#### unspecial[x] : SUBR pseudo-function
 
 The list x contains the names of variables that are no longer to be considered
 SPECIAL by the compiler.
 
-c ommon[x] SUBR pseudo-function
+#### common[x] : SUBR pseudo-function
 
-```
 The list x contains the names of variables that are to be declared COMMON.
-```
 
-unc ommon[x] : SUBR pseudo-function
+#### uncommon[x] : SUBR pseudo-function
 
 The list x contains the names of variables that are no longer to be considered
 COMMON by the compiler.
 
-```
-lap[list; - table] : SUBR pseudo-function
+#### lap[list; - table] : SUBR pseudo-function
+
 The assembler LAP is discussed in appendix C.
 opd ef ine [x] EXPR pseudo-function
 opdefine defines new symbols for the assembler LAP. The argument is a list of
 dotted pairs, each pair consisting of symbol and value.
-```
 
-```
-readlap[ ] EXPR pseudo-function
+#### readlap[ ] : EXPR pseudo-function
+
 readlap reads assembly language input and causes it to be assembled using LAP.
 The input follows the STOP card of the packet containing the readlap. Each function to
 be read in consists of a list of the two arguments of 2. These are read in successively
 until a card containing NIL is encountered. readlap uses remob to remove unwanted
 atomic symbols occurring in the listing. For this reason, it should only be used to read
 cards that have been produced by punchlap.
-```
 
-```
-Input and Output
-```
+### Input and Output
 
-- read[ ] SUBR pseudo-function
+#### read[] : SUBR pseudo-function
 
-```
 The execution of read causes one list to be read from SYSPIT, or from the card
 reader. The list that is read is the value of read.
-```
 
-- print [x] SUBR pseudo-function
+#### print[x] : SUBR pseudo-function
     The execution of - print causes the S-expression x to be printed on SYSPOT and/or
     the on-line printer. The value of print is its argument.
     punchrx] - SUBR pseudo.-function
@@ -3192,47 +3098,38 @@ reader. The list that is read is the value of read.
 * prinl prints an atomic symbol without terminating the print line. The argument
 of - prini must be an atomic symbol.
 
-terpri[ - ] SUBR pseudo-function
+#### terpri[] : SUBR pseudo-function
 
-```
 terpri terminates the print line.
-```
 
-```
 The character reading, sorting and printing functions are discussed in appendix F.
-```
 
-```
 startread pack opc har error1 numob
 advance unpack dash mknam
 endread digit
 clearbuff liter
-```
 
-```
-Functions for System Control, Debugging, and Error Processing
-```
+#### Functions for System Control, Debugging, and Error Processing
 
-- trace[xl EXPR pseudo-function
+#### trace[x] : EXPR pseudo-function
 
-```
 The argument of trace is a list of functions. After trace has been executed, the
 arguments and values of these functions are printed each time the function is entered
 recursively. This is illustrated in the printed output of the Wang Algorithm example.
 The value of trace is NIL. Special forms cannot be traced.
-untrac e [x] EXPR pseudo-function
-This removes +he tracing from all functions in the list x. The value of untrace is NIL.
+
+#### untrace [x] : EXPR pseudo-function
+
+This removes the tracing from all functions in the list x. The value of untrace is NIL.
 The following pseudo-functions are described in the section on running the LISP
 system:
-```
 
-```
 --- count, uncount, speak, error, errorset.
-Miscellaneous Functions '
+
+### Miscellaneous Functions '
 prog2 [x;~] SUBR
 The value of prog2 is its second argument. It is used mainly to perform two pseudo-
 functions.
-```
 
 - CPl [XI SUBR
   * cpA copies its argument which must be a list of a very special type.
@@ -3241,8 +3138,8 @@ functions.
 
 The copied list is the value of cpi.
 
-```
-gens~m[ 1 SUBR
+#### gensym[ ] : SUBR
+
 The function gensym has no arguments. Its value is a new, distinct, and freshly-
 created atomic symbol with a print name of the form G00001, G00002,... , G99999.
 This function is useful for creating atomic symbols when one is needed; each one
@@ -3253,35 +3150,33 @@ The qits in select are evaluated in sequence from left to right until one is fou
 qi =
 and the value of select is the value of the corresponding ei. If no such qi is found the
 value of select is that of e.
-```
 
-```
-t empus -fugit [ ] : SUBR pseudo-function
+#### tempus -fugit [ ] : SUBR pseudo-function
+
 Executing this will cause a time statement to appear in the output. The value is
 NIL. (tempus-fugit is for MIT users only.)
-```
 
-- load[ ] : SUBR pseudo-function
+#### load[] : SUBR pseudo-function
 
-```
 Program control is given to the LISP loader which expects octal correction cards,
 704 row binary cards, and a transfer card.
-```
 
-- plb [ I SUBR pseudo-function
+#### plb[] : SUBR pseudo-function
 
-```
 This is equivalent to pushing "LOAD CARDS " on the console in the middle of a LISP
 program.
-reclaim[ ] SUBR pseudo-function
-Executing this will cause a garbage collection to occur. The value is NIL.
-```
 
-```
-pause[ 1 SUBR pseudo-function
+#### reclaim[] : SUBR pseudo-function
+
+Executing this will cause a garbage collection to occur. The value is NIL.
+
+#### pause[] : SUBR pseudo-function
+
 Executing this will cause a program halt. Pushing START will cause the program
 to continue, returning the value NIL.
-excise[x] : SUBR pseudo-function
+
+#### excise[x] : SUBR pseudo-function
+
 If x is NIL, then the compiler will be overwritten with free storage, If x is *T*,
 then both the compiler and LAP will be overwritten by free storage. excise may be
 executed more than once. The effect of excise[W'*] is somewhat unreliable. It is
@@ -3301,10 +3196,11 @@ This removes the atom x from the object list. It causes the symbol and all its
 properties to be lost unless the symbol is referred to by active list structure. When
 an atomic symbol has been removed, subsequent reading of its name from input will
 create a different atomic symbol.
-The LISP Library
+
+### The LISP Library
+
 The LISP Library is distributed as the second file on the LISP setup tape. To use
 any part of it, punch out the entire library and remove the part you wish to use. Be
-```
 
 sure to strip off comment cards, unnecessary DEFINE cards, and unnecessary cards
 that close a define with )).
@@ -3342,27 +3238,20 @@ atoms in the EXPRs and FEXPRs of punchlapped functions must not contain class C
 characters.
 pr intpr op[x] EXPR pseudo-function
 
-```
 If x is an atomic symbol, all of its properties will be printed in the output. Nothing
 is changed by printprop.
-```
 
 punchdef [x] EXPR pseudo-function
 
-```
 If x is a list of atomic symbols, each one having an EXPR or FEXPR will have its
 definition punched out. Nothing is changed.
-```
 
 APVAL1s
 The following is a list of all atoms with APVALts on their property lists in the basic
 system and their values.
 
-```
 APVAL
-```
 
-```
 BLANK
 CHARCOUNT
 COMMA
@@ -3382,13 +3271,9 @@ SLASH
 STAR
 T
 *T*
-```
 
-```
 value
-```
 
-```
 (BCD blank)
 (character count during reading of characters)
 J
@@ -3396,95 +3281,96 @@ J
 $
 $EOF $
 $EOR$
-```
 
-```
 NIL
 (
 NIL
 (bucket sorted object list)
-```
 
 1. The entire set of objects (atomic symbols) existing in the system can be printed out
     by performing
        EVAL (OBLIST NIL).
 
-```
-APPENDIX B
+<a name="page70">page 70</a>
+
+## APPENDIX B : THE LISP INTERPRETER
+
+This appendix is written in mixed M-expressions and English. Its purpose is to describe as closely as possible the actual working of the interpreter and PROG feature. The functions `evalquote`, `apply`, `eval`, `evlis`, `evcon`, and the `PROG` feature are defined by using a language that follows the M-expression notation as closely as possible and contains some insertions in English.
+
+```mexpr
+evalquote[fn; args]=[get[fn; FEXPR] v get[fn; FSUBR] -> eval[cons [ fn; args]; NIL];
+        T -> apply[fn; args; NIL]
 ```
 
-```
-THE LISP INTERPRETER
-```
+This definition shows that `evalquote` is capable of handling special forms as a sort of exception. Apply cannot handle special forms and will give error `A2` if given one as its first argument.
 
-```
-This appendix is written in mixed M-expressions and English. Its purpose is to
-describe as closely as possible the actual working of the interpreter and PROG feature.
-The functions evalquote, ---- apply, eval, evlis, evcon, and the PROG feature are defined
-by using a language that follows the M-expression notation as closely as possible and
-contains some insertions in English.
-```
+The following definition of `apply` is an enlargement of the one given in Section I. It shows how functional arguments bound by FUNARG are processed, and describes the way in which machine language subroutines are called.
 
-###### evalquote[fn;args]=[get [fn; FEXPR] vget [fn; FSUBR] -
+In this description, `spread` can be regarded as a pseudo-function of one argument. This argument is a list. `spread` puts the individual items of this list into the AC, MQ,
+$ARG3,... the standard cells *[general purpose registers]* for transmitting arguments to functions.
 
-eval[cons [ fn; args]; NIL]
-
-```
-This definition shows that evalquote is capable of handling special forms as a sort
-of exception. Apply cannot handle special forms and will give error A2 if given one as
-its first argument.
-The following definition'of apply is an enlargement of the one given in Section I. It
-shows how functional arguments bound by FUNARG are processed, and describes the
-way in which machine language subroutines are called.
-In this description, spread can be regarded as a pseudo-function of one argument.
-This argument is a list. spread puts the individual items of this list into the AC, MQ,
-$ARG3,... the standard cells for transmitting arguments to functions.
 These M-expressions should not be taken too literally. In many cases, the actual
 program is a store and transfer where a recursion is suggested by these definitions.
-apply[fn;args;a]=[
-null [fn]-NIL;
-at ~rn[fn]-[~et [fn; EXPR]-~~~~~ [expr^1 ; args ; a];
-spread[args];
+
+```mexpr
+apply[fn; args; a]=[
+    null[fn] -> NIL;
+    atom[fn] -> [get[fn; EXPR] -> apply[expr ; args ; a];
+        get[fn; subr] -> {spread[args];
+                          $ALIST := a;
+                          TSX subr, 4};
+        T -> apply[cdr[sassoc[fn; a; lambda[[];error [A2]]]]; args ;a];
+    eq[car[fn]; LABEL] -> apply[caddr[fn];args;
+                                cons[cons[cadr[fn];
+                                    caddr[fn]];a]];
+    eq[car[fn]; FUNARG] -> apply[cadr[fn]; args; caddr[fn]];
+    eq[car [fn]; LAMBDA] -> eval[caddr[fn]; 
+                                nconc [pair[cadr[fn]; args]; a]];
+    T -> apply[eval[fn; a]; args; a]]
 ```
+*NOTE THAT the formatting of this MEXPR is beyond the capabilities of Markdown to reproduce; this is a rational reconstruction, but to be perfectly certain of the interpretation consult the PDF*
 
+
+
+-----
+
+1. The value of get is set aside. This is the meaning of the apparent free or undefined variable.
+
+<a name="page71">page 71</a>
+
+```mexpr
+eval[form; a]= [
+    null[form] -> NIL;
+    numberp[form] -> form;
+    atom[form] -> [get[form; APVAL] -> car[apval];
+                  T -> cdr[sassoc[form; a; lambda[[ ]; error[A8]]]]];
+    eq[car[form]; QUOTE] -> cadr[form]; 
+    eq[car[form]; FUNCTION] -> list[FUNARG; cadr[form]; a];
+    eq[car [form]; COND] -> evcon[cdr[form]; a];
+    eq[car [form]; PROG] -> prog[cdr [form]; a];
+    atom[car[form]] -> [get[car [form]; EXPR] -> 
+                            apply[expr; evlis[cdr[form]; a]; a];
+                         get[car[form]; FEXPR] ->
+                             apply[fexpr; list[cdr[form]; a]; a];
+                         get[car[form]; SUBR] -> {spread[evlis[cdr[form]; a]];
+                                                   $ALIST := a;
+                                                   TSX subr 4};
+                        get[car[form]; FSUBR] -> {AC := cdr[form];
+                                                  MQ := $ALIST := a;
+                                                  TSX fsubr 4}
+                        T -> eval[cons[cdr[sassoc[car[form]; a;
+                                                  lambda[[];error[A9]]]];
+                                  cdr[form]]; a]];
+    T-apply [car [form];evlis [cdr [form]; a]; a]]
+    
+evcon[c; a] = [null[c] -> error[A3];
+            eval[caar[c]; a] -> eval[cadar[a]; a];
+            T -> evcon[cdr[ c]; a]]
+
+evlis[m; a] = maplist[m; lambda[[j]; eval[car[j]; a]]]
 ```
-T-apply[cdr[sassoc [fn;a;~[[];error [~2]]]];ar~s ;a];
-eq[car[fn]; ~~~~~]-a~~l~[caddr[fn];ar~s;cons[cons[cadr[fn];caddr[fn]];a]];
-eq[car[fn]; ~~~~~~]-a~~1~[cadr [fn]; args; caddr [fn]];
-eq[car [fn]; LAMBDA]-eval[caddr[fn]; nconc [pair[cadr[fn]; args]; a]];
-~-a~~ly[eval[fn;a];ar~s ;a]]
-```
+### The PROG Feature
 
-1. The value of get is set aside. This is the meaning of the apparent free or unde-
-    fined variable -
-
-* eval[f orm; a]= [
-    null[f orm]-NIL;
-    numberp[f orm]-f orm;
-    atom[form]-[get[f O~~;APVAL]-car [apval^1 1;
-       ~~cdr[sassoc[form;a;~[[ ];error[A8]]]]];
-    eq[car[f O~~];QUOTE]-cadr [form]; 2
-    eq[car [form]; FUNCTION]-~~~~[FUNARG; cadr [form];a];
-    eq[car [form]; COND]-evcon[cdr[form]; a];
-    eq[car [form]; ~~OG]-~ro~[cdr [form]; a];
-    atom[car[form]] -[get[car [form];~~~~]-~a~~l~[ex~r;^1 evlis[cdr lforrn];a];a];
-       get[car[form];~~~~~]-apply[fexpr !list[cdr [form];a];a];
-          spread[evlis [cdr [form]; a]];
-       get[car[form];~~~~]-
-          TSX subr f 4
-             AC: =cdr [ form];
-       get[car[form];F~u~R]-, MQ: = $ALIST: =a; ;
-
-# (TSx fsubr!4 }
-
-~-e~al[~0ns[cdr[sas~0~[car[form];a;~[[];error[~9]]]];
-cdr [form]]; a]];
-T-apply [car [form];evlis [cdr [form]; a]; a]]
-evcon[c; a]= [null[c]--error [A3];
-eval[caar[ c]; a]-eval[cadar [a];a];
-T-evcon[cdr [ c];a]]
-evlis[ - m; a] =maplist [m; ~[[j]; eval[car[j]; a]]]
-The PROG Feature
 The PROG feature is an FSUBR coded into the system. It can best be explained in
 English, although it is possible to define it by using M-expressions.
 
@@ -3497,57 +3383,53 @@ paired with a pointer into the remainder of the program.
 3. When a set or a setq - is encountered, the name of the variable is located on the
 a-list. The value of the variable (or cs of the pair) is actually replaced with the new
 value.
+
+-----
 1. The value of get is set aside. This is the meaning of the apparent free or unde-
 fined variable-
 2. In the actual system this is handled by an FSUBR rather than as the separate special
 case as shown here.
 
+<a name="page72">page 72</a>
+
 If the variable is bound several times on the a-list, only the first or most recent
 occurrence is changed. If the current binding of the variable is at a higher level than
 the entrance to the prog, then the change will remain in effect throughout the scope
 of that binding, and the old value will be lost.
-If the variable does not occur on the a-list, then error diagnostic A4 or A5 will
-occur.
 
-4. When a return is encountered at any point, its argument is evaluated and returned
-as the value of the most recent prog that has been entered.
+If the variable does not occur on the a-list, then error diagnostic `A4` or `A5` will occur.
+
+4. When a return is encountered at any point, its argument is evaluated and returned as the value of the most recent prog that has been entered.
 5. The form go may be used only in two ways.
-a. (GO X) may occur on the top level of the prog, x must be a location symbol
-of this prog and not another one on a higher or lower level.
-b. This form may also occur as one of the value parts of a conditional expres-
-sion, if this conditional expression occurs on the top level of the prog.
-If a go - is used incorrectly or refers to a nonexistent location, error diagnostic A6
-will occur.
-6. When the form cond occurs on the top level of a prog, it differs from other
-conds in the following ways.
-a. It is the only instance in which a gocan occur inside a cond.
-b. If the cond runs out of clauses, error diagnostic A3 will not occur. Instead,
-the prog will c6ntinue with the next statement.
+    a. `(GO X)` may occur on the top level of the prog, `x` must be a location symbol of this `prog` and not another one on a higher or lower level.
+    b. This form may also occur as one of the value parts of a conditional expression, if this conditional expression occurs on the top level of the `prog`.
+    If a `go` is used incorrectly or refers to a nonexistent location, error diagnostic `A6` will occur.
+
+6. When the form cond occurs on the top level of a `prog`, it differs from other
+     `cond`s in the following ways.
+       a. It is the only instance in which a `go` can occur inside a `cond`.
+       b. If the `cond` runs out of clauses, error diagnostic `A3` will not occur. Instead, the `prog` will continue with the next statement.
+     
 7. When a statement is executed, this has the following meaning, with the exception
-of the special forms cond, go, return, setq and the pseudo-functionset, all of which
-are peculiar to prog.
-The statement 5 is executed by performing eval[s;a], where 2 is the current a-list,
-and then ignoring the value.
+     of the special forms `cond`, `go`, `return`, `setq` and the pseudo-function `set`, all of which  are peculiar to `prog`.
+     The statement `s` is executed by performing `eval[s;a]`, where `a` is the current a-list, and then ignoring the value.
+     
 8. If a prog runs out of statements, its value is NIL.
-When a prog - is compiled, it will have the same effect as when it is interpreted,
-although the method of execution is much different; for example, a go is always corn-
-piled as a transfer. The following points should be noted concerning declared variables.^1
-1. Program variables follow the same rules as h variables do.
-a. If a variable is purely local, it need not be declared.
-b. Special variables can be used as free variables in compiled functions. They
-may be set at a lower level than that at which they are bound.
-c. Common program variables maintain complete communication between com-
-piled programs and the interpreter.
-2. & as distinct from setq can only be used to set common variables.
+   When a prog - is compiled, it will have the same effect as when it is interpreted, although the method of execution is much different; for example, a go is always cornpiled as a transfer. The following points should be noted concerning declared variables.<sup>1</sup>
+     1. Program variables follow the same rules as h variables do.
+         a. If a variable is purely local, it need not be declared.
+         b. Special variables can be used as free variables in compiled functions. They may be set at a lower level than that at which they are bound.
+         c. Common program variables maintain complete communication between compiled programs and the interpreter.
+     
+     2. & as distinct from setq can only be used to set common variables.
+   
+
+-----
 1. See Appendix D for an explanation of variable declaration.
 
-```
-APPENDIX C
-```
+<a name="page73">page 73</a>
 
-```
-THE LISP ASSEMBLY PROGRAM (LAP)
-```
+## APPENDIX C : THE LISP ASSEMBLY PROGRAM (LAP)
 
 lap is a two-pass assembler. It was specifically designed for use by the new com-
 piler, but it can also be used for defining functions in machine language, and for making
@@ -3588,13 +3470,12 @@ pointer to a word containing TXL, the first location of the program just assembl
 the address, and the number n in the decrement. type is usually either SUBR or
 FSUBR. n is the number of arguments which the subroutine expects.
 
-Sv mbols
+Symbols
 
-```
 Atomic symbols appearing on the listing (except NIL or the first item on the listing)
-```
 
-```
+<a name="page74">page 74</a>
+
 are treated as location symbols. The appearance of the symbol defines it as the location
 of the next instruction in the listing. During pass one, these symbols and their values
 are made into a pair list, and appended to the initial symbol table to form the final sym-
@@ -3604,14 +3485,11 @@ Symbols occurring on this table are defined only for the current assembly. The
 symbol table is discarded after each assembly.
 Permanent symbols are defined by putting the indicator SYM followed by a pointer
 to a value on their property lists.
-```
 
 Instructions
 
-```
 Each instruction is a list of from zero to four fields. Each field is evaluated in the
 same manner; however, the fields are combined as follows.
-```
 
 1. The first field is taken as a full word.
 2. The second field is reduced algebraically modulo 2 15, and is OR1ed into the
@@ -3643,30 +3521,25 @@ literal will not be created if it is equal to one that already exists.
 4. If the field is of the form (SPECIAL x), then the value is the address of the
 SPECIAL cell on the property list of x. If one does not already exist, it will be created.
 
-```
+<a name="page75">page 75</a>
+
 The SPECIAL cell itself (but not the entire atom) is protected against garbage collection.
-```
 
 5. In all other cases, the field is assumed to be a list of subfields, and their sum
 is taken. The subfields must be of types 14 above.
 
-```
 Error Diagnostics
 *L 1* Unable to determine origin. No assembly.
 *L 2* Out of binary program space. Second pass cancelled.
 *L 3 * Undefined symbol. Assembly incomplete.
 *L 4* Type five field contains type five fields inside itself. Assembly incomplete.
-```
 
-```
 Opdef ine
 opdefine is a pseudo-function for defining new quantities for LAP. It puts a SYM
 on the property list of the symbol that is being defined. Its argument is a list of pairs.
 Each pair is a symbol and its numerical value. Note that these pairs are not "dotted
 pairs.
-```
 
-```
 Example
 OPDEFINE ( ( (CLA 500Q8)
 (TRA 2Q9)
@@ -3681,9 +3554,6 @@ LXD
 PAX
 PDX
 Examples of the Use of LAP
-```
-
-```
 PXA
 PXD
 STD
@@ -3691,9 +3561,6 @@ ST0
 STQ
 STR
 STZ
-```
-
-```
 SUB
 SXA
 SXD
@@ -3701,9 +3568,6 @@ TIX
 Trn
 TNX
 TNZ
-```
-
-```
 TRA
 TSX
 TXH
@@ -3711,27 +3575,24 @@ TXI
 TXL
 TZE
 XCA
-```
 
-```
 Example 1: A LISP function
 The predicate greater induces an arbitrary canonical order among atomic symbols.
 LAP ( ( (GREATER SUBR 2) (TI& (* 3)) (PXA 0 0)
 (TRA 1 4) (CLA (QUOTE *T* ) ) (TRA 1 4) )NIL)
 Example 2: A patch
-```
 
 The instruction TSX 6204Q must be inserted after location 62 17Q.^62 17Q contains
 CIA 6243Q and this instruction must be moved to the patch.
 
-```
 LAP ( (6217Q (TRA NIL) )NIL)
 LAP ( (NIL (CLA A) (TSX 6204Q) (TRA B) )
 ( (A 6243Q) (B 6220Q) ) )
-```
 
-APPENDIX D
-THE LISP COMPILER
+<a name="page76">page 76</a>
+
+## APPENDIX D : THE LISP COMPILER
+
 The LISP Compiler is a program written in LISP that translates S-expression defi-
 nitions of functions into machine language subroutines. It is an optional feature that
 makes programs run many times faster than they would if they were to be interpreted
@@ -3744,12 +3605,13 @@ space. Thus an EXPR, or an FEXPR, has been changed to a SUBR or an FSUBR,
 respectively.
 Experience has shown that compiled programs run anywhere from 10 to 100 times
 as fast as interpreted programs, the time depending upon the nature of the program.
-Compiled programs are also more economical with memory than their corresponding 1
-S-expressions, taking only from 50 per cent to 80 per cent as much space.'
+Compiled programs are also more economical with memory than their corresponding 
+S-expressions, taking only from 50 per cent to 80 per cent as much space.<sup>1</sup>
 The major part of the compiler is a translator or function from the S-expression
 function notation into the assembly language, LAP. The only reasons why the compiler
 is regarded as a pseudo-function are that it calls LAP, and it removes EXPRts and
 FEXPR1s when it has finished compiling.
+
 The compiler has an interesting and perhaps unique history. It was developed in
 the following steps:
 
@@ -3764,19 +3626,20 @@ tape is created, the entire compiler was punched out in assembly language by usi
 punc hlap.
 4. When a system tape is to be made, the compiler in assembly language is read
 in by using readlap.
-The compiler is called by using the pseudo-function compile. The argument of com-
 
-- pile is a list of the names of functions to be compiled. Each atomic symbol on this list
+The compiler is called by using the pseudo-function compile. The argument of compile is a list of the names of functions to be compiled. Each atomic symbol on this list
 should have either an EXPR or an FEXPR on its property list before being compiled.
 The processing of each function occurs in three steps. First, the S-expression for
 the function is translated into assembly language. If no S-expression is found, then the
 compiler will print this fact and proceed with the next function. Second, the assembly
 
+-----
 1. Since the compiled program is binary program space, which is normally
 not otherwise accessible, one gains as free storage the total space formerly occupied
 by the S-expression definition.
 
-```
+<a name="page77">page 77</a>
+
 language program is assembled by LAP. Finally, if no error has occurred, then the
 EXPR or FEXPR is removed from the property list. When certain errors caused by
 undeclared free variables occur, the compiler will print a diagnostic and continue.
@@ -3785,7 +3648,6 @@ compiled.
 When writing a large LISP program, it is better to debug the individual function defi-
 nitions by using the interpreter, and compile them only when they are known to work.
 Persons planning to use the compiler should note the following points:
-```
 
 1. It is not necessary to compile all of the functions that are used in a particular
 run. The interpreter is designed to link with compiled functions. Compiled functions
@@ -3801,24 +3663,18 @@ compiled. This is discussed at length in this appendix.
 
 Excise
 
-```
 The compiler and the assembler LAP can be removed from the system by using
 the pseudo-function excise. If excise [NIL] is executed, then the compiler will be
 removed. If excise [*T*] is executed, then the compiler and LAP will both be excised.
 One may execute excise [NIL] and then excise [*T*] at a later time. When a portion
 of the system is excised, the region of memory that it occupied is converted into addi-
 tional free-storage space.
-```
 
-```
 Free Variables
 A variable is bound in a particular function when it occurs in a list of bound vari-
 ables following the word LAMBDA or PROG. Any variable that is not bound is free.
-```
 
-```
 Example
-```
 
 (LAMBDA (A) (PROG (B)
 S (SETQ B A)
@@ -3829,6 +3685,8 @@ A and B are bound variables, C is a free variable.
 When a variable is used free, it must have been bound by a higher level function.
 If a program is being run interpretively, and a free variable is used without having been
 bound on a higher level, error diagnostic *A^89 will occur.
+
+<a name="page78">page 78</a>
 
 If the program is being run compiled, the diagnostic may not occur, and the variable
 may have value NIL.
@@ -3866,32 +3724,29 @@ functions.
 COMMON variables are declared by common[a], where a is a list of variable names.
 The declaration can be removed by uncommon[a], where a is a list of variable names.
 
-```
 Functional Constants
 Consider the following definition of a function dot by using an S-expression:
 (YDOT (LAMBDA (X Y) (MAPLIST X (FUNCTION
 (LAMBDA (J) (CONS (CAR J) Y)) ))))
-```
+
+<a name="page79">page 79</a>
 
 Following the word FUNCTION is a functional constant. If we consider it as a sep-
 arate function, it is evident that it contains a bound variable "Jtt, and a free variable
 "Yfl. This free variable must be declared SPECIAL or COMMON, even though it is
 bound in YDOT.
 
-Functional Arguments
+### Functional Arguments
 
-```
 MAPLIST can be defined in S-expressions as follows:
 (MAPLIST (LAMBDA (L FN) (COND
 ((NULL L) NIL)
 (T (CONS (FN L) (MAPLIST (CDR L) FN))) )))
 The variable FN is used to bind a functional argument. That is, the value of FN
 is a function definition. This type of variable must be declared COMMON.
-```
 
-- Link
+### Link
 
-```
 Link is the routine that creates all linkage of compiled functions at run time.
 The normal procedure for calling a compiled function is to place the arguments in
 the AC, MQj $ARG3,. .. and then to TSX FN,4. However, the first time any call is
@@ -3901,11 +3756,8 @@ ments that are being transmitted, respectively. The tag contains a 7. If there i
 SUBR or FSUBR for the function that is being called, then link will call the interpreter
 that may find an EXPR or FEXPR. If there is a subroutine available, then link will
 form the instruction TSX and plant this on top of the STR.
-```
 
-```
-Tracing Compiled Functions
-```
+### Tracing Compiled Functions
 
 - trace will work for compiled functions, subject to the following restrictions.
     1. The trace must be declared after the function has been compiled.
@@ -3913,11 +3765,9 @@ Tracing Compiled Functions
 2. Once a direct TSX link is made, this particular calling point will not be traced.
 (Link will not make a TSX as long as the called function is being traced. )
 
-```
-APPENDIX E
-```
+<a name="page80">page 80</a>
 
-OVERLORD - THE MONITOR
+## APPENDIX E : OVERLORD - THE MONITOR
 
 Overlord is the monitor of the LISP System. It controls the handling of tapes, the
 reading and writing of entire core images, the historical memory of the system, and
@@ -3951,59 +3801,75 @@ function definitions and other memory changes are preserved.
 
 Card Format
 
-```
 Octal correction cards can alter up to 4 words of memory per card. Each change
 specifies an address (5 octal digits) and a word to be placed there (12 octal digits). The
 card columns to use are as follows.
-```
 
-```
 address data word
-```
 
-```
+<a name="page81">page 81</a>
+
 Overlord cards have the Overlord direction beginning in column 8. If the card has
 no other field, then comments may begin in column 16. Otherwise, the other fields of
 the card begin in column 16 and are separated by commas. The comments may begin
 after the first blank past column 16.
-```
 
-Overlord Cards
-TAPE SYSPPT, B4
+### Overlord Cards
+
+#### TAPE SYSPPT, B4
+
 The TAPE Overlord card defines the actual drives to be assigned to the tapes. The
 system uses five tapes designated by the names SYSTAP, SYSTMP, SYSPIT, SYSPOT,
 and SYSPPT. The actual tape units may range from A0 through C9.
-SIZE N1, N2, N3, N4
+
+#### SIZE N1, N2, N3, N4
+
 The size card specifies the amount of storage to be allocated to binary program
 space, push-down, full words, and free storage in that order. The SIZE card must be
 used only once at the time when the system is created from a binary card deck. The
 fields are octal or decimal integers.
-DUMP Ll,L2,0
+
+#### DUMP Ll,L2,0
+
 This Overlord card causes an octal dump of memory to be printed. The first two
 fields are octal or decimal integers specifying the range of the dump. The third field
 specifies the mode. 0 mode specifies a straight dump. 1 mode specifies that if the
 prefix and tag areas of a word are zero, then the complements of the address and decre-
 ment are dumped instead.
-TEST
+
+#### TEST
+
 Specifies that a packet is to follow and that memory is to be restored from SYSTMP
 after the packet has been evaluated.
-TST
+
+#### TST
+
 Same as TEST
-SET
+
+#### SET
+
 The SET card specifies that a packet is to follow and that the memory state following
 the evaluation of the packet is to be set onto SYSTMP. If an error occurs during the
 evaluation of the packet, then the memory is to be restored from SYSTMP instead.
-SETSET
+
+#### SETSET
+
 The SETSET card is like SET except that it sets even if there has been an error.
-DEBUG
+
+#### DEBUG
+
 This direction is like TEST except that after the doublets have been read in the entire
 object list is thrown away, making it impossible to do any further reading (except of
 numbers). This makes a considerable amount of free storage available but may cause
 trouble if certain atoms that are needed are not protected in some manner.
-FIN
+
+#### FIN
+
 Causes the computer to halt. An end of file mark is written on SYSPOT. An end
 of file is written on SYSPPT only if it has been used. If the FIN card was read on-line,
 the computer halts after doing these things. If the FIN card came from SYSPIT, then
+
+<a name="page82">page 82</a>
 
 SYSPIT is advanced past the next end of file mark before the halt occurs.
 
@@ -4028,13 +3894,9 @@ become a system tape containing the basic system plus any changes that have been
 onto it. It may be mounted on the SYSTAP drive for some future run to use definitions
 that have been set onto it.
 
-```
-APPENDIX F
-```
+<a name="page83">page 83</a>
 
-```
-LISP INPUT AND OUTPUT
-```
+## APPENDIX F : LISP INPUT AND OUTPUT
 
 This appendix describes the LISP read and write programs and the character-
 manipulation programs. The read and write programs allow one to read and write
@@ -4075,12 +3937,12 @@ b. The first two characters must not be $ $.
 c. It must be delimited on either side by a character from class C.
 There is a provision for reading in atomic symbols containing arbitrary characters.
 
-```
+<a name="page84">page 84</a>
+
 This is done by punching the form $$dsd, where s is any string of up to 30 characters,
 and d is any character not contained in the string s. Only the string s is used in
 forming the print name of the atomic symbol; d and the dollar signs will not appear when
 the atomic symbol is printed out.
-```
 
 Examples
 Input will print as
@@ -4105,8 +3967,8 @@ prinl is a pseudo-function that prints its argument, which must be an atomic sym
 bol, and does not terminate the print line (unless it is full).
 terpri prints what is left in the print buffer, and then clears it.
 
-```
-Characters and Character Objects
+### Characters and Character Objects
+
 Each of the sixty-four 6-bit binary numbers corresponds to a BCD character, if we
 include illegal characters. Therefore, in order to manipulate these characters via LISP
 functions, each of them has a corresponding object. Of the 64 characters, 48 corre-
@@ -4120,7 +3982,8 @@ to Z. Each letter is a legitimate atomic symbol, and therefore may be referred t
 a straightforward way, without ambiguity.
 The second group of legal characters consists of the digits from 0 to 9. These
 must be handled with some care because if a digit is considered as an ordinary integer
-```
+
+<a name="page85">page 85</a>
 
 rather than a character a new nonunique object will be created corresponding to it, and
 this object will not be the same as the character object for the same digit, even though
@@ -4154,9 +4017,8 @@ STAR
 BLANK
 EQSIGN
 
-```
+
 )
-```
 
 i
 
@@ -4172,12 +4034,11 @@ Each example consists of a doublet for evalquote followed by the result.
 
 Examples
 
-```
 EVAL (DOLLAR NIL) value is " $
 EVAL ((PRINT PERIOD) NIL) value is ". and If. is also printed.
-```
 
-```
+<a name="page86">page 86</a>
+
 The remaining characters are all illegal as far as the key punch is concerned. The
 two characters corresponding to 12 and 72 have been reserved for end-of-file and end-
 of-record, respectively, The end-of-file character has print name $EOF$ and the end-
@@ -4192,9 +4053,9 @@ sponding object or conversely by a single addition or subtraction. This speeds u
 character-handling considerably, because it isn't necessary to search property lists
 of character objects for their print names; the names may be deduced from the object
 locations.
-```
 
-Packing and Unpacking Characters
+### Packing and Unpacking Characters
+
 When a sequence of characters is to be made into either a print name or a numerical
 object, the characters must be put one by one into a buffer called BOFFO. BOFFO is
 used to store the characters until they are to be combined. It is not available explicitly
@@ -4222,6 +4083,8 @@ whose print name is in BOFFO.
     sented by the sequence of characters in BOFFO. (Positive decimal integers from
     0 to 9 are converted so as to point to the corresponding character object. )
 
+<a name="page87">page 87</a>
+
 5. unpack [x]: SUBR pseudo-function
     This function has as argument a pointer to a full word. unpack considers
     the full word to be a set of 6 BCD characters, and has as value a list of these
@@ -4229,12 +4092,10 @@ whose print name is in BOFFO.
 6. h~tern[~name] : SUBR pseudo-function
     This function has as argument a pointer to a PNAME type structure such as -
 
-```
 Its value is the atomic symbol having this print name. If it does not already
 exist, then a new atomic symbol will be created.
-```
 
-The Character-Classifying Predicates
+### The Character-Classifying Predicates
 
 *. - liter [c]: SUBR predicate
     * liter has as argument a character object. Its value is T if the character
@@ -4253,7 +4114,7 @@ lently.
 - dash has as argument a character object. Its value is T if the character
 is either an 11-punch minus or an 84 punch minus, and F otherwise.
 
-The Character -Reading Functions
+### The Character -Reading Functions
 
 The character-reading functions make it possible to read characters one by one from
 input.
@@ -4262,49 +4123,42 @@ an object). There is also an object CHARCOUNT whose value is an integer object g
 the column just read on the card, i. e., the column number of the character given by
 CURCHAR. There are three functions which affect the value of CURCHAR:
 
-1. startread [ 1: : SUBR ps eudo-function
-    startread is a function of no arguments which causes a new card to be read.
-    The value of startread is the first character on that card, or more precisely,
+#### 1. startread [ ]  : SUBR ps eudo-function
+startread is a function of no arguments which causes a new card to be read. The value of startread is the first character on that card, or more precisely,
 
-```
+<a name="page88">page 88</a>
+
 the object corresponding to the first character on the card. If an end-of-file
 condition exists, the value of startread is $EOF$. The value of CURCHAR
 becomes the same as the output of startread, and the value of CHARCOUNT
 becomes 1. Both CURCHAR and CHARCOUNT are undefined until a startread
 is performed. A startread may be performed before the current card has been
 completely read.
-```
 
-2. advance [ 1: SUBR pseudo -function
-    advance is a function of no arguments which causes the next character to be
-    read. The value of advance is that character. After the 72nd character on the
-    card has been read, the next advance will have value $EOR$. After reading
-    $EOR$, the next advance will act like a startread, i. e., will read the first char-
-    acter of the next card unless an end-of-file condition exists. The new value of
-    CURCHAR is the same as the output of advance; executing advance also increases
-    the value of CHARCOUNT by 1. However, CHARCOUNT is undefined when
-    CURCHAR is either $EOR $ or $EOF $.
-3. endread [ 1: SUBR pseudo-function
-    endread is a function of no arguments which causes the remainder of the
-    card to be read and ignored. endread sets CURCHAR to $EOR$ and leaves
-    CHARCOUNT undefined; the value of endread is always $EOR $. An advance
-    following endread acts like a startread. If CURCHAR already has value $EOR $
-    and endread is performed, CURCHAR will remain the same and endread will,
-    as usual, have value $EOR $.
+#### 2. advance [ ] : SUBR pseudo -function
 
-Diagnostic Function
+advance is a function of no arguments which causes the next character to be read. The value of advance is that character. After the 72nd character on the card has been read, the next advance will have value $EOR$. After reading $EOR$, the next advance will act like a startread, i. e., will read the first char acter of the next card unless an end-of-file condition exists. The new value of CURCHAR is the same as the output of advance; executing advance also increases the value of CHARCOUNT by 1. However, CHARCOUNT is undefined when CURCHAR is either $EOR $ or $EOF $.
+    
+#### 3. endread [ ] : SUBR pseudo-function
 
-```
-error 1 [ 1: SUBR pseudo-function
-errorL is a function of no arguments and has value NIL. It should be executed
+endread is a function of no arguments which causes the remainder of the card to be read and ignored. endread sets CURCHAR to $EOR$ and leaves CHARCOUNT undefined; the value of endread is always $EOR $. An advance following endread acts like a startread. If CURCHAR already has value $EOR $ and endread is performed, CURCHAR will remain the same and endread will, as usual, have value $EOR $.
+
+### Diagnostic Function
+
+#### error 1 [ ]: SUBR pseudo-function
+
+error1 is a function of no arguments and has value NIL. It should be executed
 only while reading characters from a card (or tape). Its effect is to mark the char-
 acter just read, i. e., CURCHAR, so that when the end of the card is reached, either
 by successive advances or by an endread, the entire card is printed out along with
 a visual pointer to the defective character. For a line consisting of ABCDEFG fol-
 lowed by blanks, a pointer to C would look like this:
-v
+
+```
+  v
 ABCDEFG
-A
+  A
+```
 If error 1 is performed an even number of times on the same character, the A will
 not appear. If error1 is performed before the first startread or while CURCHAR
 has value $EOR $ or $EOF $, it will have no effect. Executing a startread before
@@ -4312,105 +4166,83 @@ the current card has been completed will cause the error1 printout to be lost. T
 card is considered to have been completed when CURCHAR has been set to $EOR$.
 Successive endreads will cause the error l printout to be reprinted. Any number
 of characters in a given line may be marked by error1.
-```
 
-```
-APPENDIX G
-```
+<a name="page89">page 89</a>
 
-```
-MEMORY ALLOCATION AND THE GARBAGE COLLECTOR
-```
+## APPENDIX G : MEMORY ALLOCATION AND THE GARBAGE COLLECTOR
 
-```
 The following diagram shows the way in which space is allocated in the LISP System.
-```
 
-```
-Loader
-LAP
-```
-
-```
-Compiler
-```
-
-```
-Free Storage
-```
-
-```
-Full Words
-```
-
-```
-Push-Down List
-```
-
-```
-Binary Program Space
-```
-
-```
-Interpreter, I/O, Read
-Print, Arithmetic,
-Overlord, Garbage
-Collector, and other
-system coding
-```
+| Address (octal) | Assigned to                                                  |
+| --------------- | ------------------------------------------------------------ |
+| 77777           | -----                                                        |
+|                 | Loader                                                       |
+| 77600           | -----                                                        |
+|                 | LAP                                                          |
+|                 | Compiler                                                     |
+| 70000           | -----                                                        |
+|                 | Free storage                                                 |
+|                 | Full words                                                   |
+|                 | Pushdown list                                                |
+|                 | Binary program space                                         |
+| 17000           |                                                              |
+|                 | Interpreter, I/O, Read Print, Arithmetic, Overlord, Garbage Collector, and other system coding |
+| 00000           |                                                              |
 
 The addresses in this chart are only approximate. The available space is divided
 among binary program space, push-down list, full-word space, and free-storage space
 as specified on the SIZE card when the system is made.
+
 When the compiler and LAP are not to be used again, they may be eliminated by
 executing the pseudo-function excise. This part of the memory is then converted into
 free storage.
+
 Free storage is the area in the computer where list structures are stored. This
 includes the property lists of atomic symbols, the definitions of all EXPRts and
 FEXPR1s, evalquote doublets waiting to be executed, APVALts, and partial results of
 the computation that is in progress.
+
 Full-word space is filled with the BCD characters of PNAMEts, the actual numbers
+
+<a name="page90">page 90</a>
 
 of numerical atomic structures, and the TXL words of SUBRtsB FSUBRts, and SYMts.
 All available words in the free-storage area that are not in use are strung together
 in one long list called the free-storage list. Every time a word is needed (for example,
 by s) the first word on the free-storage list is used, and the free-storage list is set
 to & of what it formerly was.
+
 Full-word space is handled in the same way. No use is made of consecutive storage
-in either of these areas of memory. They are both scrambled. '
+in either of these areas of memory. They are both scrambled. 
+
 When either of these lists is exhausted in the middle of a computation, the garbage
 collector is called automatically. Unless the computation is too large for the system,
 there are many words in free storage and full-word space that are no longer needed.
 The garbage collector locates these by marking those words that are needed. In free
 storage, the sign bit is used for marking. In full-word space, there is no room in the
 word itself. Marking is done in a bit table which is next to full-word space.
+
 Since it is important that all needed lists be marked, the garbage collector starts
 marking from several base positions including the following:
 
-1. The object list that includes all atomic symbols except numbers and generated
-names. This protects the atomic symbols, and all S-expressions that hang on the prop-
-erty lists of atomic symbols.
-2. The portion of the push-down list that is currently being used. This protects
-partial results of the computation that is in progress.
-3. The temlis, which is a list of registers scattered throughout the memory where
-binary programs store list structures that must be protected.
+1. The object list that includes all atomic symbols except numbers and generated names. This protects the atomic symbols, and all S-expressions that hang on the property lists of atomic symbols.
+2. The portion of the push-down list that is currently being used. This protects partial results of the computation that is in progress.
+3. The temlis, which is a list of registers scattered throughout the memory where binary programs store list structures that must be protected.
+
 Marking proceeds as follows. If the cell is in full-word space, then the bit table
 is marked. If the cell is in free storage, then the sign is set minus, and car and &
 of the cell are marked. If the cell is anywhere else, then nothing is done.
 After the marking is done, the new available word lists are made by stringing all
 unmarked words together. Finally, the signs in free storage are set plus.
+
 A garbage collection takes approximately 1 second on the IBM 7090 computer. It
 can be recognized by the stationary pattern of the MQ lights. Any trap that prevents
 completion of a garbage collection will create a panic condition in memory from which
 there is no recovery.
 
-```
-APPENDIX H
-```
+<a name="page91">page 91</a>
 
-```
-RECURSION AND THE PUSH-DOWN LIST
-```
+## APPENDIX H : RECURSION AND THE PUSH-DOWN LIST
 
 One of the most powerful resources of the LISP language is its ability to accept
 function definitions that make use of the very function that is being defined. This may
@@ -4418,75 +4250,79 @@ come about either directly by using the name of the function, or indirectly thro
 chain of function definitions that eventually return to the original ones. A definition of
 this type is called recursive. Its power lies in its ability to define an algorithm in
 terms of itself.
+
 A recursive definition always has the possibility of not terminating and of being
 infinitely regressive. Some recursive definitions may terminate when given certain
 inputs and not terminate for others. It is theoretically impossible to determine whether
 a definition will terminate in the general case; however, it is often possible to show
 that particular cases will or will not terminate.
+
 LISP is designed in such a way that all functions for which the possibility of recursion
 can exist are in fact recursive. This requires that all temporary stored results related
 to the computation that is in progress be set aside when a piece of coding is to be used
 recursively, and that they be later restored. This is done autorrlatically and need not
 be programmed explicitly.
+
 All saving of temporary results in LISP is performed on a linear block of storage
 called the push-down list. Each set of stored data that is moved onto the push-down
 list is in a block labeled with its size and the name of the subroutine from which it came.
 Since it is in the nature of recursion that the first block to be saved is always the last
 block to be restored, it is possible to keep the push-down list compact.
+
 The frontier of the push-down list can always be found by referring to the cell CPPI.
 The decrement of this cell contains the complementary address of the first available
 unused location on the push-down list. Index register 1 also contains this quantity,
 except during certain nonrecursive subroutines; in these last cases it must be restored
 upon leaving these routines.
+
 There are two types of blocks to be found on the push-down list, those put there by
-SAVE, and those put there by *MOVE. SAVE blocks are moved from fixed locations
+SAVE, and those put there by MOVE. SAVE blocks are moved from fixed locations
 in certain subroutines onto the push-down list, and then moved back to the place where
 they came from by UNSAVE. Each block contains parameters that tell UNSAVE how
 many words are to be moved, and where they are to be moved to.
+
 Functions compiled by the LISP compiler do not make use of storage cells located
 near the actual programming. All data are stored directly on the push-down list and
-referenced by using index register 1.*MOVE is used to update CPPI and index regis-
+referenced by using index register 1. MOVE is used to update CPPI and index regis-
 ter 1, to place the arguments on the push-down list, and to set up the parameters for
 the push-down block.
+
 Because pointers to list structures are normally stored on the push-down list, the
+
+<a name="page92">page 92</a>
 
 garbage collector must mark the currently active portion of the push-down list during a
 garbage collection. Sometimes quantities are placed on the push- down list which should
 not be marked. In this case, the sign bit must be negative. Cells on the active portion
 of the push-down list having a negative sign bit will not be marked.
+
 When an error occurs, an examination of the push-down list is an excellent indica-
 tion of what was occurring at the time of the error. Since each block on the push-down
 list has the name of the function to which it belongs, it is possible to form a list of
 these names. This is called the backtrace, and is normally printed out after error
 diagnostics.
 
-```
-APPENDIX I
-```
+<a name="page93">page 93</a>
 
-```
-LISP FOR SHARE DISTRIBUTION
-```
+## APPENDIX I : LISP FOR SHARE DISTRIBUTION
 
-```
 The Artificial Intelligence Project at Stanford University has produced a version of
 LISP 1.5 to be distributed by SHARE. In the middle of February 1965 the system is
 complete and is available from Stanford. The system should be available from SHARE
 by the end of March 1965.
+
 SHARE LISP differs somewhat from the LISP 1.5 system described in the LISP 1.5
 Programmer's Manual, but only in (generally) inessential details. It is hoped that
 the changes will be widely hailed as improvements.
-```
 
-```
-Verbos and the Garbage Collector
+### Verbos and the Garbage Collector
+
 The garbage collector now prints its message in a single-spaced format; thus, the
 amount of paper generated by a program with many constes is somewhat less than for-
 merly. Furthermore, the garbage collector printout may be suspended by executing
 "VERBOS(N1L)"; and the printout may be reinstated by executing flVERBOS(*T*)tI.
-```
 
-Flap Trap
+### Flap Trap
 
 Every now and then a state of affairs known as floating-point trap occurs - this re-
 sults when a floating-point arithmetic instruction generates a number whose exponent
@@ -4498,7 +4334,7 @@ stores a floating -point zero in the accumulator when an underflow occurs. (Ther
 has, as yet, been no request to have "infinityIt stored in the accumulator when an
 overflow occurs.)
 
-Time
+### Time
 
 The new system prints the time upon entering and leaving evalquote. In fact, two
 times are printed, but in a neat, concise, impersonal manner which, it is felt, is
@@ -4512,6 +4348,8 @@ the time spent in the packet being finished. This time printout, to be meaningfu
 requires the computer to have a millisecond clock in cell 5 (RPQ F 89349, with mil-
 lisecond feature).
 
+<a name="page94">page 94</a>
+
 It is also possible to determine how much time is required to execute a given func-
 tion. llTIMEl()lt initializes two time cells to zero and prints out, in the same format
 that is used for the evalquote time printout, two times, and these are both zero.
@@ -4519,11 +4357,10 @@ prints (again in the evalquote time printout format) the time since the last
 execution of "TIME()" and the time since the last execution of "TIMEl()". The use
 of the time and time1 functions has no effect on the times recorded by evalquote.
 
-```
-Lap and Symtab
+### Lap and Symtab
+
 Heretofore, lap has not only returned the symbol table as its value but has printed
 it out as well. This phenomenon is familiar to those who have much at all to do with
-```
 
 -- lap or the compiler. The lap in the new system always prints the function name and
 the octal location in which the first word of the assembled function is stored. (If the
@@ -4534,57 +4371,57 @@ The value of - lap is still the symbol table, but the printing of the symbol tab
 be suspended by executing llSYMTAB(NIL)lt; and the printing may be restored by ex-
 ecuting uSYMTAB(*T*)ll.
 
-```
-Non -Printing Compiler
+### Non-Printing Compiler
+
 The problem of the verbosity of the compiler is only slightly abated by the symtab
 function. The remainder of the trouble may be cured by executing "LISTING(NIL)ll.
 This turns off the printout of the lap code generated by the compiler. And, of course,
 the printout may be reinstated by executing llLISTING(*T*)ll. Thus, for a perfectly
 quiet compilation (except for the origin printout by lap), one need only execute
 I1SYMTAB(NIL)l1 and LISTING(NIL)I1 before compiling.
-```
 
-```
-Tracecount (Alarm-Clock Trace)
+### Tracecount (Alarm-Clock Trace)
+
 The trace feature of LISP is quite useful; but, with very little encouragement, it
 can be made to generate wastebaskets full of useless output. Often a programmer
 will find that his output (without tracing) consists of many lines of garbage collector
 printout, an error message, and a few cryptic remarks concerning the condition
 of the push-down list at the time the error occurred. In such a situation, one wishes
 he could begin tracing only a short time before the occurrence of the error. The
-tracecount function permits exactly this. " TRACECOUNT(X)~~ causes the tracing
+tracecount function permits exactly this. " TRACECOUNT(X)  causes the tracing
 (of those functions designated to be traced by the trace function call) to begin
 after x number of function entrances. Furthermore, when the tracecount mecha-
 nism has been activated, by execution of ltTRACECOUNT(x)ll, some of the blank
 space in the garbage collector printout will be used to output the number of function
 entrances which have taken place up to the time of the garbage collection; each time
-```
 
-```
+<a name="page95">page 95</a>
+
 the arguments or value of a traced function are printed the number of function en-
 trances will be printed; and if an error occurs, the number of function entrances ac-
 complished before the error will be printed.
+
 The tracecount feature (or alarm-clock trace, as it is called by Marvin Minsky of
 M. I. T.) enables a programmer to run a job (preceding the program by "TRACE-
 COUNT(O)It), estimate the number of function entrances that occur before the pro-
 gram generates an error condition or a wrong answer, and then run the job again,
 tracing only the pertinent portion of the execution.
-```
 
-```
-Space and Eject
+### Space and Eject
+
 A small amount of additional control over the form of the data printed by LISP has
 been provided in the space and eject functions.
+
 ttSPACE(*T*)tt causes all output to be double-spaced. nSPACE(NIL)u restores the
 spacing to its original status; in particular, the output of the print routine reverts
 to single -spacing, and the "END OF EVALQUOTE OPERATORnt printout again ejects
 the page before printing.
+
 "EJECT()tt causes a blank line with a carriage control character of 1 to be printed
 on the output tape. The result is a skip to the top of the next page of output.
-```
 
-```
-Untime
+### Untime
+
 This routine is not available to the programmer, but its mention here may prevent
 some anxiety. In the event that the program time estimate is exceeded during system
 I/O, using the old system, one finds himself in the position of having part of one sys-
@@ -4597,18 +4434,17 @@ write operation (in a machine with a millisecond core clock this is the case - m
 chines with 1/60 second core clocks add 50 seconds, but this is easily changed). A
 clock trap that would normally have occurred during the execution of the read or
 write will be executed before the I/O operation takes place.
-```
 
-```
-Tape
+### Tape
+
 A few programmers with very large programs have long bemoaned the inability
 of LISP to communicate between different systems. The functions tape, -- rewind,
-```
-
 -- mprht, mread, and backspace have been designed to alleviate this difficulty.
 ttTAPE(s)tt, where s is a list, allows the user to specify up to ten scratch tapes;
 if more than ten are specified, only the first ten are used. The value of tape is its
 argument. The initial tape settings are, from one to ten, A4, A5, A6, A7, A8, B2,
+
+<a name="page96">page 96</a>
 
 B3, B4, B5, B6. The tapes must be specified by the octal number that occurs in the
 address portion of a machine-language instruction to rewind that tape; that is, a four-
@@ -4619,16 +4455,15 @@ one, two, and three are to be tapes A4, B1, and A5, respectively, execute "TAPE
 ((1204Q 2201Q 1205Q))I1. Only the low-order fifteen bits of the numbers in +he tape
 list are used by the tape routines, so it is possible to use decimal integers or floating-
 point numb.ers in the tape list without generating errors.
-.
 
-Rewind
+### Rewind
 
 llREWIND(x)w rewinds scratch tape x, as specified in the most recently exe-
 cuted tape function. For example, if the last tape function executed was 'ITAPE
 ((1 204Q 2201Q))n, then wREWIND(2)11 will cause tape B1 to be rewound. The value
 of rewind is NIL.
 
-Mprint
+### Mprint
 
 "MPRINT(x s)I1 prints the S-expression s on scratch tape x. The format of
 the output is identical to the normal LISP output, except that sequence numbers are
@@ -4637,12 +4472,12 @@ printed in the rightmost eight columns of the output line and the output line is
 is suitable for punching or being read by mread. The value of mprint is the list
 printed.
 
-Mread
+### Mread
 
 NMREAD(x)lq reads one S-expression from scratch tape x. The value of mread is
 the S-expression read.
 
-Backspace
+### Backspace
 
 llBACKSPACE(x)" causes scratch tape x to be backspaced one record. Cau-
 tion in the use of this function is recommended, for if an S-expression to be read
@@ -4650,13 +4485,15 @@ from tape contains more than 72 characters, then it will occupy more than one re
 on the tape, and single backspace will not move the tape all the way back to the be-
 ginning of the S-expression. The value of backspace is NIL.
 
-Evalquote
+### Evalquote
 
 Evalquote is available to the programmer as a LISP function - thus, one may now
 write I1(EVALQUOTE APPEND ((A)(B C D)))I1, rather than "(EVAL (QUOTE (APPEND
 (A)(B C D))) NIL)", should one desire to do so.
 
-Bac ktrace
+<a name="page97">page 97</a>
+
+### Backtrace
 
 This function was copied (not quite literally) from M. I. T.'s LISP system on the
 time-shared 7094. Backtrace is a function of no arguments in which the manner of
@@ -4666,29 +4503,30 @@ rors occur. Thereafter, the value of "BACKTRACE NILu is the backtrace for the
 most recent error; and "BACKTRACE xtl, for x not NIL, restores the backtrace
 printout to the error routine. Backtrace should always be evaluated by evalquote.
 
-Read-In Errors
+### Read-In Errors
+
 A common cause of free-storage or circular list printouts is an error (in paren-
 thesis count, usually) during the initial read-in of a packet. The new system causes
 the accumulator to be cleared if an error occurs during the initial read-in, so that
 the contents of the accumulator are printed as ttNIL1t.
 
-Obkeep
+### Obkeep
 
 Anyone desperate for a few more words of free storage may make up a list, s, of
 all atom names he wants to retain in his personal LISP systems, then execute (in a
 SET packet) "OBKEEP(s)". All atoms except those which are members of s will be
 eliminated from the object list.
 
-```
-Reserved
+### Reserved
+
 "RESERVED NILtt prints the names of the atoms on the object list in alphabetical
 order, along with the indicators (not alphabetized, and flags may be missed) on their
 property lists. This function should help to solve some of the problems that arise
 involving mysterious behavior of compiled functions that worked fine when inter-
 preted.
-```
 
-Gensym and Symnam
+### Gensym and Symnam
+
 Gensym now omits leading zeroes from the numeric portions of the print-names of
 the symbols it generates; thus, what once looked like ltGOOOO1tt now prints as ltGln.
 Furthermore, it is possible to specify a heading word of from zero to six characters
@@ -4703,6 +4541,9 @@ defined results.
 
 For the convenience of those who find it difficult to get along with the tlCONDn form
 of the conditional statement, the following "IF" forms are provided in the new system.
+
+<a name="page98">page 98</a>
+
 "IF (a THEN b ELSE c)I1 and "IF (a b c)I1 are equivalent to nCOND ((a b)(T c))". "IF
 (a THEN b)n and "IF (a b)" are equivalent to "COND ((a b))".
 
@@ -4714,20 +4555,17 @@ step s until u do begin dl... dn endN. The value of the for statement is the val
 of dn the last time it was evaluated. The final value of index is available outside
 the for function because cset is used to set the index.
 
-Sublis
+### Sublis
 
 Sublis has been re-hand-compiled so that it behaves as if it were defined as fol-
 lows :
 
-###### null[x] - e
-
-###### eq[caar[x];e] - cdar[x]
-
-###### T - subb[cdr[x]]
-
 ```
+null[x] -> e
+ eq[caar[x];e] -> cdar[x]
+T -> subb[cdr[x]]
+
 111~~1;
-```
 
 ###### T -
 
@@ -4740,18 +4578,15 @@ T -. cons[u;v]
 The differences between the new sublis and the old one, as far as the programmer is
 concerned, are that the new model is faster and the result shares as much storage
 as possible with e.
-```
 
-```
+
 Characteristics of the System
-```
 
-```
 The set-up deck supplied with the SHARE LISP system produces a system tape
 with the following properties:
-```
 
-```
+<a name="page99">page 99</a>
+
 Size (in words) -
 Binary Program Space 14000 octal
 Push-Down List 5000 octal
@@ -4762,11 +4597,9 @@ System Temporary Tape (SYSTMP) B6
 System Input Tape (SYSPIT) A2
 System Output Tape (SYSPOT) A3
 System Punch Tape (SYSPPT) A3
-```
 
 The console switches may be used to obtain special results:
 
-```
 SW1 on for LISP input from on-line card reader
 SW2 has no effect
 SW3 on for LISP output on on-line printer
@@ -4774,9 +4607,10 @@ SW4 has no effect
 SW5 on to suppress SYSPOT output
 SW6 on to return to overlord after accumulator printout resulting from
 error *I? 5*. SW6 off for error printout.
-```
 
-## Index
+<a name="page100">page 100</a>
+
+## Index to function descriptions
 
 | Function     | Call type  | Implementation   | Pages                        |
 |--------------|------------|------------------|------------------------------|

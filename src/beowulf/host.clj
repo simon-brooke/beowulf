@@ -2,14 +2,12 @@
   "provides Lisp 1.5 functions which can't be (or can't efficiently
    be) implemented in Lisp 1.5, which therefore need to be implemented in the
    host language, in this case Clojure."
-  (:require [clojure.string :refer [upper-case]]
-            [beowulf.cons-cell :refer [F make-cons-cell make-beowulf-list
-                                       pretty-print T]]
-            ;; note hyphen - this is Clojure...
+  (:require [beowulf.cons-cell :refer [F make-beowulf-list make-cons-cell T]] ;; note hyphen - this is Clojure...
             [beowulf.gendoc :refer [open-doc]]
-            [beowulf.oblist :refer [*options* oblist NIL]])
-  (:import [beowulf.cons_cell ConsCell]
-           ;; note underscore - same namespace, but Java.
+            [beowulf.oblist :refer [*options* NIL oblist]]
+            [clojure.set :refer [union]]
+            [clojure.string :refer [upper-case]])
+  (:import [beowulf.cons_cell ConsCell] ;; note underscore - same namespace, but Java.
            ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -164,17 +162,32 @@
       (number? value)
       (symbol? value)
       (= value NIL))
-      (do
+      (try
         (.rplaca cell value)
-        cell)
+        cell
+        (catch Throwable any
+          (throw (ex-info
+                  (str (.getMessage any) " in RPLACA: `")
+                  {:cause :upstream-error
+                   :phase :host
+                   :function :rplaca
+                   :args (list cell value)
+                   :type :beowulf}
+                  any))))
       (throw (ex-info
               (str "Invalid value in RPLACA: `" value "` (" (type value) ")")
               {:cause :bad-value
-               :detail :rplaca})))
+               :phase :host
+               :function :rplaca
+               :args (list cell value)
+               :type :beowulf})))
     (throw (ex-info
             (str "Invalid cell in RPLACA: `" cell "` (" (type cell) ")")
-            {:cause :bad-value
-             :detail :rplaca}))))
+            {:cause :bad-cell
+             :phase :host
+             :function :rplaca
+             :args (list cell value)
+             :type :beowulf}))))
 
 (defn RPLACD
   "Replace the CDR pointer of this `cell` with this `value`. Dangerous, should
@@ -189,17 +202,32 @@
       (number? value)
       (symbol? value)
       (= value NIL))
-      (do
+      (try
         (.rplacd cell value)
-        cell)
+        cell
+        (catch Throwable any
+          (throw (ex-info
+                  (str (.getMessage any) " in RPLACD: `")
+                  {:cause :upstream-error
+                   :phase :host
+                   :function :rplacd
+                   :args (list cell value)
+                   :type :beowulf}
+                  any))))
       (throw (ex-info
               (str "Invalid value in RPLACD: `" value "` (" (type value) ")")
               {:cause :bad-value
-               :detail :rplaca})))
+               :phase :host
+               :function :rplacd
+               :args (list cell value)
+               :type :beowulf})))
     (throw (ex-info
             (str "Invalid cell in RPLACD: `" cell "` (" (type cell) ")")
-            {:cause :bad-value
-             :detail :rplaca}))));; PLUS
+            {:cause :bad-cell
+             :phase :host
+             :detail :rplacd
+             :args (list cell value)
+             :type :beowulf}))));; PLUS
 
 (defn LIST
   [& args]
@@ -260,9 +288,20 @@
    In `beowulf.host` principally because I don't yet feel confident to define
    varargs functions in Lisp."
   [& args]
-  (if (empty? (filter #(or (= 'F %) (= NIL %) (nil? %)) args))
-    'T
-    'F))
+  (cond (= NIL args) T
+        (not (#{NIL F} (.getCar args))) (AND (.getCdr args))
+        :else T))
+
+(defn OR
+  "`T` if and only if at least one of my `args` evaluates to something other
+  than either `F` or `NIL`, else `F`.
+   
+   In `beowulf.host` principally because I don't yet feel confident to define
+   varargs functions in Lisp."
+  [& args]
+  (cond (= NIL args) F
+        (not (#{NIL F} (.getCar args))) T
+        :else (OR (.getCdr args))))
 
 ;;;; Operations on lists ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -394,38 +433,87 @@
     (make-beowulf-list (map CAR @oblist))
     NIL))
 
+(def magic-marker
+  "The unexplained magic number which marks the start of a property list."
+  (Integer/parseInt "77777" 8))
+
+(defn PUT
+  "Put this `value` as the value of the property indicated by this `indicator` 
+   of this `symbol`. Return `value` on success.
+   
+   NOTE THAT there is no `PUT` defined in the manual, but it would have been 
+   easy to have defined it so I don't think this fully counts as an extension."
+  [symbol indicator value]
+  (if-let [binding (ASSOC symbol @oblist)]
+    (if-let [prop (ASSOC indicator (CDDR binding))]
+      (RPLACD prop value)
+      (RPLACD binding
+              (make-cons-cell
+               magic-marker
+               (make-cons-cell
+                indicator
+                (make-cons-cell value (CDDR binding))))))
+    (swap!
+     oblist
+     (fn [ob s p v]
+       (make-cons-cell
+        (make-beowulf-list (list s magic-marker p v))
+        ob))
+     symbol indicator value)))
+
+(defn GET
+  "From the manual:
+   
+   '`get` is somewhat like `prop`; however its value is car of the rest of
+   the list if the `indicator` is found, and NIL otherwise.'
+   
+   It's clear that `GET` is expected to be defined in terms of `PROP`, but
+   we can't implement `PROP` here because we lack `EVAL`; and we can't have
+   `EVAL` here because both it and `APPLY` depends on `GET`.
+   
+   OK, It's worse than that: the statement of the definition of `GET` (and 
+   of) `PROP` on page 59 says that the first argument to each must be a list;
+   But the in the definition of `ASSOC` on page 70, when `GET` is called its
+   first argument is always an atom. Since it's `ASSOC` and `EVAL` which I 
+   need to make work, I'm going to assume that page 59 is wrong."
+  [symbol indicator]
+  (let [binding (ASSOC symbol @oblist)]
+    (cond
+      (= binding NIL) NIL
+      (= magic-marker (CADR binding)) (loop [b binding]
+                                        (cond (= b NIL) NIL
+                                              (= (CAR b) indicator) (CADR b)
+                                              :else (recur (CDR b))))
+      :else (throw
+             (ex-info "Misformatted property list (missing magic marker)"
+                      {:phase :host
+                       :function :get
+                       :args (list symbol indicator)
+                       :type :beowulf})))))
+
+(defn DEFLIST
+  "For each pair in this association list `a-list`, set the property with this
+   `indicator` of the symbol which is the first element of the pair to the 
+   value which is the second element of the pair. See page 58 of the manual."
+  [a-list indicator]
+  (map
+   #(PUT (CAR %) indicator (CDR %))
+   a-list))
+
 (defn DEFINE
   "Bootstrap-only version of `DEFINE` which, post boostrap, can be overwritten 
   in LISP. 
 
-  The single argument to `DEFINE` should be an assoc list which should be 
-  nconc'ed onto the front of the oblist. Broadly, 
-  (SETQ OBLIST (NCONC ARG1 OBLIST))"
-  [args]
-  (swap!
-   oblist
-   (fn [ob arg1]
-     (loop [cursor arg1 a arg1]
-       (if (= (CDR cursor) NIL)
-         (do
-           (.rplacd cursor @oblist)
-           (pretty-print a)
-           a)
-         (recur (CDR cursor) a))))
-   (CAR args)))
+  The single argument to `DEFINE` should be an association list of symbols to
+   lambda functions. See page 58 of the manual."
+  [a-list]
+  (DEFLIST a-list 'EXPR))
 
 (defn SET
   "Implementation of SET in Clojure. Add to the `oblist` a binding of the
    value of `var` to the value of `val`. NOTE WELL: this is not SETQ!"
   [symbol val]
-  (when
-   (swap!
-    oblist
-    (fn [ob s v] (if-let [binding (ASSOC symbol ob)] 
-                   (RPLACD binding v)
-                   (make-cons-cell (make-cons-cell s v) ob)))
-    symbol val)
-    val))
+  (PUT symbol 'APVAL val))
 
 ;;;; TRACE and friends ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -437,19 +525,26 @@
   "Return `true` iff `s` is a symbol currently being traced, else `nil`."
   [s]
   (try (contains? @traced-symbols s)
-       (catch Throwable _)))
+       (catch Throwable _ nil)))
 
 (defn TRACE
-  "Add this symbol `s` to the set of symbols currently being traced. If `s`
-   is not a symbol, does nothing."
+  "Add this `s` to the set of symbols currently being traced. If `s`
+   is not a symbol or sequence of symbols, does nothing."
   [s]
-  (when (symbol? s)
-    (swap! traced-symbols #(conj % s))))
+  (swap! traced-symbols
+         #(cond
+            (symbol? s) (conj % s)
+            (and (seq? s) (every? symbol? s)) (union % (set s))
+            :else %)))
 
 (defn UNTRACE
+  "Remove this `s` from the set of symbols currently being traced. If `s`
+   is not a symbol or sequence of symbols, does nothing."
   [s]
-  (when (symbol? s)
-    (swap! traced-symbols #(set (remove (fn [x] (= s x)) %)))))
+  (cond
+    (symbol? s) (swap! traced-symbols #(set (remove (fn [x] (= s x)) %)))
+    (and (seq? s) (every? symbol? s)) (map UNTRACE s))
+  @traced-symbols)
 
 ;;;; Extensions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -470,4 +565,4 @@
    argument was, or was not, a cons cell."
   [o]
   (when (lax? 'CONSP)
-    (if (instance? o ConsCell) 'T 'F)))
+    (if (instance? ConsCell o) 'T 'F)))

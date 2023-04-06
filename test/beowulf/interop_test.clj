@@ -1,6 +1,7 @@
 (ns beowulf.interop-test
   (:require [clojure.test :refer [deftest is testing]]
-            [beowulf.bootstrap :refer [EVAL INTEROP]]
+            [beowulf.bootstrap :refer [EVAL]]
+            [beowulf.interop :refer [INTEROP]]
             [beowulf.read :refer [gsp]]))
 
 
