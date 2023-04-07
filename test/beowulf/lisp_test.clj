@@ -146,5 +146,11 @@
           actual (reps "(MEMBER 'BERTRAM '(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED))")]
       (is (= actual expected)))))
 
-       
-  
+(deftest sublis-tests
+  (testing "sublis"
+    (let [expected "(SHAKESPEARE WROTE (THE TEMPEST))"
+          actual (reps
+                   "(SUBLIS
+                     '((X . SHAKESPEARE) (Y . (THE TEMPEST)))
+                     '(X WROTE Y))")]
+      (is (= actual expected)))))

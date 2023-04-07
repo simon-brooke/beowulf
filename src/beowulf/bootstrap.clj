@@ -39,16 +39,19 @@
 
 (declare APPLY EVAL prog-eval)
 
+;;;; The PROGram feature ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (def find-target
   (memoize
    (fn [target body]
      (loop [body' body]
        (cond
-         (= body' NIL) (throw (ex-info "Invalid GO target"
+         (= body' NIL) (throw (ex-info (str "Invalid GO target `" target "`")
                                        {:phase :lisp
                                         :function 'PROG
-                                        :type :lisp
-                                        :code :A6}))
+                                        :type :lisp 
+                                        :code :A6
+                                        :target target}))
          (= (.getCar body') target) body'
          :else (recur (.getCdr body')))))))
 
@@ -64,6 +67,14 @@
           (recur (.getCdr clauses'))))
       NIL)))
 
+(defn- merge-vars [vars env]
+  (reduce
+   #(make-cons-cell 
+     (make-cons-cell %2 (@vars %2))
+      env)
+   env
+   (keys @vars)))
+
 (defn prog-eval
   "Like `EVAL`, q.v., except handling symbols, and expressions starting
    `GO`, `RETURN`, `SET` and `SETQ` specially."
@@ -75,23 +86,30 @@
                                 COND (prog-cond (.getCdr expr)
                                                 vars env depth)
                                 GO (make-cons-cell
-                                    '*PROGGO* (.getCdr expr))
+                                    '*PROGGO* (.getCar (.getCdr expr)))
                                 RETURN (make-cons-cell
                                         '*PROGRETURN*
-                                        (EVAL (.getCdr expr) env depth))
-                                SET (swap! vars
+                                        (prog-eval (.getCar (.getCdr expr))
+                                                   vars env depth))
+                                SET (let [v (CADDR expr)]
+                                      (swap! vars
                                            assoc
                                            (prog-eval (CADR expr)
                                                       vars env depth)
                                            (prog-eval (CADDR expr)
                                                       vars env depth))
-                                SETQ (swap! vars
+                                      v)
+                                SETQ (let [v (CADDR expr)]
+                                       (swap! vars
                                             assoc
                                             (CADR expr)
-                                            (prog-eval (CADDR expr)
+                                            (prog-eval v
                                                        vars env depth))
+                                       v)
                                  ;; else
-                                (beowulf.bootstrap/EVAL expr env depth))))
+                                (beowulf.bootstrap/EVAL expr
+                                                        (merge-vars vars env) 
+                                                        depth))))
 
 (defn PROG
   "The accursed `PROG` feature. See page 71 of the manual.
@@ -157,40 +175,31 @@
     (loop [cursor body]
       (let [step (.getCar cursor)]
         (when trace (do (println "Executing step: " step)
-                        (println "  with vars: " vars)))
+                        (println "  with vars: " @vars)))
         (cond (= cursor NIL) NIL
-              (symbol? step) (recur step)
+              (symbol? step) (recur (.getCdr cursor))
               :else (let [v (prog-eval (.getCar cursor) vars env depth)]
+                      (when trace (println "  --> " v))
                       (if (instance? ConsCell v)
                         (case (.getCar v)
                           *PROGGO* (let [target (.getCdr v)]
                                      (if (targets target)
                                        (recur (find-target target body))
-                                       (throw (ex-info "Invalid GO target"
+                                       (throw (ex-info (str "Invalid GO target `"
+                                                            target "`")
                                                        {:phase :lisp
                                                         :function 'PROG
                                                         :args program
                                                         :type :lisp
-                                                        :code :A6}))))
+                                                        :code :A6
+                                                        :target target
+                                                        :targets targets}))))
                           *PROGRETURN* (.getCdr v)
                         ;; else
                           (recur (.getCdr cursor)))
                         (recur (.getCdr cursor)))))))))
 
-
-
-(defn try-resolve-subroutine
-  "Attempt to resolve this `subr` with these `arg`."
-  [subr args]
-  (when (and subr (not= subr NIL))
-    (try @(resolve subr)
-         (catch Throwable any
-           (throw (ex-info "Failed to resolve subroutine"
-                           {:phase :apply
-                            :function subr
-                            :args args
-                            :type :beowulf}
-                           any))))))
+;;;; Tracing execution ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn- trace-call
   "Show a trace of a call to the function named by this `function-symbol` 
@@ -218,6 +227,21 @@
    (when (symbol? s)
      (first (remove #(= % NIL) (map #(GET s %)
                                     indicators))))))
+
+;;;; APPLY ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn try-resolve-subroutine
+  "Attempt to resolve this `subr` with these `args`."
+  [subr args]
+  (when (and subr (not= subr NIL))
+    (try @(resolve subr)
+         (catch Throwable any
+           (throw (ex-info "Failed to resolve subroutine"
+                           {:phase :apply
+                            :function subr
+                            :args args
+                            :type :beowulf}
+                           any))))))
 
 (defn- apply-symbolic
   "Apply this `funtion-symbol` to these `args` in this `environment` and 
@@ -281,6 +305,8 @@
     (trace-response 'APPLY result depth)
     result))
 
+;;;; EVAL ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn- EVCON
   "Inner guts of primitive COND. All `clauses` are assumed to be
   `beowulf.cons-cell/ConsCell` objects. Note that tests in Lisp 1.5
@@ -319,17 +345,17 @@
 
 (defn- eval-symbolic
   [expr env depth]
-  (let [v (value expr (list 'APVAL))
+  (let [v (ASSOC expr env)
         indent (apply str (repeat depth "-"))]
     (when (traced? 'EVAL)
-      (println (str indent ": EVAL: deep binding (" expr " . " (or v "nil") ")")))
-    (if (and v (not= v NIL))
-      v
-      (let [v' (ASSOC expr env)]
+      (println (str indent ": EVAL: shallow binding: " (or v "nil"))))
+    (if (instance? ConsCell v)
+      (.getCdr v)
+      (let [v' (value expr (list 'APVAL))]
         (when (traced? 'EVAL)
-          (println (str indent ": EVAL: shallow binding: " (or v' "nil"))))
-        (if (and v' (not= v' NIL))
-          (.getCdr v')
+          (println (str indent ": EVAL: deep binding: (" expr " . " (or v' "nil") ")" )))
+        (if v'
+          v'
           (throw (ex-info "No binding for symbol found"
                           {:phase :eval
                            :function 'EVAL
@@ -349,7 +375,7 @@
    (let [expr' (if (and (coll? expr) (not (instance? ConsCell expr)))
                  (make-beowulf-list expr)
                  expr)]
-     (EVAL expr' @oblist 0)))
+     (EVAL expr' NIL 0)))
   ([expr env depth]
    (trace-call 'EVAL (list expr env depth) depth)
    (let [result (cond

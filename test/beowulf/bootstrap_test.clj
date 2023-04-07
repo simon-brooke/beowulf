@@ -1,19 +1,26 @@
 (ns beowulf.bootstrap-test
-  (:require [clojure.test :refer [deftest testing is]]
-            [beowulf.cons-cell :refer [make-cons-cell T F]]
-            [beowulf.host :refer [ASSOC ATOM ATOM? CAR CAAAAR CADR
-                                       CADDR CADDDR CDR EQ EQUAL 
-                                       PAIRLIS]]
+  (:require [beowulf.bootstrap :refer [EVAL]]
+            [beowulf.cons-cell :refer [F make-cons-cell T]]
+            [beowulf.host :refer [ASSOC ATOM ATOM? CAAAAR CADDDR CADDR CADR
+                                  CAR CDR EQ EQUAL PAIRLIS]]
             [beowulf.oblist :refer [NIL]]
-            [beowulf.read :refer [gsp]]))
+            [beowulf.read :refer [gsp READ]]
+            [clojure.test :refer [deftest is testing]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; This file is primarily tests of the functions in `beowulf.eval` - which
+;;; This file is primarily tests of the functions in `beowulf.bootstrap` - which
 ;;; are Clojure functions, but aim to provide sufficient functionality that
 ;;; Beowulf can get up to the level of running its own code.
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn- reps
+  "'Read eval print string', or 'read eval print single'.
+   Reads and evaluates one input string, and returns the
+   output string."
+  [input]
+  (with-out-str (print (EVAL (READ input)))))
 
 (deftest atom-tests
   (testing "ATOM"
@@ -197,12 +204,13 @@
                      (gsp "((A . (M N)) (B . (CAR X)) (C . (QUOTE M)) (C . (CDR X)))")))]
       (is (= actual expected)))))
 
-;; TODO: need to reimplement this in lisp_test
-;; (deftest sublis-tests
-;;   (testing "sublis"
-;;     (let [expected "(SHAKESPEARE WROTE (THE TEMPEST))"
-;;           actual (print-str
-;;                    (SUBLIS
-;;                      (gsp "((X . SHAKESPEARE) (Y . (THE TEMPEST)))")
-;;                      (gsp "(X WROTE Y)")))]
-;;       (is (= actual expected)))))
+(deftest prog-tests
+  (testing "PROG"
+    (let [expected "5"
+          actual (reps "(PROG (X)
+    (SETQ X 1)
+    START
+    (SETQ X (ADD1 X))
+    (COND ((EQ X 5) (RETURN X))
+        (T (GO START))))")]
+      (is (= actual expected)))))
