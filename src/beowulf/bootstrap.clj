@@ -9,7 +9,8 @@
   ALLUPPERCASE are Lisp 1.5 functions (although written in Clojure) and that
   therefore all arguments must be numbers, symbols or `beowulf.cons_cell.ConsCell`
   objects."
-  (:require [beowulf.cons-cell :refer [make-beowulf-list make-cons-cell T]]
+  (:require [beowulf.cons-cell :refer [F make-beowulf-list make-cons-cell
+                                       pretty-print T]]
             [beowulf.host :refer [ASSOC ATOM CAAR CADAR CADDR CADR CAR CDR GET
                                   LIST NUMBERP PAIRLIS traced?]]
             [beowulf.oblist :refer [*options* NIL oblist]])
@@ -36,7 +37,147 @@
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(declare APPLY EVAL)
+(declare APPLY EVAL prog-eval)
+
+(def find-target
+  (memoize
+   (fn [target body]
+     (loop [body' body]
+       (cond
+         (= body' NIL) (throw (ex-info "Invalid GO target"
+                                       {:phase :lisp
+                                        :function 'PROG
+                                        :type :lisp
+                                        :code :A6}))
+         (= (.getCar body') target) body'
+         :else (recur (.getCdr body')))))))
+
+(defn- prog-cond
+  "Like `EVCON`, q.v. except using `prog-eval` instead of `EVAL` and not
+   throwing an error if no clause matches."
+  [clauses vars env depth]
+  (loop [clauses' clauses]
+    (if-not (= clauses' NIL)
+      (let [test (prog-eval (CAAR clauses') vars env depth)]
+        (if (not (#{NIL F} test))
+          (prog-eval (CADAR clauses') vars env depth)
+          (recur (.getCdr clauses'))))
+      NIL)))
+
+(defn prog-eval
+  "Like `EVAL`, q.v., except handling symbols, and expressions starting
+   `GO`, `RETURN`, `SET` and `SETQ` specially."
+  [expr vars env depth]
+  (cond
+    (number? expr) expr
+    (symbol? expr) (@vars expr)
+    (instance? ConsCell expr) (case (.getCar expr)
+                                COND (prog-cond (.getCdr expr)
+                                                vars env depth)
+                                GO (make-cons-cell
+                                    '*PROGGO* (.getCdr expr))
+                                RETURN (make-cons-cell
+                                        '*PROGRETURN*
+                                        (EVAL (.getCdr expr) env depth))
+                                SET (swap! vars
+                                           assoc
+                                           (prog-eval (CADR expr)
+                                                      vars env depth)
+                                           (prog-eval (CADDR expr)
+                                                      vars env depth))
+                                SETQ (swap! vars
+                                            assoc
+                                            (CADR expr)
+                                            (prog-eval (CADDR expr)
+                                                       vars env depth))
+                                 ;; else
+                                (beowulf.bootstrap/EVAL expr env depth))))
+
+(defn PROG
+  "The accursed `PROG` feature. See page 71 of the manual.
+   
+   Lisp 1.5 introduced `PROG`, and most Lisps have been stuck with it ever 
+   since. It introduces imperative programming into what should be a pure 
+   functional language, and consequently it's going to be a pig to implement.
+   
+   Broadly, `PROG` is a variadic pseudo function called as a `FEXPR` (or 
+   possibly an `FSUBR`, although I'm not presently sure that would even work.)
+
+   The arguments, which are unevaluated, are a list of forms, the first of 
+   which is expected to be a list of symbols which will be treated as names 
+   of variables within the program, and the rest of which (the 'program body')
+   are either lists or symbols. Lists are treated as Lisp expressions which
+   may be evaulated in turn. Symbols are treated as targets for the `GO` 
+   statement. 
+      
+   **GO:** 
+   A `GO` statement takes the form of `(GO target)`, where 
+   `target` should be one of the symbols which occur at top level among that
+   particular invocation of `PROG`s arguments. A `GO` statement may occur at 
+   top level in a PROG, or in a clause of a `COND` statement in a `PROG`, but
+   not in a function called from the `PROG` statement. When a `GO` statement
+   is evaluated, execution should transfer immediately to the expression which
+   is the argument list immediately following the symbol which is its target.
+
+   If the target is not found, an error with the code `A6` should be thrown.
+
+   **RETURN:** 
+   A `RETURN` statement takes the form `(RETURN value)`, where 
+   `value` is any value. Following the evaluation of a `RETURN` statement, 
+   the `PROG` should immediately exit without executing any further 
+   expressions, returning the  value.
+
+   **SET and SETQ:**
+   In addition to the above, if a `SET` or `SETQ` expression is encountered
+   in any expression within the `PROG` body, it should affect not the global
+   object list but instead only the local variables of the program.
+
+   **COND:**
+   In **strict** mode, when in normal execution, a `COND` statement none of 
+   whose clauses match should not return `NIL` but should throw an error with
+   the code `A3`... *except* that inside a `PROG` body, it should not do so.
+   *sigh*.
+
+   **Flow of control:**
+   Apart from the exceptions specified above, expressions in the program body
+   are evaluated sequentially. If execution reaches the end of the program 
+   body, `NIL` is returned.
+
+   Got all that?
+
+   Good."
+  [program env depth]
+  (let [trace (traced? 'PROG)
+        vars (atom (reduce merge (map #(assoc {} % NIL) (.getCar program))))
+        body (.getCdr program)
+        targets (set (filter symbol? body))]
+    (when trace (do
+                  (println "Program:")
+                  (pretty-print program))) ;; for debugging
+    (loop [cursor body]
+      (let [step (.getCar cursor)]
+        (when trace (do (println "Executing step: " step)
+                        (println "  with vars: " vars)))
+        (cond (= cursor NIL) NIL
+              (symbol? step) (recur step)
+              :else (let [v (prog-eval (.getCar cursor) vars env depth)]
+                      (if (instance? ConsCell v)
+                        (case (.getCar v)
+                          *PROGGO* (let [target (.getCdr v)]
+                                     (if (targets target)
+                                       (recur (find-target target body))
+                                       (throw (ex-info "Invalid GO target"
+                                                       {:phase :lisp
+                                                        :function 'PROG
+                                                        :args program
+                                                        :type :lisp
+                                                        :code :A6}))))
+                          *PROGRETURN* (.getCdr v)
+                        ;; else
+                          (recur (.getCdr cursor)))
+                        (recur (.getCdr cursor)))))))))
+
+
 
 (defn try-resolve-subroutine
   "Attempt to resolve this `subr` with these `arg`."
@@ -143,15 +284,26 @@
 (defn- EVCON
   "Inner guts of primitive COND. All `clauses` are assumed to be
   `beowulf.cons-cell/ConsCell` objects. Note that tests in Lisp 1.5
-   often return `F`, not `NIL`, on failure.
+   often return `F`, not `NIL`, on failure. If no clause matches,
+   then, strictly, we throw an error with code `:A3`.
 
-   See page 13 of the Lisp 1.5 Programmers Manual."
+   See pages 13 and 71 of the Lisp 1.5 Programmers Manual."
   [clauses env depth]
-  (let [test (EVAL (CAAR clauses) env depth)]
-    (if
-     (and (not= test NIL) (not= test 'F))
-      (EVAL (CADAR clauses) env depth)
-      (EVCON (CDR clauses) env depth))))
+  (loop [clauses' clauses]
+    (if-not (= clauses' NIL)
+      (let [test (EVAL (CAAR clauses') env depth)]
+        (if (not (#{NIL F} test))
+         ;; (and (not= test NIL) (not= test F))
+          (EVAL (CADAR clauses') env depth)
+          (recur (.getCdr clauses'))))
+      (if (:strict *options*)
+        (throw (ex-info "No matching clause in COND"
+                        {:phase :eval
+                         :function 'COND
+                         :args (list clauses)
+                         :type :lisp
+                         :code :A3}))
+        NIL))))
 
 (defn- EVLIS
   "Map `EVAL` across this list of `args` in the context of this
@@ -214,9 +366,10 @@
                                       :expr   expr}))
                                    (symbol expr))
                   (= (ATOM (CAR expr)) T) (case (CAR expr)
-                                            QUOTE (CADR expr)
-                                            FUNCTION (LIST 'FUNARG (CADR expr))
                                             COND (EVCON (CDR expr) env depth)
+                                            FUNCTION (LIST 'FUNARG (CADR expr))
+                                            PROG (PROG (CDR expr) env depth)
+                                            QUOTE (CADR expr)
            ;; else 
                                             (APPLY
                                              (CAR expr)

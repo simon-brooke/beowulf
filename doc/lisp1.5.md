@@ -5,10 +5,10 @@
 
 **Massachusetts Institute of Technology**
 
-> John McCarthy
-> Paul W. Abrahams
-> Daniel J. Edwards
-> Timothy P. Hart
+> [John McCarthy](https://en.wikipedia.org/wiki/John_McCarthy_(computer_scientist))
+> [Paul W. Abrahams](https://mitpress.mit.edu/author/paul-w-abrahams-31449/)
+> [Daniel J. Edwards](https://www.chessprogramming.org/Daniel_Edwards)
+> [Timothy P. Hart](https://www.chessprogramming.org/Timothy_Hart)
 
 > The M. I.T. Press
 > Massachusetts Institute of Technology
@@ -43,11 +43,11 @@ The over-all design of the LISP Programming System is the work of John McCarthy 
 
 This manual was written by Michael I. Levin.
 
-The interpreter was programmed by Stephen B. Russell and Daniel J. Edwards. The print and read programs were written by John McCarthy, Klim Maling, Daniel J. Edwards, and Paul W, Abrahams.
+The interpreter was programmed by [Stephen B. Russell](https://en.wikipedia.org/wiki/Steve_Russell_(computer_scientist)) and Daniel J. Edwards. The print and read programs were written by John McCarthy, Klim Maling, Daniel J. Edwards, and Paul W. Abrahams.
 
 The garbage collector and arithmetic features Were written by Daniel J. Edwards. The compiler and assembler were written by Timothy P. Hart and Michael I. Levin. An earlier compiler was written by Robert Brayton.
 
-The "LISP 1 Programmer's Manual" March 1, 1960, was written by Phyllis A. Fox. Additional programs and suggestions were contributed by the following members of the Artificial Intelligence Group of the Research Laboratory of Electronics: Marvin L. Minsky, Bertram Raphael, Louis Hodes, David M. R. Park, David C. Luckham, Daniel G. Bobrow, James R. Slagle, and Nathaniel Rochester.
+The "LISP 1 Programmer's Manual" March 1, 1960, was written by [Phyllis A. Fox](https://en.wikipedia.org/wiki/Phyllis_Fox). Additional programs and suggestions were contributed by the following members of the Artificial Intelligence Group of the Research Laboratory of Electronics: Marvin L. Minsky, Bertram Raphael, Louis Hodes, David M. R. Park, David C. Luckham, Daniel G. Bobrow, James R. Slagle, and Nathaniel Rochester.
 
 August 17, 1962
 
@@ -3347,7 +3347,7 @@ eval[form; a]= [
     eq[car[form]; QUOTE] -> cadr[form]; 
     eq[car[form]; FUNCTION] -> list[FUNARG; cadr[form]; a];
     eq[car [form]; COND] -> evcon[cdr[form]; a];
-    eq[car [form]; PROG] -> prog[cdr [form]; a];
+    eq[car [form]; PROG] -> prog[cdr[form]; a];
     atom[car[form]] -> [get[car [form]; EXPR] -> 
                             apply[expr; evlis[cdr[form]; a]; a];
                          get[car[form]; FEXPR] ->
@@ -3375,27 +3375,18 @@ The PROG feature is an FSUBR coded into the system. It can best be explained in
 English, although it is possible to define it by using M-expressions.
 
 1. As soon as the PROG feature is entered, the list of program variables is used
-to make a new list in which each one is paired with NIL. This is then appended to the
-current a-list. Thus each program variable is set to NIL at the entrance to the program.
+to make a new list in which each one is paired with NIL. This is then appended to the current a-list. Thus each program variable is set to NIL at the entrance to the program.
 2. The remainder of the program is searched for atomic symbols that are under-
-stood to be location symbols. A go-list is formed in which each location symbol is
-paired with a pointer into the remainder of the program.
-3. When a set or a setq - is encountered, the name of the variable is located on the
-a-list. The value of the variable (or cs of the pair) is actually replaced with the new
-value.
+stood to be location symbols. A go-list is formed in which each location symbol is paired with a pointer into the remainder of the program.
+3. When a set or a setq - is encountered, the name of the variable is located on the a-list. The value of the variable (or cdr of the pair) is actually replaced with the new value.
 
 -----
-1. The value of get is set aside. This is the meaning of the apparent free or unde-
-fined variable-
-2. In the actual system this is handled by an FSUBR rather than as the separate special
-case as shown here.
+1. The value of get is set aside. This is the meaning of the apparent free or undefined variable.
+2. In the actual system this is handled by an FSUBR rather than as the separate special case as shown here.
 
 <a name="page72">page 72</a>
 
-If the variable is bound several times on the a-list, only the first or most recent
-occurrence is changed. If the current binding of the variable is at a higher level than
-the entrance to the prog, then the change will remain in effect throughout the scope
-of that binding, and the old value will be lost.
+If the variable is bound several times on the a-list, only the first or most recent occurrence is changed. If the current binding of the variable is at a higher level than the entrance to the prog, then the change will remain in effect throughout the scope of that binding, and the old value will be lost.
 
 If the variable does not occur on the a-list, then error diagnostic `A4` or `A5` will occur.
 

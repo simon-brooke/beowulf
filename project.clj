@@ -34,6 +34,5 @@
                   ["uberjar"]
                   ["change" "version" "leiningen.release/bump-version"]
                   ["vcs" "commit"]]
-
   :target-path "target/%s"
   :url "https://github.com/simon-brooke/the-great-game")
