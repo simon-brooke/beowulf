@@ -114,7 +114,7 @@
     EXPR
     (LAMBDA
       (L)
-      (COND ((EQ NIL L) 0) ((CONSP (CDR L)) (ADD1 (LENGTH (CDR L)))) (T 0))))
+      (COND ((EQ NIL L) 0) ((CONSP (CDR L)) (ADD1 (LENGTH (CDR L)))) (T 1))))
   (LESSP 32767 SUBR (BEOWULF HOST LESSP))
   (MAPLIST
     32767

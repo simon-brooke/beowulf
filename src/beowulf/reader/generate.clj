@@ -94,7 +94,7 @@
      (list (if (= (nth p 1) [:quoted-expr [:atom "T"]])
              'T
              (generate (nth p 1) context))
-           (generate (nth p 2)) context))))
+           (generate (nth p 2) context)))))
 
 (defn gen-cond
   "Generate a cond statement from this simplified parse tree fragment `p`;
