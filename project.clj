@@ -1,10 +1,16 @@
 (defproject beowulf "0.3.0-SNAPSHOT"
   :cloverage {:output "docs/cloverage"
               :ns-exclude-regex [#"beowulf\.gendoc" #"beowulf\.scratch"]}
-  :codox {:metadata {:doc "**TODO**: write docs"
+  :codox {:html {:transforms [[:head] [:append 
+                                       [:link {:rel "icon"
+                                               :type "image/x-icon"
+                                               :href "../img/beowulf_logo_favicon.png"}]]]}
+          :metadata {:doc "**TODO**: write docs"
                      :doc/format :markdown}
           :output-path "docs/codox"
-          :source-uri "https://github.com/simon-brooke/beowulf/blob/master/{filepath}#L{line}"}
+          :source-uri "https://github.com/simon-brooke/beowulf/blob/master/{filepath}#L{line}"
+          ;; :themes [:journeyman]
+          }
   :description "An implementation of LISP 1.5 in Clojure"
   :license {:name "GPL-2.0-or-later"
             :url "https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html"}
