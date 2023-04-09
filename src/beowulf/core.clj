@@ -30,7 +30,10 @@
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(def stop-word "STOP")
+(def stop-word 
+  "The word which, if submitted an an input line, will cause Beowulf to quit.
+   Question: should this be `forlǣte`?"
+  "STOP")
 
 (def cli-options
   [["-f FILEPATH" "--file-path FILEPATH"
@@ -124,6 +127,6 @@
                 :quit nil
                 ;; default
                 (do
-                  (println "ERROR: " (.getMessage e))
+                  (println "STÆFLEAHTER: " (.getMessage e))
                   (pprint data)))
               (println e))))))))

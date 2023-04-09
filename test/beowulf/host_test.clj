@@ -15,12 +15,12 @@
       (is (= actual expected)))
     (is (thrown-with-msg?
           Exception
-          #"Invalid value in RPLACA.*"
+          #"Un-ġefōg þing in RPLACA.*"
           (RPLACA (make-beowulf-list '(A B C D E)) "F"))
         "You can't represent a string in Lisp 1.5")
     (is (thrown-with-msg?
           Exception
-          #"Invalid cell in RPLACA.*"
+          #"Uncynlic miercels in RPLACA.*"
           (RPLACA '(A B C D E) 'F))
         "You can't RPLACA into anything which isn't a MutableSequence.")
     )

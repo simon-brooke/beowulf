@@ -70,12 +70,12 @@
       (is (= actual expected) "A is CAR of (A B C D)"))
     (is (thrown-with-msg?
           Exception
-          #"Cannot take CAR of `.*"
+          #"Ne can tace CAR of `.*"
           (CAR 'T))
         "Can't take the CAR of an atom")
     (is (thrown-with-msg?
           Exception
-          #"Cannot take CAR of `.*"
+          #"Ne can tace CAR of `.*"
           (CAR 7))
         "Can't take the CAR of a number"))
   (testing "CDR"
@@ -89,12 +89,12 @@
       (is (= (CAR actual) expected) "the CAR of that cons-cell is B"))
     (is (thrown-with-msg?
           Exception
-          #"Cannot take CDR of `.*"
+          #"Ne can tace CDR of `.*"
           (CDR 'T))
         "Can't take the CDR of an atom")
     (is (thrown-with-msg?
           Exception
-          #"Cannot take CDR of `.*"
+          #"Ne can tace CDR of `.*"
           (CDR 7))
         "Can't take the CDR of a number"))
   (let [s (gsp "((((1 . 2) 3)(4 5) 6)(7 (8 9) (10 11 12) 13) 14 (15 16) 17)")]
@@ -202,15 +202,4 @@
                    (ASSOC
                      'D
                      (gsp "((A . (M N)) (B . (CAR X)) (C . (QUOTE M)) (C . (CDR X)))")))]
-      (is (= actual expected)))))
-
-(deftest prog-tests
-  (testing "PROG"
-    (let [expected "5"
-          actual (reps "(PROG (X)
-    (SETQ X 1)
-    START
-    (SETQ X (ADD1 X))
-    (COND ((EQ X 5) (RETURN X))
-        (T (GO START))))")]
       (is (= actual expected)))))

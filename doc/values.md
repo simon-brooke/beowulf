@@ -1,4 +1,6 @@
-# The properties of the system, and their values: here be dragons
+# The properties of the system, and their values
+
+## here be dragons
 
 Lisp is the list processing language; that is what its name means. It processes data structures built of lists - which may be lists of lists, or lists of numbers, or lists of any other sort of data item provided for by the designers of the system.
 

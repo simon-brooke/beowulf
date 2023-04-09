@@ -105,7 +105,7 @@
              (pretty-print output)
              )))))
 
-(defn- resolve-subr
+(defn resolve-subr
   "If this oblist `entry` references a subroutine, attempt to fix up that
    reference."
   [entry]
@@ -118,7 +118,7 @@
                                          (CADR entry))
                                   (CDDR entry)))
                                 (catch Exception _
-                                  (print "Warning: failed to resolve "
+                                  (print "Warnung: ne can āfinde "
                                          (CADR entry))
                                   (CDDR entry)))
         :else (make-cons-cell
@@ -159,7 +159,7 @@
                   (catch Throwable _ nil))
          content (try (READ (slurp (or file res)))
                       (catch Throwable any
-                        (throw (ex-info "Could not read from file"
+                        (throw (ex-info "Ne can ārǣde"
                                         {:context "SYSIN"
                                          :filepath fp}
                                         any))))]

@@ -15,9 +15,14 @@
       rather than the strings which were supplied to `READ`);
    4. <Tab> offers potential auto-completions taken from the value of `(OBLIST)`, ideally the
       current value, not the value at the time the session started;
-   5. <Back-arrow> and <Forward-arrow> offer movement and editing within the line."
-  (:import [org.jline.reader LineReader LineReaderBuilder]
-           [org.jline.terminal TerminalBuilder]))
+   5. <Back-arrow> and <Forward-arrow> offer movement and editing within the line.
+   
+   TODO: There are multiple problems with JLine; a better solution might be
+   to start from here:
+   https://stackoverflow.com/questions/7931988/how-to-manipulate-control-characters"
+  ;; (:import [org.jline.reader LineReader LineReaderBuilder]
+  ;;          [org.jline.terminal TerminalBuilder])
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -44,27 +49,27 @@
 ;; looks as though you'd need a DPhil in JLine to write it, and I don't have
 ;; the time.
 
-(def get-reader
-  "Return a reader, first constructing it if necessary.
+;; (def get-reader
+;;   "Return a reader, first constructing it if necessary.
    
-   **NOTE THAT** this is not settled API. The existence and call signature of
-   this function is not guaranteed in future versions."
-  (memoize (fn []
-  (let [term (.build (.system (TerminalBuilder/builder) true))]
-    (.build (.terminal (LineReaderBuilder/builder) term))))))
+;;    **NOTE THAT** this is not settled API. The existence and call signature of
+;;    this function is not guaranteed in future versions."
+;;   (memoize (fn []
+;;   (let [term (.build (.system (TerminalBuilder/builder) true))]
+;;     (.build (.terminal (LineReaderBuilder/builder) term))))))
 
-(defn read-chars
-  "A drop-in replacement for `clojure.core/read-line`, except that line editing
-   and history should be enabled.
+;; (defn read-chars
+;;   "A drop-in replacement for `clojure.core/read-line`, except that line editing
+;;    and history should be enabled.
    
-   **NOTE THAT** this does not work yet, but it is in the API because I hope 
-   that it will work later!"
-  [] 
-    (let [eddie (get-reader)]
-      (loop [s (.readLine eddie)]
-      (if (and (= (count (re-seq #"\(" s))
-           (count (re-seq #"\)" s)))
-               (= (count (re-seq #"\[]" s))
-                  (count (re-seq #"\]" s))))
-        s
-        (recur (str s " " (.readLine eddie)))))))
+;;    **NOTE THAT** this does not work yet, but it is in the API because I hope 
+;;    that it will work later!"
+;;   [] 
+;;     (let [eddie (get-reader)]
+;;       (loop [s (.readLine eddie)]
+;;       (if (and (= (count (re-seq #"\(" s))
+;;            (count (re-seq #"\)" s)))
+;;                (= (count (re-seq #"\[]" s))
+;;                   (count (re-seq #"\]" s))))
+;;         s
+;;         (recur (str s " " (.readLine eddie)))))))

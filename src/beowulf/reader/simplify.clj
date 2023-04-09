@@ -110,7 +110,7 @@
                             (throw
                              (ex-info "Cannot parse meta expressions in strict mode"
                                       {:cause :strict}))
-                            (simplify-tree (second p) :mexpr))
+                            [:mexpr (simplify-tree (second p) :mexpr)])
                    :list (if
                           (= context :mexpr)
                            [:fncall
@@ -118,7 +118,7 @@
                             [:args (apply vector (map simplify-tree (rest p)))]]
                            (map #(simplify-tree % context) p))
                    :raw (first (remove empty? (map simplify-tree (rest p))))
-                   :sexpr (simplify-tree (second p) :sexpr)
+                   :sexpr [:sexpr (simplify-tree (second p) :sexpr)]
           ;;default
                    p)))
      :else p)))

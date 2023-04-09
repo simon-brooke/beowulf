@@ -2,7 +2,8 @@
   "provides Lisp 1.5 functions which can't be (or can't efficiently
    be) implemented in Lisp 1.5, which therefore need to be implemented in the
    host language, in this case Clojure."
-  (:require [beowulf.cons-cell :refer [F make-beowulf-list make-cons-cell T]] ;; note hyphen - this is Clojure...
+  (:require [beowulf.cons-cell :refer [F make-beowulf-list make-cons-cell
+                                       pretty-print T]] ;; note hyphen - this is Clojure...
             [beowulf.gendoc :refer [open-doc]]
             [beowulf.oblist :refer [*options* NIL oblist]]
             [clojure.set :refer [union]]
@@ -40,7 +41,7 @@
    this `symbol`."
   [symbol]
   (when (:strict *options*)
-    (throw (ex-info (format "%s is not available in Lisp 1.5" symbol)
+    (throw (ex-info (format "%s ne āfand innan Lisp 1.5" symbol)
                     {:type :strict
                      :phase :host
                      :function symbol})))
@@ -57,41 +58,30 @@
   "Return the item indicated by the first pointer of a pair. NIL is treated
   specially: the CAR of NIL is NIL."
   [x]
-  (if
-   (= x NIL) NIL
-   (try
-     (or (.getCar x) NIL)
-     (catch Exception any
-       (throw (ex-info
-               (str "Cannot take CAR of `" x "` (" (.getName (.getClass x)) ")")
-               {:phase :host
-                :function 'CAR
-                :args (list x)
-                :type :beowulf}
-               ;; startlingly, Lisp 1.5 did not flag an error when you took the
-               ;; CAR of something that wasn't cons cell. The result, as the
-               ;; manual says (page 56), could be garbage.
-               any))))))
+  (cond
+    (= x NIL) NIL
+    (instance? ConsCell x) (or (.getCar x) NIL)
+    :else  (throw (ex-info
+                   (str "Ne can tace CAR of `" x "` (" (.getName (.getClass x)) ")")
+                   {:phase :host
+                    :function 'CAR
+                    :args (list x)
+                    :type :beowulf}))))
 
 (defn CDR
   "Return the item indicated by the second pointer of a pair. NIL is treated
   specially: the CDR of NIL is NIL."
   [x]
-  (if
-   (= x NIL) NIL
-   (try
-     (.getCdr x)
-     (catch Exception any
-       (throw (ex-info
-               (str "Cannot take CDR of `" x "` (" (.getName (.getClass x)) ")")
-               {:phase :host
-                :function 'CDR
-                :args (list x)
-                :type :beowulf}
-               ;; startlingly, Lisp 1.5 did not flag an error when you took the
-               ;; CAR of something that wasn't cons cell. The result, as the
-               ;; manual says (page 56), could be garbage.
-               any))))))
+  (cond
+    (= x NIL) NIL
+    (instance? ConsCell x) (or (.getCdr x) NIL)
+    :else  (throw (ex-info
+                   (str "Ne can tace CDR of `" x "` (" (.getName (.getClass x)) ")")
+                   {:phase :host
+                    :function 'CDR
+                    :args (list x)
+                    :type :beowulf}))))
+
 
 (defn uaf
   "Universal access function; `l` is expected to be an arbitrary LISP list, `path`
@@ -175,14 +165,14 @@
                    :type :beowulf}
                   any))))
       (throw (ex-info
-              (str "Invalid value in RPLACA: `" value "` (" (type value) ")")
+              (str "Un-ġefōg þing in RPLACA: `" value "` (" (type value) ")")
               {:cause :bad-value
                :phase :host
                :function :rplaca
                :args (list cell value)
                :type :beowulf})))
     (throw (ex-info
-            (str "Invalid cell in RPLACA: `" cell "` (" (type cell) ")")
+            (str "Uncynlic miercels in RPLACA: `" cell "` (" (type cell) ")")
             {:cause :bad-cell
              :phase :host
              :function :rplaca
@@ -215,14 +205,14 @@
                    :type :beowulf}
                   any))))
       (throw (ex-info
-              (str "Invalid value in RPLACD: `" value "` (" (type value) ")")
+              (str "Un-ġefōg þing in RPLACD: `" value "` (" (type value) ")")
               {:cause :bad-value
                :phase :host
                :function :rplacd
                :args (list cell value)
                :type :beowulf})))
     (throw (ex-info
-            (str "Invalid cell in RPLACD: `" cell "` (" (type cell) ")")
+            (str "Uncynlic miercels in RPLACD: `" cell "` (" (type cell) ")")
             {:cause :bad-cell
              :phase :host
              :detail :rplacd
@@ -288,9 +278,12 @@
    In `beowulf.host` principally because I don't yet feel confident to define
    varargs functions in Lisp."
   [& args]
+  ;; (println "AND: " args " type: " (type args) " seq? " (seq? args))
+  ;; (println "  filtered: " (seq (filter #{F NIL} args)))
   (cond (= NIL args) T
-        (not (#{NIL F} (.getCar args))) (AND (.getCdr args))
+        (seq? args) (if (seq (filter #{F NIL} args)) F T)
         :else T))
+
 
 (defn OR
   "`T` if and only if at least one of my `args` evaluates to something other
@@ -299,9 +292,12 @@
    In `beowulf.host` principally because I don't yet feel confident to define
    varargs functions in Lisp."
   [& args]
+  ;; (println "OR: " args " type: " (type args) " seq? " (seq? args))
+  ;; (println "  filtered: " (seq (remove #{F NIL} args)))
   (cond (= NIL args) F
-        (not (#{NIL F} (.getCar args))) T
-        :else (OR (.getCdr args))))
+        (seq? args) (if (seq (remove #{F NIL} args)) T F)
+        :else F))
+
 
 ;;;; Operations on lists ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -414,11 +410,11 @@
 (defn ERROR
   "Throw an error"
   [& args]
-  (throw (ex-info "LISP ERROR" {:args args
-                                :phase :eval
-                                :function 'ERROR
-                                :type :lisp
-                                :code (or (first args) 'A1)})))
+  (throw (ex-info "LISP STÆFLEAHTER" {:args args
+                                      :phase :eval
+                                      :function 'ERROR
+                                      :type :lisp
+                                      :code (or (first args) 'A1)})))
 
 ;;;; Assignment and the object list ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -477,19 +473,26 @@
    first argument is always an atom. Since it's `ASSOC` and `EVAL` which I 
    need to make work, I'm going to assume that page 59 is wrong."
   [symbol indicator]
-  (let [binding (ASSOC symbol @oblist)]
-    (cond
-      (= binding NIL) NIL
-      (= magic-marker (CADR binding)) (loop [b binding]
-                                        (cond (= b NIL) NIL
-                                              (= (CAR b) indicator) (CADR b)
-                                              :else (recur (CDR b))))
-      :else (throw
-             (ex-info "Misformatted property list (missing magic marker)"
-                      {:phase :host
-                       :function :get
-                       :args (list symbol indicator)
-                       :type :beowulf})))))
+  (let [binding (ASSOC symbol @oblist)
+        val (cond
+              (= binding NIL) NIL
+              (= magic-marker
+                 (CADR binding)) (loop [b binding]
+                                  ;;  (println "GET loop, seeking " indicator ":")
+                                  ;;  (pretty-print b)
+                                   (if (instance? ConsCell b)
+                                     (if (= (CAR b) indicator)
+                                       (CADR b) ;; <- this is what we should actually be returning
+                                       (recur (CDR b)))
+                                     NIL))
+              :else (throw
+                     (ex-info "Misformatted property list (missing magic marker)"
+                              {:phase :host
+                               :function :get
+                               :args (list symbol indicator)
+                               :type :beowulf})))]
+    ;; (println "<< GET returning: " val)
+    val))
 
 (defn DEFLIST
   "For each pair in this association list `a-list`, set the property with this

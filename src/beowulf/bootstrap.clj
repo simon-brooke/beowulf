@@ -46,10 +46,10 @@
    (fn [target body]
      (loop [body' body]
        (cond
-         (= body' NIL) (throw (ex-info (str "Invalid GO target `" target "`")
+         (= body' NIL) (throw (ex-info (str "Mislar GO miercels: `" target "`")
                                        {:phase :lisp
                                         :function 'PROG
-                                        :type :lisp 
+                                        :type :lisp
                                         :code :A6
                                         :target target}))
          (= (.getCar body') target) body'
@@ -69,9 +69,9 @@
 
 (defn- merge-vars [vars env]
   (reduce
-   #(make-cons-cell 
+   #(make-cons-cell
      (make-cons-cell %2 (@vars %2))
-      env)
+     env)
    env
    (keys @vars)))
 
@@ -93,22 +93,22 @@
                                                    vars env depth))
                                 SET (let [v (CADDR expr)]
                                       (swap! vars
-                                           assoc
-                                           (prog-eval (CADR expr)
-                                                      vars env depth)
-                                           (prog-eval (CADDR expr)
-                                                      vars env depth))
+                                             assoc
+                                             (prog-eval (CADR expr)
+                                                        vars env depth)
+                                             (prog-eval (CADDR expr)
+                                                        vars env depth))
                                       v)
                                 SETQ (let [v (CADDR expr)]
                                        (swap! vars
-                                            assoc
-                                            (CADR expr)
-                                            (prog-eval v
-                                                       vars env depth))
+                                              assoc
+                                              (CADR expr)
+                                              (prog-eval v
+                                                         vars env depth))
                                        v)
                                  ;; else
                                 (beowulf.bootstrap/EVAL expr
-                                                        (merge-vars vars env) 
+                                                        (merge-vars vars env)
                                                         depth))))
 
 (defn PROG
@@ -185,7 +185,7 @@
                           *PROGGO* (let [target (.getCdr v)]
                                      (if (targets target)
                                        (recur (find-target target body))
-                                       (throw (ex-info (str "Invalid GO target `"
+                                       (throw (ex-info (str "Uncynlic GO miercels `"
                                                             target "`")
                                                        {:phase :lisp
                                                         :function 'PROG
@@ -236,7 +236,7 @@
   (when (and subr (not= subr NIL))
     (try @(resolve subr)
          (catch Throwable any
-           (throw (ex-info "Failed to resolve subroutine"
+           (throw (ex-info "þegnung (SUBR) ne āfand"
                            {:phase :apply
                             :function subr
                             :args args
@@ -248,16 +248,26 @@
    return the result."
   [^Symbol function-symbol args ^ConsCell environment depth]
   (trace-call function-symbol args depth)
-  (let [lisp-fn ;; (try 
-        (value function-symbol '(EXPR FEXPR))
-                    ;; (catch Exception any (when (traced? function-symbol)
-                    ;;                        (println any))))
+  (let [lisp-fn (value function-symbol '(EXPR FEXPR))
+        args' (cond (= NIL args) args
+                    (empty? args) NIL
+                    (instance? ConsCell args) args
+                    :else (make-beowulf-list args))
         subr (value function-symbol '(SUBR FSUBR))
-        host-fn (try-resolve-subroutine subr args)
+        host-fn (try-resolve-subroutine subr args')
         result (cond (and lisp-fn
-                          (not= lisp-fn NIL)) (APPLY lisp-fn args environment depth)
-                     host-fn (apply host-fn (when (instance? ConsCell args) args))
-                     :else (ex-info "No function found"
+                          (not= lisp-fn NIL)) (APPLY lisp-fn args' environment depth)
+                     host-fn (try
+                               (apply host-fn (when (instance? ConsCell args') args'))
+                               (catch Exception any
+                                 (throw (ex-info (str "Uncynlic þegnung: "
+                                                      (.getMessage any))
+                                                 {:phase :apply
+                                                  :function function-symbol
+                                                  :args args
+                                                  :type :beowulf}
+                                                 any))))
+                     :else (ex-info "þegnung ne āfand"
                                     {:phase :apply
                                      :function function-symbol
                                      :args args
@@ -277,7 +287,7 @@
   (let [result (cond
                  (= NIL function) (if (:strict *options*)
                                     NIL
-                                    (throw (ex-info "NIL is not a function"
+                                    (throw (ex-info "NIL sí ne þegnung"
                                                     {:phase :apply
                                                      :function "NIL"
                                                      :args args
@@ -297,7 +307,7 @@
                          LAMBDA (EVAL
                                  (CADDR function)
                                  (PAIRLIS (CADR function) args environment) depth)
-                         (throw (ex-info "Unrecognised value in function position"
+                         (throw (ex-info "Ungecnáwen wyrþan sí þegnung-weard"
                                          {:phase :apply
                                           :function function
                                           :args args
@@ -323,7 +333,7 @@
           (EVAL (CADAR clauses') env depth)
           (recur (.getCdr clauses'))))
       (if (:strict *options*)
-        (throw (ex-info "No matching clause in COND"
+        (throw (ex-info "Ne ġefōg dǣl in COND"
                         {:phase :eval
                          :function 'COND
                          :args (list clauses)
@@ -348,15 +358,15 @@
   (let [v (ASSOC expr env)
         indent (apply str (repeat depth "-"))]
     (when (traced? 'EVAL)
-      (println (str indent ": EVAL: shallow binding: " (or v "nil"))))
+      (println (str indent ": EVAL: sceald bindele: " (or v "nil"))))
     (if (instance? ConsCell v)
       (.getCdr v)
       (let [v' (value expr (list 'APVAL))]
         (when (traced? 'EVAL)
-          (println (str indent ": EVAL: deep binding: (" expr " . " (or v' "nil") ")" )))
+          (println (str indent ": EVAL: deóp bindele: (" expr " . " (or v' "nil") ")")))
         (if v'
           v'
-          (throw (ex-info "No binding for symbol found"
+          (throw (ex-info "Ne tácen-bindele āfand"
                           {:phase :eval
                            :function 'EVAL
                            :args (list expr env depth)

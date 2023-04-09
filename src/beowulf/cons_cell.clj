@@ -77,7 +77,7 @@
         (set! (. this CAR) value)
         this)
       (throw (ex-info
-              (str "Invalid value in RPLACA: `" value "` (" (type value) ")")
+              (str "Uncynlic miercels in RPLACA: `" value "` (" (type value) ")")
               {:cause  :bad-value
                :detail :rplaca}))))
 
@@ -92,7 +92,7 @@
         (set! (. this CDR) value)
         this)
       (throw (ex-info
-              (str "Invalid value in RPLACD: `" value "` (" (type value) ")")
+              (str "Uncynlic miercels in RPLACD: `" value "` (" (type value) ")")
               {:cause  :bad-value
                :detail :rplaca}))))
 
@@ -248,7 +248,7 @@
   (try
     (ConsCell. car cdr (gensym "c"))
     (catch Exception any
-      (throw (ex-info "Cound not construct cons cell" {:car car
+      (throw (ex-info "Ne meahte cræfte cons cell" {:car car
                                                        :cdr cdr} any)))))
 
 (defn make-beowulf-list
@@ -269,6 +269,6 @@
       :else
       NIL)
     (catch Exception any
-      (throw (ex-info "Could not construct Beowulf list"
+      (throw (ex-info "Ne meahte cræfte Beowulf líste"
                       {:content x}
                       any)))))

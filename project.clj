@@ -18,10 +18,11 @@
                  [org.clojure/math.combinatorics "0.2.0"] ;; not needed in production builds
                  [org.clojure/math.numeric-tower "0.0.5"]
                  [org.clojure/tools.cli "1.0.214"]
+                 [org.clojure/tools.trace "0.7.11"]
                  [clojure.java-time "1.2.0"]
                  [environ "1.2.0"]
                  [instaparse "1.4.12"]
-                 [org.jline/jline "3.23.0"]
+;;                 [org.jline/jline "3.23.0"]
                  [rhizome "0.2.9"] ;; not needed in production builds
                  ]
   :main ^:skip-aot beowulf.core

@@ -91,12 +91,12 @@
   (GENSYM 32767 SUBR (BEOWULF HOST GENSYM))
   (GET
     32767
-    EXPR
-    (LAMBDA
-      (X Y)
-      (COND
-        ((NULL X) NIL)
-        ((EQ (CAR X) Y) (CAR (CDR X))) (T (GET (CDR X) Y))))
+;;    EXPR
+;;    (LAMBDA
+;;      (X Y)
+;;      (COND
+;;        ((NULL X) NIL)
+;;        ((EQ (CAR X) Y) (CAR (CDR X))) (T (GET (CDR X) Y))))
     SUBR (BEOWULF HOST GET))
   (GREATERP 32767 SUBR (BEOWULF HOST GREATERP))
   (INTEROP 32767 SUBR (BEOWULF INTEROP INTEROP))
@@ -138,6 +138,7 @@
   (NUMBERP 32767 SUBR (BEOWULF HOST NUMBERP))
   (OBLIST 32767 SUBR (BEOWULF HOST OBLIST))
   (ONEP 32767 EXPR (LAMBDA (X) (EQ X 1)))
+  (OR 32767 SUBR (BEOWULF HOST OR))
   (PAIR
     32767
     EXPR
@@ -185,6 +186,11 @@
     (LAMBDA (N X) (COND ((EQ N 0) NIL) (T (CONS X (REPEAT (SUB1 N) X))))))
   (RPLACA 32767 SUBR (BEOWULF HOST RPLACA))
   (RPLACD 32767 SUBR (BEOWULF HOST RPLACD))
+  (SEARCH 32767 EXPR 
+    (LAMBDA (X P F U) 
+    (COND ((NULL X) (U X)) 
+        ((P X) (F X)) 
+        ((QUOTE T) (SEARCH (CDR X) P F U)))))
   (SET 32767 SUBR (BEOWULF HOST SET))
   (SUB1 32767 EXPR (LAMBDA (N) (DIFFERENCE N 1)) SUBR (BEOWULF HOST SUB1))
   (SUB2
@@ -195,7 +201,17 @@
       (COND
         ((NULL A) Z) ((EQ (CAAR A) Z) (CDAR A)) (T (SUB2 (CDAR A) Z)))))
   (SUBLIS
-    32767 EXPR (LAMBDA (A Y) (COND ((ATOM Y) (SUB2 A Y)) (T (CONS)))))
+    32767 EXPR 
+    (LAMBDA (X Y) 
+    (COND ((NULL X) Y) 
+        ((NULL Y) Y) 
+        ((QUOTE T) (SEARCH X 
+                      (LAMBDA (J) (EQUAL Y (CAAR J))) 
+                      (LAMBDA (J) (CDAR J)) 
+                      (LAMBDA (J) (COND ((ATOM Y) Y) 
+                                      ((QUOTE T) (CONS 
+                                                    (SUBLIS X (CAR Y)) 
+                                                    (SUBLIS X (CDR Y)))))))))))
   (SUBST
     32767
     EXPR

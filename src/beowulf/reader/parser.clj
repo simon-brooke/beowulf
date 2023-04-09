@@ -51,15 +51,15 @@
 
     "exprs := expr | exprs;"
     "mexpr := λexpr | fncall | defn | cond | mvar | mconst | iexpr | number | mexpr comment;
-      λexpr := λ lsqb bindings semi-colon body rsqb;
-      λ := 'λ';
+      λexpr := λ lsqb bindings semi-colon opt-space body opt-space rsqb;
+      λ := 'λ' | 'lambda';
       bindings := lsqb args rsqb | lsqb rsqb;
-      body := (mexpr semi-colon opt-space)* mexpr;
+      body := (opt-space mexpr semi-colon)* opt-space mexpr;
       fncall := fn-name bindings;
       lsqb := '[';
       rsqb := ']';
-       lbrace := '{';
-       rbrace := '}';
+      lbrace := '{';
+      rbrace := '}';
       defn := mexpr opt-space '=' opt-space mexpr;
       cond := lsqb (opt-space cond-clause semi-colon opt-space)* cond-clause rsqb;
       cond-clause := mexpr opt-space arrow opt-space mexpr opt-space;

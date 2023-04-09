@@ -100,16 +100,16 @@
                  (catch java.lang.ClassNotFoundException _ nil)) q-name
                :else (throw
                       (ex-info
-                       (str "INTEROP: unknown function `" fn-symbol "`")
+                       (str "INTEROP: ungecnáwen þegnung `" fn-symbol "`")
                        {:cause      :interop
                         :detail     :not-found
                         :name       fn-symbol
                         :also-tried l-name})))
       args'  (to-clojure args)]
-      (print (str "INTEROP: evaluating `" (cons f args') "`"))
+;;      (print (str "INTEROP: eahtiende `" (cons f args') "`"))
       (flush)
       (let [result (eval (conj args' f))] ;; this has the potential to blow up the world
-        (println (str "; returning `" result "`"))
+;;        (println (str "; ágiefende `" result "`"))
         (cond
           (instance? beowulf.cons_cell.ConsCell result) result
           (coll? result) (make-beowulf-list result)
@@ -118,12 +118,12 @@
           (number? result) result
           :else (throw
                  (ex-info
-                  (str "INTEROP: Cannot return `" result "` to Lisp 1.5.")
+                  (str "INTEROP: Ne can eahtiende `" result "` to Lisp 1.5.")
                   {:cause  :interop
                    :detail :not-representable
                    :result result})))))
     (throw
      (ex-info
-      (str "INTEROP not allowed in strict mode.")
+      (str "INTEROP ne āfand innan Lisp 1.5.")
       {:cause  :interop
        :detail :strict}))))

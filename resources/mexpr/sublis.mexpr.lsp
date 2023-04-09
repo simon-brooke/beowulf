@@ -7,4 +7,19 @@ sub2[a; z] = [null[a] -> z;
             T -> sub2[cdar[a]; z]]
 
 sublis[a; y] = [atom[y] -> sub2[a; y];
-                T -> cons[]]
+                T -> cons[sublis[a; car[y]];
+                        sublis[a; cdr[y]]]]
+
+;; this is the version from page 61               
+
+sublis[x;y] = [null[x] -> y;
+            null[y] -> y;
+            T -> search[x;
+                    λ[[j]; equal[y; caar[j]]];
+                    λ[[j]; cdar[j]];
+                    λ[[j]; [atom[y] -> y;
+                        T -> cons[sublis[x; car[y]];
+                                sublis[x; cdr[y]]]]]]]
+
+;; the test for this is:
+;; (SUBLIS '((X . SHAKESPEARE) (Y . (THE TEMPEST))) '(X WROTE Y))

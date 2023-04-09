@@ -88,6 +88,6 @@
 
 (deftest assignment-tests
   (testing "Function assignment"
-    (let [expected "(SET (QUOTE FF) (QUOTE (LAMBDA (X) (COND ((ATOM X) X) ((QUOTE T) (FF (CAR X)))))))"
+    (let [expected "(PUT (QUOTE FF) (QUOTE EXPR) (QUOTE (LAMBDA (X) (COND ((ATOM X) X) ((QUOTE T) (FF (CAR X)))))))"
           actual (print-str (gsp "ff[x]=[atom[x] -> x; T -> ff[car[x]]]"))]
       (is (= actual expected)))))

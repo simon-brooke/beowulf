@@ -13,7 +13,7 @@
 
   Both these extensions can be disabled by using the `--strict` command line
   switch."
-  (:require [beowulf.reader.char-reader :refer [read-chars]]
+  (:require ;; [beowulf.reader.char-reader :refer [read-chars]]
             [beowulf.reader.generate :refer [generate]]
             [beowulf.reader.parser :refer [parse]]
             [beowulf.reader.simplify :refer [simplify]]
@@ -79,7 +79,7 @@
         parse-tree (parse source)]
     (if (instance? Failure parse-tree)
       (doall (println (number-lines source parse-tree))
-             (throw (ex-info "Parse failed" (assoc parse-tree :source source))))
+             (throw (ex-info "Ne can forstande " (assoc parse-tree :source source))))
       (generate (simplify parse-tree)))))
 
 (defn read-from-console
@@ -99,7 +99,7 @@
   the final Lisp reader. `input` should be either a string representation of a LISP
   expression, or else an input stream. A single form will be read."
   ([]
-   (gsp (read-chars)))
+   (gsp (read-from-console)))
   ([input]
    (cond
      (empty? input) (READ)

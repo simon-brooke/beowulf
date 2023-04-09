@@ -2816,13 +2816,14 @@ Note that the following M-expression is different from that given in Section I, 
 the result is the same.
 
 ```
-sublis[x;y] [null[x] -- y;
-null[y] -- y;
-T -. search[x;
-k[[j]; equal[y;caar[j]]];
-k[[j]; cdar[j]];
-k[[j];[atom[y] - y;
-T -c cons [sublis [x;car [y]];sublis [x;cdr [y]]]]]]]
+sublis[x;y] = [null[x] -> y;
+            null[y] -> y;
+            T -> search[x;
+                    lambda[[j]; equal[y;caar[j]]];
+                    lambda[[j]; cdar[j]];
+                    lambda[[j]; [atom[y] -> y;
+                                T -> cons[sublis[x; car[y]];
+                                        sublis[x; cdr[y]]]]]]]
 ```
 
 ### List Handling Functions
