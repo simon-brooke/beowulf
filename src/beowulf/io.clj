@@ -46,7 +46,7 @@
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(def ^:constant default-sysout "resources/lisp1.5.lsp")
+(def ^:constant default-sysout "lisp1.5.lsp")
 
 (defn- full-path
   [fp]
@@ -154,18 +154,18 @@
    
    **NOTE THAT** this is an extension function, not available in strct mode."
   ([]
-   (SYSIN (or (:read *options*) default-sysout)))
+   (SYSIN (or (:read *options*) (str "resources/" default-sysout))))
   ([filename]
    (let [fp (file (full-path (str filename)))
          file (when (and (.exists fp) (.canRead fp)) fp)
          res (try (resource filename)
                   (catch Throwable _ nil))
          content (try (READ (slurp (or file res)))
-                      (catch Throwable any
+                      (catch Throwable _
                         (throw (ex-info "Ne can ārǣde"
                                         {:context "SYSIN"
-                                         :filepath fp}
-                                        any))))]
+                                         :filename filename
+                                         :filepath fp}))))]
      (swap! oblist
             #(when (or % (seq content))
                (resolve-subroutines content))))))
