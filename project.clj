@@ -1,4 +1,4 @@
-(defproject beowulf "0.3.0-SNAPSHOT"
+(defproject beowulf "0.3.0"
   :aot :all
   :cloverage {:output "docs/cloverage"
               :ns-exclude-regex [#"beowulf\.gendoc" #"beowulf\.scratch"]}
