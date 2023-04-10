@@ -63,11 +63,10 @@
 (defn repl
   "Read/eval/print loop."
   [prompt]
-  (loop []
-    (print prompt)
+  (loop [] 
     (flush)
     (try
-      (if-let [input (trim (read-from-console))]
+      (if-let [input (trim (read-from-console prompt))]
         (if (= input stop-word)
           (throw (ex-info "\nFærwell!" {:cause :quit}))
           (println 
@@ -116,7 +115,7 @@
              (catch Throwable any
                (println any))))
       (try
-        (repl (str (:prompt (:options args)) " "))
+        (repl (:prompt (:options args)))
         (catch
          Exception
          e

@@ -1,0 +1,11 @@
+{:resources ["css/default.css" "css/highlight.css"]
+ :transforms [[:head] [:append
+                       [:link {:rel "stylesheet"
+                               :type "text/css"
+                               :href "css/default.css"}]
+                       [:link {:rel "stylesheet"
+                               :type "text/css"
+                               :href "css/highlight.css"}]
+                       [:link {:rel "icon"
+                               :type "image/x-icon"
+                               :href "../img/beowulf_logo_favicon.png"}]]]}

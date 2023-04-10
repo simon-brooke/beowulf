@@ -13,13 +13,14 @@
 
   Both these extensions can be disabled by using the `--strict` command line
   switch."
-  (:require ;; [beowulf.reader.char-reader :refer [read-chars]]
+  (:require [beowulf.oblist :refer [*options*]]
+            [beowulf.reader.char-reader :refer [read-chars]]
             [beowulf.reader.generate :refer [generate]]
             [beowulf.reader.parser :refer [parse]]
             [beowulf.reader.simplify :refer [simplify]]
             [clojure.string :refer [join split starts-with? trim]])
-  (:import [java.io InputStream]
-           [instaparse.gll Failure]))
+  (:import [instaparse.gll Failure]
+           [java.io InputStream]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -83,23 +84,22 @@
       (generate (simplify parse-tree)))))
 
 (defn read-from-console
-  "Attempt to read a complete lisp expression from the console. NOTE that this
-   will only really work for S-Expressions, not M-Expressions."
-  []
-  (loop [r (read-line)]
+  "Attempt to read a complete lisp expression from the console."
+  [prompt]
+  (loop [r (read-chars prompt)]
     (if (and (= (count (re-seq #"\(" r))
            (count (re-seq #"\)" r)))
              (= (count (re-seq #"\[" r))
                 (count (re-seq #"\]" r))))
       r
-      (recur (str r "\n" (read-line))))))
+      (recur (str r "\n" (read-chars ""))))))
 
 (defn READ
   "An implementation of a Lisp reader sufficient for bootstrapping; not necessarily
   the final Lisp reader. `input` should be either a string representation of a LISP
   expression, or else an input stream. A single form will be read."
   ([]
-   (gsp (read-from-console)))
+   (gsp (read-from-console (:prompt *options*))))
   ([input]
    (cond
      (empty? input) (READ)
