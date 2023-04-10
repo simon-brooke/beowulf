@@ -1,0 +1,836 @@
+<html>
+ <head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <link rel="stylesheet" href="../../coverage.css"/>  <title> beowulf/reader/generate.clj </title>
+ </head>
+ <body>
+<span class="covered" title="1 out of 1 forms covered">
+                001&nbsp;&nbsp;(ns&nbsp;beowulf.reader.generate
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                002&nbsp;&nbsp;&nbsp;&nbsp;&quot;Generating&nbsp;S-Expressions&nbsp;from&nbsp;parse&nbsp;trees.&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                003&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                004&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;##&nbsp;From&nbsp;Lisp&nbsp;1.5&nbsp;Programmers&nbsp;Manual,&nbsp;page&nbsp;10
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                005&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*Note&nbsp;that&nbsp;I&#x27;ve&nbsp;retyped&nbsp;much&nbsp;of&nbsp;this,&nbsp;since&nbsp;copy&#x2F;pasting&nbsp;out&nbsp;of&nbsp;PDF&nbsp;is&nbsp;less
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                006&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;than&nbsp;reliable.&nbsp;Any&nbsp;typos&nbsp;are&nbsp;mine.*
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                007&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                008&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*Quote&nbsp;starts:*
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                009&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                010&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We&nbsp;are&nbsp;now&nbsp;in&nbsp;a&nbsp;position&nbsp;to&nbsp;define&nbsp;the&nbsp;universal&nbsp;LISP&nbsp;function
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                011&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`evalquote[fn;args]`,&nbsp;When&nbsp;evalquote&nbsp;is&nbsp;given&nbsp;a&nbsp;function&nbsp;and&nbsp;a&nbsp;list&nbsp;of&nbsp;arguments
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                012&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for&nbsp;that&nbsp;function,&nbsp;it&nbsp;computes&nbsp;the&nbsp;value&nbsp;of&nbsp;the&nbsp;function&nbsp;applied&nbsp;to&nbsp;the&nbsp;arguments.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                013&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LISP&nbsp;functions&nbsp;have&nbsp;S-expressions&nbsp;as&nbsp;arguments.&nbsp;In&nbsp;particular,&nbsp;the&nbsp;argument&nbsp;`fn`
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                014&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of&nbsp;the&nbsp;function&nbsp;evalquote&nbsp;must&nbsp;be&nbsp;an&nbsp;S-expression.&nbsp;Since&nbsp;we&nbsp;have&nbsp;been
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                015&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;writing&nbsp;functions&nbsp;as&nbsp;M-expressions,&nbsp;it&nbsp;is&nbsp;necessary&nbsp;to&nbsp;translate&nbsp;them&nbsp;into
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                016&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;S-expressions.
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                017&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                018&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;following&nbsp;rules&nbsp;define&nbsp;a&nbsp;method&nbsp;of&nbsp;translating&nbsp;functions&nbsp;written&nbsp;in&nbsp;the
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                019&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;meta-language&nbsp;into&nbsp;S-expressions.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                020&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.&nbsp;If&nbsp;the&nbsp;function&nbsp;is&nbsp;represented&nbsp;by&nbsp;its&nbsp;name,&nbsp;it&nbsp;is&nbsp;translated&nbsp;by&nbsp;changing
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                021&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;all&nbsp;of&nbsp;the&nbsp;letters&nbsp;to&nbsp;upper&nbsp;case,&nbsp;making&nbsp;it&nbsp;an&nbsp;atomic&nbsp;symbol.&nbsp;Thus&nbsp;`car`&nbsp;is&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                022&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;translated&nbsp;to&nbsp;`CAR`.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                023&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.&nbsp;If&nbsp;the&nbsp;function&nbsp;uses&nbsp;the&nbsp;lambda&nbsp;notation,&nbsp;then&nbsp;the&nbsp;expression
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                024&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`λ[[x&nbsp;..;xn];&nbsp;ε]`&nbsp;is&nbsp;translated&nbsp;into&nbsp;`(LAMBDA&nbsp;(X1&nbsp;...XN)&nbsp;ε*)`,&nbsp;where&nbsp;ε*&nbsp;is&nbsp;the&nbsp;translation
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                025&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of&nbsp;ε.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                026&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.&nbsp;If&nbsp;the&nbsp;function&nbsp;begins&nbsp;with&nbsp;label,&nbsp;then&nbsp;the&nbsp;translation&nbsp;of
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                027&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`label[α;ε]`&nbsp;is&nbsp;`(LABEL&nbsp;α*&nbsp;ε*)`.
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                028&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                029&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Forms&nbsp;are&nbsp;translated&nbsp;as&nbsp;follows:
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                030&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.&nbsp;A&nbsp;variable,&nbsp;like&nbsp;a&nbsp;function&nbsp;name,&nbsp;is&nbsp;translated&nbsp;by&nbsp;using&nbsp;uppercase&nbsp;letters.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                031&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Thus&nbsp;the&nbsp;translation&nbsp;of&nbsp;`var1`&nbsp;is&nbsp;`VAR1`.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                032&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.&nbsp;The&nbsp;obvious&nbsp;translation&nbsp;of&nbsp;letting&nbsp;a&nbsp;constant&nbsp;translate&nbsp;into&nbsp;itself&nbsp;will&nbsp;not
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                033&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;work.&nbsp;Since&nbsp;the&nbsp;translation&nbsp;of&nbsp;`x`&nbsp;is&nbsp;`X`,&nbsp;the&nbsp;translation&nbsp;of&nbsp;`X`&nbsp;must&nbsp;be&nbsp;something
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                034&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else&nbsp;to&nbsp;avoid&nbsp;ambiguity.&nbsp;The&nbsp;solution&nbsp;is&nbsp;to&nbsp;quote&nbsp;it.&nbsp;Thus&nbsp;`X`&nbsp;is&nbsp;translated
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                035&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;into&nbsp;`(QUOTE&nbsp;X)`.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                036&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.&nbsp;The&nbsp;form&nbsp;`fn[argl;.&nbsp;..;argn]`&nbsp;is&nbsp;translated&nbsp;into&nbsp;`(fn*&nbsp;argl*&nbsp;...argn*)`
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                037&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.&nbsp;The&nbsp;conditional&nbsp;expression&nbsp;`[pl-el;...;pn-en]`&nbsp;is&nbsp;translated&nbsp;into
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                038&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`(COND&nbsp;(p1*&nbsp;e1*)...(pn*&nbsp;en*))`
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                039&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                040&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;##&nbsp;Examples
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                041&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                042&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;M-expressions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;S-expressions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                043&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                044&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                045&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;car&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CAR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                046&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;car[x]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CAR&nbsp;X)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                047&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(QUOTE&nbsp;T)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                048&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ff[car&nbsp;[x]]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(FF&nbsp;(CAR&nbsp;X))&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                049&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[atom[x]-&gt;x;&nbsp;T-&gt;ff[car[x]]]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(COND&nbsp;((ATOM&nbsp;X)&nbsp;X)&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                050&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((QUOTE&nbsp;T)(FF&nbsp;(CAR&nbsp;X))))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                051&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label[ff;λ[[x];[atom[x]-&gt;x;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(LABEL&nbsp;FF&nbsp;(LAMBDA&nbsp;(X)&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                052&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T-&gt;ff[car[x]]]]]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(COND&nbsp;((ATOM&nbsp;X)&nbsp;X)&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                053&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((QUOTE&nbsp;T)(FF&nbsp;(CAR&nbsp;X))))))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                054&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                055&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                056&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*quote&nbsp;ends*
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                057&nbsp;&nbsp;&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                058&nbsp;&nbsp;&nbsp;&nbsp;(:require&nbsp;[beowulf.cons-cell&nbsp;:refer&nbsp;[make-beowulf-list&nbsp;make-cons-cell]]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                059&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[beowulf.reader.macros&nbsp;:refer&nbsp;[expand-macros]]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                060&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[beowulf.oblist&nbsp;:refer&nbsp;[NIL]]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                061&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[clojure.math.numeric-tower&nbsp;:refer&nbsp;[expt]]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                062&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[clojure.string&nbsp;:refer&nbsp;[upper-case]]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                063&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[clojure.tools.trace&nbsp;:refer&nbsp;[deftrace]]))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                064&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                065&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                066&nbsp;&nbsp;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                067&nbsp;&nbsp;;;;&nbsp;Copyright&nbsp;(C)&nbsp;2022-2023&nbsp;Simon&nbsp;Brooke
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                068&nbsp;&nbsp;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                069&nbsp;&nbsp;;;;&nbsp;This&nbsp;program&nbsp;is&nbsp;free&nbsp;software;&nbsp;you&nbsp;can&nbsp;redistribute&nbsp;it&nbsp;and&#x2F;or
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                070&nbsp;&nbsp;;;;&nbsp;modify&nbsp;it&nbsp;under&nbsp;the&nbsp;terms&nbsp;of&nbsp;the&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                071&nbsp;&nbsp;;;;&nbsp;as&nbsp;published&nbsp;by&nbsp;the&nbsp;Free&nbsp;Software&nbsp;Foundation;&nbsp;either&nbsp;version&nbsp;2
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                072&nbsp;&nbsp;;;;&nbsp;of&nbsp;the&nbsp;License,&nbsp;or&nbsp;(at&nbsp;your&nbsp;option)&nbsp;any&nbsp;later&nbsp;version.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                073&nbsp;&nbsp;;;;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                074&nbsp;&nbsp;;;;&nbsp;This&nbsp;program&nbsp;is&nbsp;distributed&nbsp;in&nbsp;the&nbsp;hope&nbsp;that&nbsp;it&nbsp;will&nbsp;be&nbsp;useful,
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                075&nbsp;&nbsp;;;;&nbsp;but&nbsp;WITHOUT&nbsp;ANY&nbsp;WARRANTY;&nbsp;without&nbsp;even&nbsp;the&nbsp;implied&nbsp;warranty&nbsp;of
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                076&nbsp;&nbsp;;;;&nbsp;MERCHANTABILITY&nbsp;or&nbsp;FITNESS&nbsp;FOR&nbsp;A&nbsp;PARTICULAR&nbsp;PURPOSE.&nbsp;&nbsp;See&nbsp;the
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                077&nbsp;&nbsp;;;;&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License&nbsp;for&nbsp;more&nbsp;details.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                078&nbsp;&nbsp;;;;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                079&nbsp;&nbsp;;;;&nbsp;You&nbsp;should&nbsp;have&nbsp;received&nbsp;a&nbsp;copy&nbsp;of&nbsp;the&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                080&nbsp;&nbsp;;;;&nbsp;along&nbsp;with&nbsp;this&nbsp;program;&nbsp;if&nbsp;not,&nbsp;write&nbsp;to&nbsp;the&nbsp;Free&nbsp;Software
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                081&nbsp;&nbsp;;;;&nbsp;Foundation,&nbsp;Inc.,&nbsp;51&nbsp;Franklin&nbsp;Street,&nbsp;Fifth&nbsp;Floor,&nbsp;Boston,&nbsp;MA&nbsp;&nbsp;02110-1301,&nbsp;USA.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                082&nbsp;&nbsp;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                083&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                084&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                085&nbsp;&nbsp;(declare&nbsp;generate)
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                086&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                087&nbsp;&nbsp;(defn&nbsp;gen-cond-clause
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                088&nbsp;&nbsp;&nbsp;&nbsp;&quot;Generate&nbsp;a&nbsp;cond&nbsp;clause&nbsp;from&nbsp;this&nbsp;simplified&nbsp;parse&nbsp;tree&nbsp;fragment&nbsp;`p`;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                089&nbsp;&nbsp;&nbsp;&nbsp;returns&nbsp;`nil`&nbsp;if&nbsp;`p`&nbsp;does&nbsp;not&nbsp;represent&nbsp;a&nbsp;cond&nbsp;clause.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                090&nbsp;&nbsp;&nbsp;&nbsp;[p&nbsp;context]
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                091&nbsp;&nbsp;&nbsp;&nbsp;(when
+                </span><br/>
+<span class="partial" title="11 out of 12 forms covered">
+                092&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;(coll?&nbsp;p)&nbsp;(=&nbsp;:cond-clause&nbsp;(first&nbsp;p)))
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                093&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-beowulf-list
+                </span><br/>
+<span class="partial" title="12 out of 13 forms covered">
+                094&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;(if&nbsp;(=&nbsp;(nth&nbsp;p&nbsp;1)&nbsp;[:quoted-expr&nbsp;[:atom&nbsp;&quot;T&quot;]])
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                095&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x27;T
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                096&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(nth&nbsp;p&nbsp;1)&nbsp;context))
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                097&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(nth&nbsp;p&nbsp;2)&nbsp;context)))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                098&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                099&nbsp;&nbsp;(defn&nbsp;gen-cond
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                100&nbsp;&nbsp;&nbsp;&nbsp;&quot;Generate&nbsp;a&nbsp;cond&nbsp;statement&nbsp;from&nbsp;this&nbsp;simplified&nbsp;parse&nbsp;tree&nbsp;fragment&nbsp;`p`;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                101&nbsp;&nbsp;&nbsp;&nbsp;returns&nbsp;`nil`&nbsp;if&nbsp;`p`&nbsp;does&nbsp;not&nbsp;represent&nbsp;a&nbsp;(MEXPR)&nbsp;cond&nbsp;statement.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                102&nbsp;&nbsp;&nbsp;&nbsp;[p&nbsp;context]
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                103&nbsp;&nbsp;&nbsp;&nbsp;(when
+                </span><br/>
+<span class="partial" title="11 out of 12 forms covered">
+                104&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;(coll?&nbsp;p)&nbsp;(=&nbsp;:cond&nbsp;(first&nbsp;p)))
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                105&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-beowulf-list
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                106&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cons
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                107&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x27;COND
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                108&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(map
+                </span><br/>
+<span class="partial" title="8 out of 9 forms covered">
+                109&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#(generate&nbsp;%&nbsp;(if&nbsp;(=&nbsp;context&nbsp;:mexpr)&nbsp;:cond-mexpr&nbsp;context))
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                110&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(rest&nbsp;p))))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                111&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                112&nbsp;&nbsp;(defn&nbsp;gen-fn-call
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                113&nbsp;&nbsp;&nbsp;&nbsp;&quot;Generate&nbsp;a&nbsp;function&nbsp;call&nbsp;from&nbsp;this&nbsp;simplified&nbsp;parse&nbsp;tree&nbsp;fragment&nbsp;`p`;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                114&nbsp;&nbsp;&nbsp;&nbsp;returns&nbsp;`nil`&nbsp;if&nbsp;`p`&nbsp;does&nbsp;not&nbsp;represent&nbsp;a&nbsp;(MEXPR)&nbsp;function&nbsp;call.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                115&nbsp;&nbsp;&nbsp;&nbsp;[p&nbsp;context]
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                116&nbsp;&nbsp;&nbsp;&nbsp;(when
+                </span><br/>
+<span class="partial" title="21 out of 23 forms covered">
+                117&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;(coll?&nbsp;p)&nbsp;(=&nbsp;:fncall&nbsp;(first&nbsp;p))&nbsp;(=&nbsp;:mvar&nbsp;(first&nbsp;(second&nbsp;p))))
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                118&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                119&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(second&nbsp;p)&nbsp;context)
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                120&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(nth&nbsp;p&nbsp;2)&nbsp;context))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                121&nbsp;&nbsp;
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                122&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                123&nbsp;&nbsp;(defn&nbsp;gen-dot-terminated-list
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                124&nbsp;&nbsp;&nbsp;&nbsp;&quot;Generate&nbsp;a&nbsp;list,&nbsp;which&nbsp;may&nbsp;be&nbsp;dot-terminated,&nbsp;from&nbsp;this&nbsp;partial&nbsp;parse&nbsp;tree
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                125&nbsp;&nbsp;&nbsp;&nbsp;&#x27;p&#x27;.&nbsp;Note&nbsp;that&nbsp;the&nbsp;function&nbsp;acts&nbsp;recursively&nbsp;and&nbsp;progressively&nbsp;decapitates
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                126&nbsp;&nbsp;&nbsp;&nbsp;its&nbsp;argument,&nbsp;so&nbsp;that&nbsp;the&nbsp;argument&nbsp;will&nbsp;not&nbsp;always&nbsp;be&nbsp;a&nbsp;valid&nbsp;parse&nbsp;tree.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                127&nbsp;&nbsp;&nbsp;&nbsp;[p]
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                128&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                129&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(empty?&nbsp;p)
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                130&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NIL
+                </span><br/>
+<span class="partial" title="15 out of 16 forms covered">
+                131&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;(coll?&nbsp;(first&nbsp;p))&nbsp;(=&nbsp;:dot-terminal&nbsp;(first&nbsp;(first&nbsp;p))))
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                132&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[dt&nbsp;(first&nbsp;p)]
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                133&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                134&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(nth&nbsp;dt&nbsp;1))
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                135&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(nth&nbsp;dt&nbsp;2))))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                136&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                137&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                138&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(first&nbsp;p))
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                139&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(gen-dot-terminated-list&nbsp;(rest&nbsp;p)))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                140&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                141&nbsp;&nbsp;;;&nbsp;null[x]&nbsp;=&nbsp;[x&nbsp;=&nbsp;NIL&nbsp;-&gt;&nbsp;T;&nbsp;T&nbsp;-&gt;&nbsp;F]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                142&nbsp;&nbsp;;;&nbsp;[:defn&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                143&nbsp;&nbsp;;;&nbsp;&nbsp;[:mexpr&nbsp;[:fncall&nbsp;[:mvar&nbsp;&quot;null&quot;]&nbsp;[:bindings&nbsp;[:args&nbsp;[:mexpr&nbsp;[:mvar&nbsp;&quot;x&quot;]]]]]]&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                144&nbsp;&nbsp;;;&nbsp;&nbsp;&quot;=&quot;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                145&nbsp;&nbsp;;;&nbsp;&nbsp;[:mexpr&nbsp;[:cond&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                146&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[:cond-clause&nbsp;[:mexpr&nbsp;[:iexpr&nbsp;[:lhs&nbsp;[:mexpr&nbsp;[:mvar&nbsp;&quot;x&quot;]]]&nbsp;[:iop&nbsp;&quot;=&quot;]&nbsp;[:rhs&nbsp;[:mexpr&nbsp;[:mconst&nbsp;&quot;NIL&quot;]]]]]&nbsp;[:mexpr&nbsp;[:mconst&nbsp;&quot;T&quot;]]]&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                147&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[:cond-clause&nbsp;[:mexpr&nbsp;[:mconst&nbsp;&quot;T&quot;]]&nbsp;[:mexpr&nbsp;[:mconst&nbsp;&quot;F&quot;]]]]]]
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                148&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                149&nbsp;&nbsp;(defn&nbsp;generate-defn
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                150&nbsp;&nbsp;&nbsp;&nbsp;[tree&nbsp;context]
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                151&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(=&nbsp;:mexpr&nbsp;(first&nbsp;tree))
+                </span><br/>
+<span class="not-covered" title="0 out of 6 forms covered">
+                152&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate-defn&nbsp;(second&nbsp;tree)&nbsp;context)
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                153&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-beowulf-list
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                154&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;PUT
+                </span><br/>
+<span class="covered" title="13 out of 13 forms covered">
+                155&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;QUOTE&nbsp;(generate&nbsp;(-&gt;&nbsp;tree&nbsp;second&nbsp;second&nbsp;second)&nbsp;context))
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                156&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;QUOTE&nbsp;&#x27;EXPR)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                157&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;QUOTE
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                158&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cons&nbsp;&#x27;LAMBDA
+                </span><br/>
+<span class="covered" title="12 out of 12 forms covered">
+                159&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;(generate&nbsp;(nth&nbsp;(-&gt;&nbsp;tree&nbsp;second&nbsp;second)&nbsp;2)&nbsp;context)
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                160&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;3)&nbsp;context))))))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                161&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                162&nbsp;&nbsp;(defn&nbsp;gen-iexpr
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                163&nbsp;&nbsp;&nbsp;&nbsp;[tree&nbsp;context]
+                </span><br/>
+<span class="not-covered" title="0 out of 11 forms covered">
+                164&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[bundle&nbsp;(reduce&nbsp;#(assoc&nbsp;%1&nbsp;(first&nbsp;%2)&nbsp;%2)
+                </span><br/>
+<span class="not-covered" title="0 out of 1 forms covered">
+                165&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{}
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                166&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(rest&nbsp;tree))]
+                </span><br/>
+<span class="not-covered" title="0 out of 8 forms covered">
+                167&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;(generate&nbsp;(:iop&nbsp;bundle)&nbsp;context)
+                </span><br/>
+<span class="not-covered" title="0 out of 6 forms covered">
+                168&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(:lhs&nbsp;bundle)&nbsp;context)
+                </span><br/>
+<span class="not-covered" title="0 out of 6 forms covered">
+                169&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(:rhs&nbsp;bundle)&nbsp;context))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                170&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                171&nbsp;&nbsp;(defn&nbsp;generate-set
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                172&nbsp;&nbsp;&nbsp;&nbsp;&quot;Actually&nbsp;not&nbsp;sure&nbsp;what&nbsp;the&nbsp;mexpr&nbsp;representation&nbsp;of&nbsp;set&nbsp;looks&nbsp;like&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                173&nbsp;&nbsp;&nbsp;&nbsp;[tree&nbsp;context]
+                </span><br/>
+<span class="not-covered" title="0 out of 7 forms covered">
+                174&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info&nbsp;&quot;Not&nbsp;Yet&nbsp;Implemented&quot;&nbsp;{:feature&nbsp;&quot;generate-set&quot;})))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                175&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                176&nbsp;&nbsp;(defn&nbsp;generate-assign
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                177&nbsp;&nbsp;&nbsp;&nbsp;&quot;Generate&nbsp;an&nbsp;assignment&nbsp;statement&nbsp;based&nbsp;on&nbsp;this&nbsp;`tree`.&nbsp;If&nbsp;the&nbsp;thing&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                178&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;being&nbsp;assigned&nbsp;to&nbsp;is&nbsp;a&nbsp;function&nbsp;signature,&nbsp;then&nbsp;we&nbsp;have&nbsp;to&nbsp;do&nbsp;something&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                179&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;different&nbsp;to&nbsp;if&nbsp;it&#x27;s&nbsp;an&nbsp;atom.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                180&nbsp;&nbsp;&nbsp;&nbsp;[tree&nbsp;context]
+                </span><br/>
+<span class="not-covered" title="0 out of 13 forms covered">
+                181&nbsp;&nbsp;&nbsp;&nbsp;(case&nbsp;(first&nbsp;(second&nbsp;tree))
+                </span><br/>
+<span class="not-covered" title="0 out of 4 forms covered">
+                182&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:fncall&nbsp;(generate-defn&nbsp;tree&nbsp;context)
+                </span><br/>
+<span class="not-covered" title="0 out of 12 forms covered">
+                183&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:mexpr&nbsp;(map&nbsp;#(generate&nbsp;%&nbsp;context)&nbsp;(rest&nbsp;(second&nbsp;tree)))
+                </span><br/>
+<span class="not-covered" title="0 out of 8 forms covered">
+                184&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(:mvar&nbsp;:atom)&nbsp;(generate-set&nbsp;tree&nbsp;context)))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                185&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                186&nbsp;&nbsp;(defn&nbsp;strip-leading-zeros
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                187&nbsp;&nbsp;&nbsp;&nbsp;&quot;`read-string`&nbsp;interprets&nbsp;strings&nbsp;with&nbsp;leading&nbsp;zeros&nbsp;as&nbsp;octal;&nbsp;strip
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                188&nbsp;&nbsp;&nbsp;&nbsp;any&nbsp;from&nbsp;this&nbsp;string&nbsp;`s`.&nbsp;If&nbsp;what&#x27;s&nbsp;left&nbsp;is&nbsp;empty&nbsp;(i.e.&nbsp;there&nbsp;were
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                189&nbsp;&nbsp;&nbsp;&nbsp;only&nbsp;zeros,&nbsp;return&nbsp;`\&quot;0\&quot;`.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                190&nbsp;&nbsp;&nbsp;&nbsp;([s]
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                191&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(strip-leading-zeros&nbsp;s&nbsp;&quot;&quot;))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                192&nbsp;&nbsp;&nbsp;&nbsp;([s&nbsp;prefix]
+                </span><br/>
+<span class="partial" title="1 out of 2 forms covered">
+                193&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                194&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(empty?&nbsp;s)&nbsp;&quot;0&quot;
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                195&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(case&nbsp;(first&nbsp;s)
+                </span><br/>
+<span class="partial" title="12 out of 24 forms covered">
+                196&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(\+&nbsp;\-)&nbsp;(strip-leading-zeros&nbsp;(subs&nbsp;s&nbsp;1)&nbsp;(str&nbsp;(first&nbsp;s)&nbsp;prefix))
+                </span><br/>
+<span class="not-covered" title="0 out of 7 forms covered">
+                197&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;0&quot;&nbsp;(strip-leading-zeros&nbsp;(subs&nbsp;s&nbsp;1)&nbsp;prefix)
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                198&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;prefix&nbsp;s)))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                199&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                200&nbsp;&nbsp;(defn&nbsp;generate
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                201&nbsp;&nbsp;&nbsp;&nbsp;&quot;Generate&nbsp;lisp&nbsp;structure&nbsp;from&nbsp;this&nbsp;parse&nbsp;tree&nbsp;`p`.&nbsp;It&nbsp;is&nbsp;assumed&nbsp;that
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                202&nbsp;&nbsp;&nbsp;&nbsp;`p`&nbsp;has&nbsp;been&nbsp;simplified.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                203&nbsp;&nbsp;&nbsp;&nbsp;([p]
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                204&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;p&nbsp;:expr))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                205&nbsp;&nbsp;&nbsp;&nbsp;([p&nbsp;context]
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                206&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(try
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                207&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(expand-macros
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                208&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                209&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(coll?&nbsp;p)
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                210&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(case&nbsp;(first&nbsp;p)
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                211&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:λ&nbsp;&quot;LAMBDA&quot;
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                212&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:λexpr&nbsp;(make-cons-cell
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                213&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(nth&nbsp;p&nbsp;1)&nbsp;context)
+                </span><br/>
+<span class="covered" title="8 out of 8 forms covered">
+                214&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell&nbsp;(generate&nbsp;(nth&nbsp;p&nbsp;2)&nbsp;context)
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                215&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(nth&nbsp;p&nbsp;3)&nbsp;context)))
+                </span><br/>
+<span class="covered" title="12 out of 12 forms covered">
+                216&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:args&nbsp;(make-beowulf-list&nbsp;(map&nbsp;#(generate&nbsp;%&nbsp;context)&nbsp;(rest&nbsp;p)))
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                217&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:atom&nbsp;(symbol&nbsp;(second&nbsp;p))
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                218&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:bindings&nbsp;(generate&nbsp;(second&nbsp;p)&nbsp;context)
+                </span><br/>
+<span class="covered" title="12 out of 12 forms covered">
+                219&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:body&nbsp;(make-beowulf-list&nbsp;(map&nbsp;#(generate&nbsp;%&nbsp;context)&nbsp;(rest&nbsp;p)))
+                </span><br/>
+<span class="covered" title="12 out of 12 forms covered">
+                220&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(:coefficient&nbsp;:exponent)&nbsp;(generate&nbsp;(second&nbsp;p)&nbsp;context)
+                </span><br/>
+<span class="partial" title="8 out of 9 forms covered">
+                221&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:cond&nbsp;(gen-cond&nbsp;p&nbsp;(if&nbsp;(=&nbsp;context&nbsp;:mexpr)&nbsp;:cond-mexpr&nbsp;context))
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                222&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:cond-clause&nbsp;(gen-cond-clause&nbsp;p&nbsp;context)
+                </span><br/>
+<span class="covered" title="11 out of 11 forms covered">
+                223&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:decimal&nbsp;(read-string&nbsp;(apply&nbsp;str&nbsp;(map&nbsp;second&nbsp;(rest&nbsp;p))))
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                224&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:defn&nbsp;(generate-defn&nbsp;p&nbsp;context)
+                </span><br/>
+<span class="not-covered" title="0 out of 2 forms covered">
+                225&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:dotted-pair&nbsp;(make-cons-cell
+                </span><br/>
+<span class="not-covered" title="0 out of 6 forms covered">
+                226&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(nth&nbsp;p&nbsp;1)&nbsp;context)
+                </span><br/>
+<span class="not-covered" title="0 out of 6 forms covered">
+                227&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(nth&nbsp;p&nbsp;2)&nbsp;context))
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                228&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:fncall&nbsp;(gen-fn-call&nbsp;p&nbsp;context)
+                </span><br/>
+<span class="not-covered" title="0 out of 4 forms covered">
+                229&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:iexpr&nbsp;(gen-iexpr&nbsp;p&nbsp;context)
+                </span><br/>
+<span class="covered" title="7 out of 7 forms covered">
+                230&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:integer&nbsp;(read-string&nbsp;(strip-leading-zeros&nbsp;(second&nbsp;p)))
+                </span><br/>
+<span class="not-covered" title="0 out of 11 forms covered">
+                231&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:iop&nbsp;(case&nbsp;(second&nbsp;p)
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                232&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;&#x2F;&quot;&nbsp;&#x27;DIFFERENCE
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                233&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;=&quot;&nbsp;&#x27;EQUAL
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                234&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;&gt;&quot;&nbsp;&#x27;GREATERP
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                235&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;&lt;&quot;&nbsp;&#x27;LESSP
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                236&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;+&quot;&nbsp;&#x27;PLUS
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                237&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;*&quot;&nbsp;&#x27;TIMES
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                238&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;else
+                </span><br/>
+<span class="not-covered" title="0 out of 4 forms covered">
+                239&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info&nbsp;&quot;Unrecognised&nbsp;infix&nbsp;operator&nbsp;symbol&quot;
+                </span><br/>
+<span class="not-covered" title="0 out of 4 forms covered">
+                240&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:phase&nbsp;:generate
+                </span><br/>
+<span class="not-covered" title="0 out of 1 forms covered">
+                241&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:fragment&nbsp;p})))
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                242&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:list&nbsp;(gen-dot-terminated-list&nbsp;(rest&nbsp;p))
+                </span><br/>
+<span class="not-covered" title="0 out of 12 forms covered">
+                243&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(:lhs&nbsp;:rhs)&nbsp;(generate&nbsp;(second&nbsp;p)&nbsp;context)
+                </span><br/>
+<span class="covered" title="11 out of 11 forms covered">
+                244&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:mexpr&nbsp;(generate&nbsp;(second&nbsp;p)&nbsp;(if&nbsp;(=&nbsp;context&nbsp;:cond-mexpr)&nbsp;context&nbsp;:mexpr))
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                245&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:mconst&nbsp;(if&nbsp;(=&nbsp;context&nbsp;:cond-mexpr)
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                246&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(case&nbsp;(second&nbsp;p)
+                </span><br/>
+<span class="partial" title="5 out of 15 forms covered">
+                247&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(&quot;T&quot;&nbsp;&quot;F&quot;&nbsp;&quot;NIL&quot;)&nbsp;(symbol&nbsp;(second&nbsp;p))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                248&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;else
+                </span><br/>
+<span class="not-covered" title="0 out of 8 forms covered">
+                249&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;QUOTE&nbsp;(symbol&nbsp;(second&nbsp;p))))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                250&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;else
+                </span><br/>
+<span class="covered" title="8 out of 8 forms covered">
+                251&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;QUOTE&nbsp;(symbol&nbsp;(second&nbsp;p))))
+                </span><br/>
+<span class="covered" title="7 out of 7 forms covered">
+                252&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:mvar&nbsp;(symbol&nbsp;(upper-case&nbsp;(second&nbsp;p)))
+                </span><br/>
+<span class="not-covered" title="0 out of 6 forms covered">
+                253&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:number&nbsp;(generate&nbsp;(second&nbsp;p)&nbsp;context)
+                </span><br/>
+<span class="covered" title="9 out of 9 forms covered">
+                254&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:octal&nbsp;(let&nbsp;[n&nbsp;(read-string&nbsp;(strip-leading-zeros&nbsp;(second&nbsp;p)&nbsp;&quot;0&quot;))
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                255&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scale&nbsp;(generate&nbsp;(nth&nbsp;p&nbsp;3)&nbsp;context)]
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                256&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(*&nbsp;n&nbsp;(expt&nbsp;8&nbsp;scale)))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                257&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                258&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;the&nbsp;quote&nbsp;read&nbsp;macro&nbsp;(which&nbsp;probably&nbsp;didn&#x27;t&nbsp;exist&nbsp;in&nbsp;Lisp&nbsp;1.5,&nbsp;but...)
+                </span><br/>
+<span class="covered" title="11 out of 11 forms covered">
+                259&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:quoted-expr&nbsp;(make-beowulf-list&nbsp;(list&nbsp;&#x27;QUOTE&nbsp;(generate&nbsp;(second&nbsp;p)&nbsp;context)))
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                260&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:scale-factor&nbsp;(if
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                261&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(empty?&nbsp;(second&nbsp;p))&nbsp;0
+                </span><br/>
+<span class="covered" title="7 out of 7 forms covered">
+                262&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(read-string&nbsp;(strip-leading-zeros&nbsp;(second&nbsp;p))))
+                </span><br/>
+<span class="covered" title="7 out of 7 forms covered">
+                263&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:scientific&nbsp;(let&nbsp;[n&nbsp;(generate&nbsp;(second&nbsp;p)&nbsp;context)
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                264&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exponent&nbsp;(generate&nbsp;(nth&nbsp;p&nbsp;3)&nbsp;context)]
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                265&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(*&nbsp;n&nbsp;(expt&nbsp;10&nbsp;exponent)))
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                266&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:sexpr&nbsp;(generate&nbsp;(second&nbsp;p)&nbsp;:sexpr)
+                </span><br/>
+<span class="not-covered" title="0 out of 5 forms covered">
+                267&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:subr&nbsp;(symbol&nbsp;(second&nbsp;p))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                268&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                269&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;default
+                </span><br/>
+<span class="not-covered" title="0 out of 9 forms covered">
+                270&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info&nbsp;(str&nbsp;&quot;Unrecognised&nbsp;head:&nbsp;&quot;&nbsp;(first&nbsp;p))
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                271&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:generating&nbsp;p})))
+                </span><br/>
+<span class="not-covered" title="0 out of 1 forms covered">
+                272&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;p))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                273&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(catch&nbsp;Throwable&nbsp;any
+                </span><br/>
+<span class="not-covered" title="0 out of 4 forms covered">
+                274&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info&nbsp;&quot;Could&nbsp;not&nbsp;generate&quot;
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                275&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:generating&nbsp;p}
+                </span><br/>
+<span class="not-covered" title="0 out of 1 forms covered">
+                276&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;any))))))
+                </span><br/>
+ </body>
+</html>

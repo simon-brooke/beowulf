@@ -1,0 +1,368 @@
+<html>
+ <head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <link rel="stylesheet" href="../../coverage.css"/>  <title> beowulf/reader/parser.clj </title>
+ </head>
+ <body>
+<span class="covered" title="1 out of 1 forms covered">
+                001&nbsp;&nbsp;(ns&nbsp;beowulf.reader.parser
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                002&nbsp;&nbsp;&nbsp;&nbsp;&quot;The&nbsp;actual&nbsp;parser,&nbsp;supporting&nbsp;both&nbsp;S-expression&nbsp;and&nbsp;M-expression&nbsp;syntax.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                003&nbsp;&nbsp;&nbsp;&nbsp;(:require&nbsp;[instaparse.core&nbsp;:as&nbsp;i]))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                004&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                005&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                006&nbsp;&nbsp;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                007&nbsp;&nbsp;;;;&nbsp;Copyright&nbsp;(C)&nbsp;2022-2023&nbsp;Simon&nbsp;Brooke
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                008&nbsp;&nbsp;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                009&nbsp;&nbsp;;;;&nbsp;This&nbsp;program&nbsp;is&nbsp;free&nbsp;software;&nbsp;you&nbsp;can&nbsp;redistribute&nbsp;it&nbsp;and&#x2F;or
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                010&nbsp;&nbsp;;;;&nbsp;modify&nbsp;it&nbsp;under&nbsp;the&nbsp;terms&nbsp;of&nbsp;the&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                011&nbsp;&nbsp;;;;&nbsp;as&nbsp;published&nbsp;by&nbsp;the&nbsp;Free&nbsp;Software&nbsp;Foundation;&nbsp;either&nbsp;version&nbsp;2
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                012&nbsp;&nbsp;;;;&nbsp;of&nbsp;the&nbsp;License,&nbsp;or&nbsp;(at&nbsp;your&nbsp;option)&nbsp;any&nbsp;later&nbsp;version.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                013&nbsp;&nbsp;;;;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                014&nbsp;&nbsp;;;;&nbsp;This&nbsp;program&nbsp;is&nbsp;distributed&nbsp;in&nbsp;the&nbsp;hope&nbsp;that&nbsp;it&nbsp;will&nbsp;be&nbsp;useful,
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                015&nbsp;&nbsp;;;;&nbsp;but&nbsp;WITHOUT&nbsp;ANY&nbsp;WARRANTY;&nbsp;without&nbsp;even&nbsp;the&nbsp;implied&nbsp;warranty&nbsp;of
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                016&nbsp;&nbsp;;;;&nbsp;MERCHANTABILITY&nbsp;or&nbsp;FITNESS&nbsp;FOR&nbsp;A&nbsp;PARTICULAR&nbsp;PURPOSE.&nbsp;&nbsp;See&nbsp;the
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                017&nbsp;&nbsp;;;;&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License&nbsp;for&nbsp;more&nbsp;details.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                018&nbsp;&nbsp;;;;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                019&nbsp;&nbsp;;;;&nbsp;You&nbsp;should&nbsp;have&nbsp;received&nbsp;a&nbsp;copy&nbsp;of&nbsp;the&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                020&nbsp;&nbsp;;;;&nbsp;along&nbsp;with&nbsp;this&nbsp;program;&nbsp;if&nbsp;not,&nbsp;write&nbsp;to&nbsp;the&nbsp;Free&nbsp;Software
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                021&nbsp;&nbsp;;;;&nbsp;Foundation,&nbsp;Inc.,&nbsp;51&nbsp;Franklin&nbsp;Street,&nbsp;Fifth&nbsp;Floor,&nbsp;Boston,&nbsp;MA&nbsp;&nbsp;02110-1301,&nbsp;USA.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                022&nbsp;&nbsp;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                023&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                024&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                025&nbsp;&nbsp;(def&nbsp;parse
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                026&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;a&nbsp;string&nbsp;presented&nbsp;as&nbsp;argument&nbsp;into&nbsp;a&nbsp;parse&nbsp;tree&nbsp;which&nbsp;can&nbsp;then
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                027&nbsp;&nbsp;&nbsp;&nbsp;be&nbsp;operated&nbsp;upon&nbsp;further.&quot;
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                028&nbsp;&nbsp;&nbsp;&nbsp;(i&#x2F;parser
+                </span><br/>
+<span class="covered" title="13 out of 13 forms covered">
+                029&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                030&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;we&nbsp;tolerate&nbsp;whitespace&nbsp;and&nbsp;comments&nbsp;around&nbsp;legitimate&nbsp;input
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                031&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;raw&nbsp;:=&nbsp;expr&nbsp;|&nbsp;opt-comment&nbsp;expr&nbsp;opt-comment;&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                032&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;top&nbsp;level:&nbsp;we&nbsp;accept&nbsp;mexprs&nbsp;as&nbsp;well&nbsp;as&nbsp;sexprs.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                033&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;expr&nbsp;:=&nbsp;mexpr&nbsp;|&nbsp;sexpr&nbsp;;&quot;
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                034&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                035&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;comments.&nbsp;I&#x27;m&nbsp;pretty&nbsp;confident&nbsp;Lisp&nbsp;1.5&nbsp;did&nbsp;NOT&nbsp;have&nbsp;these.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                036&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;comment&nbsp;:=&nbsp;opt-space&nbsp;&lt;&#x27;;;&#x27;&gt;&nbsp;opt-space&nbsp;#&#x27;[^\\n\\r]*&#x27;;&quot;
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                037&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                038&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;there&#x27;s&nbsp;a&nbsp;notation&nbsp;comprising&nbsp;a&nbsp;left&nbsp;brace&nbsp;followed&nbsp;by&nbsp;mexprs
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                039&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;followed&nbsp;by&nbsp;a&nbsp;right&nbsp;brace&nbsp;which&nbsp;doesn&#x27;t&nbsp;seem&nbsp;to&nbsp;be&nbsp;documented&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                040&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;but&nbsp;I&nbsp;think&nbsp;must&nbsp;represent&nbsp;assembly&nbsp;code(?)
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                041&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                042&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;&quot;assembly&nbsp;:=&nbsp;lbrace&nbsp;exprs&nbsp;rbrace;&quot;
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                043&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                044&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;mexprs.&nbsp;I&#x27;m&nbsp;pretty&nbsp;clear&nbsp;that&nbsp;Lisp&nbsp;1.5&nbsp;could&nbsp;never&nbsp;read&nbsp;these,
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                045&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;but&nbsp;it&#x27;s&nbsp;a&nbsp;convenience.
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                046&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                047&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;TODO:&nbsp;this&nbsp;works&nbsp;for&nbsp;now&nbsp;but&nbsp;in&nbsp;fact&nbsp;the&nbsp;Programmer&#x27;s&nbsp;Manual
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                048&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;gives&nbsp;a&nbsp;much&nbsp;simpler&nbsp;formulation&nbsp;of&nbsp;M-expression&nbsp;grammar&nbsp;on
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                049&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;page&nbsp;9,&nbsp;and&nbsp;of&nbsp;the&nbsp;S-expression&nbsp;grammar&nbsp;on&nbsp;page&nbsp;8.&nbsp;It&nbsp;would
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                050&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;be&nbsp;worth&nbsp;going&nbsp;back&nbsp;and&nbsp;redoing&nbsp;this&nbsp;from&nbsp;the&nbsp;book.
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                051&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                052&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;exprs&nbsp;:=&nbsp;expr&nbsp;|&nbsp;exprs;&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                053&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;mexpr&nbsp;:=&nbsp;λexpr&nbsp;|&nbsp;fncall&nbsp;|&nbsp;defn&nbsp;|&nbsp;cond&nbsp;|&nbsp;mvar&nbsp;|&nbsp;mconst&nbsp;|&nbsp;iexpr&nbsp;|&nbsp;number&nbsp;|&nbsp;mexpr&nbsp;comment;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                054&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;λexpr&nbsp;:=&nbsp;λ&nbsp;lsqb&nbsp;bindings&nbsp;semi-colon&nbsp;opt-space&nbsp;body&nbsp;opt-space&nbsp;rsqb;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                055&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;λ&nbsp;:=&nbsp;&#x27;λ&#x27;&nbsp;|&nbsp;&#x27;lambda&#x27;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                056&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bindings&nbsp;:=&nbsp;lsqb&nbsp;args&nbsp;rsqb&nbsp;|&nbsp;lsqb&nbsp;rsqb;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                057&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;body&nbsp;:=&nbsp;(opt-space&nbsp;mexpr&nbsp;semi-colon)*&nbsp;opt-space&nbsp;mexpr;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                058&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fncall&nbsp;:=&nbsp;fn-name&nbsp;bindings;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                059&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lsqb&nbsp;:=&nbsp;&#x27;[&#x27;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                060&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rsqb&nbsp;:=&nbsp;&#x27;]&#x27;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                061&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lbrace&nbsp;:=&nbsp;&#x27;{&#x27;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                062&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rbrace&nbsp;:=&nbsp;&#x27;}&#x27;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                063&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;defn&nbsp;:=&nbsp;mexpr&nbsp;opt-space&nbsp;&#x27;=&#x27;&nbsp;opt-space&nbsp;mexpr;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                064&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cond&nbsp;:=&nbsp;lsqb&nbsp;(opt-space&nbsp;cond-clause&nbsp;semi-colon&nbsp;opt-space)*&nbsp;cond-clause&nbsp;rsqb;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                065&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cond-clause&nbsp;:=&nbsp;mexpr&nbsp;opt-space&nbsp;arrow&nbsp;opt-space&nbsp;mexpr&nbsp;opt-space;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                066&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;arrow&nbsp;:=&nbsp;&#x27;-&gt;&#x27;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                067&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args&nbsp;:=&nbsp;arg&nbsp;|&nbsp;(opt-space&nbsp;arg&nbsp;semi-colon&nbsp;opt-space)*&nbsp;opt-space&nbsp;arg&nbsp;opt-space;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                068&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;arg&nbsp;:=&nbsp;mexpr;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                069&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fn-name&nbsp;:=&nbsp;mvar;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                070&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mvar&nbsp;:=&nbsp;#&#x27;[a-z][a-z0-9]*&#x27;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                071&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mconst&nbsp;:=&nbsp;#&#x27;[A-Z][A-Z0-9]*&#x27;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                072&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;semi-colon&nbsp;:=&nbsp;&#x27;;&#x27;;&quot;
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                073&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                074&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;Infix&nbsp;operators&nbsp;appear&nbsp;in&nbsp;mexprs,&nbsp;e.g.&nbsp;on&nbsp;page&nbsp;7.&nbsp;Ooops!
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                075&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;I&nbsp;do&nbsp;not&nbsp;know&nbsp;what&nbsp;infix&nbsp;operators&nbsp;are&nbsp;considered&nbsp;legal.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                076&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;In&nbsp;particular&nbsp;I&nbsp;do&nbsp;not&nbsp;know&nbsp;what&nbsp;symbol&nbsp;was&nbsp;used&nbsp;for
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                077&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;multiply
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                078&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;iexpr&nbsp;:=&nbsp;iexp&nbsp;iop&nbsp;iexp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                079&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iexp&nbsp;:=&nbsp;mexpr&nbsp;|&nbsp;number&nbsp;|&nbsp;opt-space&nbsp;iexp&nbsp;opt-space;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                080&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iop&nbsp;:=&nbsp;&#x27;&gt;&#x27;&nbsp;|&nbsp;&#x27;&lt;&#x27;&nbsp;|&nbsp;&#x27;+&#x27;&nbsp;|&nbsp;&#x27;-&#x27;&nbsp;|&nbsp;&#x27;*&#x27;&nbsp;&#x27;&#x2F;&#x27;&nbsp;|&nbsp;&#x27;=&#x27;&nbsp;;&quot;
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                081&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                082&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;comments.&nbsp;I&#x27;m&nbsp;pretty&nbsp;confident&nbsp;Lisp&nbsp;1.5&nbsp;did&nbsp;NOT&nbsp;have&nbsp;these.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                083&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;opt-comment&nbsp;:=&nbsp;opt-space&nbsp;|&nbsp;comment;&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                084&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;comment&nbsp;:=&nbsp;opt-space&nbsp;&lt;&#x27;;;&#x27;&gt;&nbsp;#&#x27;[^\\n\\r]*&#x27;&nbsp;opt-space;&quot;
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                085&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                086&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;sexprs.&nbsp;Note&nbsp;it&#x27;s&nbsp;not&nbsp;clear&nbsp;to&nbsp;me&nbsp;whether&nbsp;Lisp&nbsp;1.5&nbsp;had&nbsp;the&nbsp;quote&nbsp;macro,
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                087&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;but&nbsp;I&#x27;ve&nbsp;included&nbsp;it&nbsp;on&nbsp;the&nbsp;basis&nbsp;that&nbsp;it&nbsp;can&nbsp;do&nbsp;little&nbsp;harm.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                088&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;sexpr&nbsp;:=&nbsp;quoted-expr&nbsp;|&nbsp;atom&nbsp;|&nbsp;number&nbsp;|&nbsp;subr&nbsp;|&nbsp;dotted-pair&nbsp;|&nbsp;list&nbsp;|&nbsp;sexpr&nbsp;comment;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                089&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list&nbsp;:=&nbsp;lpar&nbsp;sexpr&nbsp;rpar&nbsp;|&nbsp;lpar&nbsp;(sexpr&nbsp;sep)*&nbsp;rpar&nbsp;|&nbsp;lpar&nbsp;(sexpr&nbsp;sep)*&nbsp;dot-terminal&nbsp;|&nbsp;lbrace&nbsp;exprs&nbsp;rbrace;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                090&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list&nbsp;:=&nbsp;lpar&nbsp;opt-space&nbsp;sexpr&nbsp;rpar&nbsp;|&nbsp;lpar&nbsp;opt-space&nbsp;(sexpr&nbsp;sep)*&nbsp;rpar&nbsp;|&nbsp;lpar&nbsp;opt-space&nbsp;(sexpr&nbsp;sep)*&nbsp;dot-terminal;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                091&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dotted-pair&nbsp;:=&nbsp;lpar&nbsp;dot-terminal&nbsp;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                092&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dot&nbsp;:=&nbsp;&#x27;.&#x27;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                093&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lpar&nbsp;:=&nbsp;&#x27;(&#x27;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                094&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rpar&nbsp;:=&nbsp;&#x27;)&#x27;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                095&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;quoted-expr&nbsp;:=&nbsp;quote&nbsp;sexpr;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                096&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;quote&nbsp;:=&nbsp;&#x27;\\&#x27;&#x27;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                097&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dot-terminal&nbsp;:=&nbsp;sexpr&nbsp;space&nbsp;dot&nbsp;space&nbsp;sexpr&nbsp;rpar;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                098&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;space&nbsp;:=&nbsp;#&#x27;\\p{javaWhitespace}+&#x27;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                099&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;opt-space&nbsp;:=&nbsp;#&#x27;\\p{javaWhitespace}*&#x27;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                100&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sep&nbsp;:=&nbsp;&#x27;,&#x27;&nbsp;|&nbsp;opt-space;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                101&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;atom&nbsp;:=&nbsp;#&#x27;[A-Z][A-Z0-9]*&#x27;;&quot;
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                102&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                103&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;we&nbsp;need&nbsp;a&nbsp;way&nbsp;of&nbsp;representing&nbsp;Clojure&nbsp;functions&nbsp;on&nbsp;the&nbsp;object&nbsp;list;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                104&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;subr&nbsp;objects&nbsp;aren&#x27;t&nbsp;expected&nbsp;to&nbsp;be&nbsp;normally&nbsp;entered&nbsp;on&nbsp;the&nbsp;REPL,&nbsp;but
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                105&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;must&nbsp;be&nbsp;on&nbsp;the&nbsp;object&nbsp;list&nbsp;or&nbsp;functions&nbsp;to&nbsp;which&nbsp;functions&nbsp;are&nbsp;passed
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                106&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;won&#x27;t&nbsp;be&nbsp;able&nbsp;to&nbsp;access&nbsp;them.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                107&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;subr&nbsp;:=&nbsp;#&#x27;[a-z][a-z.]*&#x2F;[A-Za-z][A-Za-z0-9]*&#x27;;&quot;
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                108&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                109&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;Lisp&nbsp;1.5&nbsp;supported&nbsp;octal&nbsp;as&nbsp;well&nbsp;as&nbsp;decimal&nbsp;and&nbsp;scientific&nbsp;notation
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                110&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;number&nbsp;:=&nbsp;integer&nbsp;|&nbsp;decimal&nbsp;|&nbsp;scientific&nbsp;|&nbsp;octal;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                111&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;integer&nbsp;:=&nbsp;#&#x27;-?[0-9]+&#x27;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                112&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;decimal&nbsp;:=&nbsp;integer&nbsp;dot&nbsp;integer;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                113&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scientific&nbsp;:=&nbsp;coefficient&nbsp;e&nbsp;exponent;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                114&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;coefficient&nbsp;:=&nbsp;decimal&nbsp;|&nbsp;integer;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                115&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exponent&nbsp;:=&nbsp;integer;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                116&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e&nbsp;:=&nbsp;&#x27;E&#x27;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                117&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;octal&nbsp;:=&nbsp;#&#x27;[+-]?[0-7]+{1,12}&#x27;&nbsp;q&nbsp;scale-factor;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                118&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;q&nbsp;:=&nbsp;&#x27;Q&#x27;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                119&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scale-factor&nbsp;:=&nbsp;#&#x27;[0-9]*&#x27;&quot;)))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                120&nbsp;&nbsp;
+                </span><br/>
+ </body>
+</html>

@@ -1,0 +1,395 @@
+<html>
+ <head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <link rel="stylesheet" href="../coverage.css"/>  <title> beowulf/interop.clj </title>
+ </head>
+ <body>
+<span class="covered" title="1 out of 1 forms covered">
+                001&nbsp;&nbsp;(ns&nbsp;beowulf.interop
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                002&nbsp;&nbsp;&nbsp;&nbsp;(:require&nbsp;[beowulf.cons-cell&nbsp;:refer&nbsp;[make-beowulf-list]]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                003&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[beowulf.host&nbsp;:refer&nbsp;[CAR&nbsp;CDR]]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                004&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[beowulf.oblist&nbsp;:refer&nbsp;[*options*&nbsp;NIL]]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                005&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[clojure.string&nbsp;:as&nbsp;s&nbsp;:refer&nbsp;[last-index-of&nbsp;lower-case&nbsp;split
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                006&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;upper-case]]))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                007&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                008&nbsp;&nbsp;;;;;&nbsp;INTEROP&nbsp;feature&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                009&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                010&nbsp;&nbsp;(defn&nbsp;listify-qualified-name
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                011&nbsp;&nbsp;&nbsp;&nbsp;&quot;We&nbsp;need&nbsp;to&nbsp;be&nbsp;able&nbsp;to&nbsp;print&nbsp;something&nbsp;we&nbsp;can&nbsp;link&nbsp;to&nbsp;the&nbsp;particular&nbsp;Clojure
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                012&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function&nbsp;`subr`&nbsp;in&nbsp;a&nbsp;form&nbsp;in&nbsp;which&nbsp;Lisp&nbsp;1.5&nbsp;is&nbsp;able&nbsp;to&nbsp;read&nbsp;it&nbsp;back&nbsp;in&nbsp;and
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                013&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;relink&nbsp;it.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                014&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                015&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This&nbsp;assumes&nbsp;`subr`&nbsp;is&nbsp;either&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                016&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.&nbsp;a&nbsp;string&nbsp;in&nbsp;the&nbsp;format&nbsp;`#&#x27;beowulf.io&#x2F;SYSIN`&nbsp;or&nbsp;`beowulf.io&#x2F;SYSIN`;&nbsp;or
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                017&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.&nbsp;something&nbsp;which,&nbsp;when&nbsp;coerced&nbsp;to&nbsp;a&nbsp;string&nbsp;with&nbsp;`str`,&nbsp;will&nbsp;have&nbsp;such
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                018&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;format.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                019&nbsp;&nbsp;&nbsp;&nbsp;[subr]
+                </span><br/>
+<span class="not-covered" title="0 out of 2 forms covered">
+                020&nbsp;&nbsp;&nbsp;&nbsp;(make-beowulf-list
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                021&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(map
+                </span><br/>
+<span class="not-covered" title="0 out of 5 forms covered">
+                022&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#(symbol&nbsp;(upper-case&nbsp;%))
+                </span><br/>
+<span class="not-covered" title="0 out of 9 forms covered">
+                023&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(remove&nbsp;empty?&nbsp;(split&nbsp;(str&nbsp;subr)&nbsp;#&quot;[#&#x27;.&#x2F;]&quot;)))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                024&nbsp;&nbsp;
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                025&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                026&nbsp;&nbsp;(defn&nbsp;interpret-qualified-name
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                027&nbsp;&nbsp;&nbsp;&nbsp;&quot;For&nbsp;interoperation&nbsp;with&nbsp;Clojure,&nbsp;it&nbsp;will&nbsp;often&nbsp;be&nbsp;necessary&nbsp;to&nbsp;pass
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                028&nbsp;&nbsp;&nbsp;&nbsp;qualified&nbsp;names&nbsp;that&nbsp;are&nbsp;not&nbsp;representable&nbsp;in&nbsp;Lisp&nbsp;1.5.&nbsp;This&nbsp;function
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                029&nbsp;&nbsp;&nbsp;&nbsp;takes&nbsp;a&nbsp;sequence&nbsp;in&nbsp;the&nbsp;form&nbsp;`(PART&nbsp;PART&nbsp;PART...&nbsp;NAME)`&nbsp;and&nbsp;returns
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                030&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;symbol&nbsp;in&nbsp;the&nbsp;form&nbsp;`part.part.part&#x2F;NAME`.&nbsp;This&nbsp;symbol&nbsp;will&nbsp;then&nbsp;be
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                031&nbsp;&nbsp;&nbsp;&nbsp;tried&nbsp;in&nbsp;both&nbsp;that&nbsp;form&nbsp;and&nbsp;lower-cased.&nbsp;Names&nbsp;with&nbsp;hyphens&nbsp;or
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                032&nbsp;&nbsp;&nbsp;&nbsp;underscores&nbsp;cannot&nbsp;be&nbsp;represented&nbsp;with&nbsp;this&nbsp;scheme.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                033&nbsp;&nbsp;&nbsp;&nbsp;([l]
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                034&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(symbol
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                035&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[n&nbsp;(s&#x2F;join&nbsp;&quot;.&quot;&nbsp;
+                </span><br/>
+<span class="covered" title="13 out of 13 forms covered">
+                036&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(concat&nbsp;(map&nbsp;#(lower-case&nbsp;(str&nbsp;%))&nbsp;(butlast&nbsp;l))&nbsp;
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                037&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;(last&nbsp;l))))
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                038&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;s&nbsp;(last-index-of&nbsp;n&nbsp;&quot;.&quot;)]
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                039&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;s
+                </span><br/>
+<span class="covered" title="13 out of 13 forms covered">
+                040&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;(subs&nbsp;n&nbsp;0&nbsp;s)&nbsp;&quot;&#x2F;&quot;&nbsp;(subs&nbsp;n&nbsp;(inc&nbsp;s)))
+                </span><br/>
+<span class="not-covered" title="0 out of 1 forms covered">
+                041&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n)))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                042&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                043&nbsp;&nbsp;(defn&nbsp;to-beowulf
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                044&nbsp;&nbsp;&nbsp;&nbsp;&quot;Return&nbsp;a&nbsp;beowulf-native&nbsp;representation&nbsp;of&nbsp;the&nbsp;Clojure&nbsp;object&nbsp;`o`.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                045&nbsp;&nbsp;&nbsp;&nbsp;Numbers&nbsp;and&nbsp;symbols&nbsp;are&nbsp;unaffected.&nbsp;Collections&nbsp;have&nbsp;to&nbsp;be&nbsp;converted;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                046&nbsp;&nbsp;&nbsp;&nbsp;strings&nbsp;must&nbsp;be&nbsp;converted&nbsp;to&nbsp;symbols.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                047&nbsp;&nbsp;&nbsp;&nbsp;[o]
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                048&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                </span><br/>
+<span class="not-covered" title="0 out of 6 forms covered">
+                049&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(coll?&nbsp;o)&nbsp;(make-beowulf-list&nbsp;o)
+                </span><br/>
+<span class="not-covered" title="0 out of 8 forms covered">
+                050&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(string?&nbsp;o)&nbsp;(symbol&nbsp;(s&#x2F;upper-case&nbsp;o))
+                </span><br/>
+<span class="not-covered" title="0 out of 1 forms covered">
+                051&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;o))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                052&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                053&nbsp;&nbsp;(defn&nbsp;to-clojure
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                054&nbsp;&nbsp;&nbsp;&nbsp;&quot;If&nbsp;l&nbsp;is&nbsp;a&nbsp;`beowulf.cons_cell.ConsCell`,&nbsp;return&nbsp;a&nbsp;Clojure&nbsp;list&nbsp;having&nbsp;the&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                055&nbsp;&nbsp;&nbsp;&nbsp;same&nbsp;members&nbsp;in&nbsp;the&nbsp;same&nbsp;order.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                056&nbsp;&nbsp;&nbsp;&nbsp;[l]
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                057&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                058&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(not&nbsp;(instance?&nbsp;beowulf.cons_cell.ConsCell&nbsp;l))
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                059&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;l
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                060&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(CDR&nbsp;l)&nbsp;NIL)
+                </span><br/>
+<span class="covered" title="7 out of 7 forms covered">
+                061&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;(to-clojure&nbsp;(CAR&nbsp;l)))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                062&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else
+                </span><br/>
+<span class="covered" title="12 out of 12 forms covered">
+                063&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(conj&nbsp;(to-clojure&nbsp;(CDR&nbsp;l))&nbsp;(to-clojure&nbsp;(CAR&nbsp;l)))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                064&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                065&nbsp;&nbsp;(defn&nbsp;INTEROP
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                066&nbsp;&nbsp;&nbsp;&nbsp;&quot;Clojure&nbsp;(or&nbsp;other&nbsp;host&nbsp;environment)&nbsp;interoperation&nbsp;API.&nbsp;`fn-symbol`&nbsp;is&nbsp;expected
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                067&nbsp;&nbsp;&nbsp;&nbsp;to&nbsp;be&nbsp;either
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                068&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                069&nbsp;&nbsp;&nbsp;&nbsp;1.&nbsp;a&nbsp;symbol&nbsp;bound&nbsp;in&nbsp;the&nbsp;host&nbsp;environment&nbsp;to&nbsp;a&nbsp;function;&nbsp;or
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                070&nbsp;&nbsp;&nbsp;&nbsp;2.&nbsp;a&nbsp;sequence&nbsp;(list)&nbsp;of&nbsp;symbols&nbsp;forming&nbsp;a&nbsp;qualified&nbsp;path&nbsp;name&nbsp;bound&nbsp;to&nbsp;a
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                071&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function.
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                072&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                073&nbsp;&nbsp;&nbsp;&nbsp;Lower&nbsp;case&nbsp;characters&nbsp;cannot&nbsp;normally&nbsp;be&nbsp;represented&nbsp;in&nbsp;Lisp&nbsp;1.5,&nbsp;so&nbsp;both&nbsp;the
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                074&nbsp;&nbsp;&nbsp;&nbsp;upper&nbsp;case&nbsp;and&nbsp;lower&nbsp;case&nbsp;variants&nbsp;of&nbsp;`fn-symbol`&nbsp;will&nbsp;be&nbsp;tried.&nbsp;If&nbsp;the
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                075&nbsp;&nbsp;&nbsp;&nbsp;function&nbsp;you&#x27;re&nbsp;looking&nbsp;for&nbsp;has&nbsp;a&nbsp;mixed&nbsp;case&nbsp;name,&nbsp;that&nbsp;is&nbsp;not&nbsp;currently
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                076&nbsp;&nbsp;&nbsp;&nbsp;accessible.
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                077&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                078&nbsp;&nbsp;&nbsp;&nbsp;`args`&nbsp;is&nbsp;expected&nbsp;to&nbsp;be&nbsp;a&nbsp;Lisp&nbsp;1.5&nbsp;list&nbsp;of&nbsp;arguments&nbsp;to&nbsp;be&nbsp;passed&nbsp;to&nbsp;that
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                079&nbsp;&nbsp;&nbsp;&nbsp;function.&nbsp;Return&nbsp;value&nbsp;must&nbsp;be&nbsp;something&nbsp;acceptable&nbsp;to&nbsp;Lisp&nbsp;1.5,&nbsp;so&nbsp;either
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                080&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;symbol,&nbsp;a&nbsp;number,&nbsp;or&nbsp;a&nbsp;Lisp&nbsp;1.5&nbsp;list.
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                081&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                082&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;`fn-symbol`&nbsp;is&nbsp;not&nbsp;found&nbsp;(even&nbsp;when&nbsp;cast&nbsp;to&nbsp;lower&nbsp;case),&nbsp;or&nbsp;is&nbsp;not&nbsp;a&nbsp;function,
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                083&nbsp;&nbsp;&nbsp;&nbsp;or&nbsp;the&nbsp;value&nbsp;returned&nbsp;cannot&nbsp;be&nbsp;represented&nbsp;in&nbsp;Lisp&nbsp;1.5,&nbsp;an&nbsp;exception&nbsp;is&nbsp;thrown
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                084&nbsp;&nbsp;&nbsp;&nbsp;with&nbsp;`:cause`&nbsp;bound&nbsp;to&nbsp;`:interop`&nbsp;and&nbsp;`:detail`&nbsp;set&nbsp;to&nbsp;a&nbsp;value&nbsp;representing&nbsp;the
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                085&nbsp;&nbsp;&nbsp;&nbsp;actual&nbsp;problem.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                086&nbsp;&nbsp;&nbsp;&nbsp;[fn-symbol&nbsp;args]
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                087&nbsp;&nbsp;&nbsp;&nbsp;(if-not&nbsp;(:strict&nbsp;*options*)
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                088&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                089&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[q-name&nbsp;(if
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                090&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(seq?&nbsp;fn-symbol)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                091&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(interpret-qualified-name&nbsp;fn-symbol)
+                </span><br/>
+<span class="not-covered" title="0 out of 1 forms covered">
+                092&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fn-symbol)
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                093&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;l-name&nbsp;(symbol&nbsp;(s&#x2F;lower-case&nbsp;q-name))
+                </span><br/>
+<span class="partial" title="1 out of 3 forms covered">
+                094&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                </span><br/>
+<span class="partial" title="1 out of 2 forms covered">
+                095&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(try
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                096&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(fn?&nbsp;(eval&nbsp;l-name))
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                097&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(catch&nbsp;java.lang.ClassNotFoundException&nbsp;_&nbsp;nil))&nbsp;l-name
+                </span><br/>
+<span class="not-covered" title="0 out of 2 forms covered">
+                098&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(try
+                </span><br/>
+<span class="not-covered" title="0 out of 5 forms covered">
+                099&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(fn?&nbsp;(eval&nbsp;q-name))
+                </span><br/>
+<span class="not-covered" title="0 out of 1 forms covered">
+                100&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(catch&nbsp;java.lang.ClassNotFoundException&nbsp;_&nbsp;nil))&nbsp;q-name
+                </span><br/>
+<span class="not-covered" title="0 out of 1 forms covered">
+                101&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;(throw
+                </span><br/>
+<span class="not-covered" title="0 out of 2 forms covered">
+                102&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ex-info
+                </span><br/>
+<span class="not-covered" title="0 out of 5 forms covered">
+                103&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;&quot;INTEROP:&nbsp;ungecnáwen&nbsp;þegnung&nbsp;`&quot;&nbsp;fn-symbol&nbsp;&quot;`&quot;)
+                </span><br/>
+<span class="not-covered" title="0 out of 7 forms covered">
+                104&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:cause&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:interop
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                105&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:detail&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:not-found
+                </span><br/>
+<span class="not-covered" title="0 out of 1 forms covered">
+                106&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fn-symbol
+                </span><br/>
+<span class="not-covered" title="0 out of 1 forms covered">
+                107&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:also-tried&nbsp;l-name})))
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                108&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args&#x27;&nbsp;&nbsp;(to-clojure&nbsp;args)]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                109&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(print&nbsp;(str&nbsp;&quot;INTEROP:&nbsp;eahtiende&nbsp;`&quot;&nbsp;(cons&nbsp;f&nbsp;args&#x27;)&nbsp;&quot;`&quot;))
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                110&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(flush)
+                </span><br/>
+<span class="covered" title="7 out of 7 forms covered">
+                111&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[result&nbsp;(eval&nbsp;(conj&nbsp;args&#x27;&nbsp;f))]&nbsp;;;&nbsp;this&nbsp;has&nbsp;the&nbsp;potential&nbsp;to&nbsp;blow&nbsp;up&nbsp;the&nbsp;world
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                112&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(println&nbsp;(str&nbsp;&quot;;&nbsp;ágiefende&nbsp;`&quot;&nbsp;result&nbsp;&quot;`&quot;))
+                </span><br/>
+<span class="partial" title="4 out of 6 forms covered">
+                113&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                </span><br/>
+<span class="partial" title="4 out of 5 forms covered">
+                114&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(instance?&nbsp;beowulf.cons_cell.ConsCell&nbsp;result)&nbsp;result
+                </span><br/>
+<span class="partial" title="3 out of 6 forms covered">
+                115&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(coll?&nbsp;result)&nbsp;(make-beowulf-list&nbsp;result)
+                </span><br/>
+<span class="partial" title="3 out of 4 forms covered">
+                116&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(symbol?&nbsp;result)&nbsp;result
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                117&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(string?&nbsp;result)&nbsp;(symbol&nbsp;result)
+                </span><br/>
+<span class="not-covered" title="0 out of 4 forms covered">
+                118&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(number?&nbsp;result)&nbsp;result
+                </span><br/>
+<span class="not-covered" title="0 out of 1 forms covered">
+                119&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;(throw
+                </span><br/>
+<span class="not-covered" title="0 out of 2 forms covered">
+                120&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ex-info
+                </span><br/>
+<span class="not-covered" title="0 out of 5 forms covered">
+                121&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;&quot;INTEROP:&nbsp;Ne&nbsp;can&nbsp;eahtiende&nbsp;`&quot;&nbsp;result&nbsp;&quot;`&nbsp;to&nbsp;Lisp&nbsp;1.5.&quot;)
+                </span><br/>
+<span class="not-covered" title="0 out of 6 forms covered">
+                122&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:cause&nbsp;&nbsp;:interop
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                123&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:detail&nbsp;:not-representable
+                </span><br/>
+<span class="not-covered" title="0 out of 1 forms covered">
+                124&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:result&nbsp;result})))))
+                </span><br/>
+<span class="not-covered" title="0 out of 1 forms covered">
+                125&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw
+                </span><br/>
+<span class="not-covered" title="0 out of 2 forms covered">
+                126&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ex-info
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                127&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;&quot;INTEROP&nbsp;ne&nbsp;āfand&nbsp;innan&nbsp;Lisp&nbsp;1.5.&quot;)
+                </span><br/>
+<span class="not-covered" title="0 out of 5 forms covered">
+                128&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:cause&nbsp;&nbsp;:interop
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                129&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:detail&nbsp;:strict}))))
+                </span><br/>
+ </body>
+</html>

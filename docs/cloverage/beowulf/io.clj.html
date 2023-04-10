@@ -1,0 +1,521 @@
+<html>
+ <head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <link rel="stylesheet" href="../coverage.css"/>  <title> beowulf/io.clj </title>
+ </head>
+ <body>
+<span class="covered" title="1 out of 1 forms covered">
+                001&nbsp;&nbsp;(ns&nbsp;beowulf.io
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                002&nbsp;&nbsp;&nbsp;&nbsp;&quot;Non-standard&nbsp;extensions&nbsp;to&nbsp;Lisp&nbsp;1.5&nbsp;to&nbsp;read&nbsp;and&nbsp;write&nbsp;to&nbsp;the&nbsp;filesystem.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                003&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                004&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lisp&nbsp;1.5&nbsp;had&nbsp;only&nbsp;`READ`,&nbsp;which&nbsp;read&nbsp;one&nbsp;S-Expression&nbsp;at&nbsp;a&nbsp;time,&nbsp;and&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                005&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;various&nbsp;forms&nbsp;of&nbsp;`PRIN*`&nbsp;functions,&nbsp;which&nbsp;printed&nbsp;to&nbsp;the&nbsp;line&nbsp;printer.&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                006&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;There&nbsp;was&nbsp;also&nbsp;`PUNCH`,&nbsp;which&nbsp;wrote&nbsp;to&nbsp;a&nbsp;card&nbsp;punch.&nbsp;It&nbsp;does&nbsp;not&nbsp;seem&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                007&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;that&nbsp;there&nbsp;was&nbsp;any&nbsp;concept&nbsp;of&nbsp;an&nbsp;interactive&nbsp;terminal.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                008&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                009&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;Appendix&nbsp;E,&nbsp;`OVERLORD&nbsp;-&nbsp;THE&nbsp;MONITOR`,&nbsp;and&nbsp;Appendix&nbsp;F,&nbsp;`LISP&nbsp;INPUT
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                010&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;OUTPUT`.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                011&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                012&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;our&nbsp;purposes,&nbsp;to&nbsp;save&nbsp;the&nbsp;current&nbsp;state&nbsp;of&nbsp;the&nbsp;Lisp&nbsp;system&nbsp;it&nbsp;should
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                013&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;be&nbsp;sufficient&nbsp;to&nbsp;print&nbsp;the&nbsp;current&nbsp;contents&nbsp;of&nbsp;the&nbsp;oblist&nbsp;to&nbsp;file;&nbsp;and&nbsp;to
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                014&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;restore&nbsp;a&nbsp;previous&nbsp;state&nbsp;from&nbsp;file,&nbsp;to&nbsp;overwrite&nbsp;the&nbsp;contents&nbsp;of&nbsp;the&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                015&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;oblist&nbsp;with&nbsp;data&nbsp;from&nbsp;that&nbsp;file.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                016&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                017&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Hence&nbsp;functions&nbsp;SYSOUT&nbsp;and&nbsp;SYSIN,&nbsp;which&nbsp;do&nbsp;just&nbsp;that.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                018&nbsp;&nbsp;&nbsp;&nbsp;(:require&nbsp;[beowulf.cons-cell&nbsp;:refer&nbsp;[make-beowulf-list&nbsp;make-cons-cell
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                019&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pretty-print]]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                020&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[beowulf.host&nbsp;:refer&nbsp;[CADR&nbsp;CAR&nbsp;CDDR&nbsp;CDR]]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                021&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[beowulf.interop&nbsp;:refer&nbsp;[interpret-qualified-name
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                022&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;listify-qualified-name]]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                023&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[beowulf.oblist&nbsp;:refer&nbsp;[*options*&nbsp;NIL&nbsp;oblist]]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                024&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[beowulf.read&nbsp;:refer&nbsp;[READ]]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                025&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[clojure.java.io&nbsp;:refer&nbsp;[file&nbsp;resource]]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                026&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[clojure.string&nbsp;:refer&nbsp;[ends-with?]]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                027&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[java-time.api&nbsp;:refer&nbsp;[local-date&nbsp;local-date-time]]))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                028&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                029&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                030&nbsp;&nbsp;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                031&nbsp;&nbsp;;;;&nbsp;Copyright&nbsp;(C)&nbsp;2022-2023&nbsp;Simon&nbsp;Brooke
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                032&nbsp;&nbsp;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                033&nbsp;&nbsp;;;;&nbsp;This&nbsp;program&nbsp;is&nbsp;free&nbsp;software;&nbsp;you&nbsp;can&nbsp;redistribute&nbsp;it&nbsp;and&#x2F;or
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                034&nbsp;&nbsp;;;;&nbsp;modify&nbsp;it&nbsp;under&nbsp;the&nbsp;terms&nbsp;of&nbsp;the&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                035&nbsp;&nbsp;;;;&nbsp;as&nbsp;published&nbsp;by&nbsp;the&nbsp;Free&nbsp;Software&nbsp;Foundation;&nbsp;either&nbsp;version&nbsp;2
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                036&nbsp;&nbsp;;;;&nbsp;of&nbsp;the&nbsp;License,&nbsp;or&nbsp;(at&nbsp;your&nbsp;option)&nbsp;any&nbsp;later&nbsp;version.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                037&nbsp;&nbsp;;;;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                038&nbsp;&nbsp;;;;&nbsp;This&nbsp;program&nbsp;is&nbsp;distributed&nbsp;in&nbsp;the&nbsp;hope&nbsp;that&nbsp;it&nbsp;will&nbsp;be&nbsp;useful,
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                039&nbsp;&nbsp;;;;&nbsp;but&nbsp;WITHOUT&nbsp;ANY&nbsp;WARRANTY;&nbsp;without&nbsp;even&nbsp;the&nbsp;implied&nbsp;warranty&nbsp;of
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                040&nbsp;&nbsp;;;;&nbsp;MERCHANTABILITY&nbsp;or&nbsp;FITNESS&nbsp;FOR&nbsp;A&nbsp;PARTICULAR&nbsp;PURPOSE.&nbsp;&nbsp;See&nbsp;the
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                041&nbsp;&nbsp;;;;&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License&nbsp;for&nbsp;more&nbsp;details.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                042&nbsp;&nbsp;;;;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                043&nbsp;&nbsp;;;;&nbsp;You&nbsp;should&nbsp;have&nbsp;received&nbsp;a&nbsp;copy&nbsp;of&nbsp;the&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                044&nbsp;&nbsp;;;;&nbsp;along&nbsp;with&nbsp;this&nbsp;program;&nbsp;if&nbsp;not,&nbsp;write&nbsp;to&nbsp;the&nbsp;Free&nbsp;Software
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                045&nbsp;&nbsp;;;;&nbsp;Foundation,&nbsp;Inc.,&nbsp;51&nbsp;Franklin&nbsp;Street,&nbsp;Fifth&nbsp;Floor,&nbsp;Boston,&nbsp;MA&nbsp;&nbsp;02110-1301,&nbsp;USA.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                046&nbsp;&nbsp;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                047&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                048&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                049&nbsp;&nbsp;(def&nbsp;^:constant&nbsp;default-sysout&nbsp;&quot;lisp1.5.lsp&quot;)
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                050&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                051&nbsp;&nbsp;(defn-&nbsp;full-path
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                052&nbsp;&nbsp;&nbsp;&nbsp;[fp]
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                053&nbsp;&nbsp;&nbsp;&nbsp;(str
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                054&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(:filepath&nbsp;*options*)
+                </span><br/>
+<span class="not-covered" title="0 out of 6 forms covered">
+                055&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;(:filepath&nbsp;*options*)&nbsp;(java.io.File&#x2F;separator))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                056&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;&quot;)
+                </span><br/>
+<span class="partial" title="12 out of 14 forms covered">
+                057&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(and&nbsp;(string?&nbsp;fp)
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                058&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(&gt;&nbsp;(count&nbsp;fp)&nbsp;0)
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                059&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(not=&nbsp;fp&nbsp;&quot;NIL&quot;))
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                060&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fp
+                </span><br/>
+<span class="not-covered" title="0 out of 5 forms covered">
+                061&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;&quot;Sysout-&quot;&nbsp;(local-date)))
+                </span><br/>
+<span class="partial" title="6 out of 7 forms covered">
+                062&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(ends-with?&nbsp;fp&nbsp;&quot;.lsp&quot;)
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                063&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                064&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;.lsp&quot;)))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                065&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                066&nbsp;&nbsp;;;&nbsp;(find-var&nbsp;(symbol&nbsp;&quot;beowulf.io&#x2F;SYSIN&quot;))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                067&nbsp;&nbsp;;;&nbsp;(@(resolve&nbsp;(symbol&nbsp;&quot;beowulf.host&#x2F;TIMES&quot;))&nbsp;2&nbsp;2)
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                068&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                069&nbsp;&nbsp;(defn&nbsp;safely-wrap-subr
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                070&nbsp;&nbsp;&nbsp;&nbsp;[entry]
+                </span><br/>
+<span class="not-covered" title="0 out of 7 forms covered">
+                071&nbsp;&nbsp;&nbsp;&nbsp;(cond&nbsp;(=&nbsp;entry&nbsp;NIL)&nbsp;NIL
+                </span><br/>
+<span class="not-covered" title="0 out of 7 forms covered">
+                072&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(CAR&nbsp;entry)&nbsp;&#x27;SUBR)&nbsp;(make-cons-cell
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                073&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CAR&nbsp;entry)
+                </span><br/>
+<span class="not-covered" title="0 out of 2 forms covered">
+                074&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell
+                </span><br/>
+<span class="not-covered" title="0 out of 5 forms covered">
+                075&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(listify-qualified-name&nbsp;(CADR&nbsp;entry))
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                076&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CDDR&nbsp;entry)))
+                </span><br/>
+<span class="not-covered" title="0 out of 2 forms covered">
+                077&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;(make-cons-cell
+                </span><br/>
+<span class="not-covered" title="0 out of 8 forms covered">
+                078&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CAR&nbsp;entry)&nbsp;(safely-wrap-subr&nbsp;(CDR&nbsp;entry)))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                079&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                080&nbsp;&nbsp;(defn&nbsp;safely-wrap-subrs
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                081&nbsp;&nbsp;&nbsp;&nbsp;[objects]
+                </span><br/>
+<span class="not-covered" title="0 out of 6 forms covered">
+                082&nbsp;&nbsp;&nbsp;&nbsp;(make-beowulf-list&nbsp;(map&nbsp;safely-wrap-subr&nbsp;objects)))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                083&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                084&nbsp;&nbsp;(defn&nbsp;SYSOUT
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                085&nbsp;&nbsp;&nbsp;&nbsp;&quot;Dump&nbsp;the&nbsp;current&nbsp;content&nbsp;of&nbsp;the&nbsp;object&nbsp;list&nbsp;to&nbsp;file.&nbsp;If&nbsp;no&nbsp;`filepath`&nbsp;is
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                086&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;specified,&nbsp;a&nbsp;file&nbsp;name&nbsp;will&nbsp;be&nbsp;constructed&nbsp;of&nbsp;the&nbsp;symbol&nbsp;`Sysout`&nbsp;and&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                087&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;current&nbsp;date.&nbsp;File&nbsp;paths&nbsp;will&nbsp;be&nbsp;considered&nbsp;relative&nbsp;to&nbsp;the&nbsp;filepath
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                088&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set&nbsp;when&nbsp;starting&nbsp;Lisp.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                089&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                090&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**NOTE&nbsp;THAT**&nbsp;this&nbsp;is&nbsp;an&nbsp;extension&nbsp;function,&nbsp;not&nbsp;available&nbsp;in&nbsp;strct&nbsp;mode.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                091&nbsp;&nbsp;&nbsp;&nbsp;([]
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                092&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(SYSOUT&nbsp;nil))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                093&nbsp;&nbsp;&nbsp;&nbsp;([filepath]
+                </span><br/>
+<span class="not-covered" title="0 out of 7 forms covered">
+                094&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(spit&nbsp;(full-path&nbsp;(str&nbsp;filepath))
+                </span><br/>
+<span class="not-covered" title="0 out of 15 forms covered">
+                095&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(with-out-str
+                </span><br/>
+<span class="not-covered" title="0 out of 9 forms covered">
+                096&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(println&nbsp;(apply&nbsp;str&nbsp;(repeat&nbsp;79&nbsp;&quot;;&quot;)))
+                </span><br/>
+<span class="not-covered" title="0 out of 5 forms covered">
+                097&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(println&nbsp;(format&nbsp;&quot;;;&nbsp;Beowulf&nbsp;%s&nbsp;Sysout&nbsp;file&nbsp;generated&nbsp;at&nbsp;%s&quot;
+                </span><br/>
+<span class="not-covered" title="0 out of 7 forms covered">
+                098&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(or&nbsp;(System&#x2F;getProperty&nbsp;&quot;beowulf.version&quot;)&nbsp;&quot;&quot;)
+                </span><br/>
+<span class="not-covered" title="0 out of 2 forms covered">
+                099&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(local-date-time)))
+                </span><br/>
+<span class="not-covered" title="0 out of 4 forms covered">
+                100&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(when&nbsp;(System&#x2F;getenv&nbsp;&quot;USER&quot;)
+                </span><br/>
+<span class="not-covered" title="0 out of 7 forms covered">
+                101&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(println&nbsp;(format&nbsp;&quot;;;&nbsp;generated&nbsp;by&nbsp;%s&quot;&nbsp;(System&#x2F;getenv&nbsp;&quot;USER&quot;))))
+                </span><br/>
+<span class="not-covered" title="0 out of 9 forms covered">
+                102&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(println&nbsp;(apply&nbsp;str&nbsp;(repeat&nbsp;79&nbsp;&quot;;&quot;)))
+                </span><br/>
+<span class="not-covered" title="0 out of 2 forms covered">
+                103&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(println)
+                </span><br/>
+<span class="not-covered" title="0 out of 6 forms covered">
+                104&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[output&nbsp;(safely-wrap-subrs&nbsp;@oblist)]
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                105&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(pretty-print&nbsp;output)
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                106&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                107&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                108&nbsp;&nbsp;(defn&nbsp;resolve-subr
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                109&nbsp;&nbsp;&nbsp;&nbsp;&quot;If&nbsp;this&nbsp;oblist&nbsp;`entry`&nbsp;references&nbsp;a&nbsp;subroutine,&nbsp;attempt&nbsp;to&nbsp;fix&nbsp;up&nbsp;that
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                110&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;reference.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                111&nbsp;&nbsp;&nbsp;&nbsp;([entry]
+                </span><br/>
+<span class="partial" title="9 out of 12 forms covered">
+                112&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(or&nbsp;(resolve-subr&nbsp;entry&nbsp;&#x27;SUBR)
+                </span><br/>
+<span class="partial" title="1 out of 6 forms covered">
+                113&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(resolve-subr&nbsp;entry&nbsp;&#x27;FSUBR)))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                114&nbsp;&nbsp;&nbsp;&nbsp;([entry&nbsp;prop]
+                </span><br/>
+<span class="covered" title="7 out of 7 forms covered">
+                115&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cond&nbsp;(=&nbsp;entry&nbsp;NIL)&nbsp;NIL
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                116&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(CAR&nbsp;entry)&nbsp;prop)&nbsp;(try
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                117&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                118&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CAR&nbsp;entry)
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                119&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                120&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(interpret-qualified-name
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                121&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CADR&nbsp;entry))
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                122&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CDDR&nbsp;entry)))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                123&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(catch&nbsp;Exception&nbsp;_
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                124&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(print&nbsp;&quot;Warnung:&nbsp;ne&nbsp;can&nbsp;āfinde&nbsp;&quot;
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                125&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CADR&nbsp;entry))
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                126&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CDDR&nbsp;entry)))
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                127&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;(make-cons-cell
+                </span><br/>
+<span class="covered" title="8 out of 8 forms covered">
+                128&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CAR&nbsp;entry)&nbsp;(resolve-subr&nbsp;(CDR&nbsp;entry))))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                129&nbsp;&nbsp;
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                130&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                131&nbsp;&nbsp;(defn-&nbsp;resolve-subroutines
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                132&nbsp;&nbsp;&nbsp;&nbsp;&quot;Attempt&nbsp;to&nbsp;fix&nbsp;up&nbsp;the&nbsp;references&nbsp;to&nbsp;subroutines&nbsp;(Clojure&nbsp;functions)&nbsp;among
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                133&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;these&nbsp;`objects`,&nbsp;being&nbsp;new&nbsp;content&nbsp;for&nbsp;the&nbsp;object&nbsp;list.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                134&nbsp;&nbsp;&nbsp;&nbsp;[objects]
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                135&nbsp;&nbsp;&nbsp;&nbsp;(make-beowulf-list
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                136&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(map
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                137&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;resolve-subr
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                138&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;objects)))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                139&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                140&nbsp;&nbsp;(defn&nbsp;SYSIN
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                141&nbsp;&nbsp;&nbsp;&nbsp;&quot;Read&nbsp;the&nbsp;contents&nbsp;of&nbsp;the&nbsp;file&nbsp;at&nbsp;this&nbsp;`filename`&nbsp;into&nbsp;the&nbsp;object&nbsp;list.&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                142&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                143&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;the&nbsp;file&nbsp;is&nbsp;not&nbsp;a&nbsp;valid&nbsp;Beowulf&nbsp;sysout&nbsp;file,&nbsp;this&nbsp;will&nbsp;probably&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                144&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;corrupt&nbsp;the&nbsp;system,&nbsp;you&nbsp;have&nbsp;been&nbsp;warned.&nbsp;File&nbsp;paths&nbsp;will&nbsp;be&nbsp;considered&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                145&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;relative&nbsp;to&nbsp;the&nbsp;filepath&nbsp;set&nbsp;when&nbsp;starting&nbsp;Lisp.
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                146&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                147&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;It&nbsp;is&nbsp;intended&nbsp;that&nbsp;sysout&nbsp;files&nbsp;can&nbsp;be&nbsp;read&nbsp;both&nbsp;from&nbsp;resources&nbsp;within
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                148&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;jar&nbsp;file,&nbsp;and&nbsp;from&nbsp;the&nbsp;file&nbsp;system.&nbsp;If&nbsp;a&nbsp;named&nbsp;file&nbsp;exists&nbsp;in&nbsp;both&nbsp;the
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                149&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;file&nbsp;system&nbsp;and&nbsp;the&nbsp;resources,&nbsp;the&nbsp;file&nbsp;system&nbsp;will&nbsp;be&nbsp;preferred.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                150&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                151&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**NOTE&nbsp;THAT**&nbsp;if&nbsp;the&nbsp;provided&nbsp;`filename`&nbsp;does&nbsp;not&nbsp;end&nbsp;with&nbsp;`.lsp`&nbsp;(which,
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                152&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;you&#x27;re&nbsp;writing&nbsp;it&nbsp;from&nbsp;the&nbsp;Lisp&nbsp;REPL,&nbsp;it&nbsp;won&#x27;t),&nbsp;the&nbsp;extension&nbsp;`.lsp`
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                153&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;will&nbsp;be&nbsp;appended.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                154&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                155&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**NOTE&nbsp;THAT**&nbsp;this&nbsp;is&nbsp;an&nbsp;extension&nbsp;function,&nbsp;not&nbsp;available&nbsp;in&nbsp;strct&nbsp;mode.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                156&nbsp;&nbsp;&nbsp;&nbsp;([]
+                </span><br/>
+<span class="not-covered" title="0 out of 13 forms covered">
+                157&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(SYSIN&nbsp;(or&nbsp;(:read&nbsp;*options*)&nbsp;(str&nbsp;&quot;resources&#x2F;&quot;&nbsp;default-sysout))))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                158&nbsp;&nbsp;&nbsp;&nbsp;([filename]
+                </span><br/>
+<span class="covered" title="8 out of 8 forms covered">
+                159&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[fp&nbsp;(file&nbsp;(full-path&nbsp;(str&nbsp;filename)))
+                </span><br/>
+<span class="covered" title="9 out of 9 forms covered">
+                160&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;file&nbsp;(when&nbsp;(and&nbsp;(.exists&nbsp;fp)&nbsp;(.canRead&nbsp;fp))&nbsp;fp)
+                </span><br/>
+<span class="partial" title="4 out of 5 forms covered">
+                161&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;res&nbsp;(try&nbsp;(resource&nbsp;filename)
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                162&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(catch&nbsp;Throwable&nbsp;_&nbsp;nil))
+                </span><br/>
+<span class="covered" title="11 out of 11 forms covered">
+                163&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;content&nbsp;(try&nbsp;(READ&nbsp;(slurp&nbsp;(or&nbsp;file&nbsp;res)))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                164&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(catch&nbsp;Throwable&nbsp;_
+                </span><br/>
+<span class="not-covered" title="0 out of 4 forms covered">
+                165&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info&nbsp;&quot;Ne&nbsp;can&nbsp;ārǣde&quot;
+                </span><br/>
+<span class="not-covered" title="0 out of 5 forms covered">
+                166&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:context&nbsp;&quot;SYSIN&quot;
+                </span><br/>
+<span class="not-covered" title="0 out of 1 forms covered">
+                167&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:filename&nbsp;filename
+                </span><br/>
+<span class="not-covered" title="0 out of 1 forms covered">
+                168&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:filepath&nbsp;fp}))))]
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                169&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(swap!&nbsp;oblist
+                </span><br/>
+<span class="partial" title="7 out of 10 forms covered">
+                170&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#(when&nbsp;(or&nbsp;%&nbsp;(seq&nbsp;content))
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                171&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(resolve-subroutines&nbsp;content))))))
+                </span><br/>
+ </body>
+</html>
