@@ -1,0 +1,233 @@
+<html>
+ <head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <link rel="stylesheet" href="../../coverage.css"/>  <title> beowulf/reader/char_reader.clj </title>
+ </head>
+ <body>
+<span class="covered" title="1 out of 1 forms covered">
+                001&nbsp;&nbsp;(ns&nbsp;beowulf.reader.char-reader
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                002&nbsp;&nbsp;&nbsp;&nbsp;&quot;Provide&nbsp;sensible&nbsp;line&nbsp;editing,&nbsp;auto&nbsp;completion,&nbsp;and&nbsp;history&nbsp;recall.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                003&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                004&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None&nbsp;of&nbsp;what&#x27;s&nbsp;needed&nbsp;here&nbsp;is&nbsp;really&nbsp;working&nbsp;yet,&nbsp;and&nbsp;a&nbsp;pull&nbsp;request&nbsp;with
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                005&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;working&nbsp;implementation&nbsp;would&nbsp;be&nbsp;greatly&nbsp;welcomed.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                006&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                007&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;##&nbsp;What&#x27;s&nbsp;needed&nbsp;(rough&nbsp;specification)
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                008&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                009&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.&nbsp;Carriage&nbsp;return&nbsp;**does&nbsp;not**&nbsp;cause&nbsp;input&nbsp;to&nbsp;be&nbsp;returned,&nbsp;**unless**
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                010&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a.&nbsp;the&nbsp;number&nbsp;of&nbsp;open&nbsp;brackets&nbsp;`(`&nbsp;and&nbsp;closing&nbsp;brackets&nbsp;`)`&nbsp;match;&nbsp;and
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                011&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b.&nbsp;the&nbsp;number&nbsp;of&nbsp;open&nbsp;square&nbsp;brackets&nbsp;`[`&nbsp;and&nbsp;closing&nbsp;square&nbsp;brackets&nbsp;`]`&nbsp;also&nbsp;match;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                012&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.&nbsp;&lt;Ctrl-D&gt;&nbsp;aborts&nbsp;editing&nbsp;and&nbsp;returns&nbsp;the&nbsp;string&nbsp;`STOP`;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                013&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.&nbsp;&lt;Up-arrow&gt;&nbsp;and&nbsp;&lt;down-arrow&gt;&nbsp;scroll&nbsp;back&nbsp;and&nbsp;forward&nbsp;through&nbsp;history,&nbsp;but&nbsp;ideally&nbsp;I&#x27;d&nbsp;like&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                014&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this&nbsp;to&nbsp;be&nbsp;the&nbsp;Lisp&nbsp;history&nbsp;(i.e.&nbsp;the&nbsp;history&nbsp;of&nbsp;S-Expressions&nbsp;actually&nbsp;read&nbsp;by&nbsp;`READ`,&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                015&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rather&nbsp;than&nbsp;the&nbsp;strings&nbsp;which&nbsp;were&nbsp;supplied&nbsp;to&nbsp;`READ`);
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                016&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.&nbsp;&lt;Tab&gt;&nbsp;offers&nbsp;potential&nbsp;auto-completions&nbsp;taken&nbsp;from&nbsp;the&nbsp;value&nbsp;of&nbsp;`(OBLIST)`,&nbsp;ideally&nbsp;the
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                017&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;current&nbsp;value,&nbsp;not&nbsp;the&nbsp;value&nbsp;at&nbsp;the&nbsp;time&nbsp;the&nbsp;session&nbsp;started;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                018&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.&nbsp;&lt;Back-arrow&gt;&nbsp;and&nbsp;&lt;Forward-arrow&gt;&nbsp;offer&nbsp;movement&nbsp;and&nbsp;editing&nbsp;within&nbsp;the&nbsp;line.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                019&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                020&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TODO:&nbsp;There&nbsp;are&nbsp;multiple&nbsp;problems&nbsp;with&nbsp;JLine;&nbsp;a&nbsp;better&nbsp;solution&nbsp;might&nbsp;be
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                021&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to&nbsp;start&nbsp;from&nbsp;here:
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                022&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https:&#x2F;&#x2F;stackoverflow.com&#x2F;questions&#x2F;7931988&#x2F;how-to-manipulate-control-characters&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                023&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;(:import&nbsp;[org.jline.reader&nbsp;LineReader&nbsp;LineReaderBuilder]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                024&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[org.jline.terminal&nbsp;TerminalBuilder])
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                025&nbsp;&nbsp;&nbsp;&nbsp;)
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                026&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                027&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                028&nbsp;&nbsp;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                029&nbsp;&nbsp;;;;&nbsp;Copyright&nbsp;(C)&nbsp;2022-2023&nbsp;Simon&nbsp;Brooke
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                030&nbsp;&nbsp;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                031&nbsp;&nbsp;;;;&nbsp;This&nbsp;program&nbsp;is&nbsp;free&nbsp;software;&nbsp;you&nbsp;can&nbsp;redistribute&nbsp;it&nbsp;and&#x2F;or
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                032&nbsp;&nbsp;;;;&nbsp;modify&nbsp;it&nbsp;under&nbsp;the&nbsp;terms&nbsp;of&nbsp;the&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                033&nbsp;&nbsp;;;;&nbsp;as&nbsp;published&nbsp;by&nbsp;the&nbsp;Free&nbsp;Software&nbsp;Foundation;&nbsp;either&nbsp;version&nbsp;2
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                034&nbsp;&nbsp;;;;&nbsp;of&nbsp;the&nbsp;License,&nbsp;or&nbsp;(at&nbsp;your&nbsp;option)&nbsp;any&nbsp;later&nbsp;version.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                035&nbsp;&nbsp;;;;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                036&nbsp;&nbsp;;;;&nbsp;This&nbsp;program&nbsp;is&nbsp;distributed&nbsp;in&nbsp;the&nbsp;hope&nbsp;that&nbsp;it&nbsp;will&nbsp;be&nbsp;useful,
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                037&nbsp;&nbsp;;;;&nbsp;but&nbsp;WITHOUT&nbsp;ANY&nbsp;WARRANTY;&nbsp;without&nbsp;even&nbsp;the&nbsp;implied&nbsp;warranty&nbsp;of
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                038&nbsp;&nbsp;;;;&nbsp;MERCHANTABILITY&nbsp;or&nbsp;FITNESS&nbsp;FOR&nbsp;A&nbsp;PARTICULAR&nbsp;PURPOSE.&nbsp;&nbsp;See&nbsp;the
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                039&nbsp;&nbsp;;;;&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License&nbsp;for&nbsp;more&nbsp;details.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                040&nbsp;&nbsp;;;;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                041&nbsp;&nbsp;;;;&nbsp;You&nbsp;should&nbsp;have&nbsp;received&nbsp;a&nbsp;copy&nbsp;of&nbsp;the&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                042&nbsp;&nbsp;;;;&nbsp;along&nbsp;with&nbsp;this&nbsp;program;&nbsp;if&nbsp;not,&nbsp;write&nbsp;to&nbsp;the&nbsp;Free&nbsp;Software
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                043&nbsp;&nbsp;;;;&nbsp;Foundation,&nbsp;Inc.,&nbsp;51&nbsp;Franklin&nbsp;Street,&nbsp;Fifth&nbsp;Floor,&nbsp;Boston,&nbsp;MA&nbsp;&nbsp;02110-1301,&nbsp;USA.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                044&nbsp;&nbsp;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                045&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                046&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                047&nbsp;&nbsp;;;&nbsp;It&nbsp;looks&nbsp;from&nbsp;the&nbsp;example&nbsp;given&nbsp;[here](https:&#x2F;&#x2F;github.com&#x2F;jline&#x2F;jline3&#x2F;blob&#x2F;master&#x2F;demo&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;jline&#x2F;demo&#x2F;Repl.java)
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                048&nbsp;&nbsp;;;&nbsp;as&nbsp;though&nbsp;JLine&nbsp;could&nbsp;be&nbsp;used&nbsp;to&nbsp;build&nbsp;a&nbsp;perfect&nbsp;line-reader&nbsp;for&nbsp;Beowulf;&nbsp;but&nbsp;it&nbsp;also
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                049&nbsp;&nbsp;;;&nbsp;looks&nbsp;as&nbsp;though&nbsp;you&#x27;d&nbsp;need&nbsp;a&nbsp;DPhil&nbsp;in&nbsp;JLine&nbsp;to&nbsp;write&nbsp;it,&nbsp;and&nbsp;I&nbsp;don&#x27;t&nbsp;have
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                050&nbsp;&nbsp;;;&nbsp;the&nbsp;time.
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                051&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                052&nbsp;&nbsp;;;&nbsp;(def&nbsp;get-reader
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                053&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&quot;Return&nbsp;a&nbsp;reader,&nbsp;first&nbsp;constructing&nbsp;it&nbsp;if&nbsp;necessary.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                054&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                055&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;**NOTE&nbsp;THAT**&nbsp;this&nbsp;is&nbsp;not&nbsp;settled&nbsp;API.&nbsp;The&nbsp;existence&nbsp;and&nbsp;call&nbsp;signature&nbsp;of
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                056&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;this&nbsp;function&nbsp;is&nbsp;not&nbsp;guaranteed&nbsp;in&nbsp;future&nbsp;versions.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                057&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;(memoize&nbsp;(fn&nbsp;[]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                058&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;(let&nbsp;[term&nbsp;(.build&nbsp;(.system&nbsp;(TerminalBuilder&#x2F;builder)&nbsp;true))]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                059&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(.build&nbsp;(.terminal&nbsp;(LineReaderBuilder&#x2F;builder)&nbsp;term))))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                060&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                061&nbsp;&nbsp;;;&nbsp;(defn&nbsp;read-chars
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                062&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&quot;A&nbsp;drop-in&nbsp;replacement&nbsp;for&nbsp;`clojure.core&#x2F;read-line`,&nbsp;except&nbsp;that&nbsp;line&nbsp;editing
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                063&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;history&nbsp;should&nbsp;be&nbsp;enabled.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                064&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                065&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;**NOTE&nbsp;THAT**&nbsp;this&nbsp;does&nbsp;not&nbsp;work&nbsp;yet,&nbsp;but&nbsp;it&nbsp;is&nbsp;in&nbsp;the&nbsp;API&nbsp;because&nbsp;I&nbsp;hope&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                066&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;that&nbsp;it&nbsp;will&nbsp;work&nbsp;later!&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                067&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;[]&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                068&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[eddie&nbsp;(get-reader)]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                069&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(loop&nbsp;[s&nbsp;(.readLine&nbsp;eddie)]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                070&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(and&nbsp;(=&nbsp;(count&nbsp;(re-seq&nbsp;#&quot;\(&quot;&nbsp;s))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                071&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(count&nbsp;(re-seq&nbsp;#&quot;\)&quot;&nbsp;s)))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                072&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(count&nbsp;(re-seq&nbsp;#&quot;\[]&quot;&nbsp;s))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                073&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(count&nbsp;(re-seq&nbsp;#&quot;\]&quot;&nbsp;s))))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                074&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;s
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                075&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(recur&nbsp;(str&nbsp;s&nbsp;&quot;&nbsp;&quot;&nbsp;(.readLine&nbsp;eddie)))))))
+                </span><br/>
+ </body>
+</html>
