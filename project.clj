@@ -11,7 +11,7 @@
           :source-uri "https://github.com/simon-brooke/beowulf/blob/master/{filepath}#L{line}"
           ;; :themes [:journeyman]
           }
-  :description "An implementation of LISP 1.5 in Clojure"
+  :description "LISP 1.5 is to all Lisp dialects as Beowulf is to English literature."
   :license {:name "GPL-2.0-or-later"
             :url "https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html"}
   :dependencies [[org.clojure/clojure "1.11.1"]

@@ -108,9 +108,12 @@
 (defn resolve-subr
   "If this oblist `entry` references a subroutine, attempt to fix up that
    reference."
-  [entry]
-  (cond (= entry NIL) NIL
-        (= (CAR entry) 'SUBR) (try
+  ([entry]
+   (or (resolve-subr entry 'SUBR)
+       (resolve-subr entry 'FSUBR)))
+  ([entry prop]
+   (cond (= entry NIL) NIL
+        (= (CAR entry) prop) (try
                                 (make-cons-cell
                                  (CAR entry)
                                  (make-cons-cell
@@ -122,7 +125,7 @@
                                          (CADR entry))
                                   (CDDR entry)))
         :else (make-cons-cell
-               (CAR entry) (resolve-subr (CDR entry)))))
+               (CAR entry) (resolve-subr (CDR entry))))))
 
 
 (defn- resolve-subroutines

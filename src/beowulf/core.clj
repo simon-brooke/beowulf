@@ -46,12 +46,12 @@
    ["-h" "--help"]
    ["-p PROMPT" "--prompt PROMPT" "Set the REPL prompt to PROMPT"
     :default "Sprecan::"]
-   ["-r INITFILE" "--read INITFILE" "Read Lisp system from file INITFILE"
+   ["-r SYSOUTFILE" "--read SYSOUTFILE" "Read Lisp system from file SYSOUTFILE"
     :default default-sysout
     :validate [#(and
                  (.exists (io/file %))
                  (.canRead (io/file %)))
-               "Could not find initfile"]]
+               "Could not find sysout file"]]
    ["-s" "--strict" "Strictly interpret the Lisp 1.5 language, without extensions."]
    ["-t" "--time" "Time evaluations."]])
 

@@ -68,10 +68,10 @@
 
 (deftest conditional-tests
   (testing "Conditional expressions"
-    (let [expected "(COND ((ATOM X) X) ((QUOTE T) (FF (CAR X))))"
+    (let [expected "(COND ((ATOM X) X) (T (FF (CAR X))))"
           actual (print-str (gsp "[atom[x]->x; T->ff[car[x]]]"))]
       (is (= actual expected)))
-    (let [expected "(LABEL FF (LAMBDA (X) (COND ((ATOM X) X) ((QUOTE T) (FF (CAR X))))))"
+    (let [expected "(LABEL FF (LAMBDA (X) (COND ((ATOM X) X) (T (FF (CAR X))))))"
           actual (print-str
                    (generate
                      (simplify-tree
@@ -88,6 +88,6 @@
 
 (deftest assignment-tests
   (testing "Function assignment"
-    (let [expected "(PUT (QUOTE FF) (QUOTE EXPR) (QUOTE (LAMBDA (X) (COND ((ATOM X) X) ((QUOTE T) (FF (CAR X)))))))"
+    (let [expected "(PUT (QUOTE FF) (QUOTE EXPR) (QUOTE (LAMBDA (X) (COND ((ATOM X) X) (T (FF (CAR X)))))))"
           actual (print-str (gsp "ff[x]=[atom[x] -> x; T -> ff[car[x]]]"))]
       (is (= actual expected)))))

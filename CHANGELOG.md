@@ -1,6 +1,16 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+## [0.3.0] - 2023-04-10
+
+### Changed
+
+- Added property lists in the exact format used by Lisp 1.5;
+- Added `ASSOC`, `EFFACE`, `MAPLIST`, `PROG`, and other functions;
+- Where there are both interpreted (`EXPR`) and Clojure (`SUBR`) implementations of the same function, the `EXPR` is preferred (it is planned to make this configurable if/when there is a working compiler);
+- More error messages/diagnostics are now printed in Old English (it is planned to implement internationalisation so that you can switch to messages you actually understand);
+- Documentation improvements. 
+
 ## [0.2.1] - 2023-03-30
 
 ### Changed

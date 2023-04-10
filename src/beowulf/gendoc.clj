@@ -8,7 +8,7 @@
                            *manual-url* page-url]]
    [beowulf.oblist :refer [NIL oblist]]
    [clojure.java.browse :refer [browse-url]]
-   [clojure.string :as s ]))
+   [clojure.string :as s]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -60,7 +60,6 @@
    (when (keyword? key)
      (key (get-metadata-for-function function)))))
 
-
 (defn- get-metadata-for-entry [entry key]
   (let [fn ((host-functions) (symbol (first entry)))]
     (get-metadata-for-function fn key)))
@@ -69,13 +68,25 @@
   "Try to work out what this `entry` from the oblist actually
    represents."
   [entry]
-  (cond
-    (= (second entry) 'LAMBDA) "Lisp function"
-    (= (second entry) 'LABEL) "Labeled form"
-    ((host-functions) (first entry)) (if (fn? (eval (symbol ((host-functions) (first entry)))))
-                                     "Host function"
-                                     "Host variable")
-    :else "Lisp variable"))
+  (let [interpretation {'APVAL "Lisp variable"
+                        'EXPR "Lisp lambda function"
+                        'FEXPR "Lisp nlambda function"
+                        'SUBR "Host lambda function"
+                        'FSUBR "Host nlambda function"}]
+    (s/join ", "
+            (remove nil?
+                    (map
+                     #(when (some #{%} entry) (interpretation %))
+                     (keys interpretation))))))
+  ;; (cond
+  ;;   (= (nth entry 2) 'EXPR) "Lisp function"
+  ;;   (= (nth entry 2) 'FEXPR) "Labeled form"
+  ;;   ((host-functions) (first entry)) (try (if (fn? (eval (symbol ((host-functions) (first entry)))))
+  ;;                                    "Host function"
+  ;;                                    "Host variable")
+  ;;                                         (catch Exception _
+  ;;                                           "?Host macro?"))
+  ;;   :else "Lisp variable"))
 
 (defn- format-clj-signature
   "Format the signature of the Clojure function represented by `symbol` for
@@ -87,7 +98,7 @@
     (map
      (fn [l]
        (s/join (concat (list "("  symbol " ")
-                     (s/join " " (map #(s/upper-case (str %)) l)) (list ")"))))
+                       (s/join " " (map #(s/upper-case (str %)) l)) (list ")"))))
      arglists))))
 
 (defn infer-signature
@@ -102,17 +113,18 @@
 
 (defn infer-implementation
   [entry]
-  (case (second entry)
-    LAMBDA (format "%s-fn" (second entry))
-    LABEL (format "%s-fn" (second entry))
-    (or (:implementation (index (keyword (first entry)))) (str entry))))
+  (or (:implementation (index (keyword (first entry)))) "?"))
+  ;; (case (second entry)
+  ;;   LAMBDA (format "%s-fn" (second entry))
+  ;;   LABEL (format "%s-fn" (second entry))
+  ;;   (or (:implementation (index (keyword (first entry)))) (str entry))))
 
 (defn find-documentation
   "Find appropriate documentation for this `entry` from the oblist."
   [entry]
   (let [k (keyword (first entry))]
     (cond
-      (= (count entry) 1) (if-let [doc (get-metadata-for-entry entry :doc)]
+      (some #{'SUBR 'FSUBR} entry) (if-let [doc (get-metadata-for-entry entry :doc)]
                             (s/replace doc "\n" " ")
                             "?")
       (k index) (str "see manual pages " (format-page-references k))
@@ -159,12 +171,12 @@
    web browser."
   [symbol]
   (let [doc (get-metadata-for-function symbol :doc)]
-   (if-let [pages (:page-nos (index (keyword symbol)))]
-    (browse-url (page-url (first pages)))
-    (if doc
-      (println doc)
-      (throw (ex-info "No documentation found"
-                      {:phase :host
-                       :function 'DOC
-                       :args (list symbol)
-                       :type :beowulf}))))))
+    (if-let [pages (:page-nos (index (keyword symbol)))]
+      (browse-url (page-url (first pages)))
+      (if doc
+        (println doc)
+        (throw (ex-info "No documentation found"
+                        {:phase :host
+                         :function 'DOC
+                         :args (list symbol)
+                         :type :beowulf}))))))

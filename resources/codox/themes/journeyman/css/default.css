@@ -37,6 +37,10 @@ h2 {
     font-size: 25px;
 }
 
+th, td {
+    vertical-align: top;
+}
+
 h5.license {
     margin: 9px 0 22px 0;
     color: lime;

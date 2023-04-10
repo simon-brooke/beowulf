@@ -65,7 +65,7 @@
       cond-clause := mexpr opt-space arrow opt-space mexpr opt-space;
       arrow := '->';
       args := arg | (opt-space arg semi-colon opt-space)* opt-space arg opt-space;
-      arg := mexpr | sexpr;
+      arg := mexpr;
       fn-name := mvar;
       mvar := #'[a-z][a-z0-9]*';
       mconst := #'[A-Z][A-Z0-9]*';
