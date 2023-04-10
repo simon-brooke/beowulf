@@ -1,7 +1,7 @@
 (ns beowulf.host-test
   (:require [clojure.test :refer [deftest is testing]]
-            [beowulf.cons-cell :refer [CDR F make-beowulf-list T]] 
-            [beowulf.host :refer [DIFFERENCE NUMBERP PLUS RPLACA RPLACD TIMES]]
+            [beowulf.cons-cell :refer [F make-beowulf-list T]] 
+            [beowulf.host :refer [CDR DIFFERENCE NUMBERP PLUS RPLACA RPLACD TIMES]]
             [beowulf.oblist :refer [NIL]]
             [beowulf.read :refer [gsp]]))
 
@@ -15,12 +15,12 @@
       (is (= actual expected)))
     (is (thrown-with-msg?
           Exception
-          #"Invalid value in RPLACA.*"
+          #"Un-ġefōg þing in RPLACA.*"
           (RPLACA (make-beowulf-list '(A B C D E)) "F"))
         "You can't represent a string in Lisp 1.5")
     (is (thrown-with-msg?
           Exception
-          #"Invalid cell in RPLACA.*"
+          #"Uncynlic miercels in RPLACA.*"
           (RPLACA '(A B C D E) 'F))
         "You can't RPLACA into anything which isn't a MutableSequence.")
     )

@@ -13,10 +13,10 @@
 
   Both these extensions can be disabled by using the `--strict` command line
   switch."
-  (:require [beowulf.reader.char-reader :refer [read-chars]]
+  (:require ;; [beowulf.reader.char-reader :refer [read-chars]]
             [beowulf.reader.generate :refer [generate]]
             [beowulf.reader.parser :refer [parse]]
-            [beowulf.reader.simplify :refer [remove-optional-space simplify]]
+            [beowulf.reader.simplify :refer [simplify]]
             [clojure.string :refer [join split starts-with? trim]])
   (:import [java.io InputStream]
            [instaparse.gll Failure]))
@@ -26,6 +26,24 @@
 ;;; This file provides the reader required for boostrapping. It's not a bad
 ;;; reader - it provides feedback on errors found in the input - but it isn't
 ;;; the real Lisp reader.
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Copyright (C) 2022-2023 Simon Brooke
+;;;
+;;; This program is free software; you can redistribute it and/or
+;;; modify it under the terms of the GNU General Public License
+;;; as published by the Free Software Foundation; either version 2
+;;; of the License, or (at your option) any later version.
+;;; 
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;; 
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -61,16 +79,18 @@
         parse-tree (parse source)]
     (if (instance? Failure parse-tree)
       (doall (println (number-lines source parse-tree))
-             (throw (ex-info "Parse failed" (assoc parse-tree :source source))))
-      (generate (simplify (remove-optional-space parse-tree))))))
+             (throw (ex-info "Ne can forstande " (assoc parse-tree :source source))))
+      (generate (simplify parse-tree)))))
 
 (defn read-from-console
   "Attempt to read a complete lisp expression from the console. NOTE that this
    will only really work for S-Expressions, not M-Expressions."
   []
   (loop [r (read-line)]
-    (if (= (count (re-seq #"\(" r))
+    (if (and (= (count (re-seq #"\(" r))
            (count (re-seq #"\)" r)))
+             (= (count (re-seq #"\[" r))
+                (count (re-seq #"\]" r))))
       r
       (recur (str r "\n" (read-line))))))
 
@@ -79,7 +99,7 @@
   the final Lisp reader. `input` should be either a string representation of a LISP
   expression, or else an input stream. A single form will be read."
   ([]
-   (gsp (read-chars)))
+   (gsp (read-from-console)))
   ([input]
    (cond
      (empty? input) (READ)

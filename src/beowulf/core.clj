@@ -1,16 +1,39 @@
 (ns beowulf.core
   "Essentially, the `-main` function and the bootstrap read-eval-print loop."
   (:require [beowulf.bootstrap :refer [EVAL]]
-            [beowulf.io :refer [SYSIN]]
+            [beowulf.io :refer [default-sysout SYSIN]]
+            [beowulf.oblist :refer [*options* NIL]]
             [beowulf.read :refer [READ read-from-console]]
-            [beowulf.oblist :refer [*options* oblist]]
             [clojure.java.io :as io]
             [clojure.pprint :refer [pprint]]
             [clojure.string :refer [trim]]
             [clojure.tools.cli :refer [parse-opts]])
   (:gen-class))
 
-(def stop-word "STOP")
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Copyright (C) 2022-2023 Simon Brooke
+;;;
+;;; This program is free software; you can redistribute it and/or
+;;; modify it under the terms of the GNU General Public License
+;;; as published by the Free Software Foundation; either version 2
+;;; of the License, or (at your option) any later version.
+;;; 
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;; 
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(def stop-word 
+  "The word which, if submitted an an input line, will cause Beowulf to quit.
+   Question: should this be `forlǣte`?"
+  "STOP")
 
 (def cli-options
   [["-f FILEPATH" "--file-path FILEPATH"
@@ -23,13 +46,19 @@
    ["-h" "--help"]
    ["-p PROMPT" "--prompt PROMPT" "Set the REPL prompt to PROMPT"
     :default "Sprecan::"]
-   ["-r INITFILE" "--read INITFILE" "Read Lisp system from file INITFILE"
-    :default "resources/lisp1.5.lsp"
+   ["-r SYSOUTFILE" "--read SYSOUTFILE" "Read Lisp system from file SYSOUTFILE"
+    :default default-sysout
     :validate [#(and
                  (.exists (io/file %))
                  (.canRead (io/file %)))
-               "Could not find initfile"]]
-   ["-s" "--strict" "Strictly interpret the Lisp 1.5 language, without extensions."]])
+               "Could not find sysout file"]]
+   ["-s" "--strict" "Strictly interpret the Lisp 1.5 language, without extensions."]
+   ["-t" "--time" "Time evaluations."]])
+
+(defn- re 
+  "Like REPL, but it isn't a loop and doesn't print."
+  [input]
+  (EVAL (READ input) NIL 0))
 
 (defn repl
   "Read/eval/print loop."
@@ -38,11 +67,15 @@
     (print prompt)
     (flush)
     (try
-      (let [input (trim (read-from-console))]
-        (cond
-          (= input stop-word) (throw (ex-info "\nFærwell!" {:cause :quit}))
-          input (println (str ">  " (print-str (EVAL (READ input) @oblist 0))))
-          :else (println)))
+      (if-let [input (trim (read-from-console))]
+        (if (= input stop-word)
+          (throw (ex-info "\nFærwell!" {:cause :quit}))
+          (println 
+           (str ">  " 
+                (print-str (if (:time *options*)
+                             (time (re input))
+                             (re input)))))) 
+        (println))
       (catch
        Exception
        e
@@ -77,7 +110,7 @@
       "\nSprecan '" stop-word "' tó laéfan\n"))
     
     (binding [*options* (:options args)]
-;;      (pprint *options*)
+      ;; (pprint *options*)
       (when (:read *options*)
         (try (SYSIN (:read *options*))
              (catch Throwable any
@@ -93,5 +126,7 @@
               (case (:cause data)
                 :quit nil
                 ;; default
-                (pprint data))
+                (do
+                  (println "STÆFLEAHTER: " (.getMessage e))
+                  (pprint data)))
               (println e))))))))

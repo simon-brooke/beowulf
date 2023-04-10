@@ -59,45 +59,65 @@
             [beowulf.reader.macros :refer [expand-macros]]
             [beowulf.oblist :refer [NIL]]
             [clojure.math.numeric-tower :refer [expt]]
-            [clojure.string :refer [upper-case]]))
+            [clojure.string :refer [upper-case]]
+            [clojure.tools.trace :refer [deftrace]]))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Copyright (C) 2022-2023 Simon Brooke
+;;;
+;;; This program is free software; you can redistribute it and/or
+;;; modify it under the terms of the GNU General Public License
+;;; as published by the Free Software Foundation; either version 2
+;;; of the License, or (at your option) any later version.
+;;; 
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;; 
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (declare generate)
 
 (defn gen-cond-clause
   "Generate a cond clause from this simplified parse tree fragment `p`;
   returns `nil` if `p` does not represent a cond clause."
-  [p]
+  [p context]
   (when
    (and (coll? p) (= :cond-clause (first p)))
     (make-beowulf-list
      (list (if (= (nth p 1) [:quoted-expr [:atom "T"]])
              'T
-             (generate (nth p 1)))
-           (generate (nth p 2))))))
+             (generate (nth p 1) context))
+           (generate (nth p 2) context)))))
 
 (defn gen-cond
   "Generate a cond statement from this simplified parse tree fragment `p`;
   returns `nil` if `p` does not represent a (MEXPR) cond statement."
-  [p]
+  [p context]
   (when
    (and (coll? p) (= :cond (first p)))
     (make-beowulf-list
      (cons
       'COND
       (map
-       generate
+       #(generate % (if (= context :mexpr) :cond-mexpr context))
        (rest p))))))
 
 (defn gen-fn-call
   "Generate a function call from this simplified parse tree fragment `p`;
   returns `nil` if `p` does not represent a (MEXPR) function call."
-  [p]
+  [p context]
   (when
    (and (coll? p) (= :fncall (first p)) (= :mvar (first (second p))))
     (make-cons-cell
-     (generate (second p))
-     (generate (nth p 2)))))
+     (generate (second p) context)
+     (generate (nth p 2) context))))
 
 
 (defn gen-dot-terminated-list
@@ -118,38 +138,50 @@
      (generate (first p))
      (gen-dot-terminated-list (rest p)))))
 
+;; null[x] = [x = NIL -> T; T -> F]
+;; [:defn 
+;;  [:mexpr [:fncall [:mvar "null"] [:bindings [:args [:mexpr [:mvar "x"]]]]]] 
+;;  "=" 
+;;  [:mexpr [:cond 
+;;           [:cond-clause [:mexpr [:iexpr [:lhs [:mexpr [:mvar "x"]]] [:iop "="] [:rhs [:mexpr [:mconst "NIL"]]]]] [:mexpr [:mconst "T"]]] 
+;;           [:cond-clause [:mexpr [:mconst "T"]] [:mexpr [:mconst "F"]]]]]]
+
 (defn generate-defn
-  [tree]
-  (make-beowulf-list
-   (list 'SET
-         (list 'QUOTE (generate (-> tree second second)))
-         (list 'QUOTE
-               (cons 'LAMBDA
-                     (cons (generate (nth (second tree) 2))
-                           (map generate (-> tree rest rest rest))))))))
+  [tree context]
+  (if (= :mexpr (first tree))
+    (generate-defn (second tree) context)
+    (make-beowulf-list
+     (list 'PUT
+           (list 'QUOTE (generate (-> tree second second second) context))
+           (list 'QUOTE 'EXPR)
+           (list 'QUOTE
+                 (cons 'LAMBDA
+                       (list (generate (nth (-> tree second second) 2) context)
+                             (generate (nth tree 3) context))))))))
 
 (defn gen-iexpr
-  [tree]
-  (let [bundle (reduce #(assoc %1 (first %2) %2) 
-                       {} 
+  [tree context]
+  (let [bundle (reduce #(assoc %1 (first %2) %2)
+                       {}
                        (rest tree))]
-    (list (generate (:iop bundle))
-          (generate (:lhs bundle))
-          (generate (:rhs bundle)))))
+    (list (generate (:iop bundle) context)
+          (generate (:lhs bundle) context)
+          (generate (:rhs bundle) context))))
 
 (defn generate-set
   "Actually not sure what the mexpr representation of set looks like"
-  [tree]
+  [tree context]
   (throw (ex-info "Not Yet Implemented" {:feature "generate-set"})))
 
 (defn generate-assign
   "Generate an assignment statement based on this `tree`. If the thing 
    being assigned to is a function signature, then we have to do something 
    different to if it's an atom."
-  [tree]
+  [tree context]
   (case (first (second tree))
-    :fncall (generate-defn tree)
-    (:mvar :atom) (generate-set tree)))
+    :fncall (generate-defn tree context)
+    :mexpr (map #(generate % context) (rest (second tree)))
+    (:mvar :atom) (generate-set tree context)))
 
 (defn strip-leading-zeros
   "`read-string` interprets strings with leading zeros as octal; strip
@@ -168,68 +200,77 @@
 (defn generate
   "Generate lisp structure from this parse tree `p`. It is assumed that
   `p` has been simplified."
-  [p]
-  (try
-    (expand-macros
-     (if
-      (coll? p)
-       (case (first p)
-         :λ "LAMBDA"
-         :λexpr (make-cons-cell
-                 (generate (nth p 1))
-                 (make-cons-cell (generate (nth p 2))
-                                 (generate (nth p 3))))
-         :args (make-beowulf-list (map generate (rest p)))
-         :atom (symbol (second p))
-         :bindings (generate (second p))
-         :body (make-beowulf-list (map generate (rest p)))
-         (:coefficient :exponent) (generate (second p))
-         :cond (gen-cond p)
-         :cond-clause (gen-cond-clause p)
-         :decimal (read-string (apply str (map second (rest p))))
-         :defn (generate-assign p)
-         :dotted-pair (make-cons-cell
-                       (generate (nth p 1))
-                       (generate (nth p 2)))
-         :fncall (gen-fn-call p)
-         :iexpr (gen-iexpr p)
-         :integer (read-string (strip-leading-zeros (second p)))
-         :iop (case (second p)
-                "/" 'DIFFERENCE
-                "=" 'EQUAL
-                ">" 'GREATERP
-                "<" 'LESSP
-                "+" 'PLUS
-                "*" 'TIMES
+  ([p]
+   (generate p :expr))
+  ([p context]
+   (try
+     (expand-macros
+      (if
+       (coll? p)
+        (case (first p)
+          :λ "LAMBDA"
+          :λexpr (make-cons-cell
+                  (generate (nth p 1) context)
+                  (make-cons-cell (generate (nth p 2) context)
+                                  (generate (nth p 3) context)))
+          :args (make-beowulf-list (map #(generate % context) (rest p)))
+          :atom (symbol (second p))
+          :bindings (generate (second p) context)
+          :body (make-beowulf-list (map #(generate % context) (rest p)))
+          (:coefficient :exponent) (generate (second p) context)
+          :cond (gen-cond p (if (= context :mexpr) :cond-mexpr context))
+          :cond-clause (gen-cond-clause p context)
+          :decimal (read-string (apply str (map second (rest p))))
+          :defn (generate-defn p context)
+          :dotted-pair (make-cons-cell
+                        (generate (nth p 1) context)
+                        (generate (nth p 2) context))
+          :fncall (gen-fn-call p context)
+          :iexpr (gen-iexpr p context)
+          :integer (read-string (strip-leading-zeros (second p)))
+          :iop (case (second p)
+                 "/" 'DIFFERENCE
+                 "=" 'EQUAL
+                 ">" 'GREATERP
+                 "<" 'LESSP
+                 "+" 'PLUS
+                 "*" 'TIMES
                 ;; else
-                (throw (ex-info "Unrecognised infix operator symbol"
-                                {:phase :generate
-                                 :fragment p})))
-         :list (gen-dot-terminated-list (rest p))
-         (:lhs :rhs) (generate (second p))
-         :mexpr (generate (second p))
-         :mconst (make-beowulf-list 
-                  (list 'QUOTE (symbol (upper-case (second p)))))
-         :mvar (symbol (upper-case (second p)))
-         :number (generate (second p))
-         :octal (let [n (read-string (strip-leading-zeros (second p) "0"))
-                      scale (generate (nth p 3))]
-                  (* n (expt 8 scale)))
+                 (throw (ex-info "Unrecognised infix operator symbol"
+                                 {:phase :generate
+                                  :fragment p})))
+          :list (gen-dot-terminated-list (rest p))
+          (:lhs :rhs) (generate (second p) context)
+          :mexpr (generate (second p) (if (= context :cond-mexpr) context :mexpr))
+          :mconst (if (= context :cond-mexpr)
+                    (case (second p)
+                      ("T" "F" "NIL") (symbol (second p))
+                      ;; else
+                      (list 'QUOTE (symbol (second p))))
+                    ;; else
+                    (list 'QUOTE (symbol (second p))))
+          :mvar (symbol (upper-case (second p)))
+          :number (generate (second p) context)
+          :octal (let [n (read-string (strip-leading-zeros (second p) "0"))
+                       scale (generate (nth p 3) context)]
+                   (* n (expt 8 scale)))
 
       ;; the quote read macro (which probably didn't exist in Lisp 1.5, but...)
-         :quoted-expr (make-beowulf-list (list 'QUOTE (generate (second p))))
-         :scale-factor (if
-                        (empty? (second p)) 0
-                        (read-string (strip-leading-zeros (second p))))
-         :scientific (let [n (generate (second p))
-                           exponent (generate (nth p 3))]
-                       (* n (expt 10 exponent)))
+          :quoted-expr (make-beowulf-list (list 'QUOTE (generate (second p) context)))
+          :scale-factor (if
+                         (empty? (second p)) 0
+                         (read-string (strip-leading-zeros (second p))))
+          :scientific (let [n (generate (second p) context)
+                            exponent (generate (nth p 3) context)]
+                        (* n (expt 10 exponent)))
+          :sexpr (generate (second p) :sexpr)
+          :subr (symbol (second p))
 
       ;; default
-         (throw (ex-info (str "Unrecognised head: " (first p))
-                         {:generating p})))
-       p))
-    (catch Throwable any
-      (throw (ex-info "Could not generate"
-                      {:generating p}
-                      any)))))
+          (throw (ex-info (str "Unrecognised head: " (first p))
+                          {:generating p})))
+        p))
+     (catch Throwable any
+       (throw (ex-info "Could not generate"
+                       {:generating p}
+                       any))))))

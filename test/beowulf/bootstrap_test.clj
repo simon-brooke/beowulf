@@ -1,19 +1,26 @@
 (ns beowulf.bootstrap-test
-  (:require [clojure.test :refer [deftest testing is]]
-            [beowulf.cons-cell :refer [CAR CDR make-cons-cell T F]]
-            [beowulf.bootstrap :refer [APPEND ASSOC ATOM ATOM? CAAAAR CADR
-                                       CADDR CADDDR EQ EQUAL MEMBER 
-                                       PAIRLIS SUBLIS SUBST]]
+  (:require [beowulf.bootstrap :refer [EVAL]]
+            [beowulf.cons-cell :refer [F make-cons-cell T]]
+            [beowulf.host :refer [ASSOC ATOM ATOM? CAAAAR CADDDR CADDR CADR
+                                  CAR CDR EQ EQUAL PAIRLIS]]
             [beowulf.oblist :refer [NIL]]
-            [beowulf.read :refer [gsp]]))
+            [beowulf.read :refer [gsp READ]]
+            [clojure.test :refer [deftest is testing]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; This file is primarily tests of the functions in `beowulf.eval` - which
+;;; This file is primarily tests of the functions in `beowulf.bootstrap` - which
 ;;; are Clojure functions, but aim to provide sufficient functionality that
 ;;; Beowulf can get up to the level of running its own code.
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn- reps
+  "'Read eval print string', or 'read eval print single'.
+   Reads and evaluates one input string, and returns the
+   output string."
+  [input]
+  (with-out-str (print (EVAL (READ input)))))
 
 (deftest atom-tests
   (testing "ATOM"
@@ -63,12 +70,12 @@
       (is (= actual expected) "A is CAR of (A B C D)"))
     (is (thrown-with-msg?
           Exception
-          #"Cannot take CAR of `.*"
+          #"Ne can tace CAR of `.*"
           (CAR 'T))
         "Can't take the CAR of an atom")
     (is (thrown-with-msg?
           Exception
-          #"Cannot take CAR of `.*"
+          #"Ne can tace CAR of `.*"
           (CAR 7))
         "Can't take the CAR of a number"))
   (testing "CDR"
@@ -82,12 +89,12 @@
       (is (= (CAR actual) expected) "the CAR of that cons-cell is B"))
     (is (thrown-with-msg?
           Exception
-          #"Cannot take CDR of `.*"
+          #"Ne can tace CDR of `.*"
           (CDR 'T))
         "Can't take the CDR of an atom")
     (is (thrown-with-msg?
           Exception
-          #"Cannot take CDR of `.*"
+          #"Ne can tace CDR of `.*"
           (CDR 7))
         "Can't take the CDR of a number"))
   (let [s (gsp "((((1 . 2) 3)(4 5) 6)(7 (8 9) (10 11 12) 13) 14 (15 16) 17)")]
@@ -153,55 +160,18 @@
           actual (EQUAL l m)]
       (is (= actual expected) "different lists, different content"))))
 
-(deftest substitution-tests
-  (testing "subst"
-    (let [expected "((A X . A) . C)"
-          ;; differs from example in book only because of how the function
-          ;; `beowulf.cons-cell/to-string` formats lists.
-          actual (print-str
-                   (SUBST
-                     (gsp "(X . A)")
-                     (gsp "B")
-                     (gsp "((A . B) . C)")))]
-      (is (= actual expected)))))
-
-(deftest append-tests
-  (testing "append"
-    (let [expected "(A B C . D)"
-          actual (print-str
-                   (APPEND
-                     (gsp "(A B)")
-                     (gsp "(C . D)")))]
-      (is (= actual expected)))
-    (let [expected "(A B C D E)"
-          actual (print-str
-                   (APPEND
-                     (gsp "(A B)")
-                     (gsp "(C D E)")))]
-      (is (= actual expected)))))
-
-(deftest member-tests
-  (testing "member"
-    (let [expected 'T
-          actual (MEMBER
-                   (gsp "ALBERT")
-                   (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
-      (is (= actual expected)))
-    (let [expected 'T
-          actual (MEMBER
-                   (gsp "BELINDA")
-                   (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
-       (is (= actual expected)))
-    (let [expected 'T
-          actual (MEMBER
-                   (gsp "ELFREDA")
-                   (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
-       (is (= actual expected)))
-    (let [expected 'F
-          actual (MEMBER
-                   (gsp "BERTRAM")
-                   (gsp "(ALBERT BELINDA CHARLIE DORIS ELFREDA FRED)"))]
-       (is (= actual expected)))))
+;; TODO: need to reimplement this in lisp_test
+;; (deftest substitution-tests
+;;   (testing "subst"
+;;     (let [expected "((A X . A) . C)"
+;;           ;; differs from example in book only because of how the function
+;;           ;; `beowulf.cons-cell/to-string` formats lists.
+;;           actual (print-str
+;;                    (SUBST
+;;                      (gsp "(X . A)")
+;;                      (gsp "B")
+;;                      (gsp "((A . B) . C)")))]
+;;       (is (= actual expected)))))
 
 (deftest pairlis-tests
   (testing "pairlis"
@@ -232,13 +202,4 @@
                    (ASSOC
                      'D
                      (gsp "((A . (M N)) (B . (CAR X)) (C . (QUOTE M)) (C . (CDR X)))")))]
-      (is (= actual expected)))))
-
-(deftest sublis-tests
-  (testing "sublis"
-    (let [expected "(SHAKESPEARE WROTE (THE TEMPEST))"
-          actual (print-str
-                   (SUBLIS
-                     (gsp "((X . SHAKESPEARE) (Y . (THE TEMPEST)))")
-                     (gsp "(X WROTE Y)")))]
       (is (= actual expected)))))
