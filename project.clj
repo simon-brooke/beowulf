@@ -1,4 +1,5 @@
 (defproject beowulf "0.3.0-SNAPSHOT"
+  :aot :all
   :cloverage {:output "docs/cloverage"
               :ns-exclude-regex [#"beowulf\.gendoc" #"beowulf\.scratch"]}
   :codox {:html {:transforms [[:head] [:append 
@@ -25,13 +26,12 @@
 ;;                 [org.jline/jline "3.23.0"]
                  [rhizome "0.2.9"] ;; not needed in production builds
                  ]
-  :main ^:skip-aot beowulf.core
+  :main  beowulf.core
   :plugins [[lein-cloverage "1.2.2"]
             [lein-codox "0.10.7"]
             [lein-environ "1.1.0"]]
-  :profiles {:uberjar {:aot :all
-                       :omit-source true
-                       :uberjar-exclusions [#"beowulf\.scratch"]}}
+  :profiles {:jar {:aot :all}
+             :uberjar {:aot :all}}
   :release-tasks [["vcs" "assert-committed"]
                   ["change" "version" "leiningen.release/bump-version" "release"]
                   ["vcs" "commit"]
