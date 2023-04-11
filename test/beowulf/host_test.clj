@@ -1,9 +1,21 @@
 (ns beowulf.host-test
-  (:require [clojure.test :refer [deftest is testing]]
-            [beowulf.cons-cell :refer [F make-beowulf-list T]] 
-            [beowulf.host :refer [CDR DIFFERENCE NUMBERP PLUS RPLACA RPLACD TIMES]]
+  (:require [beowulf.cons-cell :refer [F make-beowulf-list T]]
+            [beowulf.host :refer [CDR DIFFERENCE GENSYM GET NUMBERP PLUS PUT
+                                  RPLACA RPLACD TIMES]]
+            [beowulf.io :refer [SYSIN]]
             [beowulf.oblist :refer [NIL]]
-            [beowulf.read :refer [gsp]]))
+            [beowulf.read :refer [gsp]]
+            [clojure.test :refer [deftest is testing use-fixtures]]))
+
+(use-fixtures :once (fn [f]
+                      (try (when (SYSIN "resources/lisp1.5.lsp")
+                             (f))
+                           (catch Throwable any
+                             (throw (ex-info "Failed to load Lisp sysout"
+                                             {:phase test
+                                              :function 'SYSIN
+                                              :file "resources/lisp1.5.lsp"}
+                                             any))))))
 
 (deftest destructive-change-test
   (testing "RPLACA"
@@ -64,7 +76,8 @@
     (let [expected 6
           actual (TIMES 2 3)]
       (is (= actual expected))))
-  (testing DIFFERENCE
+  (testing "DIFFERENCE"
     (let [expected -1
           actual (DIFFERENCE 1 2)]
       (is (= actual expected)))))
+

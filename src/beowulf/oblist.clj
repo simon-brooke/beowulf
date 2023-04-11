@@ -41,5 +41,5 @@
 
 (def ^:dynamic *options*
   "Command line options from invocation."
-  {})
+  {:testing true})
 

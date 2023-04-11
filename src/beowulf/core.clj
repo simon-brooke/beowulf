@@ -53,7 +53,8 @@
                  (.canRead (io/file %)))
                "Could not find sysout file"]]
    ["-s" "--strict" "Strictly interpret the Lisp 1.5 language, without extensions."]
-   ["-t" "--time" "Time evaluations."]])
+   ["-t" "--time" "Time evaluations."]
+   ["-x" "--testing" "Disable the jline reader - useful when piping input."]])
 
 (defn- re 
   "Like REPL, but it isn't a loop and doesn't print."
