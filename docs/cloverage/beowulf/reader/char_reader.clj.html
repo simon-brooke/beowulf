@@ -71,163 +71,259 @@
                 022&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https:&#x2F;&#x2F;stackoverflow.com&#x2F;questions&#x2F;7931988&#x2F;how-to-manipulate-control-characters&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                023&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;(:import&nbsp;[org.jline.reader&nbsp;LineReader&nbsp;LineReaderBuilder]
+                023&nbsp;&nbsp;&nbsp;&nbsp;(:require&nbsp;[beowulf.oblist&nbsp;:refer&nbsp;[*options*&nbsp;oblist]])
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                024&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[org.jline.terminal&nbsp;TerminalBuilder])
+                024&nbsp;&nbsp;&nbsp;&nbsp;(:import&nbsp;[org.jline.reader.impl.completer&nbsp;StringsCompleter]
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                025&nbsp;&nbsp;&nbsp;&nbsp;)
+                025&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[org.jline.reader.impl&nbsp;DefaultParser&nbsp;DefaultParser$Bracket]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                026&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[org.jline.reader&nbsp;LineReaderBuilder]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                027&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[org.jline.terminal&nbsp;TerminalBuilder]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                028&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[org.jline.widget&nbsp;AutopairWidgets&nbsp;AutosuggestionWidgets]))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                026&nbsp;&nbsp;
+                029&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                027&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                030&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                028&nbsp;&nbsp;;;;
+                031&nbsp;&nbsp;;;;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                029&nbsp;&nbsp;;;;&nbsp;Copyright&nbsp;(C)&nbsp;2022-2023&nbsp;Simon&nbsp;Brooke
+                032&nbsp;&nbsp;;;;&nbsp;Copyright&nbsp;(C)&nbsp;2022-2023&nbsp;Simon&nbsp;Brooke
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                030&nbsp;&nbsp;;;;
+                033&nbsp;&nbsp;;;;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                031&nbsp;&nbsp;;;;&nbsp;This&nbsp;program&nbsp;is&nbsp;free&nbsp;software;&nbsp;you&nbsp;can&nbsp;redistribute&nbsp;it&nbsp;and&#x2F;or
+                034&nbsp;&nbsp;;;;&nbsp;This&nbsp;program&nbsp;is&nbsp;free&nbsp;software;&nbsp;you&nbsp;can&nbsp;redistribute&nbsp;it&nbsp;and&#x2F;or
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                032&nbsp;&nbsp;;;;&nbsp;modify&nbsp;it&nbsp;under&nbsp;the&nbsp;terms&nbsp;of&nbsp;the&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License
+                035&nbsp;&nbsp;;;;&nbsp;modify&nbsp;it&nbsp;under&nbsp;the&nbsp;terms&nbsp;of&nbsp;the&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                033&nbsp;&nbsp;;;;&nbsp;as&nbsp;published&nbsp;by&nbsp;the&nbsp;Free&nbsp;Software&nbsp;Foundation;&nbsp;either&nbsp;version&nbsp;2
+                036&nbsp;&nbsp;;;;&nbsp;as&nbsp;published&nbsp;by&nbsp;the&nbsp;Free&nbsp;Software&nbsp;Foundation;&nbsp;either&nbsp;version&nbsp;2
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                034&nbsp;&nbsp;;;;&nbsp;of&nbsp;the&nbsp;License,&nbsp;or&nbsp;(at&nbsp;your&nbsp;option)&nbsp;any&nbsp;later&nbsp;version.
+                037&nbsp;&nbsp;;;;&nbsp;of&nbsp;the&nbsp;License,&nbsp;or&nbsp;(at&nbsp;your&nbsp;option)&nbsp;any&nbsp;later&nbsp;version.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                035&nbsp;&nbsp;;;;&nbsp;
+                038&nbsp;&nbsp;;;;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                036&nbsp;&nbsp;;;;&nbsp;This&nbsp;program&nbsp;is&nbsp;distributed&nbsp;in&nbsp;the&nbsp;hope&nbsp;that&nbsp;it&nbsp;will&nbsp;be&nbsp;useful,
+                039&nbsp;&nbsp;;;;&nbsp;This&nbsp;program&nbsp;is&nbsp;distributed&nbsp;in&nbsp;the&nbsp;hope&nbsp;that&nbsp;it&nbsp;will&nbsp;be&nbsp;useful,
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                037&nbsp;&nbsp;;;;&nbsp;but&nbsp;WITHOUT&nbsp;ANY&nbsp;WARRANTY;&nbsp;without&nbsp;even&nbsp;the&nbsp;implied&nbsp;warranty&nbsp;of
+                040&nbsp;&nbsp;;;;&nbsp;but&nbsp;WITHOUT&nbsp;ANY&nbsp;WARRANTY;&nbsp;without&nbsp;even&nbsp;the&nbsp;implied&nbsp;warranty&nbsp;of
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                038&nbsp;&nbsp;;;;&nbsp;MERCHANTABILITY&nbsp;or&nbsp;FITNESS&nbsp;FOR&nbsp;A&nbsp;PARTICULAR&nbsp;PURPOSE.&nbsp;&nbsp;See&nbsp;the
+                041&nbsp;&nbsp;;;;&nbsp;MERCHANTABILITY&nbsp;or&nbsp;FITNESS&nbsp;FOR&nbsp;A&nbsp;PARTICULAR&nbsp;PURPOSE.&nbsp;&nbsp;See&nbsp;the
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                039&nbsp;&nbsp;;;;&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License&nbsp;for&nbsp;more&nbsp;details.
+                042&nbsp;&nbsp;;;;&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License&nbsp;for&nbsp;more&nbsp;details.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                040&nbsp;&nbsp;;;;&nbsp;
+                043&nbsp;&nbsp;;;;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                041&nbsp;&nbsp;;;;&nbsp;You&nbsp;should&nbsp;have&nbsp;received&nbsp;a&nbsp;copy&nbsp;of&nbsp;the&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License
+                044&nbsp;&nbsp;;;;&nbsp;You&nbsp;should&nbsp;have&nbsp;received&nbsp;a&nbsp;copy&nbsp;of&nbsp;the&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                042&nbsp;&nbsp;;;;&nbsp;along&nbsp;with&nbsp;this&nbsp;program;&nbsp;if&nbsp;not,&nbsp;write&nbsp;to&nbsp;the&nbsp;Free&nbsp;Software
+                045&nbsp;&nbsp;;;;&nbsp;along&nbsp;with&nbsp;this&nbsp;program;&nbsp;if&nbsp;not,&nbsp;write&nbsp;to&nbsp;the&nbsp;Free&nbsp;Software
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                043&nbsp;&nbsp;;;;&nbsp;Foundation,&nbsp;Inc.,&nbsp;51&nbsp;Franklin&nbsp;Street,&nbsp;Fifth&nbsp;Floor,&nbsp;Boston,&nbsp;MA&nbsp;&nbsp;02110-1301,&nbsp;USA.
+                046&nbsp;&nbsp;;;;&nbsp;Foundation,&nbsp;Inc.,&nbsp;51&nbsp;Franklin&nbsp;Street,&nbsp;Fifth&nbsp;Floor,&nbsp;Boston,&nbsp;MA&nbsp;&nbsp;02110-1301,&nbsp;USA.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                044&nbsp;&nbsp;;;;
+                047&nbsp;&nbsp;;;;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                045&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                048&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                046&nbsp;&nbsp;
+                049&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                047&nbsp;&nbsp;;;&nbsp;It&nbsp;looks&nbsp;from&nbsp;the&nbsp;example&nbsp;given&nbsp;[here](https:&#x2F;&#x2F;github.com&#x2F;jline&#x2F;jline3&#x2F;blob&#x2F;master&#x2F;demo&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;jline&#x2F;demo&#x2F;Repl.java)
+                050&nbsp;&nbsp;;;&nbsp;It&nbsp;looks&nbsp;from&nbsp;the&nbsp;example&nbsp;given&nbsp;[here](https:&#x2F;&#x2F;github.com&#x2F;jline&#x2F;jline3&#x2F;blob&#x2F;master&#x2F;demo&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;jline&#x2F;demo&#x2F;Repl.java)
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                048&nbsp;&nbsp;;;&nbsp;as&nbsp;though&nbsp;JLine&nbsp;could&nbsp;be&nbsp;used&nbsp;to&nbsp;build&nbsp;a&nbsp;perfect&nbsp;line-reader&nbsp;for&nbsp;Beowulf;&nbsp;but&nbsp;it&nbsp;also
+                051&nbsp;&nbsp;;;&nbsp;as&nbsp;though&nbsp;JLine&nbsp;could&nbsp;be&nbsp;used&nbsp;to&nbsp;build&nbsp;a&nbsp;perfect&nbsp;line-reader&nbsp;for&nbsp;Beowulf;&nbsp;but&nbsp;it&nbsp;also
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                049&nbsp;&nbsp;;;&nbsp;looks&nbsp;as&nbsp;though&nbsp;you&#x27;d&nbsp;need&nbsp;a&nbsp;DPhil&nbsp;in&nbsp;JLine&nbsp;to&nbsp;write&nbsp;it,&nbsp;and&nbsp;I&nbsp;don&#x27;t&nbsp;have
+                052&nbsp;&nbsp;;;&nbsp;looks&nbsp;as&nbsp;though&nbsp;you&#x27;d&nbsp;need&nbsp;a&nbsp;DPhil&nbsp;in&nbsp;JLine&nbsp;to&nbsp;write&nbsp;it,&nbsp;and&nbsp;I&nbsp;don&#x27;t&nbsp;have
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                050&nbsp;&nbsp;;;&nbsp;the&nbsp;time.
+                053&nbsp;&nbsp;;;&nbsp;the&nbsp;time.
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                051&nbsp;&nbsp;
+                054&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                055&nbsp;&nbsp;(defn&nbsp;build-completer
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                052&nbsp;&nbsp;;;&nbsp;(def&nbsp;get-reader
+                056&nbsp;&nbsp;&nbsp;&nbsp;&quot;Build&nbsp;a&nbsp;completer&nbsp;which&nbsp;takes&nbsp;tokens&nbsp;from&nbsp;the&nbsp;oblist.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                053&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&quot;Return&nbsp;a&nbsp;reader,&nbsp;first&nbsp;constructing&nbsp;it&nbsp;if&nbsp;necessary.
+                057&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                054&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                058&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This&nbsp;is&nbsp;sort-of&nbsp;working,&nbsp;in&nbsp;as&nbsp;much&nbsp;as&nbsp;hitting&nbsp;&lt;TAB&gt;&nbsp;on&nbsp;a&nbsp;blank&nbsp;line&nbsp;will&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                055&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;**NOTE&nbsp;THAT**&nbsp;this&nbsp;is&nbsp;not&nbsp;settled&nbsp;API.&nbsp;The&nbsp;existence&nbsp;and&nbsp;call&nbsp;signature&nbsp;of
+                059&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show&nbsp;a&nbsp;table&nbsp;of&nbsp;values&nbsp;from&nbsp;the&nbsp;oblist,&nbsp;but&nbsp;hitting&nbsp;&lt;TAB&gt;&nbsp;after&nbsp;you&#x27;ve&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                056&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;this&nbsp;function&nbsp;is&nbsp;not&nbsp;guaranteed&nbsp;in&nbsp;future&nbsp;versions.&quot;
+                060&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;started&nbsp;input&nbsp;does&nbsp;not&nbsp;show&nbsp;potential&nbsp;completions&nbsp;for&nbsp;tokens&nbsp;you&#x27;ve&nbsp;started.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                057&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;(memoize&nbsp;(fn&nbsp;[]
+                061&nbsp;&nbsp;&nbsp;&nbsp;[]
                 </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                058&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;(let&nbsp;[term&nbsp;(.build&nbsp;(.system&nbsp;(TerminalBuilder&#x2F;builder)&nbsp;true))]
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                059&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(.build&nbsp;(.terminal&nbsp;(LineReaderBuilder&#x2F;builder)&nbsp;term))))))
+<span class="not-covered" title="0 out of 12 forms covered">
+                062&nbsp;&nbsp;&nbsp;&nbsp;(StringsCompleter.&nbsp;(map&nbsp;#(str&nbsp;(first&nbsp;%))&nbsp;@oblist)))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                060&nbsp;&nbsp;
+                063&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                061&nbsp;&nbsp;;;&nbsp;(defn&nbsp;read-chars
+                064&nbsp;&nbsp;;;&nbsp;This&nbsp;breaks;&nbsp;it&nbsp;is&nbsp;not&nbsp;correctly&nbsp;resolving&nbsp;the&nbsp;Enum,&nbsp;although&nbsp;I&nbsp;can&#x27;t&nbsp;work&nbsp;out
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                062&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&quot;A&nbsp;drop-in&nbsp;replacement&nbsp;for&nbsp;`clojure.core&#x2F;read-line`,&nbsp;except&nbsp;that&nbsp;line&nbsp;editing
+                065&nbsp;&nbsp;;;&nbsp;why&nbsp;not.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                063&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;history&nbsp;should&nbsp;be&nbsp;enabled.
+                066&nbsp;&nbsp;;;&nbsp;(defn&nbsp;build-parser
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                064&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                067&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;[]
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                065&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;**NOTE&nbsp;THAT**&nbsp;this&nbsp;does&nbsp;not&nbsp;work&nbsp;yet,&nbsp;but&nbsp;it&nbsp;is&nbsp;in&nbsp;the&nbsp;API&nbsp;because&nbsp;I&nbsp;hope&nbsp;
+                068&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;(println&nbsp;&quot;Building&nbsp;parser&quot;)
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                066&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;that&nbsp;it&nbsp;will&nbsp;work&nbsp;later!&quot;
+                069&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;(let&nbsp;[parser&nbsp;(DefaultParser.)]
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                067&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;[]&nbsp;
+                070&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(doall
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                068&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[eddie&nbsp;(get-reader)]
+                071&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(.setEofOnUnclosedBracket&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                069&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(loop&nbsp;[s&nbsp;(.readLine&nbsp;eddie)]
+                072&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parser&nbsp;DefaultParser$Bracket&#x2F;ROUND))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                073&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                074&nbsp;&nbsp;(def&nbsp;get-reader
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                070&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(and&nbsp;(=&nbsp;(count&nbsp;(re-seq&nbsp;#&quot;\(&quot;&nbsp;s))
+                075&nbsp;&nbsp;&nbsp;&nbsp;&quot;Return&nbsp;a&nbsp;reader,&nbsp;first&nbsp;constructing&nbsp;it&nbsp;if&nbsp;necessary.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                071&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(count&nbsp;(re-seq&nbsp;#&quot;\)&quot;&nbsp;s)))
+                076&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                072&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(count&nbsp;(re-seq&nbsp;#&quot;\[]&quot;&nbsp;s))
+                077&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**NOTE&nbsp;THAT**&nbsp;this&nbsp;is&nbsp;not&nbsp;settled&nbsp;API.&nbsp;The&nbsp;existence&nbsp;and&nbsp;call&nbsp;signature&nbsp;of
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                073&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(count&nbsp;(re-seq&nbsp;#&quot;\]&quot;&nbsp;s))))
+                078&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this&nbsp;function&nbsp;is&nbsp;not&nbsp;guaranteed&nbsp;in&nbsp;future&nbsp;versions.&quot;
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                079&nbsp;&nbsp;&nbsp;&nbsp;(memoize&nbsp;(fn&nbsp;[]
+                </span><br/>
+<span class="not-covered" title="0 out of 5 forms covered">
+                080&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[term&nbsp;(.build&nbsp;(.system&nbsp;(TerminalBuilder&#x2F;builder)&nbsp;true))
+                </span><br/>
+<span class="not-covered" title="0 out of 2 forms covered">
+                081&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;reader&nbsp;(-&gt;&nbsp;(LineReaderBuilder&#x2F;builder)
+                </span><br/>
+<span class="not-covered" title="0 out of 2 forms covered">
+                082&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(.terminal&nbsp;&nbsp;term)
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                083&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(.completer&nbsp;&nbsp;(build-completer))
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                074&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;s
+                084&nbsp;&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#(.parser&nbsp;%&nbsp;(build-parser))
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                075&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(recur&nbsp;(str&nbsp;s&nbsp;&quot;&nbsp;&quot;&nbsp;(.readLine&nbsp;eddie)))))))
+                085&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(.build))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                086&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;apw&nbsp;(AutopairWidgets.&nbsp;reader&nbsp;false)
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                087&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;asw&nbsp;(AutosuggestionWidgets.&nbsp;reader)
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                088&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                089&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;(.enable&nbsp;apw)
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                090&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;(.enable&nbsp;asw)
+                </span><br/>
+<span class="not-covered" title="0 out of 1 forms covered">
+                091&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;reader))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                092&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                093&nbsp;&nbsp;(defn&nbsp;read-chars
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                094&nbsp;&nbsp;&nbsp;&nbsp;&quot;A&nbsp;drop-in&nbsp;replacement&nbsp;for&nbsp;`clojure.core&#x2F;read-line`,&nbsp;except&nbsp;that&nbsp;line&nbsp;editing
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                095&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;history&nbsp;should&nbsp;be&nbsp;enabled.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                096&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                097&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**NOTE&nbsp;THAT**&nbsp;this&nbsp;does&nbsp;not&nbsp;fully&nbsp;work&nbsp;yet,&nbsp;but&nbsp;it&nbsp;is&nbsp;in&nbsp;the&nbsp;API&nbsp;because&nbsp;I&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                098&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hope&nbsp;that&nbsp;it&nbsp;will&nbsp;work&nbsp;later!&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                099&nbsp;&nbsp;&nbsp;&nbsp;[prompt]
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                100&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[eddie&nbsp;(get-reader)]
+                </span><br/>
+<span class="not-covered" title="0 out of 6 forms covered">
+                101&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(loop&nbsp;[s&nbsp;(.readLine&nbsp;eddie&nbsp;(str&nbsp;prompt&nbsp;&quot;&nbsp;&quot;))]
+                </span><br/>
+<span class="not-covered" title="0 out of 12 forms covered">
+                102&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(and&nbsp;(=&nbsp;(count&nbsp;(re-seq&nbsp;#&quot;\(&quot;&nbsp;s))
+                </span><br/>
+<span class="not-covered" title="0 out of 5 forms covered">
+                103&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(count&nbsp;(re-seq&nbsp;#&quot;\)&quot;&nbsp;s)))
+                </span><br/>
+<span class="not-covered" title="0 out of 5 forms covered">
+                104&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(count&nbsp;(re-seq&nbsp;#&quot;\[]&quot;&nbsp;s))
+                </span><br/>
+<span class="not-covered" title="0 out of 5 forms covered">
+                105&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(count&nbsp;(re-seq&nbsp;#&quot;\]&quot;&nbsp;s))))
+                </span><br/>
+<span class="not-covered" title="0 out of 1 forms covered">
+                106&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;s
+                </span><br/>
+<span class="not-covered" title="0 out of 1 forms covered">
+                107&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(recur&nbsp;(str&nbsp;s&nbsp;&quot;&nbsp;&quot;&nbsp;(.readLine&nbsp;eddie&nbsp;&quot;::&nbsp;&quot;)))))))
                 </span><br/>
  </body>
 </html>

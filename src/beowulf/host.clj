@@ -91,22 +91,21 @@
   (cond
     (= l NIL) NIL
     (empty? path) l
-    :else
-    (try
-      (case (last path)
-        \a (uaf (.first l) (butlast path))
-        \d (uaf (.getCdr l) (butlast path))
-        (throw (ex-info (str "uaf: unexpected letter in path (only `a` and `d` permitted): " (last path))
-                        {:cause  :uaf
-                         :detail :unexpected-letter
-                         :expr   (last path)})))
-      (catch ClassCastException e
-        (throw (ex-info
-                (str "uaf: Not a LISP list? " (type l))
-                {:cause  :uaf
-                 :detail :not-a-lisp-list
-                 :expr   l}
-                e))))))
+    (not (instance? ConsCell l)) (throw (ex-info (str "Ne liste: "
+                                                      l "; " (type l))
+                                                 {:phase :eval
+                                                  :function "universal access function"
+                                                  :args [l path]
+                                                  :type :beowulf}))
+    :else (case (last path)
+            \a (uaf (.first l) (butlast path))
+            \d (uaf (.getCdr l) (butlast path))
+            (throw (ex-info (str "uaf: unexpected letter in path (only `a` and `d` permitted): "
+                                 (last path))
+                            {:phase :eval
+                             :function "universal access function"
+                             :args [l path]
+                             :type :beowulf})))))
 
 (defmacro CAAR [x] `(uaf ~x '(\a \a)))
 (defmacro CADR [x] `(uaf ~x '(\a \d)))
@@ -433,6 +432,21 @@
   "The unexplained magic number which marks the start of a property list."
   (Integer/parseInt "77777" 8))
 
+(defn hit-or-miss-assoc
+  "Find the position of the binding of this `target` in a Lisp 1.5 
+   property list `plist`.
+   
+   Lisp 1.5 property lists are not assoc lists, but lists of the form
+   `(name value name value name value...)`. It's therefore necessary to
+   recurse down the list two entries at a time to avoid confusing names
+   with values."
+  [target plist]
+  (if (and (instance? ConsCell plist)(even? (count plist)))
+    (cond (= plist NIL) NIL
+          (= (first plist) target) plist
+          :else (hit-or-miss-assoc target (CDDR plist)))
+    NIL))
+
 (defn PUT
   "Put this `value` as the value of the property indicated by this `indicator` 
    of this `symbol`. Return `value` on success.
@@ -440,22 +454,25 @@
    NOTE THAT there is no `PUT` defined in the manual, but it would have been 
    easy to have defined it so I don't think this fully counts as an extension."
   [symbol indicator value]
-  (if-let [binding (ASSOC symbol @oblist)]
-    (if-let [prop (ASSOC indicator (CDDR binding))]
-      (RPLACD prop value)
-      (RPLACD binding
-              (make-cons-cell
-               magic-marker
-               (make-cons-cell
-                indicator
-                (make-cons-cell value (CDDR binding))))))
-    (swap!
-     oblist
-     (fn [ob s p v]
-       (make-cons-cell
-        (make-beowulf-list (list s magic-marker p v))
-        ob))
-     symbol indicator value)))
+  (let [binding (ASSOC symbol @oblist)]
+    (if (instance? ConsCell binding)
+      (let [prop (hit-or-miss-assoc indicator (CDDR binding))]
+        (if (instance? ConsCell prop)
+          (RPLACA (CDR prop) value)
+          (RPLACD binding
+                  (make-cons-cell
+                   magic-marker
+                   (make-cons-cell
+                    indicator
+                    (make-cons-cell value (CDDR binding)))))))
+      (swap!
+       oblist
+       (fn [ob s p v]
+         (make-cons-cell
+          (make-beowulf-list (list s magic-marker p v))
+          ob))
+       symbol indicator value)))
+  value)
 
 (defn GET
   "From the manual:

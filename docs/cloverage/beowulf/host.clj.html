@@ -274,7 +274,7 @@
 <span class="not-tracked" title="0 out of 0 forms covered">
                 090&nbsp;&nbsp;&nbsp;&nbsp;[l&nbsp;path]
                 </span><br/>
-<span class="covered" title="3 out of 3 forms covered">
+<span class="covered" title="4 out of 4 forms covered">
                 091&nbsp;&nbsp;&nbsp;&nbsp;(cond
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
@@ -283,1439 +283,1490 @@
 <span class="covered" title="4 out of 4 forms covered">
                 093&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(empty?&nbsp;path)&nbsp;l
                 </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                094&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else
+<span class="partial" title="6 out of 13 forms covered">
+                094&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(not&nbsp;(instance?&nbsp;ConsCell&nbsp;l))&nbsp;(throw&nbsp;(ex-info&nbsp;(str&nbsp;&quot;Ne&nbsp;liste:&nbsp;&quot;
                 </span><br/>
-<span class="covered" title="1 out of 1 forms covered">
-                095&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(try
+<span class="not-covered" title="0 out of 4 forms covered">
+                095&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;l&nbsp;&quot;;&nbsp;&quot;&nbsp;(type&nbsp;l))
+                </span><br/>
+<span class="not-covered" title="0 out of 8 forms covered">
+                096&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:phase&nbsp;:eval
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                097&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:function&nbsp;&quot;universal&nbsp;access&nbsp;function&quot;
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                098&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:args&nbsp;[l&nbsp;path]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                099&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:type&nbsp;:beowulf}))
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                096&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(case&nbsp;(last&nbsp;path)
+                100&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;(case&nbsp;(last&nbsp;path)
                 </span><br/>
 <span class="covered" title="6 out of 6 forms covered">
-                097&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\a&nbsp;(uaf&nbsp;(.first&nbsp;l)&nbsp;(butlast&nbsp;path))
+                101&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\a&nbsp;(uaf&nbsp;(.first&nbsp;l)&nbsp;(butlast&nbsp;path))
                 </span><br/>
 <span class="covered" title="6 out of 6 forms covered">
-                098&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\d&nbsp;(uaf&nbsp;(.getCdr&nbsp;l)&nbsp;(butlast&nbsp;path))
-                </span><br/>
-<span class="not-covered" title="0 out of 9 forms covered">
-                099&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info&nbsp;(str&nbsp;&quot;uaf:&nbsp;unexpected&nbsp;letter&nbsp;in&nbsp;path&nbsp;(only&nbsp;`a`&nbsp;and&nbsp;`d`&nbsp;permitted):&nbsp;&quot;&nbsp;(last&nbsp;path))
+                102&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\d&nbsp;(uaf&nbsp;(.getCdr&nbsp;l)&nbsp;(butlast&nbsp;path))
                 </span><br/>
 <span class="not-covered" title="0 out of 6 forms covered">
-                100&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:cause&nbsp;&nbsp;:uaf
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                101&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:detail&nbsp;:unexpected-letter
+                103&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info&nbsp;(str&nbsp;&quot;uaf:&nbsp;unexpected&nbsp;letter&nbsp;in&nbsp;path&nbsp;(only&nbsp;`a`&nbsp;and&nbsp;`d`&nbsp;permitted):&nbsp;&quot;
                 </span><br/>
 <span class="not-covered" title="0 out of 3 forms covered">
-                102&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:expr&nbsp;&nbsp;&nbsp;(last&nbsp;path)})))
+                104&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(last&nbsp;path))
+                </span><br/>
+<span class="not-covered" title="0 out of 8 forms covered">
+                105&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:phase&nbsp;:eval
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                103&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(catch&nbsp;ClassCastException&nbsp;e
+                106&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:function&nbsp;&quot;universal&nbsp;access&nbsp;function&quot;
                 </span><br/>
 <span class="not-covered" title="0 out of 3 forms covered">
-                104&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info
-                </span><br/>
-<span class="not-covered" title="0 out of 6 forms covered">
-                105&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;&quot;uaf:&nbsp;Not&nbsp;a&nbsp;LISP&nbsp;list?&nbsp;&quot;&nbsp;(type&nbsp;l))
-                </span><br/>
-<span class="not-covered" title="0 out of 6 forms covered">
-                106&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:cause&nbsp;&nbsp;:uaf
+                107&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:args&nbsp;[l&nbsp;path]
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                107&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:detail&nbsp;:not-a-lisp-list
-                </span><br/>
-<span class="not-covered" title="0 out of 1 forms covered">
-                108&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:expr&nbsp;&nbsp;&nbsp;l}
-                </span><br/>
-<span class="not-covered" title="0 out of 1 forms covered">
-                109&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e))))))
+                108&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:type&nbsp;:beowulf})))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                110&nbsp;&nbsp;
+                109&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="43 out of 43 forms covered">
-                111&nbsp;&nbsp;(defmacro&nbsp;CAAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\a)))
+                110&nbsp;&nbsp;(defmacro&nbsp;CAAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\a)))
                 </span><br/>
 <span class="covered" title="44 out of 44 forms covered">
-                112&nbsp;&nbsp;(defmacro&nbsp;CADR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\d)))
+                111&nbsp;&nbsp;(defmacro&nbsp;CADR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\d)))
                 </span><br/>
-<span class="partial" title="42 out of 44 forms covered">
-                113&nbsp;&nbsp;(defmacro&nbsp;CDDR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\d)))
+<span class="covered" title="45 out of 45 forms covered">
+                112&nbsp;&nbsp;(defmacro&nbsp;CDDR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\d)))
                 </span><br/>
 <span class="partial" title="5 out of 42 forms covered">
-                114&nbsp;&nbsp;(defmacro&nbsp;CDAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\a)))
+                113&nbsp;&nbsp;(defmacro&nbsp;CDAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\a)))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                115&nbsp;&nbsp;
+                114&nbsp;&nbsp;
                 </span><br/>
 <span class="partial" title="5 out of 45 forms covered">
-                116&nbsp;&nbsp;(defmacro&nbsp;CAAAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\a&nbsp;\a)))
+                115&nbsp;&nbsp;(defmacro&nbsp;CAAAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\a&nbsp;\a)))
                 </span><br/>
 <span class="partial" title="5 out of 45 forms covered">
-                117&nbsp;&nbsp;(defmacro&nbsp;CAADR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\a&nbsp;\d)))
+                116&nbsp;&nbsp;(defmacro&nbsp;CAADR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\a&nbsp;\d)))
                 </span><br/>
 <span class="covered" title="45 out of 45 forms covered">
-                118&nbsp;&nbsp;(defmacro&nbsp;CADAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\d&nbsp;\a)))
+                117&nbsp;&nbsp;(defmacro&nbsp;CADAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\d&nbsp;\a)))
                 </span><br/>
 <span class="covered" title="45 out of 45 forms covered">
-                119&nbsp;&nbsp;(defmacro&nbsp;CADDR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\d&nbsp;\d)))
+                118&nbsp;&nbsp;(defmacro&nbsp;CADDR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\d&nbsp;\d)))
                 </span><br/>
 <span class="partial" title="5 out of 45 forms covered">
-                120&nbsp;&nbsp;(defmacro&nbsp;CDDAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\d&nbsp;\a)))
+                119&nbsp;&nbsp;(defmacro&nbsp;CDDAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\d&nbsp;\a)))
                 </span><br/>
 <span class="partial" title="5 out of 45 forms covered">
-                121&nbsp;&nbsp;(defmacro&nbsp;CDDDR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\d&nbsp;\d)))
+                120&nbsp;&nbsp;(defmacro&nbsp;CDDDR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\d&nbsp;\d)))
                 </span><br/>
 <span class="partial" title="5 out of 45 forms covered">
-                122&nbsp;&nbsp;(defmacro&nbsp;CDAAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\a&nbsp;\a)))
+                121&nbsp;&nbsp;(defmacro&nbsp;CDAAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\a&nbsp;\a)))
                 </span><br/>
 <span class="partial" title="5 out of 45 forms covered">
-                123&nbsp;&nbsp;(defmacro&nbsp;CDADR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\a&nbsp;\d)))
+                122&nbsp;&nbsp;(defmacro&nbsp;CDADR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\a&nbsp;\d)))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                124&nbsp;&nbsp;
+                123&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="48 out of 48 forms covered">
-                125&nbsp;&nbsp;(defmacro&nbsp;CAAAAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\a&nbsp;\a&nbsp;\a)))
+                124&nbsp;&nbsp;(defmacro&nbsp;CAAAAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\a&nbsp;\a&nbsp;\a)))
                 </span><br/>
 <span class="partial" title="5 out of 48 forms covered">
-                126&nbsp;&nbsp;(defmacro&nbsp;CAADAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\a&nbsp;\d&nbsp;\a)))
+                125&nbsp;&nbsp;(defmacro&nbsp;CAADAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\a&nbsp;\d&nbsp;\a)))
                 </span><br/>
 <span class="partial" title="5 out of 48 forms covered">
-                127&nbsp;&nbsp;(defmacro&nbsp;CADAAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\d&nbsp;\a&nbsp;\a)))
+                126&nbsp;&nbsp;(defmacro&nbsp;CADAAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\d&nbsp;\a&nbsp;\a)))
                 </span><br/>
 <span class="partial" title="5 out of 48 forms covered">
-                128&nbsp;&nbsp;(defmacro&nbsp;CADDAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\d&nbsp;\d&nbsp;\a)))
+                127&nbsp;&nbsp;(defmacro&nbsp;CADDAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\d&nbsp;\d&nbsp;\a)))
                 </span><br/>
 <span class="partial" title="5 out of 48 forms covered">
-                129&nbsp;&nbsp;(defmacro&nbsp;CDDAAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\d&nbsp;\a&nbsp;\a)))
+                128&nbsp;&nbsp;(defmacro&nbsp;CDDAAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\d&nbsp;\a&nbsp;\a)))
                 </span><br/>
 <span class="partial" title="5 out of 48 forms covered">
-                130&nbsp;&nbsp;(defmacro&nbsp;CDDDAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\d&nbsp;\d&nbsp;\a)))
+                129&nbsp;&nbsp;(defmacro&nbsp;CDDDAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\d&nbsp;\d&nbsp;\a)))
                 </span><br/>
 <span class="partial" title="5 out of 48 forms covered">
-                131&nbsp;&nbsp;(defmacro&nbsp;CDAAAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\a&nbsp;\a&nbsp;\a)))
+                130&nbsp;&nbsp;(defmacro&nbsp;CDAAAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\a&nbsp;\a&nbsp;\a)))
                 </span><br/>
 <span class="partial" title="5 out of 48 forms covered">
-                132&nbsp;&nbsp;(defmacro&nbsp;CDADAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\a&nbsp;\d&nbsp;\a)))
+                131&nbsp;&nbsp;(defmacro&nbsp;CDADAR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\a&nbsp;\d&nbsp;\a)))
                 </span><br/>
 <span class="partial" title="5 out of 48 forms covered">
-                133&nbsp;&nbsp;(defmacro&nbsp;CAAADR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\a&nbsp;\a&nbsp;\d)))
+                132&nbsp;&nbsp;(defmacro&nbsp;CAAADR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\a&nbsp;\a&nbsp;\d)))
                 </span><br/>
 <span class="partial" title="5 out of 48 forms covered">
-                134&nbsp;&nbsp;(defmacro&nbsp;CAADDR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\a&nbsp;\d&nbsp;\d)))
+                133&nbsp;&nbsp;(defmacro&nbsp;CAADDR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\a&nbsp;\d&nbsp;\d)))
                 </span><br/>
 <span class="partial" title="5 out of 48 forms covered">
-                135&nbsp;&nbsp;(defmacro&nbsp;CADADR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\d&nbsp;\a&nbsp;\d)))
+                134&nbsp;&nbsp;(defmacro&nbsp;CADADR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\d&nbsp;\a&nbsp;\d)))
                 </span><br/>
 <span class="covered" title="48 out of 48 forms covered">
-                136&nbsp;&nbsp;(defmacro&nbsp;CADDDR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\d&nbsp;\d&nbsp;\d)))
+                135&nbsp;&nbsp;(defmacro&nbsp;CADDDR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\a&nbsp;\d&nbsp;\d&nbsp;\d)))
                 </span><br/>
 <span class="partial" title="5 out of 48 forms covered">
-                137&nbsp;&nbsp;(defmacro&nbsp;CDDADR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\d&nbsp;\a&nbsp;\d)))
+                136&nbsp;&nbsp;(defmacro&nbsp;CDDADR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\d&nbsp;\a&nbsp;\d)))
                 </span><br/>
 <span class="partial" title="5 out of 48 forms covered">
-                138&nbsp;&nbsp;(defmacro&nbsp;CDDDDR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\d&nbsp;\d&nbsp;\d)))
+                137&nbsp;&nbsp;(defmacro&nbsp;CDDDDR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\d&nbsp;\d&nbsp;\d)))
                 </span><br/>
 <span class="partial" title="5 out of 48 forms covered">
-                139&nbsp;&nbsp;(defmacro&nbsp;CDAADR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\a&nbsp;\a&nbsp;\d)))
+                138&nbsp;&nbsp;(defmacro&nbsp;CDAADR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\a&nbsp;\a&nbsp;\d)))
                 </span><br/>
 <span class="partial" title="5 out of 48 forms covered">
-                140&nbsp;&nbsp;(defmacro&nbsp;CDADDR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\a&nbsp;\d&nbsp;\d)))
+                139&nbsp;&nbsp;(defmacro&nbsp;CDADDR&nbsp;[x]&nbsp;`(uaf&nbsp;~x&nbsp;&#x27;(\d&nbsp;\a&nbsp;\d&nbsp;\d)))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                141&nbsp;&nbsp;
+                140&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                142&nbsp;&nbsp;(defn&nbsp;RPLACA
+                141&nbsp;&nbsp;(defn&nbsp;RPLACA
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                143&nbsp;&nbsp;&nbsp;&nbsp;&quot;Replace&nbsp;the&nbsp;CAR&nbsp;pointer&nbsp;of&nbsp;this&nbsp;`cell`&nbsp;with&nbsp;this&nbsp;`value`.&nbsp;Dangerous,&nbsp;should
+                142&nbsp;&nbsp;&nbsp;&nbsp;&quot;Replace&nbsp;the&nbsp;CAR&nbsp;pointer&nbsp;of&nbsp;this&nbsp;`cell`&nbsp;with&nbsp;this&nbsp;`value`.&nbsp;Dangerous,&nbsp;should
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                144&nbsp;&nbsp;&nbsp;&nbsp;really&nbsp;not&nbsp;exist,&nbsp;but&nbsp;does&nbsp;in&nbsp;Lisp&nbsp;1.5&nbsp;(and&nbsp;was&nbsp;important&nbsp;for&nbsp;some
+                143&nbsp;&nbsp;&nbsp;&nbsp;really&nbsp;not&nbsp;exist,&nbsp;but&nbsp;does&nbsp;in&nbsp;Lisp&nbsp;1.5&nbsp;(and&nbsp;was&nbsp;important&nbsp;for&nbsp;some
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                145&nbsp;&nbsp;&nbsp;&nbsp;performance&nbsp;hacks&nbsp;in&nbsp;early&nbsp;Lisps)&quot;
+                144&nbsp;&nbsp;&nbsp;&nbsp;performance&nbsp;hacks&nbsp;in&nbsp;early&nbsp;Lisps)&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                146&nbsp;&nbsp;&nbsp;&nbsp;[^ConsCell&nbsp;cell&nbsp;value]
+                145&nbsp;&nbsp;&nbsp;&nbsp;[^ConsCell&nbsp;cell&nbsp;value]
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                147&nbsp;&nbsp;&nbsp;&nbsp;(if
+                146&nbsp;&nbsp;&nbsp;&nbsp;(if
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                148&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(instance?&nbsp;ConsCell&nbsp;cell)
+                147&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(instance?&nbsp;ConsCell&nbsp;cell)
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                149&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if
+                148&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if
                 </span><br/>
 <span class="partial" title="11 out of 13 forms covered">
-                150&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(or
+                149&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(or
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                151&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(instance?&nbsp;ConsCell&nbsp;value)
+                150&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(instance?&nbsp;ConsCell&nbsp;value)
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                152&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(number?&nbsp;value)
+                151&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(number?&nbsp;value)
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                153&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(symbol?&nbsp;value)
+                152&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(symbol?&nbsp;value)
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
-                154&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;value&nbsp;NIL))
+                153&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;value&nbsp;NIL))
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                155&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(try
+                154&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(try
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
-                156&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(.rplaca&nbsp;cell&nbsp;value)
+                155&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(.rplaca&nbsp;cell&nbsp;value)
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                157&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cell
+                156&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cell
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                158&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(catch&nbsp;Throwable&nbsp;any
+                157&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(catch&nbsp;Throwable&nbsp;any
                 </span><br/>
 <span class="not-covered" title="0 out of 3 forms covered">
-                159&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info
+                158&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info
                 </span><br/>
 <span class="not-covered" title="0 out of 4 forms covered">
-                160&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;(.getMessage&nbsp;any)&nbsp;&quot;&nbsp;in&nbsp;RPLACA:&nbsp;`&quot;)
+                159&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;(.getMessage&nbsp;any)&nbsp;&quot;&nbsp;in&nbsp;RPLACA:&nbsp;`&quot;)
                 </span><br/>
 <span class="not-covered" title="0 out of 10 forms covered">
-                161&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:cause&nbsp;:upstream-error
+                160&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:cause&nbsp;:upstream-error
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                162&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:phase&nbsp;:host
+                161&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:phase&nbsp;:host
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                163&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:function&nbsp;:rplaca
+                162&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:function&nbsp;:rplaca
                 </span><br/>
 <span class="not-covered" title="0 out of 4 forms covered">
-                164&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:args&nbsp;(list&nbsp;cell&nbsp;value)
+                163&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:args&nbsp;(list&nbsp;cell&nbsp;value)
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                165&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:type&nbsp;:beowulf}
+                164&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:type&nbsp;:beowulf}
                 </span><br/>
 <span class="not-covered" title="0 out of 1 forms covered">
-                166&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;any))))
+                165&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;any))))
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                167&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info
+                166&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info
                 </span><br/>
 <span class="covered" title="9 out of 9 forms covered">
-                168&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;&quot;Un-ġefōg&nbsp;þing&nbsp;in&nbsp;RPLACA:&nbsp;`&quot;&nbsp;value&nbsp;&quot;`&nbsp;(&quot;&nbsp;(type&nbsp;value)&nbsp;&quot;)&quot;)
+                167&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;&quot;Un-ġefōg&nbsp;þing&nbsp;in&nbsp;RPLACA:&nbsp;`&quot;&nbsp;value&nbsp;&quot;`&nbsp;(&quot;&nbsp;(type&nbsp;value)&nbsp;&quot;)&quot;)
                 </span><br/>
 <span class="covered" title="10 out of 10 forms covered">
-                169&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:cause&nbsp;:bad-value
+                168&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:cause&nbsp;:bad-value
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                170&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:phase&nbsp;:host
+                169&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:phase&nbsp;:host
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                171&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:function&nbsp;:rplaca
+                170&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:function&nbsp;:rplaca
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                172&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:args&nbsp;(list&nbsp;cell&nbsp;value)
+                171&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:args&nbsp;(list&nbsp;cell&nbsp;value)
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                173&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:type&nbsp;:beowulf})))
+                172&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:type&nbsp;:beowulf})))
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                174&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info
+                173&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info
                 </span><br/>
 <span class="covered" title="9 out of 9 forms covered">
-                175&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;&quot;Uncynlic&nbsp;miercels&nbsp;in&nbsp;RPLACA:&nbsp;`&quot;&nbsp;cell&nbsp;&quot;`&nbsp;(&quot;&nbsp;(type&nbsp;cell)&nbsp;&quot;)&quot;)
+                174&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;&quot;Uncynlic&nbsp;miercels&nbsp;in&nbsp;RPLACA:&nbsp;`&quot;&nbsp;cell&nbsp;&quot;`&nbsp;(&quot;&nbsp;(type&nbsp;cell)&nbsp;&quot;)&quot;)
                 </span><br/>
 <span class="covered" title="10 out of 10 forms covered">
-                176&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:cause&nbsp;:bad-cell
+                175&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:cause&nbsp;:bad-cell
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                177&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:phase&nbsp;:host
+                176&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:phase&nbsp;:host
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                178&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:function&nbsp;:rplaca
+                177&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:function&nbsp;:rplaca
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                179&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:args&nbsp;(list&nbsp;cell&nbsp;value)
+                178&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:args&nbsp;(list&nbsp;cell&nbsp;value)
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                180&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:type&nbsp;:beowulf}))))
+                179&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:type&nbsp;:beowulf}))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                181&nbsp;&nbsp;
+                180&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                182&nbsp;&nbsp;(defn&nbsp;RPLACD
+                181&nbsp;&nbsp;(defn&nbsp;RPLACD
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                183&nbsp;&nbsp;&nbsp;&nbsp;&quot;Replace&nbsp;the&nbsp;CDR&nbsp;pointer&nbsp;of&nbsp;this&nbsp;`cell`&nbsp;with&nbsp;this&nbsp;`value`.&nbsp;Dangerous,&nbsp;should
+                182&nbsp;&nbsp;&nbsp;&nbsp;&quot;Replace&nbsp;the&nbsp;CDR&nbsp;pointer&nbsp;of&nbsp;this&nbsp;`cell`&nbsp;with&nbsp;this&nbsp;`value`.&nbsp;Dangerous,&nbsp;should
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                184&nbsp;&nbsp;&nbsp;&nbsp;really&nbsp;not&nbsp;exist,&nbsp;but&nbsp;does&nbsp;in&nbsp;Lisp&nbsp;1.5&nbsp;(and&nbsp;was&nbsp;important&nbsp;for&nbsp;some
+                183&nbsp;&nbsp;&nbsp;&nbsp;really&nbsp;not&nbsp;exist,&nbsp;but&nbsp;does&nbsp;in&nbsp;Lisp&nbsp;1.5&nbsp;(and&nbsp;was&nbsp;important&nbsp;for&nbsp;some
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                185&nbsp;&nbsp;&nbsp;&nbsp;performance&nbsp;hacks&nbsp;in&nbsp;early&nbsp;Lisps)&quot;
+                184&nbsp;&nbsp;&nbsp;&nbsp;performance&nbsp;hacks&nbsp;in&nbsp;early&nbsp;Lisps)&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                186&nbsp;&nbsp;&nbsp;&nbsp;[^ConsCell&nbsp;cell&nbsp;value]
+                185&nbsp;&nbsp;&nbsp;&nbsp;[^ConsCell&nbsp;cell&nbsp;value]
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                187&nbsp;&nbsp;&nbsp;&nbsp;(if
+                186&nbsp;&nbsp;&nbsp;&nbsp;(if
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                188&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(instance?&nbsp;ConsCell&nbsp;cell)
+                187&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(instance?&nbsp;ConsCell&nbsp;cell)
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                189&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if
+                188&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if
                 </span><br/>
-<span class="partial" title="10 out of 13 forms covered">
-                190&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(or
+<span class="partial" title="11 out of 13 forms covered">
+                189&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(or
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                191&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(instance?&nbsp;ConsCell&nbsp;value)
+                190&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(instance?&nbsp;ConsCell&nbsp;value)
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                192&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(number?&nbsp;value)
+                191&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(number?&nbsp;value)
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                193&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(symbol?&nbsp;value)
+                192&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(symbol?&nbsp;value)
                 </span><br/>
 <span class="not-covered" title="0 out of 2 forms covered">
-                194&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;value&nbsp;NIL))
+                193&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;value&nbsp;NIL))
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                195&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(try
+                194&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(try
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
-                196&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(.rplacd&nbsp;cell&nbsp;value)
+                195&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(.rplacd&nbsp;cell&nbsp;value)
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                197&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cell
+                196&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cell
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                198&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(catch&nbsp;Throwable&nbsp;any
+                197&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(catch&nbsp;Throwable&nbsp;any
                 </span><br/>
 <span class="not-covered" title="0 out of 3 forms covered">
-                199&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info
+                198&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info
                 </span><br/>
 <span class="not-covered" title="0 out of 4 forms covered">
-                200&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;(.getMessage&nbsp;any)&nbsp;&quot;&nbsp;in&nbsp;RPLACD:&nbsp;`&quot;)
+                199&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;(.getMessage&nbsp;any)&nbsp;&quot;&nbsp;in&nbsp;RPLACD:&nbsp;`&quot;)
                 </span><br/>
 <span class="not-covered" title="0 out of 10 forms covered">
-                201&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:cause&nbsp;:upstream-error
+                200&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:cause&nbsp;:upstream-error
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                202&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:phase&nbsp;:host
+                201&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:phase&nbsp;:host
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                203&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:function&nbsp;:rplacd
+                202&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:function&nbsp;:rplacd
                 </span><br/>
 <span class="not-covered" title="0 out of 4 forms covered">
-                204&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:args&nbsp;(list&nbsp;cell&nbsp;value)
+                203&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:args&nbsp;(list&nbsp;cell&nbsp;value)
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                205&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:type&nbsp;:beowulf}
+                204&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:type&nbsp;:beowulf}
                 </span><br/>
 <span class="not-covered" title="0 out of 1 forms covered">
-                206&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;any))))
+                205&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;any))))
                 </span><br/>
 <span class="not-covered" title="0 out of 3 forms covered">
-                207&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info
+                206&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info
                 </span><br/>
 <span class="not-covered" title="0 out of 9 forms covered">
-                208&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;&quot;Un-ġefōg&nbsp;þing&nbsp;in&nbsp;RPLACD:&nbsp;`&quot;&nbsp;value&nbsp;&quot;`&nbsp;(&quot;&nbsp;(type&nbsp;value)&nbsp;&quot;)&quot;)
+                207&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;&quot;Un-ġefōg&nbsp;þing&nbsp;in&nbsp;RPLACD:&nbsp;`&quot;&nbsp;value&nbsp;&quot;`&nbsp;(&quot;&nbsp;(type&nbsp;value)&nbsp;&quot;)&quot;)
                 </span><br/>
 <span class="not-covered" title="0 out of 10 forms covered">
-                209&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:cause&nbsp;:bad-value
+                208&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:cause&nbsp;:bad-value
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                210&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:phase&nbsp;:host
+                209&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:phase&nbsp;:host
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                211&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:function&nbsp;:rplacd
+                210&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:function&nbsp;:rplacd
                 </span><br/>
 <span class="not-covered" title="0 out of 4 forms covered">
-                212&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:args&nbsp;(list&nbsp;cell&nbsp;value)
+                211&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:args&nbsp;(list&nbsp;cell&nbsp;value)
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                213&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:type&nbsp;:beowulf})))
+                212&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:type&nbsp;:beowulf})))
                 </span><br/>
 <span class="not-covered" title="0 out of 3 forms covered">
-                214&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info
+                213&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info
                 </span><br/>
 <span class="not-covered" title="0 out of 9 forms covered">
-                215&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;&quot;Uncynlic&nbsp;miercels&nbsp;in&nbsp;RPLACD:&nbsp;`&quot;&nbsp;cell&nbsp;&quot;`&nbsp;(&quot;&nbsp;(type&nbsp;cell)&nbsp;&quot;)&quot;)
+                214&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;&quot;Uncynlic&nbsp;miercels&nbsp;in&nbsp;RPLACD:&nbsp;`&quot;&nbsp;cell&nbsp;&quot;`&nbsp;(&quot;&nbsp;(type&nbsp;cell)&nbsp;&quot;)&quot;)
                 </span><br/>
 <span class="not-covered" title="0 out of 10 forms covered">
-                216&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:cause&nbsp;:bad-cell
+                215&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:cause&nbsp;:bad-cell
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                217&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:phase&nbsp;:host
+                216&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:phase&nbsp;:host
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                218&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:detail&nbsp;:rplacd
+                217&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:detail&nbsp;:rplacd
                 </span><br/>
 <span class="not-covered" title="0 out of 4 forms covered">
-                219&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:args&nbsp;(list&nbsp;cell&nbsp;value)
+                218&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:args&nbsp;(list&nbsp;cell&nbsp;value)
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                220&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:type&nbsp;:beowulf}))));;&nbsp;PLUS
+                219&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:type&nbsp;:beowulf}))));;&nbsp;PLUS
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                221&nbsp;&nbsp;
+                220&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                222&nbsp;&nbsp;(defn&nbsp;LIST
+                221&nbsp;&nbsp;(defn&nbsp;LIST
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                223&nbsp;&nbsp;&nbsp;&nbsp;[&amp;&nbsp;args]
+                222&nbsp;&nbsp;&nbsp;&nbsp;[&amp;&nbsp;args]
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                224&nbsp;&nbsp;&nbsp;&nbsp;(make-beowulf-list&nbsp;args))
+                223&nbsp;&nbsp;&nbsp;&nbsp;(make-beowulf-list&nbsp;args))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                225&nbsp;&nbsp;
+                224&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                226&nbsp;&nbsp;;;;;&nbsp;Basic&nbsp;predicates&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                225&nbsp;&nbsp;;;;;&nbsp;Basic&nbsp;predicates&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                227&nbsp;&nbsp;
+                226&nbsp;&nbsp;
                 </span><br/>
 <span class="partial" title="5 out of 36 forms covered">
-                228&nbsp;&nbsp;(defmacro&nbsp;NULL
+                227&nbsp;&nbsp;(defmacro&nbsp;NULL
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                229&nbsp;&nbsp;&nbsp;&nbsp;&quot;Returns&nbsp;`T`&nbsp;if&nbsp;and&nbsp;only&nbsp;if&nbsp;the&nbsp;argument&nbsp;`x`&nbsp;is&nbsp;bound&nbsp;to&nbsp;`NIL`;&nbsp;else&nbsp;`F`.&quot;
+                228&nbsp;&nbsp;&nbsp;&nbsp;&quot;Returns&nbsp;`T`&nbsp;if&nbsp;and&nbsp;only&nbsp;if&nbsp;the&nbsp;argument&nbsp;`x`&nbsp;is&nbsp;bound&nbsp;to&nbsp;`NIL`;&nbsp;else&nbsp;`F`.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                230&nbsp;&nbsp;&nbsp;&nbsp;[x]
+                229&nbsp;&nbsp;&nbsp;&nbsp;[x]
                 </span><br/>
 <span class="not-covered" title="0 out of 1 forms covered">
-                231&nbsp;&nbsp;&nbsp;&nbsp;`(if&nbsp;(=&nbsp;~x&nbsp;NIL)&nbsp;T&nbsp;F))
+                230&nbsp;&nbsp;&nbsp;&nbsp;`(if&nbsp;(=&nbsp;~x&nbsp;NIL)&nbsp;T&nbsp;F))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                232&nbsp;&nbsp;
+                231&nbsp;&nbsp;
                 </span><br/>
 <span class="partial" title="5 out of 36 forms covered">
-                233&nbsp;&nbsp;(defmacro&nbsp;NILP
+                232&nbsp;&nbsp;(defmacro&nbsp;NILP
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                234&nbsp;&nbsp;&nbsp;&nbsp;&quot;Not&nbsp;part&nbsp;of&nbsp;LISP&nbsp;1.5:&nbsp;`T`&nbsp;if&nbsp;`o`&nbsp;is&nbsp;`NIL`,&nbsp;else&nbsp;`NIL`.&quot;
+                233&nbsp;&nbsp;&nbsp;&nbsp;&quot;Not&nbsp;part&nbsp;of&nbsp;LISP&nbsp;1.5:&nbsp;`T`&nbsp;if&nbsp;`o`&nbsp;is&nbsp;`NIL`,&nbsp;else&nbsp;`NIL`.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                235&nbsp;&nbsp;&nbsp;&nbsp;[x]
+                234&nbsp;&nbsp;&nbsp;&nbsp;[x]
                 </span><br/>
 <span class="not-covered" title="0 out of 1 forms covered">
-                236&nbsp;&nbsp;&nbsp;&nbsp;`(if&nbsp;(=&nbsp;~x&nbsp;NIL)&nbsp;T&nbsp;NIL))
+                235&nbsp;&nbsp;&nbsp;&nbsp;`(if&nbsp;(=&nbsp;~x&nbsp;NIL)&nbsp;T&nbsp;NIL))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                237&nbsp;&nbsp;
+                236&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                238&nbsp;&nbsp;(defn&nbsp;ATOM
+                237&nbsp;&nbsp;(defn&nbsp;ATOM
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                239&nbsp;&nbsp;&nbsp;&nbsp;&quot;Returns&nbsp;`T`&nbsp;if&nbsp;and&nbsp;only&nbsp;if&nbsp;the&nbsp;argument&nbsp;`x`&nbsp;is&nbsp;bound&nbsp;to&nbsp;an&nbsp;atom;&nbsp;else&nbsp;`F`.
+                238&nbsp;&nbsp;&nbsp;&nbsp;&quot;Returns&nbsp;`T`&nbsp;if&nbsp;and&nbsp;only&nbsp;if&nbsp;the&nbsp;argument&nbsp;`x`&nbsp;is&nbsp;bound&nbsp;to&nbsp;an&nbsp;atom;&nbsp;else&nbsp;`F`.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                240&nbsp;&nbsp;&nbsp;&nbsp;It&nbsp;is&nbsp;not&nbsp;clear&nbsp;to&nbsp;me&nbsp;from&nbsp;the&nbsp;documentation&nbsp;whether&nbsp;`(ATOM&nbsp;7)`&nbsp;should&nbsp;return
+                239&nbsp;&nbsp;&nbsp;&nbsp;It&nbsp;is&nbsp;not&nbsp;clear&nbsp;to&nbsp;me&nbsp;from&nbsp;the&nbsp;documentation&nbsp;whether&nbsp;`(ATOM&nbsp;7)`&nbsp;should&nbsp;return
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                241&nbsp;&nbsp;&nbsp;&nbsp;`T`&nbsp;or&nbsp;`F`.&nbsp;I&#x27;m&nbsp;going&nbsp;to&nbsp;assume&nbsp;`T`.&quot;
+                240&nbsp;&nbsp;&nbsp;&nbsp;`T`&nbsp;or&nbsp;`F`.&nbsp;I&#x27;m&nbsp;going&nbsp;to&nbsp;assume&nbsp;`T`.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                242&nbsp;&nbsp;&nbsp;&nbsp;[x]
+                241&nbsp;&nbsp;&nbsp;&nbsp;[x]
                 </span><br/>
 <span class="covered" title="13 out of 13 forms covered">
-                243&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(or&nbsp;(symbol?&nbsp;x)&nbsp;(number?&nbsp;x))&nbsp;T&nbsp;F))
+                242&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(or&nbsp;(symbol?&nbsp;x)&nbsp;(number?&nbsp;x))&nbsp;T&nbsp;F))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                244&nbsp;&nbsp;
+                243&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="57 out of 57 forms covered">
-                245&nbsp;&nbsp;(defmacro&nbsp;ATOM?
+                244&nbsp;&nbsp;(defmacro&nbsp;ATOM?
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                246&nbsp;&nbsp;&nbsp;&nbsp;&quot;The&nbsp;convention&nbsp;of&nbsp;returning&nbsp;`F`&nbsp;from&nbsp;predicates,&nbsp;rather&nbsp;than&nbsp;`NIL`,&nbsp;is&nbsp;going
+                245&nbsp;&nbsp;&nbsp;&nbsp;&quot;The&nbsp;convention&nbsp;of&nbsp;returning&nbsp;`F`&nbsp;from&nbsp;predicates,&nbsp;rather&nbsp;than&nbsp;`NIL`,&nbsp;is&nbsp;going
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                247&nbsp;&nbsp;&nbsp;&nbsp;to&nbsp;tie&nbsp;me&nbsp;in&nbsp;knots.&nbsp;This&nbsp;is&nbsp;a&nbsp;variant&nbsp;of&nbsp;`ATOM`&nbsp;which&nbsp;returns&nbsp;`NIL`
+                246&nbsp;&nbsp;&nbsp;&nbsp;to&nbsp;tie&nbsp;me&nbsp;in&nbsp;knots.&nbsp;This&nbsp;is&nbsp;a&nbsp;variant&nbsp;of&nbsp;`ATOM`&nbsp;which&nbsp;returns&nbsp;`NIL`
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                248&nbsp;&nbsp;&nbsp;&nbsp;on&nbsp;failure.&quot;
+                247&nbsp;&nbsp;&nbsp;&nbsp;on&nbsp;failure.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                249&nbsp;&nbsp;&nbsp;&nbsp;[x]
+                248&nbsp;&nbsp;&nbsp;&nbsp;[x]
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
-                250&nbsp;&nbsp;&nbsp;&nbsp;`(if&nbsp;(or&nbsp;(symbol?&nbsp;~x)&nbsp;(number?&nbsp;~x))&nbsp;T&nbsp;NIL))
+                249&nbsp;&nbsp;&nbsp;&nbsp;`(if&nbsp;(or&nbsp;(symbol?&nbsp;~x)&nbsp;(number?&nbsp;~x))&nbsp;T&nbsp;NIL))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                251&nbsp;&nbsp;
+                250&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                252&nbsp;&nbsp;(defn&nbsp;EQ
+                251&nbsp;&nbsp;(defn&nbsp;EQ
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                253&nbsp;&nbsp;&nbsp;&nbsp;&quot;Returns&nbsp;`T`&nbsp;if&nbsp;and&nbsp;only&nbsp;if&nbsp;both&nbsp;`x`&nbsp;and&nbsp;`y`&nbsp;are&nbsp;bound&nbsp;to&nbsp;the&nbsp;same&nbsp;atom,
+                252&nbsp;&nbsp;&nbsp;&nbsp;&quot;Returns&nbsp;`T`&nbsp;if&nbsp;and&nbsp;only&nbsp;if&nbsp;both&nbsp;`x`&nbsp;and&nbsp;`y`&nbsp;are&nbsp;bound&nbsp;to&nbsp;the&nbsp;same&nbsp;atom,
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                254&nbsp;&nbsp;&nbsp;&nbsp;else&nbsp;`NIL`.&quot;
+                253&nbsp;&nbsp;&nbsp;&nbsp;else&nbsp;`NIL`.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                255&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y]
+                254&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y]
                 </span><br/>
 <span class="covered" title="12 out of 12 forms covered">
-                256&nbsp;&nbsp;&nbsp;&nbsp;(cond&nbsp;(and&nbsp;(instance?&nbsp;ConsCell&nbsp;x)
+                255&nbsp;&nbsp;&nbsp;&nbsp;(cond&nbsp;(and&nbsp;(instance?&nbsp;ConsCell&nbsp;x)
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
-                257&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(.equals&nbsp;x&nbsp;y))&nbsp;T
+                256&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(.equals&nbsp;x&nbsp;y))&nbsp;T
                 </span><br/>
 <span class="covered" title="13 out of 13 forms covered">
-                258&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;(=&nbsp;(ATOM&nbsp;x)&nbsp;T)&nbsp;(=&nbsp;x&nbsp;y))&nbsp;T
+                257&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;(=&nbsp;(ATOM&nbsp;x)&nbsp;T)&nbsp;(=&nbsp;x&nbsp;y))&nbsp;T
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                259&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;NIL))
+                258&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;NIL))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                260&nbsp;&nbsp;
+                259&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                261&nbsp;&nbsp;(defn&nbsp;EQUAL
+                260&nbsp;&nbsp;(defn&nbsp;EQUAL
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                262&nbsp;&nbsp;&nbsp;&nbsp;&quot;This&nbsp;is&nbsp;a&nbsp;predicate&nbsp;that&nbsp;is&nbsp;true&nbsp;if&nbsp;its&nbsp;two&nbsp;arguments&nbsp;are&nbsp;identical
+                261&nbsp;&nbsp;&nbsp;&nbsp;&quot;This&nbsp;is&nbsp;a&nbsp;predicate&nbsp;that&nbsp;is&nbsp;true&nbsp;if&nbsp;its&nbsp;two&nbsp;arguments&nbsp;are&nbsp;identical
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                263&nbsp;&nbsp;&nbsp;&nbsp;S-expressions,&nbsp;and&nbsp;false&nbsp;if&nbsp;they&nbsp;are&nbsp;different.&nbsp;(The&nbsp;elementary&nbsp;predicate
+                262&nbsp;&nbsp;&nbsp;&nbsp;S-expressions,&nbsp;and&nbsp;false&nbsp;if&nbsp;they&nbsp;are&nbsp;different.&nbsp;(The&nbsp;elementary&nbsp;predicate
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                264&nbsp;&nbsp;&nbsp;&nbsp;`EQ`&nbsp;is&nbsp;defined&nbsp;only&nbsp;for&nbsp;atomic&nbsp;arguments.)&nbsp;The&nbsp;definition&nbsp;of&nbsp;`EQUAL`&nbsp;is
+                263&nbsp;&nbsp;&nbsp;&nbsp;`EQ`&nbsp;is&nbsp;defined&nbsp;only&nbsp;for&nbsp;atomic&nbsp;arguments.)&nbsp;The&nbsp;definition&nbsp;of&nbsp;`EQUAL`&nbsp;is
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                265&nbsp;&nbsp;&nbsp;&nbsp;an&nbsp;example&nbsp;of&nbsp;a&nbsp;conditional&nbsp;expression&nbsp;inside&nbsp;a&nbsp;conditional&nbsp;expression.
+                264&nbsp;&nbsp;&nbsp;&nbsp;an&nbsp;example&nbsp;of&nbsp;a&nbsp;conditional&nbsp;expression&nbsp;inside&nbsp;a&nbsp;conditional&nbsp;expression.
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                266&nbsp;&nbsp;
+                265&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                267&nbsp;&nbsp;&nbsp;&nbsp;NOTE:&nbsp;returns&nbsp;`F`&nbsp;on&nbsp;failure,&nbsp;not&nbsp;`NIL`&quot;
+                266&nbsp;&nbsp;&nbsp;&nbsp;NOTE:&nbsp;returns&nbsp;`F`&nbsp;on&nbsp;failure,&nbsp;not&nbsp;`NIL`&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                268&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y]
+                267&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y]
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                269&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                268&nbsp;&nbsp;&nbsp;&nbsp;(cond
                 </span><br/>
 <span class="covered" title="11 out of 11 forms covered">
-                270&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(ATOM&nbsp;x)&nbsp;T)&nbsp;(if&nbsp;(=&nbsp;x&nbsp;y)&nbsp;T&nbsp;F)
+                269&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(ATOM&nbsp;x)&nbsp;T)&nbsp;(if&nbsp;(=&nbsp;x&nbsp;y)&nbsp;T&nbsp;F)
                 </span><br/>
 <span class="covered" title="18 out of 18 forms covered">
-                271&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(EQUAL&nbsp;(CAR&nbsp;x)&nbsp;(CAR&nbsp;y))&nbsp;T)&nbsp;(EQUAL&nbsp;(CDR&nbsp;x)&nbsp;(CDR&nbsp;y))
+                270&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(EQUAL&nbsp;(CAR&nbsp;x)&nbsp;(CAR&nbsp;y))&nbsp;T)&nbsp;(EQUAL&nbsp;(CDR&nbsp;x)&nbsp;(CDR&nbsp;y))
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                272&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;F))
+                271&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;F))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                273&nbsp;&nbsp;
+                272&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                274&nbsp;&nbsp;(defn&nbsp;AND
+                273&nbsp;&nbsp;(defn&nbsp;AND
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                275&nbsp;&nbsp;&nbsp;&nbsp;&quot;`T`&nbsp;if&nbsp;and&nbsp;only&nbsp;if&nbsp;none&nbsp;of&nbsp;my&nbsp;`args`&nbsp;evaluate&nbsp;to&nbsp;either&nbsp;`F`&nbsp;or&nbsp;`NIL`,
+                274&nbsp;&nbsp;&nbsp;&nbsp;&quot;`T`&nbsp;if&nbsp;and&nbsp;only&nbsp;if&nbsp;none&nbsp;of&nbsp;my&nbsp;`args`&nbsp;evaluate&nbsp;to&nbsp;either&nbsp;`F`&nbsp;or&nbsp;`NIL`,
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                276&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else&nbsp;`F`.
+                275&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else&nbsp;`F`.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                277&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                276&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                278&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In&nbsp;`beowulf.host`&nbsp;principally&nbsp;because&nbsp;I&nbsp;don&#x27;t&nbsp;yet&nbsp;feel&nbsp;confident&nbsp;to&nbsp;define
+                277&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In&nbsp;`beowulf.host`&nbsp;principally&nbsp;because&nbsp;I&nbsp;don&#x27;t&nbsp;yet&nbsp;feel&nbsp;confident&nbsp;to&nbsp;define
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                279&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varargs&nbsp;functions&nbsp;in&nbsp;Lisp.&quot;
+                278&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varargs&nbsp;functions&nbsp;in&nbsp;Lisp.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                280&nbsp;&nbsp;&nbsp;&nbsp;[&amp;&nbsp;args]
+                279&nbsp;&nbsp;&nbsp;&nbsp;[&amp;&nbsp;args]
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                281&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;(println&nbsp;&quot;AND:&nbsp;&quot;&nbsp;args&nbsp;&quot;&nbsp;type:&nbsp;&quot;&nbsp;(type&nbsp;args)&nbsp;&quot;&nbsp;seq?&nbsp;&quot;&nbsp;(seq?&nbsp;args))
+                280&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;(println&nbsp;&quot;AND:&nbsp;&quot;&nbsp;args&nbsp;&quot;&nbsp;type:&nbsp;&quot;&nbsp;(type&nbsp;args)&nbsp;&quot;&nbsp;seq?&nbsp;&quot;&nbsp;(seq?&nbsp;args))
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                282&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;(println&nbsp;&quot;&nbsp;&nbsp;filtered:&nbsp;&quot;&nbsp;(seq&nbsp;(filter&nbsp;#{F&nbsp;NIL}&nbsp;args)))
+                281&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;(println&nbsp;&quot;&nbsp;&nbsp;filtered:&nbsp;&quot;&nbsp;(seq&nbsp;(filter&nbsp;#{F&nbsp;NIL}&nbsp;args)))
                 </span><br/>
 <span class="partial" title="5 out of 7 forms covered">
-                283&nbsp;&nbsp;&nbsp;&nbsp;(cond&nbsp;(=&nbsp;NIL&nbsp;args)&nbsp;T
+                282&nbsp;&nbsp;&nbsp;&nbsp;(cond&nbsp;(=&nbsp;NIL&nbsp;args)&nbsp;T
                 </span><br/>
 <span class="covered" title="14 out of 14 forms covered">
-                284&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(seq?&nbsp;args)&nbsp;(if&nbsp;(seq&nbsp;(filter&nbsp;#{F&nbsp;NIL}&nbsp;args))&nbsp;F&nbsp;T)
+                283&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(seq?&nbsp;args)&nbsp;(if&nbsp;(seq&nbsp;(filter&nbsp;#{F&nbsp;NIL}&nbsp;args))&nbsp;F&nbsp;T)
                 </span><br/>
 <span class="not-covered" title="0 out of 1 forms covered">
-                285&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;T))
+                284&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;T))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                285&nbsp;&nbsp;
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
                 286&nbsp;&nbsp;
                 </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                287&nbsp;&nbsp;
-                </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                288&nbsp;&nbsp;(defn&nbsp;OR
+                287&nbsp;&nbsp;(defn&nbsp;OR
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                289&nbsp;&nbsp;&nbsp;&nbsp;&quot;`T`&nbsp;if&nbsp;and&nbsp;only&nbsp;if&nbsp;at&nbsp;least&nbsp;one&nbsp;of&nbsp;my&nbsp;`args`&nbsp;evaluates&nbsp;to&nbsp;something&nbsp;other
+                288&nbsp;&nbsp;&nbsp;&nbsp;&quot;`T`&nbsp;if&nbsp;and&nbsp;only&nbsp;if&nbsp;at&nbsp;least&nbsp;one&nbsp;of&nbsp;my&nbsp;`args`&nbsp;evaluates&nbsp;to&nbsp;something&nbsp;other
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                290&nbsp;&nbsp;&nbsp;&nbsp;than&nbsp;either&nbsp;`F`&nbsp;or&nbsp;`NIL`,&nbsp;else&nbsp;`F`.
+                289&nbsp;&nbsp;&nbsp;&nbsp;than&nbsp;either&nbsp;`F`&nbsp;or&nbsp;`NIL`,&nbsp;else&nbsp;`F`.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                291&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                290&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                292&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In&nbsp;`beowulf.host`&nbsp;principally&nbsp;because&nbsp;I&nbsp;don&#x27;t&nbsp;yet&nbsp;feel&nbsp;confident&nbsp;to&nbsp;define
+                291&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In&nbsp;`beowulf.host`&nbsp;principally&nbsp;because&nbsp;I&nbsp;don&#x27;t&nbsp;yet&nbsp;feel&nbsp;confident&nbsp;to&nbsp;define
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                293&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varargs&nbsp;functions&nbsp;in&nbsp;Lisp.&quot;
+                292&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varargs&nbsp;functions&nbsp;in&nbsp;Lisp.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                294&nbsp;&nbsp;&nbsp;&nbsp;[&amp;&nbsp;args]
+                293&nbsp;&nbsp;&nbsp;&nbsp;[&amp;&nbsp;args]
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                295&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;(println&nbsp;&quot;OR:&nbsp;&quot;&nbsp;args&nbsp;&quot;&nbsp;type:&nbsp;&quot;&nbsp;(type&nbsp;args)&nbsp;&quot;&nbsp;seq?&nbsp;&quot;&nbsp;(seq?&nbsp;args))
+                294&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;(println&nbsp;&quot;OR:&nbsp;&quot;&nbsp;args&nbsp;&quot;&nbsp;type:&nbsp;&quot;&nbsp;(type&nbsp;args)&nbsp;&quot;&nbsp;seq?&nbsp;&quot;&nbsp;(seq?&nbsp;args))
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                296&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;(println&nbsp;&quot;&nbsp;&nbsp;filtered:&nbsp;&quot;&nbsp;(seq&nbsp;(remove&nbsp;#{F&nbsp;NIL}&nbsp;args)))
+                295&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;(println&nbsp;&quot;&nbsp;&nbsp;filtered:&nbsp;&quot;&nbsp;(seq&nbsp;(remove&nbsp;#{F&nbsp;NIL}&nbsp;args)))
                 </span><br/>
 <span class="not-covered" title="0 out of 7 forms covered">
-                297&nbsp;&nbsp;&nbsp;&nbsp;(cond&nbsp;(=&nbsp;NIL&nbsp;args)&nbsp;F
+                296&nbsp;&nbsp;&nbsp;&nbsp;(cond&nbsp;(=&nbsp;NIL&nbsp;args)&nbsp;F
                 </span><br/>
 <span class="not-covered" title="0 out of 14 forms covered">
-                298&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(seq?&nbsp;args)&nbsp;(if&nbsp;(seq&nbsp;(remove&nbsp;#{F&nbsp;NIL}&nbsp;args))&nbsp;T&nbsp;F)
+                297&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(seq?&nbsp;args)&nbsp;(if&nbsp;(seq&nbsp;(remove&nbsp;#{F&nbsp;NIL}&nbsp;args))&nbsp;T&nbsp;F)
                 </span><br/>
 <span class="not-covered" title="0 out of 1 forms covered">
-                299&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;F))
+                298&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;F))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                299&nbsp;&nbsp;
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
                 300&nbsp;&nbsp;
                 </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                301&nbsp;&nbsp;
+<span class="not-tracked" title="0 out of 0 forms covered">
+                301&nbsp;&nbsp;;;;;&nbsp;Operations&nbsp;on&nbsp;lists&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                302&nbsp;&nbsp;;;;;&nbsp;Operations&nbsp;on&nbsp;lists&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                302&nbsp;&nbsp;;;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                303&nbsp;&nbsp;;;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                304&nbsp;&nbsp;;;&nbsp;TODO:&nbsp;These&nbsp;are&nbsp;candidates&nbsp;for&nbsp;moving&nbsp;to&nbsp;Lisp&nbsp;urgently!
+                303&nbsp;&nbsp;;;&nbsp;TODO:&nbsp;These&nbsp;are&nbsp;candidates&nbsp;for&nbsp;moving&nbsp;to&nbsp;Lisp&nbsp;urgently!
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                305&nbsp;&nbsp;
+                304&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                306&nbsp;&nbsp;(defn&nbsp;ASSOC
+                305&nbsp;&nbsp;(defn&nbsp;ASSOC
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                307&nbsp;&nbsp;&nbsp;&nbsp;&quot;If&nbsp;a&nbsp;is&nbsp;an&nbsp;association&nbsp;list&nbsp;such&nbsp;as&nbsp;the&nbsp;one&nbsp;formed&nbsp;by&nbsp;PAIRLIS&nbsp;in&nbsp;the&nbsp;above
+                306&nbsp;&nbsp;&nbsp;&nbsp;&quot;If&nbsp;a&nbsp;is&nbsp;an&nbsp;association&nbsp;list&nbsp;such&nbsp;as&nbsp;the&nbsp;one&nbsp;formed&nbsp;by&nbsp;PAIRLIS&nbsp;in&nbsp;the&nbsp;above
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                308&nbsp;&nbsp;&nbsp;&nbsp;example,&nbsp;then&nbsp;assoc&nbsp;will&nbsp;produce&nbsp;the&nbsp;first&nbsp;pair&nbsp;whose&nbsp;first&nbsp;term&nbsp;is&nbsp;x.&nbsp;Thus
+                307&nbsp;&nbsp;&nbsp;&nbsp;example,&nbsp;then&nbsp;assoc&nbsp;will&nbsp;produce&nbsp;the&nbsp;first&nbsp;pair&nbsp;whose&nbsp;first&nbsp;term&nbsp;is&nbsp;x.&nbsp;Thus
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                309&nbsp;&nbsp;&nbsp;&nbsp;it&nbsp;is&nbsp;a&nbsp;table&nbsp;searching&nbsp;function.
+                308&nbsp;&nbsp;&nbsp;&nbsp;it&nbsp;is&nbsp;a&nbsp;table&nbsp;searching&nbsp;function.
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                310&nbsp;&nbsp;
+                309&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                311&nbsp;&nbsp;&nbsp;&nbsp;All&nbsp;args&nbsp;are&nbsp;assumed&nbsp;to&nbsp;be&nbsp;`beowulf.cons-cell&#x2F;ConsCell`&nbsp;objects.
+                310&nbsp;&nbsp;&nbsp;&nbsp;All&nbsp;args&nbsp;are&nbsp;assumed&nbsp;to&nbsp;be&nbsp;`beowulf.cons-cell&#x2F;ConsCell`&nbsp;objects.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                312&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;page&nbsp;12&nbsp;of&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;Programmers&nbsp;Manual.
+                311&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;page&nbsp;12&nbsp;of&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;Programmers&nbsp;Manual.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                313&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                312&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                314&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**NOTE&nbsp;THAT**&nbsp;this&nbsp;function&nbsp;is&nbsp;overridden&nbsp;by&nbsp;an&nbsp;implementation&nbsp;in&nbsp;Lisp,
+                313&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**NOTE&nbsp;THAT**&nbsp;this&nbsp;function&nbsp;is&nbsp;overridden&nbsp;by&nbsp;an&nbsp;implementation&nbsp;in&nbsp;Lisp,
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                315&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;but&nbsp;is&nbsp;currently&nbsp;still&nbsp;present&nbsp;for&nbsp;bootstrapping.&quot;
+                314&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;but&nbsp;is&nbsp;currently&nbsp;still&nbsp;present&nbsp;for&nbsp;bootstrapping.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                316&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;a]
+                315&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;a]
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                317&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                316&nbsp;&nbsp;&nbsp;&nbsp;(cond
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                318&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;NIL&nbsp;a)&nbsp;NIL&nbsp;;;&nbsp;this&nbsp;clause&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;original&nbsp;but&nbsp;is&nbsp;added&nbsp;for
+                317&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;NIL&nbsp;a)&nbsp;NIL&nbsp;;;&nbsp;this&nbsp;clause&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;original&nbsp;but&nbsp;is&nbsp;added&nbsp;for
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                319&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;robustness.
+                318&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;robustness.
                 </span><br/>
 <span class="covered" title="11 out of 11 forms covered">
-                320&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(EQUAL&nbsp;(CAAR&nbsp;a)&nbsp;x)&nbsp;T)&nbsp;(CAR&nbsp;a)
+                319&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(EQUAL&nbsp;(CAAR&nbsp;a)&nbsp;x)&nbsp;T)&nbsp;(CAR&nbsp;a)
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                321&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else
+                320&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else
                 </span><br/>
 <span class="covered" title="6 out of 6 forms covered">
-                322&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ASSOC&nbsp;x&nbsp;(CDR&nbsp;a))))
+                321&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ASSOC&nbsp;x&nbsp;(CDR&nbsp;a))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                323&nbsp;&nbsp;
+                322&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                324&nbsp;&nbsp;(defn&nbsp;PAIRLIS
+                323&nbsp;&nbsp;(defn&nbsp;PAIRLIS
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                325&nbsp;&nbsp;&nbsp;&nbsp;&quot;This&nbsp;function&nbsp;gives&nbsp;the&nbsp;list&nbsp;of&nbsp;pairs&nbsp;of&nbsp;corresponding&nbsp;elements&nbsp;of&nbsp;the
+                324&nbsp;&nbsp;&nbsp;&nbsp;&quot;This&nbsp;function&nbsp;gives&nbsp;the&nbsp;list&nbsp;of&nbsp;pairs&nbsp;of&nbsp;corresponding&nbsp;elements&nbsp;of&nbsp;the
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                326&nbsp;&nbsp;&nbsp;&nbsp;lists&nbsp;`x`&nbsp;and&nbsp;`y`,&nbsp;and&nbsp;APPENDs&nbsp;this&nbsp;to&nbsp;the&nbsp;list&nbsp;`a`.&nbsp;The&nbsp;resultant&nbsp;list
+                325&nbsp;&nbsp;&nbsp;&nbsp;lists&nbsp;`x`&nbsp;and&nbsp;`y`,&nbsp;and&nbsp;APPENDs&nbsp;this&nbsp;to&nbsp;the&nbsp;list&nbsp;`a`.&nbsp;The&nbsp;resultant&nbsp;list
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                327&nbsp;&nbsp;&nbsp;&nbsp;of&nbsp;pairs,&nbsp;which&nbsp;is&nbsp;like&nbsp;a&nbsp;table&nbsp;with&nbsp;two&nbsp;columns,&nbsp;is&nbsp;called&nbsp;an
+                326&nbsp;&nbsp;&nbsp;&nbsp;of&nbsp;pairs,&nbsp;which&nbsp;is&nbsp;like&nbsp;a&nbsp;table&nbsp;with&nbsp;two&nbsp;columns,&nbsp;is&nbsp;called&nbsp;an
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                328&nbsp;&nbsp;&nbsp;&nbsp;association&nbsp;list.
+                327&nbsp;&nbsp;&nbsp;&nbsp;association&nbsp;list.
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                329&nbsp;&nbsp;
+                328&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                330&nbsp;&nbsp;&nbsp;&nbsp;Eessentially,&nbsp;it&nbsp;builds&nbsp;the&nbsp;environment&nbsp;on&nbsp;the&nbsp;stack,&nbsp;implementing&nbsp;shallow
+                329&nbsp;&nbsp;&nbsp;&nbsp;Eessentially,&nbsp;it&nbsp;builds&nbsp;the&nbsp;environment&nbsp;on&nbsp;the&nbsp;stack,&nbsp;implementing&nbsp;shallow
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                331&nbsp;&nbsp;&nbsp;&nbsp;binding.
+                330&nbsp;&nbsp;&nbsp;&nbsp;binding.
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                332&nbsp;&nbsp;
+                331&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                333&nbsp;&nbsp;&nbsp;&nbsp;All&nbsp;args&nbsp;are&nbsp;assumed&nbsp;to&nbsp;be&nbsp;`beowulf.cons-cell&#x2F;ConsCell`&nbsp;objects.
+                332&nbsp;&nbsp;&nbsp;&nbsp;All&nbsp;args&nbsp;are&nbsp;assumed&nbsp;to&nbsp;be&nbsp;`beowulf.cons-cell&#x2F;ConsCell`&nbsp;objects.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                334&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;page&nbsp;12&nbsp;of&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;Programmers&nbsp;Manual.
+                333&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;page&nbsp;12&nbsp;of&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;Programmers&nbsp;Manual.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                335&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                334&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                336&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**NOTE&nbsp;THAT**&nbsp;this&nbsp;function&nbsp;is&nbsp;overridden&nbsp;by&nbsp;an&nbsp;implementation&nbsp;in&nbsp;Lisp,
+                335&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**NOTE&nbsp;THAT**&nbsp;this&nbsp;function&nbsp;is&nbsp;overridden&nbsp;by&nbsp;an&nbsp;implementation&nbsp;in&nbsp;Lisp,
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                337&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;but&nbsp;is&nbsp;currently&nbsp;still&nbsp;present&nbsp;for&nbsp;bootstrapping.&quot;
+                336&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;but&nbsp;is&nbsp;currently&nbsp;still&nbsp;present&nbsp;for&nbsp;bootstrapping.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                338&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y&nbsp;a]
+                337&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y&nbsp;a]
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
-                339&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                338&nbsp;&nbsp;&nbsp;&nbsp;(cond
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                340&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;the&nbsp;original&nbsp;tests&nbsp;only&nbsp;x;&nbsp;testing&nbsp;y&nbsp;as&nbsp;well&nbsp;will&nbsp;be&nbsp;a&nbsp;little&nbsp;more
+                339&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;the&nbsp;original&nbsp;tests&nbsp;only&nbsp;x;&nbsp;testing&nbsp;y&nbsp;as&nbsp;well&nbsp;will&nbsp;be&nbsp;a&nbsp;little&nbsp;more
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                341&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;robust&nbsp;if&nbsp;`x`&nbsp;and&nbsp;`y`&nbsp;are&nbsp;not&nbsp;the&nbsp;same&nbsp;length.
+                340&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;robust&nbsp;if&nbsp;`x`&nbsp;and&nbsp;`y`&nbsp;are&nbsp;not&nbsp;the&nbsp;same&nbsp;length.
                 </span><br/>
 <span class="covered" title="11 out of 11 forms covered">
-                342&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(or&nbsp;(=&nbsp;NIL&nbsp;x)&nbsp;(=&nbsp;NIL&nbsp;y))&nbsp;a
+                341&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(or&nbsp;(=&nbsp;NIL&nbsp;x)&nbsp;(=&nbsp;NIL&nbsp;y))&nbsp;a
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
-                343&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;(make-cons-cell
+                342&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;(make-cons-cell
                 </span><br/>
 <span class="covered" title="8 out of 8 forms covered">
-                344&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell&nbsp;(CAR&nbsp;x)&nbsp;(CAR&nbsp;y))
+                343&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell&nbsp;(CAR&nbsp;x)&nbsp;(CAR&nbsp;y))
                 </span><br/>
 <span class="covered" title="9 out of 9 forms covered">
-                345&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(PAIRLIS&nbsp;(CDR&nbsp;x)&nbsp;(CDR&nbsp;y)&nbsp;a))))
+                344&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(PAIRLIS&nbsp;(CDR&nbsp;x)&nbsp;(CDR&nbsp;y)&nbsp;a))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                346&nbsp;&nbsp;
+                345&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                347&nbsp;&nbsp;;;;;&nbsp;Arithmetic&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                346&nbsp;&nbsp;;;;;&nbsp;Arithmetic&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                348&nbsp;&nbsp;;;
+                347&nbsp;&nbsp;;;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                349&nbsp;&nbsp;;;&nbsp;TODO:&nbsp;When&nbsp;in&nbsp;strict&nbsp;mode,&nbsp;should&nbsp;we&nbsp;limit&nbsp;arithmetic&nbsp;precision&nbsp;to&nbsp;that
+                348&nbsp;&nbsp;;;&nbsp;TODO:&nbsp;When&nbsp;in&nbsp;strict&nbsp;mode,&nbsp;should&nbsp;we&nbsp;limit&nbsp;arithmetic&nbsp;precision&nbsp;to&nbsp;that
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                350&nbsp;&nbsp;;;&nbsp;supported&nbsp;by&nbsp;Lisp&nbsp;1.5?
+                349&nbsp;&nbsp;;;&nbsp;supported&nbsp;by&nbsp;Lisp&nbsp;1.5?
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                351&nbsp;&nbsp;
+                350&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                352&nbsp;&nbsp;(defn&nbsp;PLUS
+                351&nbsp;&nbsp;(defn&nbsp;PLUS
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                353&nbsp;&nbsp;&nbsp;&nbsp;[&amp;&nbsp;args]
+                352&nbsp;&nbsp;&nbsp;&nbsp;[&amp;&nbsp;args]
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                354&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[s&nbsp;(apply&nbsp;+&nbsp;args)]
+                353&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[s&nbsp;(apply&nbsp;+&nbsp;args)]
                 </span><br/>
 <span class="covered" title="7 out of 7 forms covered">
-                355&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(integer?&nbsp;s)&nbsp;s&nbsp;(float&nbsp;s))))
+                354&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(integer?&nbsp;s)&nbsp;s&nbsp;(float&nbsp;s))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                356&nbsp;&nbsp;
+                355&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                357&nbsp;&nbsp;(defn&nbsp;TIMES
+                356&nbsp;&nbsp;(defn&nbsp;TIMES
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                358&nbsp;&nbsp;&nbsp;&nbsp;[&amp;&nbsp;args]
+                357&nbsp;&nbsp;&nbsp;&nbsp;[&amp;&nbsp;args]
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                359&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[p&nbsp;(apply&nbsp;*&nbsp;args)]
+                358&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[p&nbsp;(apply&nbsp;*&nbsp;args)]
                 </span><br/>
 <span class="partial" title="5 out of 7 forms covered">
-                360&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(integer?&nbsp;p)&nbsp;p&nbsp;(float&nbsp;p))))
+                359&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(integer?&nbsp;p)&nbsp;p&nbsp;(float&nbsp;p))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                361&nbsp;&nbsp;
+                360&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                362&nbsp;&nbsp;(defn&nbsp;DIFFERENCE
+                361&nbsp;&nbsp;(defn&nbsp;DIFFERENCE
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                363&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y]
+                362&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y]
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                364&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[d&nbsp;(-&nbsp;x&nbsp;y)]
+                363&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[d&nbsp;(-&nbsp;x&nbsp;y)]
                 </span><br/>
 <span class="partial" title="5 out of 7 forms covered">
-                365&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(integer?&nbsp;d)&nbsp;d&nbsp;(float&nbsp;d))))
+                364&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(integer?&nbsp;d)&nbsp;d&nbsp;(float&nbsp;d))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                366&nbsp;&nbsp;
+                365&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                367&nbsp;&nbsp;(defn&nbsp;QUOTIENT
+                366&nbsp;&nbsp;(defn&nbsp;QUOTIENT
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                368&nbsp;&nbsp;&nbsp;&nbsp;&quot;I&#x27;m&nbsp;not&nbsp;certain&nbsp;from&nbsp;the&nbsp;documentation&nbsp;whether&nbsp;Lisp&nbsp;1.5&nbsp;`QUOTIENT`&nbsp;returned
+                367&nbsp;&nbsp;&nbsp;&nbsp;&quot;I&#x27;m&nbsp;not&nbsp;certain&nbsp;from&nbsp;the&nbsp;documentation&nbsp;whether&nbsp;Lisp&nbsp;1.5&nbsp;`QUOTIENT`&nbsp;returned
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                369&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;integer&nbsp;part&nbsp;of&nbsp;the&nbsp;quotient,&nbsp;or&nbsp;a&nbsp;realnum&nbsp;representing&nbsp;the&nbsp;whole
+                368&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;integer&nbsp;part&nbsp;of&nbsp;the&nbsp;quotient,&nbsp;or&nbsp;a&nbsp;realnum&nbsp;representing&nbsp;the&nbsp;whole
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                370&nbsp;&nbsp;&nbsp;&nbsp;quotient.&nbsp;I&nbsp;am&nbsp;for&nbsp;now&nbsp;implementing&nbsp;the&nbsp;latter.&quot;
+                369&nbsp;&nbsp;&nbsp;&nbsp;quotient.&nbsp;I&nbsp;am&nbsp;for&nbsp;now&nbsp;implementing&nbsp;the&nbsp;latter.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                371&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y]
+                370&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y]
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                372&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[q&nbsp;(&#x2F;&nbsp;x&nbsp;y)]
+                371&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[q&nbsp;(&#x2F;&nbsp;x&nbsp;y)]
                 </span><br/>
 <span class="covered" title="7 out of 7 forms covered">
-                373&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(integer?&nbsp;q)&nbsp;q&nbsp;(float&nbsp;q))))
+                372&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(integer?&nbsp;q)&nbsp;q&nbsp;(float&nbsp;q))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                374&nbsp;&nbsp;
+                373&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                375&nbsp;&nbsp;(defn&nbsp;REMAINDER
+                374&nbsp;&nbsp;(defn&nbsp;REMAINDER
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                376&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y]
+                375&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y]
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                377&nbsp;&nbsp;&nbsp;&nbsp;(rem&nbsp;x&nbsp;y))
+                376&nbsp;&nbsp;&nbsp;&nbsp;(rem&nbsp;x&nbsp;y))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                378&nbsp;&nbsp;
+                377&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                379&nbsp;&nbsp;(defn&nbsp;ADD1
+                378&nbsp;&nbsp;(defn&nbsp;ADD1
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                380&nbsp;&nbsp;&nbsp;&nbsp;[x]
+                379&nbsp;&nbsp;&nbsp;&nbsp;[x]
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
-                381&nbsp;&nbsp;&nbsp;&nbsp;(inc&nbsp;x))
+                380&nbsp;&nbsp;&nbsp;&nbsp;(inc&nbsp;x))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                382&nbsp;&nbsp;
+                381&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                383&nbsp;&nbsp;(defn&nbsp;SUB1
+                382&nbsp;&nbsp;(defn&nbsp;SUB1
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                384&nbsp;&nbsp;&nbsp;&nbsp;[x]
+                383&nbsp;&nbsp;&nbsp;&nbsp;[x]
                 </span><br/>
 <span class="not-covered" title="0 out of 2 forms covered">
-                385&nbsp;&nbsp;&nbsp;&nbsp;(dec&nbsp;x))
+                384&nbsp;&nbsp;&nbsp;&nbsp;(dec&nbsp;x))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                386&nbsp;&nbsp;
+                385&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                387&nbsp;&nbsp;(defn&nbsp;FIXP
+                386&nbsp;&nbsp;(defn&nbsp;FIXP
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                388&nbsp;&nbsp;&nbsp;&nbsp;[x]
+                387&nbsp;&nbsp;&nbsp;&nbsp;[x]
                 </span><br/>
 <span class="not-covered" title="0 out of 6 forms covered">
-                389&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(integer?&nbsp;x)&nbsp;T&nbsp;F))
+                388&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(integer?&nbsp;x)&nbsp;T&nbsp;F))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                390&nbsp;&nbsp;
+                389&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                391&nbsp;&nbsp;(defn&nbsp;NUMBERP
+                390&nbsp;&nbsp;(defn&nbsp;NUMBERP
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                392&nbsp;&nbsp;&nbsp;&nbsp;[x]
+                391&nbsp;&nbsp;&nbsp;&nbsp;[x]
                 </span><br/>
 <span class="covered" title="6 out of 6 forms covered">
-                393&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(number?&nbsp;x)&nbsp;T&nbsp;F))
+                392&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(number?&nbsp;x)&nbsp;T&nbsp;F))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                394&nbsp;&nbsp;
+                393&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                395&nbsp;&nbsp;(defn&nbsp;LESSP
+                394&nbsp;&nbsp;(defn&nbsp;LESSP
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                396&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y]
+                395&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y]
                 </span><br/>
 <span class="not-covered" title="0 out of 6 forms covered">
-                397&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(&lt;&nbsp;x&nbsp;y)&nbsp;T&nbsp;F))
+                396&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(&lt;&nbsp;x&nbsp;y)&nbsp;T&nbsp;F))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                398&nbsp;&nbsp;
+                397&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                399&nbsp;&nbsp;(defn&nbsp;GREATERP
+                398&nbsp;&nbsp;(defn&nbsp;GREATERP
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                400&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y]
+                399&nbsp;&nbsp;&nbsp;&nbsp;[x&nbsp;y]
                 </span><br/>
 <span class="not-covered" title="0 out of 6 forms covered">
-                401&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(&gt;&nbsp;x&nbsp;y)&nbsp;T&nbsp;F))
+                400&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(&gt;&nbsp;x&nbsp;y)&nbsp;T&nbsp;F))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                402&nbsp;&nbsp;
+                401&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                403&nbsp;&nbsp;;;;;&nbsp;Miscellaneous&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                402&nbsp;&nbsp;;;;;&nbsp;Miscellaneous&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                404&nbsp;&nbsp;
+                403&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                405&nbsp;&nbsp;(defn&nbsp;GENSYM
+                404&nbsp;&nbsp;(defn&nbsp;GENSYM
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                406&nbsp;&nbsp;&nbsp;&nbsp;&quot;Generate&nbsp;a&nbsp;unique&nbsp;symbol.&quot;
+                405&nbsp;&nbsp;&nbsp;&nbsp;&quot;Generate&nbsp;a&nbsp;unique&nbsp;symbol.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                407&nbsp;&nbsp;&nbsp;&nbsp;[]
+                406&nbsp;&nbsp;&nbsp;&nbsp;[]
                 </span><br/>
-<span class="not-covered" title="0 out of 9 forms covered">
-                408&nbsp;&nbsp;&nbsp;&nbsp;(symbol&nbsp;(upper-case&nbsp;(str&nbsp;(gensym&nbsp;&quot;SYM&quot;)))))
+<span class="covered" title="9 out of 9 forms covered">
+                407&nbsp;&nbsp;&nbsp;&nbsp;(symbol&nbsp;(upper-case&nbsp;(str&nbsp;(gensym&nbsp;&quot;SYM&quot;)))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                409&nbsp;&nbsp;
+                408&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                410&nbsp;&nbsp;(defn&nbsp;ERROR
+                409&nbsp;&nbsp;(defn&nbsp;ERROR
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                411&nbsp;&nbsp;&nbsp;&nbsp;&quot;Throw&nbsp;an&nbsp;error&quot;
+                410&nbsp;&nbsp;&nbsp;&nbsp;&quot;Throw&nbsp;an&nbsp;error&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                412&nbsp;&nbsp;&nbsp;&nbsp;[&amp;&nbsp;args]
+                411&nbsp;&nbsp;&nbsp;&nbsp;[&amp;&nbsp;args]
                 </span><br/>
 <span class="not-covered" title="0 out of 14 forms covered">
-                413&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info&nbsp;&quot;LISP&nbsp;STÆFLEAHTER&quot;&nbsp;{:args&nbsp;args
+                412&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info&nbsp;&quot;LISP&nbsp;STÆFLEAHTER&quot;&nbsp;{:args&nbsp;args
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                414&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:phase&nbsp;:eval
+                413&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:phase&nbsp;:eval
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                415&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:function&nbsp;&#x27;ERROR
+                414&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:function&nbsp;&#x27;ERROR
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                416&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:type&nbsp;:lisp
+                415&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:type&nbsp;:lisp
                 </span><br/>
 <span class="not-covered" title="0 out of 8 forms covered">
-                417&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:code&nbsp;(or&nbsp;(first&nbsp;args)&nbsp;&#x27;A1)})))
+                416&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:code&nbsp;(or&nbsp;(first&nbsp;args)&nbsp;&#x27;A1)})))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                418&nbsp;&nbsp;
+                417&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                419&nbsp;&nbsp;;;;;&nbsp;Assignment&nbsp;and&nbsp;the&nbsp;object&nbsp;list&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                418&nbsp;&nbsp;;;;;&nbsp;Assignment&nbsp;and&nbsp;the&nbsp;object&nbsp;list&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                420&nbsp;&nbsp;
+                419&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                421&nbsp;&nbsp;(defn&nbsp;OBLIST
+                420&nbsp;&nbsp;(defn&nbsp;OBLIST
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                422&nbsp;&nbsp;&nbsp;&nbsp;&quot;Return&nbsp;a&nbsp;list&nbsp;of&nbsp;the&nbsp;symbols&nbsp;currently&nbsp;bound&nbsp;on&nbsp;the&nbsp;object&nbsp;list.
+                421&nbsp;&nbsp;&nbsp;&nbsp;&quot;Return&nbsp;a&nbsp;list&nbsp;of&nbsp;the&nbsp;symbols&nbsp;currently&nbsp;bound&nbsp;on&nbsp;the&nbsp;object&nbsp;list.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                423&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                422&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                424&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**NOTE&nbsp;THAT**&nbsp;in&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;manual,&nbsp;footnote&nbsp;at&nbsp;the&nbsp;bottom&nbsp;of&nbsp;page&nbsp;69,&nbsp;it&nbsp;implies&nbsp;
+                423&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**NOTE&nbsp;THAT**&nbsp;in&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;manual,&nbsp;footnote&nbsp;at&nbsp;the&nbsp;bottom&nbsp;of&nbsp;page&nbsp;69,&nbsp;it&nbsp;implies&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                425&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;that&nbsp;an&nbsp;argument&nbsp;can&nbsp;be&nbsp;passed&nbsp;but&nbsp;I&#x27;m&nbsp;not&nbsp;sure&nbsp;of&nbsp;the&nbsp;semantics&nbsp;of
+                424&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;that&nbsp;an&nbsp;argument&nbsp;can&nbsp;be&nbsp;passed&nbsp;but&nbsp;I&#x27;m&nbsp;not&nbsp;sure&nbsp;of&nbsp;the&nbsp;semantics&nbsp;of
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                426&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.&quot;
+                425&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                427&nbsp;&nbsp;&nbsp;&nbsp;[]
+                426&nbsp;&nbsp;&nbsp;&nbsp;[]
                 </span><br/>
 <span class="not-covered" title="0 out of 7 forms covered">
-                428&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(instance?&nbsp;ConsCell&nbsp;@oblist)
+                427&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(instance?&nbsp;ConsCell&nbsp;@oblist)
                 </span><br/>
 <span class="not-covered" title="0 out of 8 forms covered">
-                429&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-beowulf-list&nbsp;(map&nbsp;CAR&nbsp;@oblist))
+                428&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-beowulf-list&nbsp;(map&nbsp;CAR&nbsp;@oblist))
                 </span><br/>
 <span class="not-covered" title="0 out of 1 forms covered">
-                430&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NIL))
+                429&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NIL))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                431&nbsp;&nbsp;
+                430&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                432&nbsp;&nbsp;(def&nbsp;magic-marker
+                431&nbsp;&nbsp;(def&nbsp;magic-marker
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                433&nbsp;&nbsp;&nbsp;&nbsp;&quot;The&nbsp;unexplained&nbsp;magic&nbsp;number&nbsp;which&nbsp;marks&nbsp;the&nbsp;start&nbsp;of&nbsp;a&nbsp;property&nbsp;list.&quot;
+                432&nbsp;&nbsp;&nbsp;&nbsp;&quot;The&nbsp;unexplained&nbsp;magic&nbsp;number&nbsp;which&nbsp;marks&nbsp;the&nbsp;start&nbsp;of&nbsp;a&nbsp;property&nbsp;list.&quot;
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                434&nbsp;&nbsp;&nbsp;&nbsp;(Integer&#x2F;parseInt&nbsp;&quot;77777&quot;&nbsp;8))
+                433&nbsp;&nbsp;&nbsp;&nbsp;(Integer&#x2F;parseInt&nbsp;&quot;77777&quot;&nbsp;8))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                435&nbsp;&nbsp;
+                434&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                436&nbsp;&nbsp;(defn&nbsp;PUT
+                435&nbsp;&nbsp;(defn&nbsp;hit-or-miss-assoc
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                437&nbsp;&nbsp;&nbsp;&nbsp;&quot;Put&nbsp;this&nbsp;`value`&nbsp;as&nbsp;the&nbsp;value&nbsp;of&nbsp;the&nbsp;property&nbsp;indicated&nbsp;by&nbsp;this&nbsp;`indicator`&nbsp;
+                436&nbsp;&nbsp;&nbsp;&nbsp;&quot;Find&nbsp;the&nbsp;position&nbsp;of&nbsp;the&nbsp;binding&nbsp;of&nbsp;this&nbsp;`target`&nbsp;in&nbsp;a&nbsp;Lisp&nbsp;1.5&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                438&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of&nbsp;this&nbsp;`symbol`.&nbsp;Return&nbsp;`value`&nbsp;on&nbsp;success.
+                437&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;property&nbsp;list&nbsp;`plist`.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                439&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                438&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                440&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NOTE&nbsp;THAT&nbsp;there&nbsp;is&nbsp;no&nbsp;`PUT`&nbsp;defined&nbsp;in&nbsp;the&nbsp;manual,&nbsp;but&nbsp;it&nbsp;would&nbsp;have&nbsp;been&nbsp;
+                439&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lisp&nbsp;1.5&nbsp;property&nbsp;lists&nbsp;are&nbsp;not&nbsp;assoc&nbsp;lists,&nbsp;but&nbsp;lists&nbsp;of&nbsp;the&nbsp;form
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                441&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;easy&nbsp;to&nbsp;have&nbsp;defined&nbsp;it&nbsp;so&nbsp;I&nbsp;don&#x27;t&nbsp;think&nbsp;this&nbsp;fully&nbsp;counts&nbsp;as&nbsp;an&nbsp;extension.&quot;
+                440&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`(name&nbsp;value&nbsp;name&nbsp;value&nbsp;name&nbsp;value...)`.&nbsp;It&#x27;s&nbsp;therefore&nbsp;necessary&nbsp;to
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                442&nbsp;&nbsp;&nbsp;&nbsp;[symbol&nbsp;indicator&nbsp;value]
-                </span><br/>
-<span class="not-covered" title="0 out of 11 forms covered">
-                443&nbsp;&nbsp;&nbsp;&nbsp;(if-let&nbsp;[binding&nbsp;(ASSOC&nbsp;symbol&nbsp;@oblist)]
-                </span><br/>
-<span class="not-covered" title="0 out of 11 forms covered">
-                444&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if-let&nbsp;[prop&nbsp;(ASSOC&nbsp;indicator&nbsp;(CDDR&nbsp;binding))]
-                </span><br/>
-<span class="not-covered" title="0 out of 4 forms covered">
-                445&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(RPLACD&nbsp;prop&nbsp;value)
-                </span><br/>
-<span class="not-covered" title="0 out of 3 forms covered">
-                446&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(RPLACD&nbsp;binding
-                </span><br/>
-<span class="not-covered" title="0 out of 2 forms covered">
-                447&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell
-                </span><br/>
-<span class="not-covered" title="0 out of 1 forms covered">
-                448&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;magic-marker
-                </span><br/>
-<span class="not-covered" title="0 out of 2 forms covered">
-                449&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell
-                </span><br/>
-<span class="not-covered" title="0 out of 1 forms covered">
-                450&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indicator
-                </span><br/>
-<span class="not-covered" title="0 out of 6 forms covered">
-                451&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell&nbsp;value&nbsp;(CDDR&nbsp;binding))))))
-                </span><br/>
-<span class="not-covered" title="0 out of 2 forms covered">
-                452&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(swap!
-                </span><br/>
-<span class="not-covered" title="0 out of 1 forms covered">
-                453&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;oblist
-                </span><br/>
-<span class="not-covered" title="0 out of 1 forms covered">
-                454&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(fn&nbsp;[ob&nbsp;s&nbsp;p&nbsp;v]
-                </span><br/>
-<span class="not-covered" title="0 out of 2 forms covered">
-                455&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell
-                </span><br/>
-<span class="not-covered" title="0 out of 8 forms covered">
-                456&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-beowulf-list&nbsp;(list&nbsp;s&nbsp;magic-marker&nbsp;p&nbsp;v))
-                </span><br/>
-<span class="not-covered" title="0 out of 1 forms covered">
-                457&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ob))
-                </span><br/>
-<span class="not-covered" title="0 out of 3 forms covered">
-                458&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;symbol&nbsp;indicator&nbsp;value)))
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                459&nbsp;&nbsp;
-                </span><br/>
-<span class="covered" title="1 out of 1 forms covered">
-                460&nbsp;&nbsp;(defn&nbsp;GET
+                441&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;recurse&nbsp;down&nbsp;the&nbsp;list&nbsp;two&nbsp;entries&nbsp;at&nbsp;a&nbsp;time&nbsp;to&nbsp;avoid&nbsp;confusing&nbsp;names
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                461&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;the&nbsp;manual:
+                442&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with&nbsp;values.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                462&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                443&nbsp;&nbsp;&nbsp;&nbsp;[target&nbsp;plist]
                 </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                463&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x27;`get`&nbsp;is&nbsp;somewhat&nbsp;like&nbsp;`prop`;&nbsp;however&nbsp;its&nbsp;value&nbsp;is&nbsp;car&nbsp;of&nbsp;the&nbsp;rest&nbsp;of
+<span class="covered" title="13 out of 13 forms covered">
+                444&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(and&nbsp;(instance?&nbsp;ConsCell&nbsp;plist)(even?&nbsp;(count&nbsp;plist)))
                 </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                464&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;list&nbsp;if&nbsp;the&nbsp;`indicator`&nbsp;is&nbsp;found,&nbsp;and&nbsp;NIL&nbsp;otherwise.&#x27;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                465&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                466&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;It&#x27;s&nbsp;clear&nbsp;that&nbsp;`GET`&nbsp;is&nbsp;expected&nbsp;to&nbsp;be&nbsp;defined&nbsp;in&nbsp;terms&nbsp;of&nbsp;`PROP`,&nbsp;but
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                467&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;we&nbsp;can&#x27;t&nbsp;implement&nbsp;`PROP`&nbsp;here&nbsp;because&nbsp;we&nbsp;lack&nbsp;`EVAL`;&nbsp;and&nbsp;we&nbsp;can&#x27;t&nbsp;have
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                468&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`EVAL`&nbsp;here&nbsp;because&nbsp;both&nbsp;it&nbsp;and&nbsp;`APPLY`&nbsp;depends&nbsp;on&nbsp;`GET`.
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                469&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                470&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OK,&nbsp;It&#x27;s&nbsp;worse&nbsp;than&nbsp;that:&nbsp;the&nbsp;statement&nbsp;of&nbsp;the&nbsp;definition&nbsp;of&nbsp;`GET`&nbsp;(and&nbsp;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                471&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of)&nbsp;`PROP`&nbsp;on&nbsp;page&nbsp;59&nbsp;says&nbsp;that&nbsp;the&nbsp;first&nbsp;argument&nbsp;to&nbsp;each&nbsp;must&nbsp;be&nbsp;a&nbsp;list;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                472&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;But&nbsp;the&nbsp;in&nbsp;the&nbsp;definition&nbsp;of&nbsp;`ASSOC`&nbsp;on&nbsp;page&nbsp;70,&nbsp;when&nbsp;`GET`&nbsp;is&nbsp;called&nbsp;its
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                473&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;first&nbsp;argument&nbsp;is&nbsp;always&nbsp;an&nbsp;atom.&nbsp;Since&nbsp;it&#x27;s&nbsp;`ASSOC`&nbsp;and&nbsp;`EVAL`&nbsp;which&nbsp;I&nbsp;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                474&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;need&nbsp;to&nbsp;make&nbsp;work,&nbsp;I&#x27;m&nbsp;going&nbsp;to&nbsp;assume&nbsp;that&nbsp;page&nbsp;59&nbsp;is&nbsp;wrong.&quot;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                475&nbsp;&nbsp;&nbsp;&nbsp;[symbol&nbsp;indicator]
-                </span><br/>
-<span class="covered" title="7 out of 7 forms covered">
-                476&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[binding&nbsp;(ASSOC&nbsp;symbol&nbsp;@oblist)
-                </span><br/>
-<span class="partial" title="2 out of 3 forms covered">
-                477&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;val&nbsp;(cond
-                </span><br/>
-<span class="partial" title="3 out of 4 forms covered">
-                478&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;binding&nbsp;NIL)&nbsp;NIL
-                </span><br/>
-<span class="covered" title="2 out of 2 forms covered">
-                479&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;magic-marker
-                </span><br/>
-<span class="covered" title="5 out of 5 forms covered">
-                480&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CADR&nbsp;binding))&nbsp;(loop&nbsp;[b&nbsp;binding]
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                481&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;&nbsp;(println&nbsp;&quot;GET&nbsp;loop,&nbsp;seeking&nbsp;&quot;&nbsp;indicator&nbsp;&quot;:&quot;)
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                482&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;&nbsp;(pretty-print&nbsp;b)
-                </span><br/>
-<span class="covered" title="5 out of 5 forms covered">
-                483&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(instance?&nbsp;ConsCell&nbsp;b)
+<span class="partial" title="6 out of 7 forms covered">
+                445&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cond&nbsp;(=&nbsp;plist&nbsp;NIL)&nbsp;NIL
                 </span><br/>
 <span class="covered" title="6 out of 6 forms covered">
-                484&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(=&nbsp;(CAR&nbsp;b)&nbsp;indicator)
+                446&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(first&nbsp;plist)&nbsp;target)&nbsp;plist
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                447&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;(hit-or-miss-assoc&nbsp;target&nbsp;(CDDR&nbsp;plist)))
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                448&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NIL))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                449&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                450&nbsp;&nbsp;(defn&nbsp;PUT
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                451&nbsp;&nbsp;&nbsp;&nbsp;&quot;Put&nbsp;this&nbsp;`value`&nbsp;as&nbsp;the&nbsp;value&nbsp;of&nbsp;the&nbsp;property&nbsp;indicated&nbsp;by&nbsp;this&nbsp;`indicator`&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                452&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of&nbsp;this&nbsp;`symbol`.&nbsp;Return&nbsp;`value`&nbsp;on&nbsp;success.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                453&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                454&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NOTE&nbsp;THAT&nbsp;there&nbsp;is&nbsp;no&nbsp;`PUT`&nbsp;defined&nbsp;in&nbsp;the&nbsp;manual,&nbsp;but&nbsp;it&nbsp;would&nbsp;have&nbsp;been&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                455&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;easy&nbsp;to&nbsp;have&nbsp;defined&nbsp;it&nbsp;so&nbsp;I&nbsp;don&#x27;t&nbsp;think&nbsp;this&nbsp;fully&nbsp;counts&nbsp;as&nbsp;an&nbsp;extension.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                456&nbsp;&nbsp;&nbsp;&nbsp;[symbol&nbsp;indicator&nbsp;value]
+                </span><br/>
+<span class="covered" title="7 out of 7 forms covered">
+                457&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[binding&nbsp;(ASSOC&nbsp;symbol&nbsp;@oblist)]
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                458&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(instance?&nbsp;ConsCell&nbsp;binding)
+                </span><br/>
+<span class="covered" title="7 out of 7 forms covered">
+                459&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[prop&nbsp;(hit-or-miss-assoc&nbsp;indicator&nbsp;(CDDR&nbsp;binding))]
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                460&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(instance?&nbsp;ConsCell&nbsp;prop)
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                461&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(RPLACA&nbsp;(CDR&nbsp;prop)&nbsp;value)
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                485&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CADR&nbsp;b)&nbsp;;;&nbsp;&lt;-&nbsp;this&nbsp;is&nbsp;what&nbsp;we&nbsp;should&nbsp;actually&nbsp;be&nbsp;returning
+                462&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(RPLACD&nbsp;binding
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                463&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                486&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(recur&nbsp;(CDR&nbsp;b)))
+                464&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;magic-marker
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                465&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                487&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NIL))
+                466&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indicator
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                467&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell&nbsp;value&nbsp;(CDDR&nbsp;binding)))))))
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                468&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(swap!
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                469&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;oblist
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                470&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(fn&nbsp;[ob&nbsp;s&nbsp;p&nbsp;v]
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                471&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-cons-cell
+                </span><br/>
+<span class="covered" title="8 out of 8 forms covered">
+                472&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make-beowulf-list&nbsp;(list&nbsp;s&nbsp;magic-marker&nbsp;p&nbsp;v))
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                473&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ob))
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                474&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;symbol&nbsp;indicator&nbsp;value)))
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                475&nbsp;&nbsp;&nbsp;&nbsp;value)
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                476&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                477&nbsp;&nbsp;(defn&nbsp;GET
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                478&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;the&nbsp;manual:
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                479&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                480&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x27;`get`&nbsp;is&nbsp;somewhat&nbsp;like&nbsp;`prop`;&nbsp;however&nbsp;its&nbsp;value&nbsp;is&nbsp;car&nbsp;of&nbsp;the&nbsp;rest&nbsp;of
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                481&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;list&nbsp;if&nbsp;the&nbsp;`indicator`&nbsp;is&nbsp;found,&nbsp;and&nbsp;NIL&nbsp;otherwise.&#x27;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                482&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                483&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;It&#x27;s&nbsp;clear&nbsp;that&nbsp;`GET`&nbsp;is&nbsp;expected&nbsp;to&nbsp;be&nbsp;defined&nbsp;in&nbsp;terms&nbsp;of&nbsp;`PROP`,&nbsp;but
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                484&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;we&nbsp;can&#x27;t&nbsp;implement&nbsp;`PROP`&nbsp;here&nbsp;because&nbsp;we&nbsp;lack&nbsp;`EVAL`;&nbsp;and&nbsp;we&nbsp;can&#x27;t&nbsp;have
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                485&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`EVAL`&nbsp;here&nbsp;because&nbsp;both&nbsp;it&nbsp;and&nbsp;`APPLY`&nbsp;depends&nbsp;on&nbsp;`GET`.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                486&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                487&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OK,&nbsp;It&#x27;s&nbsp;worse&nbsp;than&nbsp;that:&nbsp;the&nbsp;statement&nbsp;of&nbsp;the&nbsp;definition&nbsp;of&nbsp;`GET`&nbsp;(and&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                488&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of)&nbsp;`PROP`&nbsp;on&nbsp;page&nbsp;59&nbsp;says&nbsp;that&nbsp;the&nbsp;first&nbsp;argument&nbsp;to&nbsp;each&nbsp;must&nbsp;be&nbsp;a&nbsp;list;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                489&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;But&nbsp;the&nbsp;in&nbsp;the&nbsp;definition&nbsp;of&nbsp;`ASSOC`&nbsp;on&nbsp;page&nbsp;70,&nbsp;when&nbsp;`GET`&nbsp;is&nbsp;called&nbsp;its
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                490&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;first&nbsp;argument&nbsp;is&nbsp;always&nbsp;an&nbsp;atom.&nbsp;Since&nbsp;it&#x27;s&nbsp;`ASSOC`&nbsp;and&nbsp;`EVAL`&nbsp;which&nbsp;I&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                491&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;need&nbsp;to&nbsp;make&nbsp;work,&nbsp;I&#x27;m&nbsp;going&nbsp;to&nbsp;assume&nbsp;that&nbsp;page&nbsp;59&nbsp;is&nbsp;wrong.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                492&nbsp;&nbsp;&nbsp;&nbsp;[symbol&nbsp;indicator]
+                </span><br/>
+<span class="covered" title="7 out of 7 forms covered">
+                493&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[binding&nbsp;(ASSOC&nbsp;symbol&nbsp;@oblist)
+                </span><br/>
+<span class="partial" title="2 out of 3 forms covered">
+                494&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;val&nbsp;(cond
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                495&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;binding&nbsp;NIL)&nbsp;NIL
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                496&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;magic-marker
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                497&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CADR&nbsp;binding))&nbsp;(loop&nbsp;[b&nbsp;binding]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                498&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;&nbsp;(println&nbsp;&quot;GET&nbsp;loop,&nbsp;seeking&nbsp;&quot;&nbsp;indicator&nbsp;&quot;:&quot;)
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                499&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;&nbsp;(pretty-print&nbsp;b)
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                500&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(instance?&nbsp;ConsCell&nbsp;b)
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                501&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(=&nbsp;(CAR&nbsp;b)&nbsp;indicator)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                502&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CADR&nbsp;b)&nbsp;;;&nbsp;&lt;-&nbsp;this&nbsp;is&nbsp;what&nbsp;we&nbsp;should&nbsp;actually&nbsp;be&nbsp;returning
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                503&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(recur&nbsp;(CDR&nbsp;b)))
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                504&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NIL))
                 </span><br/>
 <span class="not-covered" title="0 out of 1 forms covered">
-                488&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;(throw
+                505&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;(throw
                 </span><br/>
 <span class="not-covered" title="0 out of 3 forms covered">
-                489&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ex-info&nbsp;&quot;Misformatted&nbsp;property&nbsp;list&nbsp;(missing&nbsp;magic&nbsp;marker)&quot;
+                506&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ex-info&nbsp;&quot;Misformatted&nbsp;property&nbsp;list&nbsp;(missing&nbsp;magic&nbsp;marker)&quot;
                 </span><br/>
 <span class="not-covered" title="0 out of 8 forms covered">
-                490&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:phase&nbsp;:host
+                507&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:phase&nbsp;:host
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                491&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:function&nbsp;:get
+                508&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:function&nbsp;:get
                 </span><br/>
 <span class="not-covered" title="0 out of 4 forms covered">
-                492&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:args&nbsp;(list&nbsp;symbol&nbsp;indicator)
+                509&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:args&nbsp;(list&nbsp;symbol&nbsp;indicator)
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                493&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:type&nbsp;:beowulf})))]
+                510&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:type&nbsp;:beowulf})))]
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                494&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;(println&nbsp;&quot;&lt;&lt;&nbsp;GET&nbsp;returning:&nbsp;&quot;&nbsp;val)
+                511&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;(println&nbsp;&quot;&lt;&lt;&nbsp;GET&nbsp;returning:&nbsp;&quot;&nbsp;val)
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                495&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;val))
+                512&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;val))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                496&nbsp;&nbsp;
+                513&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                497&nbsp;&nbsp;(defn&nbsp;DEFLIST
+                514&nbsp;&nbsp;(defn&nbsp;DEFLIST
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                498&nbsp;&nbsp;&nbsp;&nbsp;&quot;For&nbsp;each&nbsp;pair&nbsp;in&nbsp;this&nbsp;association&nbsp;list&nbsp;`a-list`,&nbsp;set&nbsp;the&nbsp;property&nbsp;with&nbsp;this
+                515&nbsp;&nbsp;&nbsp;&nbsp;&quot;For&nbsp;each&nbsp;pair&nbsp;in&nbsp;this&nbsp;association&nbsp;list&nbsp;`a-list`,&nbsp;set&nbsp;the&nbsp;property&nbsp;with&nbsp;this
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                499&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`indicator`&nbsp;of&nbsp;the&nbsp;symbol&nbsp;which&nbsp;is&nbsp;the&nbsp;first&nbsp;element&nbsp;of&nbsp;the&nbsp;pair&nbsp;to&nbsp;the&nbsp;
+                516&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`indicator`&nbsp;of&nbsp;the&nbsp;symbol&nbsp;which&nbsp;is&nbsp;the&nbsp;first&nbsp;element&nbsp;of&nbsp;the&nbsp;pair&nbsp;to&nbsp;the&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                500&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value&nbsp;which&nbsp;is&nbsp;the&nbsp;second&nbsp;element&nbsp;of&nbsp;the&nbsp;pair.&nbsp;See&nbsp;page&nbsp;58&nbsp;of&nbsp;the&nbsp;manual.&quot;
+                517&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value&nbsp;which&nbsp;is&nbsp;the&nbsp;second&nbsp;element&nbsp;of&nbsp;the&nbsp;pair.&nbsp;See&nbsp;page&nbsp;58&nbsp;of&nbsp;the&nbsp;manual.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                501&nbsp;&nbsp;&nbsp;&nbsp;[a-list&nbsp;indicator]
+                518&nbsp;&nbsp;&nbsp;&nbsp;[a-list&nbsp;indicator]
                 </span><br/>
 <span class="not-covered" title="0 out of 3 forms covered">
-                502&nbsp;&nbsp;&nbsp;&nbsp;(map
+                519&nbsp;&nbsp;&nbsp;&nbsp;(map
                 </span><br/>
 <span class="not-covered" title="0 out of 9 forms covered">
-                503&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#(PUT&nbsp;(CAR&nbsp;%)&nbsp;indicator&nbsp;(CDR&nbsp;%))
+                520&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#(PUT&nbsp;(CAR&nbsp;%)&nbsp;indicator&nbsp;(CDR&nbsp;%))
                 </span><br/>
 <span class="not-covered" title="0 out of 1 forms covered">
-                504&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a-list))
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                505&nbsp;&nbsp;
-                </span><br/>
-<span class="covered" title="1 out of 1 forms covered">
-                506&nbsp;&nbsp;(defn&nbsp;DEFINE
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                507&nbsp;&nbsp;&nbsp;&nbsp;&quot;Bootstrap-only&nbsp;version&nbsp;of&nbsp;`DEFINE`&nbsp;which,&nbsp;post&nbsp;boostrap,&nbsp;can&nbsp;be&nbsp;overwritten&nbsp;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                508&nbsp;&nbsp;&nbsp;&nbsp;in&nbsp;LISP.&nbsp;
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                509&nbsp;&nbsp;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                510&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;single&nbsp;argument&nbsp;to&nbsp;`DEFINE`&nbsp;should&nbsp;be&nbsp;an&nbsp;association&nbsp;list&nbsp;of&nbsp;symbols&nbsp;to
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                511&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lambda&nbsp;functions.&nbsp;See&nbsp;page&nbsp;58&nbsp;of&nbsp;the&nbsp;manual.&quot;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                512&nbsp;&nbsp;&nbsp;&nbsp;[a-list]
-                </span><br/>
-<span class="not-covered" title="0 out of 4 forms covered">
-                513&nbsp;&nbsp;&nbsp;&nbsp;(DEFLIST&nbsp;a-list&nbsp;&#x27;EXPR))
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                514&nbsp;&nbsp;
-                </span><br/>
-<span class="covered" title="1 out of 1 forms covered">
-                515&nbsp;&nbsp;(defn&nbsp;SET
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                516&nbsp;&nbsp;&nbsp;&nbsp;&quot;Implementation&nbsp;of&nbsp;SET&nbsp;in&nbsp;Clojure.&nbsp;Add&nbsp;to&nbsp;the&nbsp;`oblist`&nbsp;a&nbsp;binding&nbsp;of&nbsp;the
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                517&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value&nbsp;of&nbsp;`var`&nbsp;to&nbsp;the&nbsp;value&nbsp;of&nbsp;`val`.&nbsp;NOTE&nbsp;WELL:&nbsp;this&nbsp;is&nbsp;not&nbsp;SETQ!&quot;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                518&nbsp;&nbsp;&nbsp;&nbsp;[symbol&nbsp;val]
-                </span><br/>
-<span class="not-covered" title="0 out of 5 forms covered">
-                519&nbsp;&nbsp;&nbsp;&nbsp;(PUT&nbsp;symbol&nbsp;&#x27;APVAL&nbsp;val))
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                520&nbsp;&nbsp;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                521&nbsp;&nbsp;;;;;&nbsp;TRACE&nbsp;and&nbsp;friends&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                521&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a-list))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
                 522&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                523&nbsp;&nbsp;(def&nbsp;traced-symbols
+                523&nbsp;&nbsp;(defn&nbsp;DEFINE
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                524&nbsp;&nbsp;&nbsp;&nbsp;&quot;Symbols&nbsp;currently&nbsp;being&nbsp;traced.&quot;
+                524&nbsp;&nbsp;&nbsp;&nbsp;&quot;Bootstrap-only&nbsp;version&nbsp;of&nbsp;`DEFINE`&nbsp;which,&nbsp;post&nbsp;boostrap,&nbsp;can&nbsp;be&nbsp;overwritten&nbsp;
                 </span><br/>
-<span class="covered" title="3 out of 3 forms covered">
-                525&nbsp;&nbsp;&nbsp;&nbsp;(atom&nbsp;#{}))
+<span class="not-tracked" title="0 out of 0 forms covered">
+                525&nbsp;&nbsp;&nbsp;&nbsp;in&nbsp;LISP.&nbsp;
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
                 526&nbsp;&nbsp;
                 </span><br/>
-<span class="covered" title="1 out of 1 forms covered">
-                527&nbsp;&nbsp;(defn&nbsp;traced?
+<span class="not-tracked" title="0 out of 0 forms covered">
+                527&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;single&nbsp;argument&nbsp;to&nbsp;`DEFINE`&nbsp;should&nbsp;be&nbsp;an&nbsp;association&nbsp;list&nbsp;of&nbsp;symbols&nbsp;to
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                528&nbsp;&nbsp;&nbsp;&nbsp;&quot;Return&nbsp;`true`&nbsp;iff&nbsp;`s`&nbsp;is&nbsp;a&nbsp;symbol&nbsp;currently&nbsp;being&nbsp;traced,&nbsp;else&nbsp;`nil`.&quot;
+                528&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lambda&nbsp;functions.&nbsp;See&nbsp;page&nbsp;58&nbsp;of&nbsp;the&nbsp;manual.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                529&nbsp;&nbsp;&nbsp;&nbsp;[s]
-                </span><br/>
-<span class="partial" title="7 out of 8 forms covered">
-                530&nbsp;&nbsp;&nbsp;&nbsp;(try&nbsp;(contains?&nbsp;@traced-symbols&nbsp;s)
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                531&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(catch&nbsp;Throwable&nbsp;_&nbsp;nil)))
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                532&nbsp;&nbsp;
-                </span><br/>
-<span class="covered" title="1 out of 1 forms covered">
-                533&nbsp;&nbsp;(defn&nbsp;TRACE
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                534&nbsp;&nbsp;&nbsp;&nbsp;&quot;Add&nbsp;this&nbsp;`s`&nbsp;to&nbsp;the&nbsp;set&nbsp;of&nbsp;symbols&nbsp;currently&nbsp;being&nbsp;traced.&nbsp;If&nbsp;`s`
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                535&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is&nbsp;not&nbsp;a&nbsp;symbol&nbsp;or&nbsp;sequence&nbsp;of&nbsp;symbols,&nbsp;does&nbsp;nothing.&quot;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                536&nbsp;&nbsp;&nbsp;&nbsp;[s]
+                529&nbsp;&nbsp;&nbsp;&nbsp;[a-list]
                 </span><br/>
 <span class="not-covered" title="0 out of 4 forms covered">
-                537&nbsp;&nbsp;&nbsp;&nbsp;(swap!&nbsp;traced-symbols
-                </span><br/>
-<span class="not-covered" title="0 out of 4 forms covered">
-                538&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#(cond
-                </span><br/>
-<span class="not-covered" title="0 out of 7 forms covered">
-                539&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(symbol?&nbsp;s)&nbsp;(conj&nbsp;%&nbsp;s)
-                </span><br/>
-<span class="not-covered" title="0 out of 17 forms covered">
-                540&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;(seq?&nbsp;s)&nbsp;(every?&nbsp;symbol?&nbsp;s))&nbsp;(union&nbsp;%&nbsp;(set&nbsp;s))
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                541&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;%)))
+                530&nbsp;&nbsp;&nbsp;&nbsp;(DEFLIST&nbsp;a-list&nbsp;&#x27;EXPR))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                542&nbsp;&nbsp;
+                531&nbsp;&nbsp;
                 </span><br/>
-<span class="partial" title="1 out of 3 forms covered">
-                543&nbsp;&nbsp;(defn&nbsp;UNTRACE
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                544&nbsp;&nbsp;&nbsp;&nbsp;&quot;Remove&nbsp;this&nbsp;`s`&nbsp;from&nbsp;the&nbsp;set&nbsp;of&nbsp;symbols&nbsp;currently&nbsp;being&nbsp;traced.&nbsp;If&nbsp;`s`
+<span class="covered" title="1 out of 1 forms covered">
+                532&nbsp;&nbsp;(defn&nbsp;SET
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                545&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is&nbsp;not&nbsp;a&nbsp;symbol&nbsp;or&nbsp;sequence&nbsp;of&nbsp;symbols,&nbsp;does&nbsp;nothing.&quot;
+                533&nbsp;&nbsp;&nbsp;&nbsp;&quot;Implementation&nbsp;of&nbsp;SET&nbsp;in&nbsp;Clojure.&nbsp;Add&nbsp;to&nbsp;the&nbsp;`oblist`&nbsp;a&nbsp;binding&nbsp;of&nbsp;the
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                534&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value&nbsp;of&nbsp;`var`&nbsp;to&nbsp;the&nbsp;value&nbsp;of&nbsp;`val`.&nbsp;NOTE&nbsp;WELL:&nbsp;this&nbsp;is&nbsp;not&nbsp;SETQ!&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                535&nbsp;&nbsp;&nbsp;&nbsp;[symbol&nbsp;val]
+                </span><br/>
+<span class="not-covered" title="0 out of 5 forms covered">
+                536&nbsp;&nbsp;&nbsp;&nbsp;(PUT&nbsp;symbol&nbsp;&#x27;APVAL&nbsp;val))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                537&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                538&nbsp;&nbsp;;;;;&nbsp;TRACE&nbsp;and&nbsp;friends&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                539&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                540&nbsp;&nbsp;(def&nbsp;traced-symbols
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                541&nbsp;&nbsp;&nbsp;&nbsp;&quot;Symbols&nbsp;currently&nbsp;being&nbsp;traced.&quot;
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                542&nbsp;&nbsp;&nbsp;&nbsp;(atom&nbsp;#{}))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                543&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                544&nbsp;&nbsp;(defn&nbsp;traced?
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                545&nbsp;&nbsp;&nbsp;&nbsp;&quot;Return&nbsp;`true`&nbsp;iff&nbsp;`s`&nbsp;is&nbsp;a&nbsp;symbol&nbsp;currently&nbsp;being&nbsp;traced,&nbsp;else&nbsp;`nil`.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
                 546&nbsp;&nbsp;&nbsp;&nbsp;[s]
                 </span><br/>
+<span class="partial" title="7 out of 8 forms covered">
+                547&nbsp;&nbsp;&nbsp;&nbsp;(try&nbsp;(contains?&nbsp;@traced-symbols&nbsp;s)
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                548&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(catch&nbsp;Throwable&nbsp;_&nbsp;nil)))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                549&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                550&nbsp;&nbsp;(defn&nbsp;TRACE
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                551&nbsp;&nbsp;&nbsp;&nbsp;&quot;Add&nbsp;this&nbsp;`s`&nbsp;to&nbsp;the&nbsp;set&nbsp;of&nbsp;symbols&nbsp;currently&nbsp;being&nbsp;traced.&nbsp;If&nbsp;`s`
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                552&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is&nbsp;not&nbsp;a&nbsp;symbol&nbsp;or&nbsp;sequence&nbsp;of&nbsp;symbols,&nbsp;does&nbsp;nothing.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                553&nbsp;&nbsp;&nbsp;&nbsp;[s]
+                </span><br/>
+<span class="not-covered" title="0 out of 4 forms covered">
+                554&nbsp;&nbsp;&nbsp;&nbsp;(swap!&nbsp;traced-symbols
+                </span><br/>
+<span class="not-covered" title="0 out of 4 forms covered">
+                555&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#(cond
+                </span><br/>
+<span class="not-covered" title="0 out of 7 forms covered">
+                556&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(symbol?&nbsp;s)&nbsp;(conj&nbsp;%&nbsp;s)
+                </span><br/>
+<span class="not-covered" title="0 out of 17 forms covered">
+                557&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;(seq?&nbsp;s)&nbsp;(every?&nbsp;symbol?&nbsp;s))&nbsp;(union&nbsp;%&nbsp;(set&nbsp;s))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                558&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;%)))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                559&nbsp;&nbsp;
+                </span><br/>
+<span class="partial" title="1 out of 3 forms covered">
+                560&nbsp;&nbsp;(defn&nbsp;UNTRACE
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                561&nbsp;&nbsp;&nbsp;&nbsp;&quot;Remove&nbsp;this&nbsp;`s`&nbsp;from&nbsp;the&nbsp;set&nbsp;of&nbsp;symbols&nbsp;currently&nbsp;being&nbsp;traced.&nbsp;If&nbsp;`s`
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                562&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is&nbsp;not&nbsp;a&nbsp;symbol&nbsp;or&nbsp;sequence&nbsp;of&nbsp;symbols,&nbsp;does&nbsp;nothing.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                563&nbsp;&nbsp;&nbsp;&nbsp;[s]
+                </span><br/>
 <span class="not-covered" title="0 out of 3 forms covered">
-                547&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                564&nbsp;&nbsp;&nbsp;&nbsp;(cond
                 </span><br/>
 <span class="not-covered" title="0 out of 16 forms covered">
-                548&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(symbol?&nbsp;s)&nbsp;(swap!&nbsp;traced-symbols&nbsp;#(set&nbsp;(remove&nbsp;(fn&nbsp;[x]&nbsp;(=&nbsp;s&nbsp;x))&nbsp;%)))
+                565&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(symbol?&nbsp;s)&nbsp;(swap!&nbsp;traced-symbols&nbsp;#(set&nbsp;(remove&nbsp;(fn&nbsp;[x]&nbsp;(=&nbsp;s&nbsp;x))&nbsp;%)))
                 </span><br/>
 <span class="not-covered" title="0 out of 15 forms covered">
-                549&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;(seq?&nbsp;s)&nbsp;(every?&nbsp;symbol?&nbsp;s))&nbsp;(map&nbsp;UNTRACE&nbsp;s))
+                566&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;(seq?&nbsp;s)&nbsp;(every?&nbsp;symbol?&nbsp;s))&nbsp;(map&nbsp;UNTRACE&nbsp;s))
                 </span><br/>
 <span class="not-covered" title="0 out of 1 forms covered">
-                550&nbsp;&nbsp;&nbsp;&nbsp;@traced-symbols)
+                567&nbsp;&nbsp;&nbsp;&nbsp;@traced-symbols)
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                551&nbsp;&nbsp;
+                568&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                552&nbsp;&nbsp;;;;;&nbsp;Extensions&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                569&nbsp;&nbsp;;;;;&nbsp;Extensions&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                553&nbsp;&nbsp;
+                570&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                554&nbsp;&nbsp;(defn&nbsp;DOC
+                571&nbsp;&nbsp;(defn&nbsp;DOC
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                555&nbsp;&nbsp;&nbsp;&nbsp;&quot;Open&nbsp;the&nbsp;page&nbsp;for&nbsp;this&nbsp;`symbol`&nbsp;in&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;manual,&nbsp;if&nbsp;known,&nbsp;in&nbsp;the&nbsp;
+                572&nbsp;&nbsp;&nbsp;&nbsp;&quot;Open&nbsp;the&nbsp;page&nbsp;for&nbsp;this&nbsp;`symbol`&nbsp;in&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;manual,&nbsp;if&nbsp;known,&nbsp;in&nbsp;the&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                556&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default&nbsp;web&nbsp;browser.
+                573&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default&nbsp;web&nbsp;browser.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                557&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                574&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                558&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**NOTE&nbsp;THAT**&nbsp;this&nbsp;is&nbsp;an&nbsp;extension&nbsp;function,&nbsp;not&nbsp;available&nbsp;in&nbsp;strct&nbsp;mode.&quot;
+                575&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**NOTE&nbsp;THAT**&nbsp;this&nbsp;is&nbsp;an&nbsp;extension&nbsp;function,&nbsp;not&nbsp;available&nbsp;in&nbsp;strct&nbsp;mode.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                559&nbsp;&nbsp;&nbsp;&nbsp;[symbol]
+                576&nbsp;&nbsp;&nbsp;&nbsp;[symbol]
                 </span><br/>
 <span class="not-covered" title="0 out of 5 forms covered">
-                560&nbsp;&nbsp;&nbsp;&nbsp;(when&nbsp;(lax?&nbsp;&#x27;DOC)
+                577&nbsp;&nbsp;&nbsp;&nbsp;(when&nbsp;(lax?&nbsp;&#x27;DOC)
                 </span><br/>
 <span class="not-covered" title="0 out of 3 forms covered">
-                561&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(open-doc&nbsp;symbol)))
+                578&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(open-doc&nbsp;symbol)))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                562&nbsp;&nbsp;
+                579&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                563&nbsp;&nbsp;(defn&nbsp;CONSP
+                580&nbsp;&nbsp;(defn&nbsp;CONSP
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                564&nbsp;&nbsp;&nbsp;&nbsp;&quot;Return&nbsp;`T`&nbsp;if&nbsp;object&nbsp;`o`&nbsp;is&nbsp;a&nbsp;cons&nbsp;cell,&nbsp;else&nbsp;`F`.
+                581&nbsp;&nbsp;&nbsp;&nbsp;&quot;Return&nbsp;`T`&nbsp;if&nbsp;object&nbsp;`o`&nbsp;is&nbsp;a&nbsp;cons&nbsp;cell,&nbsp;else&nbsp;`F`.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                565&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                582&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                566&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**NOTE&nbsp;THAT**&nbsp;this&nbsp;is&nbsp;an&nbsp;extension&nbsp;function,&nbsp;not&nbsp;available&nbsp;in&nbsp;strct&nbsp;mode.&nbsp;
+                583&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**NOTE&nbsp;THAT**&nbsp;this&nbsp;is&nbsp;an&nbsp;extension&nbsp;function,&nbsp;not&nbsp;available&nbsp;in&nbsp;strct&nbsp;mode.&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                567&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I&nbsp;believe&nbsp;that&nbsp;Lisp&nbsp;1.5&nbsp;did&nbsp;not&nbsp;have&nbsp;any&nbsp;mechanism&nbsp;for&nbsp;testing&nbsp;whether&nbsp;an
+                584&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I&nbsp;believe&nbsp;that&nbsp;Lisp&nbsp;1.5&nbsp;did&nbsp;not&nbsp;have&nbsp;any&nbsp;mechanism&nbsp;for&nbsp;testing&nbsp;whether&nbsp;an
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                568&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;argument&nbsp;was,&nbsp;or&nbsp;was&nbsp;not,&nbsp;a&nbsp;cons&nbsp;cell.&quot;
+                585&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;argument&nbsp;was,&nbsp;or&nbsp;was&nbsp;not,&nbsp;a&nbsp;cons&nbsp;cell.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                569&nbsp;&nbsp;&nbsp;&nbsp;[o]
+                586&nbsp;&nbsp;&nbsp;&nbsp;[o]
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                570&nbsp;&nbsp;&nbsp;&nbsp;(when&nbsp;(lax?&nbsp;&#x27;CONSP)
+                587&nbsp;&nbsp;&nbsp;&nbsp;(when&nbsp;(lax?&nbsp;&#x27;CONSP)
                 </span><br/>
 <span class="covered" title="7 out of 7 forms covered">
-                571&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(instance?&nbsp;ConsCell&nbsp;o)&nbsp;&#x27;T&nbsp;&#x27;F)))
+                588&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(instance?&nbsp;ConsCell&nbsp;o)&nbsp;&#x27;T&nbsp;&#x27;F)))
                 </span><br/>
  </body>
 </html>

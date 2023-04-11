@@ -83,16 +83,28 @@
              (throw (ex-info "Ne can forstande " (assoc parse-tree :source source))))
       (generate (simplify parse-tree)))))
 
-(defn read-from-console
-  "Attempt to read a complete lisp expression from the console."
-  [prompt]
-  (loop [r (read-chars prompt)]
-    (if (and (= (count (re-seq #"\(" r))
-           (count (re-seq #"\)" r)))
+(defn- dummy-read-chars [prompt]
+  (loop [r "" p prompt]
+    (if (and (seq r)
+             (= (count (re-seq #"\(" r))
+                (count (re-seq #"\)" r)))
              (= (count (re-seq #"\[" r))
                 (count (re-seq #"\]" r))))
       r
-      (recur (str r "\n" (read-chars ""))))))
+      (do
+        (print (str p " "))
+        (flush)
+        (recur (str r "\n" (read-line)) "::")))))
+
+(defn read-from-console
+  "Attempt to read a complete lisp expression from the console.
+   
+   There's a major problem here that the read-chars reader messes up testing.
+   We need to be able to disable it while testing!"
+  [prompt]
+  (if (:testing *options*)
+    (dummy-read-chars prompt)
+    (read-chars prompt)))
 
 (defn READ
   "An implementation of a Lisp reader sufficient for bootstrapping; not necessarily

@@ -154,10 +154,10 @@
 <span class="covered" title="1 out of 1 forms covered">
                 050&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:default&nbsp;default-sysout
                 </span><br/>
-<span class="partial" title="3 out of 8 forms covered">
+<span class="partial" title="7 out of 8 forms covered">
                 051&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:validate&nbsp;[#(and
                 </span><br/>
-<span class="not-covered" title="0 out of 4 forms covered">
+<span class="covered" title="4 out of 4 forms covered">
                 052&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(.exists&nbsp;(io&#x2F;file&nbsp;%))
                 </span><br/>
 <span class="not-covered" title="0 out of 3 forms covered">
@@ -170,40 +170,40 @@
                 055&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&quot;-s&quot;&nbsp;&quot;--strict&quot;&nbsp;&quot;Strictly&nbsp;interpret&nbsp;the&nbsp;Lisp&nbsp;1.5&nbsp;language,&nbsp;without&nbsp;extensions.&quot;]
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                056&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&quot;-t&quot;&nbsp;&quot;--time&quot;&nbsp;&quot;Time&nbsp;evaluations.&quot;]])
+                056&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&quot;-t&quot;&nbsp;&quot;--time&quot;&nbsp;&quot;Time&nbsp;evaluations.&quot;]
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                057&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&quot;-x&quot;&nbsp;&quot;--testing&quot;&nbsp;&quot;Disable&nbsp;the&nbsp;jline&nbsp;reader&nbsp;-&nbsp;useful&nbsp;when&nbsp;piping&nbsp;input.&quot;]])
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                057&nbsp;&nbsp;
+                058&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                058&nbsp;&nbsp;(defn-&nbsp;re&nbsp;
+                059&nbsp;&nbsp;(defn-&nbsp;re&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                059&nbsp;&nbsp;&nbsp;&nbsp;&quot;Like&nbsp;REPL,&nbsp;but&nbsp;it&nbsp;isn&#x27;t&nbsp;a&nbsp;loop&nbsp;and&nbsp;doesn&#x27;t&nbsp;print.&quot;
+                060&nbsp;&nbsp;&nbsp;&nbsp;&quot;Like&nbsp;REPL,&nbsp;but&nbsp;it&nbsp;isn&#x27;t&nbsp;a&nbsp;loop&nbsp;and&nbsp;doesn&#x27;t&nbsp;print.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                060&nbsp;&nbsp;&nbsp;&nbsp;[input]
+                061&nbsp;&nbsp;&nbsp;&nbsp;[input]
                 </span><br/>
 <span class="covered" title="7 out of 7 forms covered">
-                061&nbsp;&nbsp;&nbsp;&nbsp;(EVAL&nbsp;(READ&nbsp;input)&nbsp;NIL&nbsp;0))
+                062&nbsp;&nbsp;&nbsp;&nbsp;(EVAL&nbsp;(READ&nbsp;input)&nbsp;NIL&nbsp;0))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                062&nbsp;&nbsp;
+                063&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                063&nbsp;&nbsp;(defn&nbsp;repl
+                064&nbsp;&nbsp;(defn&nbsp;repl
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                064&nbsp;&nbsp;&nbsp;&nbsp;&quot;Read&#x2F;eval&#x2F;print&nbsp;loop.&quot;
+                065&nbsp;&nbsp;&nbsp;&nbsp;&quot;Read&#x2F;eval&#x2F;print&nbsp;loop.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                065&nbsp;&nbsp;&nbsp;&nbsp;[prompt]
+                066&nbsp;&nbsp;&nbsp;&nbsp;[prompt]
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                066&nbsp;&nbsp;&nbsp;&nbsp;(loop&nbsp;[]
-                </span><br/>
-<span class="covered" title="3 out of 3 forms covered">
-                067&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(print&nbsp;prompt)
+                067&nbsp;&nbsp;&nbsp;&nbsp;(loop&nbsp;[]&nbsp;
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
                 068&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(flush)
@@ -211,8 +211,8 @@
 <span class="covered" title="1 out of 1 forms covered">
                 069&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(try
                 </span><br/>
-<span class="covered" title="9 out of 9 forms covered">
-                070&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if-let&nbsp;[input&nbsp;(trim&nbsp;(read-from-console))]
+<span class="covered" title="10 out of 10 forms covered">
+                070&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if-let&nbsp;[input&nbsp;(trim&nbsp;(read-from-console&nbsp;prompt))]
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
                 071&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(=&nbsp;input&nbsp;stop-word)
@@ -259,7 +259,7 @@
 <span class="covered" title="1 out of 1 forms covered">
                 085&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data
                 </span><br/>
-<span class="partial" title="5 out of 6 forms covered">
+<span class="covered" title="6 out of 6 forms covered">
                 086&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(case&nbsp;(:cause&nbsp;data)
                 </span><br/>
 <span class="not-covered" title="0 out of 5 forms covered">
@@ -316,13 +316,13 @@
 <span class="covered" title="6 out of 6 forms covered">
                 104&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;&quot;Síðe&nbsp;&quot;&nbsp;(System&#x2F;getProperty&nbsp;&quot;beowulf.version&quot;)&nbsp;&quot;\n&quot;))
                 </span><br/>
-<span class="partial" title="1 out of 2 forms covered">
+<span class="covered" title="2 out of 2 forms covered">
                 105&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(when
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
                 106&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(:help&nbsp;(:options&nbsp;args))
                 </span><br/>
-<span class="not-covered" title="0 out of 3 forms covered">
+<span class="covered" title="3 out of 3 forms covered">
                 107&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(:summary&nbsp;args))
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
@@ -358,8 +358,8 @@
 <span class="covered" title="1 out of 1 forms covered">
                 118&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(try
                 </span><br/>
-<span class="covered" title="10 out of 10 forms covered">
-                119&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(repl&nbsp;(str&nbsp;(:prompt&nbsp;(:options&nbsp;args))&nbsp;&quot;&nbsp;&quot;))
+<span class="covered" title="7 out of 7 forms covered">
+                119&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(repl&nbsp;(:prompt&nbsp;(:options&nbsp;args)))
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
                 120&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(catch

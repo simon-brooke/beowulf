@@ -1,11 +1,11 @@
 (ns beowulf.lisp-test
   "The idea here is to test actual Lisp functions"
-  (:require [clojure.test :refer [deftest testing is use-fixtures]]
-            [beowulf.bootstrap :refer [EVAL]]
+  (:require [beowulf.bootstrap :refer [EVAL]]
             [beowulf.cons-cell :refer [make-beowulf-list]]
-            [beowulf.io :refer [SYSIN]]
-            ;; [beowulf.oblist :refer [NIL]]
-            [beowulf.read :refer [READ]]))
+            [beowulf.io :refer [SYSIN]] ;; [beowulf.oblist :refer [NIL]]
+            [beowulf.oblist :refer [NIL]]
+            [beowulf.read :refer [READ]]
+            [clojure.test :refer [deftest is testing use-fixtures]]))
 
 (defn- reps
   "'Read eval print string', or 'read eval print single'.
@@ -166,3 +166,41 @@
     (COND ((EQ X 5) (RETURN X))
         (T (GO START))))")]
       (is (= actual expected)))))
+
+
+(deftest put-get-tests
+  (let [symbol 'TESTSYMBOL
+        p1 'TESTPROPONE
+        p2 'TESTPROPTWO]
+    (testing "GET - property should be missing"
+      (let [expected "NIL"
+            actual (reps "(GET 'TESTSYMBOL 'TESTPROPONE)")]
+        (is (= actual expected))))
+    (testing "PUT and GET: value of new property; change value of property"
+      (let [prop (reps "(GENSYM)")
+            val1 (reps "(GENSYM)")
+            val2 (reps "(GENSYM)")
+            expected1 val1
+            actual1 (when (reps (str "(PUT '" symbol " '" prop " '" val1 ")"))
+                      (reps (str "(GET '" symbol " '" prop ")")))
+            expected2 val2
+            actual2 (when (reps (str "(PUT '" symbol " '" prop " '" val2 ")"))
+                      (reps (str "(GET '" symbol " '" prop ")")))]
+        (is (not= val1 val2))
+        (is (= actual1 expected1) "The value set can be retrieved.")
+        (is (= actual2 expected2) "The value is changed.")))
+    (testing "PUT and GET: different properties have independent values"
+      (let [val1 (reps "(GENSYM)")
+            val2 (reps "(GENSYM)")
+            expected1 val1
+            actual1 (when (reps (str "(PUT '" symbol " '" p1 " '" val1 ")"))
+                      (reps (str "(GET '" symbol " '" p1 ")")))
+            expected2 val2
+            actual2 (when (reps (str "(PUT '" symbol " '" p2 " '" val2 ")"))
+                      (reps (str "(GET '" symbol " '" p2 ")")))
+            expected3 val1
+            actual3 (reps (str "(GET '" symbol " '" p1 ")"))]
+        (is (not= val1 val2))
+        (is (= actual1 expected1) "The value set can be retrieved.")
+        (is (= actual2 expected2) "Values are independent.")
+        (is (= actual3 expected3) "Setting a second property does not obliterate the first.")))))
