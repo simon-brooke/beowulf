@@ -19,11 +19,12 @@
                  [environ "1.2.0"]
                  [instaparse "1.4.12"]
                  [org.jline/jline "3.23.0"]
-                 [rhizome "0.2.9"] ;; not needed in production builds
+                 [com.github.seancorfield/expectations "2.0.165"]
+                 ;; [rhizome "0.2.9"] ;; not needed in production builds
                  ]
   :main  beowulf.core
   :plugins [[lein-cloverage "1.2.2"]
-            [lein-codox "0.10.7"]
+            [lein-codox "0.10.8"]
             [lein-environ "1.1.0"]]
   :profiles {:jar {:aot :all}
              :uberjar {:aot :all}

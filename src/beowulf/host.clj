@@ -441,7 +441,7 @@
    recurse down the list two entries at a time to avoid confusing names
    with values."
   [target plist]
-  (if (and (instance? ConsCell plist)(even? (count plist)))
+  (if (and (instance? ConsCell plist) (even? (count plist)))
     (cond (= plist NIL) NIL
           (= (first plist) target) plist
           :else (hit-or-miss-assoc target (CDDR plist)))
@@ -516,9 +516,10 @@
    `indicator` of the symbol which is the first element of the pair to the 
    value which is the second element of the pair. See page 58 of the manual."
   [a-list indicator]
-  (map
-   #(PUT (CAR %) indicator (CDR %))
-   a-list))
+  (doall
+   (map
+    #(when (PUT (CAR %) indicator (CDR %)) (CAR %))
+    a-list)))
 
 (defn DEFINE
   "Bootstrap-only version of `DEFINE` which, post boostrap, can be overwritten 
