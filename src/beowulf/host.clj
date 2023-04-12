@@ -216,7 +216,7 @@
              :phase :host
              :detail :rplacd
              :args (list cell value)
-             :type :beowulf}))));; PLUS
+             :type :beowulf}))))
 
 (defn LIST
   [& args]
@@ -447,6 +447,26 @@
           :else (hit-or-miss-assoc target (CDDR plist)))
     NIL))
 
+(defn ATTRIB
+  "Destructive append. From page 59 of the manual:
+   
+   The function `attrib` concatenates its two arguments by changing the last 
+   element of its first argument to point to the second argument. Thus it
+   is commonly used to tack something onto the end of a property list. 
+   The value of `attrib` is the second argument.
+
+   For example
+   ```
+   attrib[FF; (EXPR (LAMBDA (X) (COND ((ATOM X) X) (T (FF (CAR x))))))]
+   ```
+   would put EXPR followed by the LAMBDA expression for FF onto the end of 
+   the property list for FF."
+  [x e]
+  (loop [l x]
+    (cond
+      (instance? ConsCell (CDR l)) (recur (CDR l))
+      :else (when (RPLACD l e) e))))
+
 (defn PUT
   "Put this `value` as the value of the property indicated by this `indicator` 
    of this `symbol`. Return `value` on success.
@@ -459,6 +479,8 @@
       (let [prop (hit-or-miss-assoc indicator (CDDR binding))]
         (if (instance? ConsCell prop)
           (RPLACA (CDR prop) value)
+          ;; The implication is ATTRIB was used here, but I have not made that
+          ;; work and this does work, so if it ain't broke don't fix it.
           (RPLACD binding
                   (make-cons-cell
                    magic-marker
@@ -494,13 +516,9 @@
         val (cond
               (= binding NIL) NIL
               (= magic-marker
-                 (CADR binding)) (loop [b binding]
-                                  ;;  (println "GET loop, seeking " indicator ":")
-                                  ;;  (pretty-print b)
-                                   (if (instance? ConsCell b)
-                                     (if (= (CAR b) indicator)
-                                       (CADR b) ;; <- this is what we should actually be returning
-                                       (recur (CDR b)))
+                 (CADR binding)) (let [p (hit-or-miss-assoc indicator binding)]
+                                   (if-not (= NIL p)
+                                     (CADR p)
                                      NIL))
               :else (throw
                      (ex-info "Misformatted property list (missing magic marker)"

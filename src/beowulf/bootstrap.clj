@@ -11,9 +11,9 @@
   objects."
   (:require [beowulf.cons-cell :refer [F make-beowulf-list make-cons-cell
                                        pretty-print T]]
-            [beowulf.host :refer [ASSOC ATOM CAAR CADAR CADDR CADR CAR CDR GET
-                                  LIST NUMBERP PAIRLIS traced?]]
-            [beowulf.oblist :refer [*options* NIL oblist]])
+            [beowulf.host :refer [ASSOC ATOM CAAR CADAR CADDR CADR CAR CDR
+                                  CONS ERROR GET LIST NUMBERP PAIRLIS traced?]]
+            [beowulf.oblist :refer [*options* NIL]])
   (:import [beowulf.cons_cell ConsCell]
            [clojure.lang Symbol]))
 
@@ -40,6 +40,12 @@
 (declare APPLY EVAL prog-eval)
 
 ;;;; The PROGram feature ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(def ^:dynamic
+  *depth*
+  "Stack depth. Unfortunately we need to be able to pass round depth for 
+   functions which call EVAL/APPLY but do not know about depth."
+  0)
 
 (def find-target
   (memoize
@@ -228,6 +234,21 @@
      (first (remove #(= % NIL) (map #(GET s %)
                                     indicators))))))
 
+(defn SASSOC
+  "Like `ASSOC`, but with an action to take if no value is found.
+   
+   From the manual, page 60:
+   
+   'The function `sassoc` searches `y`, which is a list of dotted pairs, for 
+   a pair whose first element that is `x`. If such a pair is found, the value 
+   of `sassoc` is this pair. Otherwise the function `u` of no arguments is 
+   taken as the value of `sassoc`.'"
+  [x y u]
+  (let [v (ASSOC x y)]
+    (if-not (= v NIL) v
+            (APPLY u NIL NIL))))
+
+
 ;;;; APPLY ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn try-resolve-subroutine
@@ -275,6 +296,24 @@
     (trace-response function-symbol result depth)
     result))
 
+(defn- apply-label 
+  "Apply in the special case that the first element in the function is `LABEL`."
+  [function args environment depth]
+  (APPLY
+   (CADDR function)
+   args
+   (CONS
+    (CONS (CADR function) (CADDR function))
+    environment)
+   depth))
+
+(defn- apply-lambda
+  "Apply in the special case that the first element in the function is `LAMBDA`."
+  [function args environment depth]
+  (EVAL
+   (CADDR function)
+   (PAIRLIS (CADR function) args environment) depth))
+
 (defn APPLY
   "Apply this `function` to these `arguments` in this `environment` and return
    the result.
@@ -282,38 +321,32 @@
    For bootstrapping, at least, a version of APPLY written in Clojure.
    All args are assumed to be symbols or `beowulf.cons-cell/ConsCell` objects.
    See page 13 of the Lisp 1.5 Programmers Manual."
-  [function args environment depth]
-  (trace-call 'APPLY (list function args environment) depth)
-  (let [result (cond
-                 (= NIL function) (if (:strict *options*)
-                                    NIL
-                                    (throw (ex-info "NIL sí ne þegnung"
-                                                    {:phase :apply
-                                                     :function "NIL"
-                                                     :args args
-                                                     :type :beowulf})))
-                 (= (ATOM function) T) (apply-symbolic function args environment (inc depth))
-                 :else (case (first function)
-                         LABEL (APPLY
-                                (CADDR function)
-                                args
-                                (make-cons-cell
-                                 (make-cons-cell
-                                  (CADR function)
-                                  (CADDR function))
-                                 environment)
-                                depth)
-                         FUNARG (APPLY (CADR function) args (CADDR function) depth)
-                         LAMBDA (EVAL
-                                 (CADDR function)
-                                 (PAIRLIS (CADR function) args environment) depth)
-                         (throw (ex-info "Ungecnáwen wyrþan sí þegnung-weard"
-                                         {:phase :apply
-                                          :function function
-                                          :args args
-                                          :type :beowulf}))))]
-    (trace-response 'APPLY result depth)
-    result))
+  ([function args environment]
+   (APPLY function args environment *depth*))
+  ([function args environment depth]
+   (binding [*depth* (inc depth)]
+     (trace-call 'APPLY (list function args environment) depth)
+     (let [result (cond
+                    (= NIL function) (if (:strict *options*)
+                                       NIL
+                                       (throw (ex-info "NIL sí ne þegnung"
+                                                       {:phase :apply
+                                                        :function "NIL"
+                                                        :args args
+                                                        :type :beowulf})))
+                    (= (ATOM function) T) (apply-symbolic function args environment (inc depth))
+                    :else (case (first function)
+                            LABEL (apply-label function args environment depth)
+                            FUNARG (APPLY (CADR function) args (CADDR function) depth)
+                            LAMBDA (apply-lambda function args environment depth)
+                            ;; else
+                            (throw (ex-info "Ungecnáwen wyrþan sí þegnung-weard"
+                                            {:phase :apply
+                                             :function function
+                                             :args args
+                                             :type :beowulf}))))]
+       (trace-response 'APPLY result depth)
+       result))))
 
 ;;;; EVAL ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -412,11 +445,10 @@
                                              (EVLIS (CDR expr) env depth)
                                              env
                                              depth))
-                  :else (APPLY
-                         (CAR expr)
-                         (EVLIS (CDR expr) env depth)
-                         env
-                         depth))]
+                  :else (EVAL (CONS (CDR (SASSOC (CAR expr) env (fn [] (ERROR 'A9))))
+                                    (CDR expr))
+                              env
+                              (inc depth)))]
      (trace-response 'EVAL result depth)
      result)))
 
