@@ -91,22 +91,21 @@
   (cond
     (= l NIL) NIL
     (empty? path) l
-    :else
-    (try
-      (case (last path)
-        \a (uaf (.first l) (butlast path))
-        \d (uaf (.getCdr l) (butlast path))
-        (throw (ex-info (str "uaf: unexpected letter in path (only `a` and `d` permitted): " (last path))
-                        {:cause  :uaf
-                         :detail :unexpected-letter
-                         :expr   (last path)})))
-      (catch ClassCastException e
-        (throw (ex-info
-                (str "uaf: Not a LISP list? " (type l))
-                {:cause  :uaf
-                 :detail :not-a-lisp-list
-                 :expr   l}
-                e))))))
+    (not (instance? ConsCell l)) (throw (ex-info (str "Ne liste: "
+                                                      l "; " (type l))
+                                                 {:phase :eval
+                                                  :function "universal access function"
+                                                  :args [l path]
+                                                  :type :beowulf}))
+    :else (case (last path)
+            \a (uaf (.first l) (butlast path))
+            \d (uaf (.getCdr l) (butlast path))
+            (throw (ex-info (str "uaf: unexpected letter in path (only `a` and `d` permitted): "
+                                 (last path))
+                            {:phase :eval
+                             :function "universal access function"
+                             :args [l path]
+                             :type :beowulf})))))
 
 (defmacro CAAR [x] `(uaf ~x '(\a \a)))
 (defmacro CADR [x] `(uaf ~x '(\a \d)))
@@ -217,7 +216,7 @@
              :phase :host
              :detail :rplacd
              :args (list cell value)
-             :type :beowulf}))));; PLUS
+             :type :beowulf}))))
 
 (defn LIST
   [& args]
@@ -433,6 +432,41 @@
   "The unexplained magic number which marks the start of a property list."
   (Integer/parseInt "77777" 8))
 
+(defn hit-or-miss-assoc
+  "Find the position of the binding of this `target` in a Lisp 1.5 
+   property list `plist`.
+   
+   Lisp 1.5 property lists are not assoc lists, but lists of the form
+   `(name value name value name value...)`. It's therefore necessary to
+   recurse down the list two entries at a time to avoid confusing names
+   with values."
+  [target plist]
+  (if (and (instance? ConsCell plist) (even? (count plist)))
+    (cond (= plist NIL) NIL
+          (= (first plist) target) plist
+          :else (hit-or-miss-assoc target (CDDR plist)))
+    NIL))
+
+(defn ATTRIB
+  "Destructive append. From page 59 of the manual:
+   
+   The function `attrib` concatenates its two arguments by changing the last 
+   element of its first argument to point to the second argument. Thus it
+   is commonly used to tack something onto the end of a property list. 
+   The value of `attrib` is the second argument.
+
+   For example
+   ```
+   attrib[FF; (EXPR (LAMBDA (X) (COND ((ATOM X) X) (T (FF (CAR x))))))]
+   ```
+   would put EXPR followed by the LAMBDA expression for FF onto the end of 
+   the property list for FF."
+  [x e]
+  (loop [l x]
+    (cond
+      (instance? ConsCell (CDR l)) (recur (CDR l))
+      :else (when (RPLACD l e) e))))
+
 (defn PUT
   "Put this `value` as the value of the property indicated by this `indicator` 
    of this `symbol`. Return `value` on success.
@@ -440,22 +474,27 @@
    NOTE THAT there is no `PUT` defined in the manual, but it would have been 
    easy to have defined it so I don't think this fully counts as an extension."
   [symbol indicator value]
-  (if-let [binding (ASSOC symbol @oblist)]
-    (if-let [prop (ASSOC indicator (CDDR binding))]
-      (RPLACD prop value)
-      (RPLACD binding
-              (make-cons-cell
-               magic-marker
-               (make-cons-cell
-                indicator
-                (make-cons-cell value (CDDR binding))))))
-    (swap!
-     oblist
-     (fn [ob s p v]
-       (make-cons-cell
-        (make-beowulf-list (list s magic-marker p v))
-        ob))
-     symbol indicator value)))
+  (let [binding (ASSOC symbol @oblist)]
+    (if (instance? ConsCell binding)
+      (let [prop (hit-or-miss-assoc indicator (CDDR binding))]
+        (if (instance? ConsCell prop)
+          (RPLACA (CDR prop) value)
+          ;; The implication is ATTRIB was used here, but I have not made that
+          ;; work and this does work, so if it ain't broke don't fix it.
+          (RPLACD binding
+                  (make-cons-cell
+                   magic-marker
+                   (make-cons-cell
+                    indicator
+                    (make-cons-cell value (CDDR binding)))))))
+      (swap!
+       oblist
+       (fn [ob s p v]
+         (make-cons-cell
+          (make-beowulf-list (list s magic-marker p v))
+          ob))
+       symbol indicator value)))
+  value)
 
 (defn GET
   "From the manual:
@@ -477,13 +516,9 @@
         val (cond
               (= binding NIL) NIL
               (= magic-marker
-                 (CADR binding)) (loop [b binding]
-                                  ;;  (println "GET loop, seeking " indicator ":")
-                                  ;;  (pretty-print b)
-                                   (if (instance? ConsCell b)
-                                     (if (= (CAR b) indicator)
-                                       (CADR b) ;; <- this is what we should actually be returning
-                                       (recur (CDR b)))
+                 (CADR binding)) (let [p (hit-or-miss-assoc indicator binding)]
+                                   (if-not (= NIL p)
+                                     (CADR p)
                                      NIL))
               :else (throw
                      (ex-info "Misformatted property list (missing magic marker)"
@@ -499,9 +534,10 @@
    `indicator` of the symbol which is the first element of the pair to the 
    value which is the second element of the pair. See page 58 of the manual."
   [a-list indicator]
-  (map
-   #(PUT (CAR %) indicator (CDR %))
-   a-list))
+  (doall
+   (map
+    #(when (PUT (CAR %) indicator (CDR %)) (CAR %))
+    a-list)))
 
 (defn DEFINE
   "Bootstrap-only version of `DEFINE` which, post boostrap, can be overwritten 

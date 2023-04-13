@@ -20,9 +20,12 @@
    TODO: There are multiple problems with JLine; a better solution might be
    to start from here:
    https://stackoverflow.com/questions/7931988/how-to-manipulate-control-characters"
-  ;; (:import [org.jline.reader LineReader LineReaderBuilder]
-  ;;          [org.jline.terminal TerminalBuilder])
-  )
+  (:require [beowulf.oblist :refer [*options* oblist]])
+  (:import [org.jline.reader.impl.completer StringsCompleter]
+           [org.jline.reader.impl DefaultParser DefaultParser$Bracket]
+           [org.jline.reader LineReaderBuilder]
+           [org.jline.terminal TerminalBuilder]
+           [org.jline.widget AutopairWidgets AutosuggestionWidgets]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -49,27 +52,56 @@
 ;; looks as though you'd need a DPhil in JLine to write it, and I don't have
 ;; the time.
 
-;; (def get-reader
-;;   "Return a reader, first constructing it if necessary.
+(defn build-completer
+  "Build a completer which takes tokens from the oblist.
    
-;;    **NOTE THAT** this is not settled API. The existence and call signature of
-;;    this function is not guaranteed in future versions."
-;;   (memoize (fn []
-;;   (let [term (.build (.system (TerminalBuilder/builder) true))]
-;;     (.build (.terminal (LineReaderBuilder/builder) term))))))
+   This is sort-of working, in as much as hitting <TAB> on a blank line will 
+   show a table of values from the oblist, but hitting <TAB> after you've 
+   started input does not show potential completions for tokens you've started."
+  []
+  (StringsCompleter. (map #(str (first %)) @oblist)))
 
-;; (defn read-chars
-;;   "A drop-in replacement for `clojure.core/read-line`, except that line editing
-;;    and history should be enabled.
+;; This breaks; it is not correctly resolving the Enum, although I can't work out
+;; why not.
+;; (defn build-parser
+;;   []
+;;   (println "Building parser")
+;;   (let [parser (DefaultParser.)]
+;;     (doall
+;;      (.setEofOnUnclosedBracket 
+;;       parser DefaultParser$Bracket/ROUND))))
+
+(def get-reader
+  "Return a reader, first constructing it if necessary.
    
-;;    **NOTE THAT** this does not work yet, but it is in the API because I hope 
-;;    that it will work later!"
-;;   [] 
-;;     (let [eddie (get-reader)]
-;;       (loop [s (.readLine eddie)]
-;;       (if (and (= (count (re-seq #"\(" s))
-;;            (count (re-seq #"\)" s)))
-;;                (= (count (re-seq #"\[]" s))
-;;                   (count (re-seq #"\]" s))))
-;;         s
-;;         (recur (str s " " (.readLine eddie)))))))
+   **NOTE THAT** this is not settled API. The existence and call signature of
+   this function is not guaranteed in future versions."
+  (memoize (fn []
+            (let [term (.build (.system (TerminalBuilder/builder) true))
+                  reader (-> (LineReaderBuilder/builder)
+                              (.terminal  term)
+                              (.completer  (build-completer))
+ ;;       #(.parser % (build-parser))
+                              (.build))
+                  ;; apw (AutopairWidgets. reader false)
+                  ;; asw (AutosuggestionWidgets. reader)
+                  ]
+              ;; (.enable apw)
+              ;; (.enable asw)
+              reader))))
+
+(defn read-chars
+  "A drop-in replacement for `clojure.core/read-line`, except that line editing
+   and history should be enabled.
+   
+   **NOTE THAT** this does not fully work yet, but it is in the API because I 
+   hope that it will work later!"
+  [prompt]
+  (let [eddie (get-reader)]
+    (loop [s (.readLine eddie (str prompt " "))]
+      (if (and (= (count (re-seq #"\(" s))
+                  (count (re-seq #"\)" s)))
+               (= (count (re-seq #"\[]" s))
+                  (count (re-seq #"\]" s))))
+        s
+        (recur (str s " " (.readLine eddie ":: ")))))))

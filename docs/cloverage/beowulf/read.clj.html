@@ -50,283 +50,319 @@
                 015&nbsp;&nbsp;&nbsp;&nbsp;switch.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                016&nbsp;&nbsp;&nbsp;&nbsp;(:require&nbsp;;;&nbsp;[beowulf.reader.char-reader&nbsp;:refer&nbsp;[read-chars]]
+                016&nbsp;&nbsp;&nbsp;&nbsp;(:require&nbsp;[beowulf.oblist&nbsp;:refer&nbsp;[*options*]]
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                017&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[beowulf.reader.generate&nbsp;:refer&nbsp;[generate]]
+                017&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[beowulf.reader.char-reader&nbsp;:refer&nbsp;[read-chars]]
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                018&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[beowulf.reader.parser&nbsp;:refer&nbsp;[parse]]
+                018&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[beowulf.reader.generate&nbsp;:refer&nbsp;[generate]]
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                019&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[beowulf.reader.simplify&nbsp;:refer&nbsp;[simplify]]
+                019&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[beowulf.reader.parser&nbsp;:refer&nbsp;[parse]]
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                020&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[clojure.string&nbsp;:refer&nbsp;[join&nbsp;split&nbsp;starts-with?&nbsp;trim]])
+                020&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[beowulf.reader.simplify&nbsp;:refer&nbsp;[simplify]]
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                021&nbsp;&nbsp;&nbsp;&nbsp;(:import&nbsp;[java.io&nbsp;InputStream]
+                021&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[clojure.string&nbsp;:refer&nbsp;[join&nbsp;split&nbsp;starts-with?&nbsp;trim]])
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                022&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[instaparse.gll&nbsp;Failure]))
+                022&nbsp;&nbsp;&nbsp;&nbsp;(:import&nbsp;[instaparse.gll&nbsp;Failure]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                023&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[java.io&nbsp;InputStream]))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                023&nbsp;&nbsp;
+                024&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                024&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                025&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                025&nbsp;&nbsp;;;;
+                026&nbsp;&nbsp;;;;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                026&nbsp;&nbsp;;;;&nbsp;This&nbsp;file&nbsp;provides&nbsp;the&nbsp;reader&nbsp;required&nbsp;for&nbsp;boostrapping.&nbsp;It&#x27;s&nbsp;not&nbsp;a&nbsp;bad
+                027&nbsp;&nbsp;;;;&nbsp;This&nbsp;file&nbsp;provides&nbsp;the&nbsp;reader&nbsp;required&nbsp;for&nbsp;boostrapping.&nbsp;It&#x27;s&nbsp;not&nbsp;a&nbsp;bad
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                027&nbsp;&nbsp;;;;&nbsp;reader&nbsp;-&nbsp;it&nbsp;provides&nbsp;feedback&nbsp;on&nbsp;errors&nbsp;found&nbsp;in&nbsp;the&nbsp;input&nbsp;-&nbsp;but&nbsp;it&nbsp;isn&#x27;t
+                028&nbsp;&nbsp;;;;&nbsp;reader&nbsp;-&nbsp;it&nbsp;provides&nbsp;feedback&nbsp;on&nbsp;errors&nbsp;found&nbsp;in&nbsp;the&nbsp;input&nbsp;-&nbsp;but&nbsp;it&nbsp;isn&#x27;t
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                028&nbsp;&nbsp;;;;&nbsp;the&nbsp;real&nbsp;Lisp&nbsp;reader.
+                029&nbsp;&nbsp;;;;&nbsp;the&nbsp;real&nbsp;Lisp&nbsp;reader.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                029&nbsp;&nbsp;;;;
+                030&nbsp;&nbsp;;;;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                030&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                031&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                031&nbsp;&nbsp;;;;
+                032&nbsp;&nbsp;;;;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                032&nbsp;&nbsp;;;;&nbsp;Copyright&nbsp;(C)&nbsp;2022-2023&nbsp;Simon&nbsp;Brooke
+                033&nbsp;&nbsp;;;;&nbsp;Copyright&nbsp;(C)&nbsp;2022-2023&nbsp;Simon&nbsp;Brooke
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                033&nbsp;&nbsp;;;;
+                034&nbsp;&nbsp;;;;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                034&nbsp;&nbsp;;;;&nbsp;This&nbsp;program&nbsp;is&nbsp;free&nbsp;software;&nbsp;you&nbsp;can&nbsp;redistribute&nbsp;it&nbsp;and&#x2F;or
+                035&nbsp;&nbsp;;;;&nbsp;This&nbsp;program&nbsp;is&nbsp;free&nbsp;software;&nbsp;you&nbsp;can&nbsp;redistribute&nbsp;it&nbsp;and&#x2F;or
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                035&nbsp;&nbsp;;;;&nbsp;modify&nbsp;it&nbsp;under&nbsp;the&nbsp;terms&nbsp;of&nbsp;the&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License
+                036&nbsp;&nbsp;;;;&nbsp;modify&nbsp;it&nbsp;under&nbsp;the&nbsp;terms&nbsp;of&nbsp;the&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                036&nbsp;&nbsp;;;;&nbsp;as&nbsp;published&nbsp;by&nbsp;the&nbsp;Free&nbsp;Software&nbsp;Foundation;&nbsp;either&nbsp;version&nbsp;2
+                037&nbsp;&nbsp;;;;&nbsp;as&nbsp;published&nbsp;by&nbsp;the&nbsp;Free&nbsp;Software&nbsp;Foundation;&nbsp;either&nbsp;version&nbsp;2
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                037&nbsp;&nbsp;;;;&nbsp;of&nbsp;the&nbsp;License,&nbsp;or&nbsp;(at&nbsp;your&nbsp;option)&nbsp;any&nbsp;later&nbsp;version.
+                038&nbsp;&nbsp;;;;&nbsp;of&nbsp;the&nbsp;License,&nbsp;or&nbsp;(at&nbsp;your&nbsp;option)&nbsp;any&nbsp;later&nbsp;version.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                038&nbsp;&nbsp;;;;&nbsp;
+                039&nbsp;&nbsp;;;;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                039&nbsp;&nbsp;;;;&nbsp;This&nbsp;program&nbsp;is&nbsp;distributed&nbsp;in&nbsp;the&nbsp;hope&nbsp;that&nbsp;it&nbsp;will&nbsp;be&nbsp;useful,
+                040&nbsp;&nbsp;;;;&nbsp;This&nbsp;program&nbsp;is&nbsp;distributed&nbsp;in&nbsp;the&nbsp;hope&nbsp;that&nbsp;it&nbsp;will&nbsp;be&nbsp;useful,
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                040&nbsp;&nbsp;;;;&nbsp;but&nbsp;WITHOUT&nbsp;ANY&nbsp;WARRANTY;&nbsp;without&nbsp;even&nbsp;the&nbsp;implied&nbsp;warranty&nbsp;of
+                041&nbsp;&nbsp;;;;&nbsp;but&nbsp;WITHOUT&nbsp;ANY&nbsp;WARRANTY;&nbsp;without&nbsp;even&nbsp;the&nbsp;implied&nbsp;warranty&nbsp;of
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                041&nbsp;&nbsp;;;;&nbsp;MERCHANTABILITY&nbsp;or&nbsp;FITNESS&nbsp;FOR&nbsp;A&nbsp;PARTICULAR&nbsp;PURPOSE.&nbsp;&nbsp;See&nbsp;the
+                042&nbsp;&nbsp;;;;&nbsp;MERCHANTABILITY&nbsp;or&nbsp;FITNESS&nbsp;FOR&nbsp;A&nbsp;PARTICULAR&nbsp;PURPOSE.&nbsp;&nbsp;See&nbsp;the
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                042&nbsp;&nbsp;;;;&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License&nbsp;for&nbsp;more&nbsp;details.
+                043&nbsp;&nbsp;;;;&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License&nbsp;for&nbsp;more&nbsp;details.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                043&nbsp;&nbsp;;;;&nbsp;
+                044&nbsp;&nbsp;;;;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                044&nbsp;&nbsp;;;;&nbsp;You&nbsp;should&nbsp;have&nbsp;received&nbsp;a&nbsp;copy&nbsp;of&nbsp;the&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License
+                045&nbsp;&nbsp;;;;&nbsp;You&nbsp;should&nbsp;have&nbsp;received&nbsp;a&nbsp;copy&nbsp;of&nbsp;the&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                045&nbsp;&nbsp;;;;&nbsp;along&nbsp;with&nbsp;this&nbsp;program;&nbsp;if&nbsp;not,&nbsp;write&nbsp;to&nbsp;the&nbsp;Free&nbsp;Software
+                046&nbsp;&nbsp;;;;&nbsp;along&nbsp;with&nbsp;this&nbsp;program;&nbsp;if&nbsp;not,&nbsp;write&nbsp;to&nbsp;the&nbsp;Free&nbsp;Software
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                046&nbsp;&nbsp;;;;&nbsp;Foundation,&nbsp;Inc.,&nbsp;51&nbsp;Franklin&nbsp;Street,&nbsp;Fifth&nbsp;Floor,&nbsp;Boston,&nbsp;MA&nbsp;&nbsp;02110-1301,&nbsp;USA.
+                047&nbsp;&nbsp;;;;&nbsp;Foundation,&nbsp;Inc.,&nbsp;51&nbsp;Franklin&nbsp;Street,&nbsp;Fifth&nbsp;Floor,&nbsp;Boston,&nbsp;MA&nbsp;&nbsp;02110-1301,&nbsp;USA.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                047&nbsp;&nbsp;;;;
+                048&nbsp;&nbsp;;;;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                048&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                049&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                049&nbsp;&nbsp;
+                050&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                050&nbsp;&nbsp;(defn&nbsp;strip-line-comments
+                051&nbsp;&nbsp;(defn&nbsp;strip-line-comments
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                051&nbsp;&nbsp;&nbsp;&nbsp;&quot;Strip&nbsp;blank&nbsp;lines&nbsp;and&nbsp;comment&nbsp;lines&nbsp;from&nbsp;this&nbsp;string&nbsp;`s`,&nbsp;expected&nbsp;to
+                052&nbsp;&nbsp;&nbsp;&nbsp;&quot;Strip&nbsp;blank&nbsp;lines&nbsp;and&nbsp;comment&nbsp;lines&nbsp;from&nbsp;this&nbsp;string&nbsp;`s`,&nbsp;expected&nbsp;to
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                052&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;be&nbsp;Lisp&nbsp;source.&quot;
+                053&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;be&nbsp;Lisp&nbsp;source.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                053&nbsp;&nbsp;&nbsp;&nbsp;[^String&nbsp;s]
+                054&nbsp;&nbsp;&nbsp;&nbsp;[^String&nbsp;s]
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                054&nbsp;&nbsp;&nbsp;&nbsp;(join&nbsp;&quot;\n&quot;
+                055&nbsp;&nbsp;&nbsp;&nbsp;(join&nbsp;&quot;\n&quot;
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                055&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(remove
+                056&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(remove
                 </span><br/>
 <span class="covered" title="9 out of 9 forms covered">
-                056&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#(or&nbsp;(empty?&nbsp;%)
+                057&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#(or&nbsp;(empty?&nbsp;%)
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                057&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(starts-with?&nbsp;(trim&nbsp;%)&nbsp;&quot;;;&quot;))
+                058&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(starts-with?&nbsp;(trim&nbsp;%)&nbsp;&quot;;;&quot;))
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                058&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(split&nbsp;s&nbsp;#&quot;\n&quot;))))
+                059&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(split&nbsp;s&nbsp;#&quot;\n&quot;))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                059&nbsp;&nbsp;
+                060&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                060&nbsp;&nbsp;(defn&nbsp;number-lines
+                061&nbsp;&nbsp;(defn&nbsp;number-lines
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                061&nbsp;&nbsp;&nbsp;&nbsp;([^String&nbsp;s]
+                062&nbsp;&nbsp;&nbsp;&nbsp;([^String&nbsp;s]
                 </span><br/>
 <span class="not-covered" title="0 out of 4 forms covered">
-                062&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(number-lines&nbsp;s&nbsp;nil))
+                063&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(number-lines&nbsp;s&nbsp;nil))
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                063&nbsp;&nbsp;&nbsp;&nbsp;([^String&nbsp;s&nbsp;^Failure&nbsp;e]
+                064&nbsp;&nbsp;&nbsp;&nbsp;([^String&nbsp;s&nbsp;^Failure&nbsp;e]
                 </span><br/>
 <span class="not-covered" title="0 out of 4 forms covered">
-                064&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[l&nbsp;(-&gt;&nbsp;e&nbsp;:line)
+                065&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[l&nbsp;(-&gt;&nbsp;e&nbsp;:line)
                 </span><br/>
 <span class="not-covered" title="0 out of 3 forms covered">
-                065&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c&nbsp;(-&gt;&nbsp;e&nbsp;:column)]
+                066&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c&nbsp;(-&gt;&nbsp;e&nbsp;:column)]
                 </span><br/>
 <span class="not-covered" title="0 out of 3 forms covered">
-                066&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(join&nbsp;&quot;\n&quot;
+                067&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(join&nbsp;&quot;\n&quot;
                 </span><br/>
 <span class="not-covered" title="0 out of 11 forms covered">
-                067&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(map&nbsp;#(str&nbsp;(format&nbsp;&quot;%5d&nbsp;%s&quot;&nbsp;(inc&nbsp;%1)&nbsp;%2)
+                068&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(map&nbsp;#(str&nbsp;(format&nbsp;&quot;%5d&nbsp;%s&quot;&nbsp;(inc&nbsp;%1)&nbsp;%2)
                 </span><br/>
 <span class="not-covered" title="0 out of 6 forms covered">
-                068&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(when&nbsp;(=&nbsp;l&nbsp;(inc&nbsp;%1))
+                069&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(when&nbsp;(=&nbsp;l&nbsp;(inc&nbsp;%1))
                 </span><br/>
 <span class="not-covered" title="0 out of 11 forms covered">
-                069&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;&quot;\n&quot;&nbsp;(apply&nbsp;str&nbsp;(repeat&nbsp;c&nbsp;&quot;&nbsp;&quot;))&nbsp;&quot;^&quot;)))
+                070&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(str&nbsp;&quot;\n&quot;&nbsp;(apply&nbsp;str&nbsp;(repeat&nbsp;c&nbsp;&quot;&nbsp;&quot;))&nbsp;&quot;^&quot;)))
                 </span><br/>
 <span class="not-covered" title="0 out of 2 forms covered">
-                070&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(range)
+                071&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(range)
                 </span><br/>
 <span class="not-covered" title="0 out of 4 forms covered">
-                071&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(split&nbsp;s&nbsp;#&quot;\n&quot;))))))
+                072&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(split&nbsp;s&nbsp;#&quot;\n&quot;))))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                072&nbsp;&nbsp;
+                073&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                073&nbsp;&nbsp;(defn&nbsp;gsp
+                074&nbsp;&nbsp;(defn&nbsp;gsp
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                074&nbsp;&nbsp;&nbsp;&nbsp;&quot;Shortcut&nbsp;macro&nbsp;-&nbsp;the&nbsp;internals&nbsp;of&nbsp;read;&nbsp;or,&nbsp;if&nbsp;you&nbsp;like,&nbsp;read-string.
+                075&nbsp;&nbsp;&nbsp;&nbsp;&quot;Shortcut&nbsp;macro&nbsp;-&nbsp;the&nbsp;internals&nbsp;of&nbsp;read;&nbsp;or,&nbsp;if&nbsp;you&nbsp;like,&nbsp;read-string.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                075&nbsp;&nbsp;&nbsp;&nbsp;Argument&nbsp;`s`&nbsp;should&nbsp;be&nbsp;a&nbsp;string&nbsp;representation&nbsp;of&nbsp;a&nbsp;valid&nbsp;Lisp
+                076&nbsp;&nbsp;&nbsp;&nbsp;Argument&nbsp;`s`&nbsp;should&nbsp;be&nbsp;a&nbsp;string&nbsp;representation&nbsp;of&nbsp;a&nbsp;valid&nbsp;Lisp
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                076&nbsp;&nbsp;&nbsp;&nbsp;expression.&quot;
+                077&nbsp;&nbsp;&nbsp;&nbsp;expression.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                077&nbsp;&nbsp;&nbsp;&nbsp;[s]
+                078&nbsp;&nbsp;&nbsp;&nbsp;[s]
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                078&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[source&nbsp;(strip-line-comments&nbsp;s)
+                079&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[source&nbsp;(strip-line-comments&nbsp;s)
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                079&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parse-tree&nbsp;(parse&nbsp;source)]
+                080&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parse-tree&nbsp;(parse&nbsp;source)]
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                080&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(instance?&nbsp;Failure&nbsp;parse-tree)
+                081&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(instance?&nbsp;Failure&nbsp;parse-tree)
                 </span><br/>
 <span class="not-covered" title="0 out of 8 forms covered">
-                081&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(doall&nbsp;(println&nbsp;(number-lines&nbsp;source&nbsp;parse-tree))
+                082&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(doall&nbsp;(println&nbsp;(number-lines&nbsp;source&nbsp;parse-tree))
                 </span><br/>
 <span class="not-covered" title="0 out of 9 forms covered">
-                082&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info&nbsp;&quot;Ne&nbsp;can&nbsp;forstande&nbsp;&quot;&nbsp;(assoc&nbsp;parse-tree&nbsp;:source&nbsp;source))))
+                083&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info&nbsp;&quot;Ne&nbsp;can&nbsp;forstande&nbsp;&quot;&nbsp;(assoc&nbsp;parse-tree&nbsp;:source&nbsp;source))))
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                083&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(simplify&nbsp;parse-tree)))))
+                084&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(simplify&nbsp;parse-tree)))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                084&nbsp;&nbsp;
+                085&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                085&nbsp;&nbsp;(defn&nbsp;read-from-console
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                086&nbsp;&nbsp;&nbsp;&nbsp;&quot;Attempt&nbsp;to&nbsp;read&nbsp;a&nbsp;complete&nbsp;lisp&nbsp;expression&nbsp;from&nbsp;the&nbsp;console.&nbsp;NOTE&nbsp;that&nbsp;this
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                087&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;will&nbsp;only&nbsp;really&nbsp;work&nbsp;for&nbsp;S-Expressions,&nbsp;not&nbsp;M-Expressions.&quot;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                088&nbsp;&nbsp;&nbsp;&nbsp;[]
+                086&nbsp;&nbsp;(defn-&nbsp;dummy-read-chars&nbsp;[prompt]
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                089&nbsp;&nbsp;&nbsp;&nbsp;(loop&nbsp;[r&nbsp;(read-line)]
+                087&nbsp;&nbsp;&nbsp;&nbsp;(loop&nbsp;[r&nbsp;&quot;&quot;&nbsp;p&nbsp;prompt]
                 </span><br/>
-<span class="partial" title="11 out of 12 forms covered">
-                090&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(and&nbsp;(=&nbsp;(count&nbsp;(re-seq&nbsp;#&quot;\(&quot;&nbsp;r))
-                </span><br/>
-<span class="covered" title="5 out of 5 forms covered">
-                091&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(count&nbsp;(re-seq&nbsp;#&quot;\)&quot;&nbsp;r)))
-                </span><br/>
-<span class="covered" title="5 out of 5 forms covered">
-                092&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(count&nbsp;(re-seq&nbsp;#&quot;\[&quot;&nbsp;r))
-                </span><br/>
-<span class="covered" title="5 out of 5 forms covered">
-                093&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(count&nbsp;(re-seq&nbsp;#&quot;\]&quot;&nbsp;r))))
-                </span><br/>
-<span class="covered" title="1 out of 1 forms covered">
-                094&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r
-                </span><br/>
-<span class="not-covered" title="0 out of 1 forms covered">
-                095&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(recur&nbsp;(str&nbsp;r&nbsp;&quot;\n&quot;&nbsp;(read-line))))))
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                096&nbsp;&nbsp;
-                </span><br/>
-<span class="covered" title="1 out of 1 forms covered">
-                097&nbsp;&nbsp;(defn&nbsp;READ
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                098&nbsp;&nbsp;&nbsp;&nbsp;&quot;An&nbsp;implementation&nbsp;of&nbsp;a&nbsp;Lisp&nbsp;reader&nbsp;sufficient&nbsp;for&nbsp;bootstrapping;&nbsp;not&nbsp;necessarily
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                099&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;final&nbsp;Lisp&nbsp;reader.&nbsp;`input`&nbsp;should&nbsp;be&nbsp;either&nbsp;a&nbsp;string&nbsp;representation&nbsp;of&nbsp;a&nbsp;LISP
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                100&nbsp;&nbsp;&nbsp;&nbsp;expression,&nbsp;or&nbsp;else&nbsp;an&nbsp;input&nbsp;stream.&nbsp;A&nbsp;single&nbsp;form&nbsp;will&nbsp;be&nbsp;read.&quot;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                101&nbsp;&nbsp;&nbsp;&nbsp;([]
-                </span><br/>
-<span class="not-covered" title="0 out of 4 forms covered">
-                102&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(gsp&nbsp;(read-from-console)))
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                103&nbsp;&nbsp;&nbsp;&nbsp;([input]
-                </span><br/>
-<span class="partial" title="2 out of 4 forms covered">
-                104&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cond
-                </span><br/>
-<span class="partial" title="3 out of 5 forms covered">
-                105&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(empty?&nbsp;input)&nbsp;(READ)
+<span class="partial" title="12 out of 13 forms covered">
+                088&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(and&nbsp;(seq&nbsp;r)
                 </span><br/>
 <span class="covered" title="6 out of 6 forms covered">
-                106&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(string?&nbsp;input)&nbsp;(gsp&nbsp;input)
+                089&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(count&nbsp;(re-seq&nbsp;#&quot;\(&quot;&nbsp;r))
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                090&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(count&nbsp;(re-seq&nbsp;#&quot;\)&quot;&nbsp;r)))
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                091&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(count&nbsp;(re-seq&nbsp;#&quot;\[&quot;&nbsp;r))
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                092&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(count&nbsp;(re-seq&nbsp;#&quot;\]&quot;&nbsp;r))))
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                093&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                094&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(do
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                095&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(print&nbsp;(str&nbsp;p&nbsp;&quot;&nbsp;&quot;))
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                096&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(flush)
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                097&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(recur&nbsp;(str&nbsp;r&nbsp;&quot;\n&quot;&nbsp;(read-line))&nbsp;&quot;::&quot;)))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                098&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                099&nbsp;&nbsp;(defn&nbsp;read-from-console
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                100&nbsp;&nbsp;&nbsp;&nbsp;&quot;Attempt&nbsp;to&nbsp;read&nbsp;a&nbsp;complete&nbsp;lisp&nbsp;expression&nbsp;from&nbsp;the&nbsp;console.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                101&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                102&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;There&#x27;s&nbsp;a&nbsp;major&nbsp;problem&nbsp;here&nbsp;that&nbsp;the&nbsp;read-chars&nbsp;reader&nbsp;messes&nbsp;up&nbsp;testing.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                103&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We&nbsp;need&nbsp;to&nbsp;be&nbsp;able&nbsp;to&nbsp;disable&nbsp;it&nbsp;while&nbsp;testing!&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                104&nbsp;&nbsp;&nbsp;&nbsp;[prompt]
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                105&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(:testing&nbsp;*options*)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                106&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(dummy-read-chars&nbsp;prompt)
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                107&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(read-chars&nbsp;prompt)))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                108&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                109&nbsp;&nbsp;(defn&nbsp;READ
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                110&nbsp;&nbsp;&nbsp;&nbsp;&quot;An&nbsp;implementation&nbsp;of&nbsp;a&nbsp;Lisp&nbsp;reader&nbsp;sufficient&nbsp;for&nbsp;bootstrapping;&nbsp;not&nbsp;necessarily
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                111&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;final&nbsp;Lisp&nbsp;reader.&nbsp;`input`&nbsp;should&nbsp;be&nbsp;either&nbsp;a&nbsp;string&nbsp;representation&nbsp;of&nbsp;a&nbsp;LISP
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                112&nbsp;&nbsp;&nbsp;&nbsp;expression,&nbsp;or&nbsp;else&nbsp;an&nbsp;input&nbsp;stream.&nbsp;A&nbsp;single&nbsp;form&nbsp;will&nbsp;be&nbsp;read.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                113&nbsp;&nbsp;&nbsp;&nbsp;([]
+                </span><br/>
+<span class="not-covered" title="0 out of 7 forms covered">
+                114&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(gsp&nbsp;(read-from-console&nbsp;(:prompt&nbsp;*options*))))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                115&nbsp;&nbsp;&nbsp;&nbsp;([input]
+                </span><br/>
+<span class="partial" title="2 out of 4 forms covered">
+                116&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                </span><br/>
+<span class="partial" title="3 out of 5 forms covered">
+                117&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(empty?&nbsp;input)&nbsp;(READ)
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                118&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(string?&nbsp;input)&nbsp;(gsp&nbsp;input)
                 </span><br/>
 <span class="not-covered" title="0 out of 9 forms covered">
-                107&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(instance?&nbsp;InputStream&nbsp;input)&nbsp;(READ&nbsp;(slurp&nbsp;input))
+                119&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(instance?&nbsp;InputStream&nbsp;input)&nbsp;(READ&nbsp;(slurp&nbsp;input))
                 </span><br/>
 <span class="not-covered" title="0 out of 5 forms covered">
-                108&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info&nbsp;&quot;READ:&nbsp;`input`&nbsp;should&nbsp;be&nbsp;a&nbsp;string&nbsp;or&nbsp;an&nbsp;input&nbsp;stream&quot;&nbsp;{})))))
+                120&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(ex-info&nbsp;&quot;READ:&nbsp;`input`&nbsp;should&nbsp;be&nbsp;a&nbsp;string&nbsp;or&nbsp;an&nbsp;input&nbsp;stream&quot;&nbsp;{})))))
                 </span><br/>
  </body>
 </html>

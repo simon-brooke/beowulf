@@ -13,13 +13,14 @@
 
   Both these extensions can be disabled by using the `--strict` command line
   switch."
-  (:require ;; [beowulf.reader.char-reader :refer [read-chars]]
+  (:require [beowulf.oblist :refer [*options*]]
+            [beowulf.reader.char-reader :refer [read-chars]]
             [beowulf.reader.generate :refer [generate]]
             [beowulf.reader.parser :refer [parse]]
             [beowulf.reader.simplify :refer [simplify]]
             [clojure.string :refer [join split starts-with? trim]])
-  (:import [java.io InputStream]
-           [instaparse.gll Failure]))
+  (:import [instaparse.gll Failure]
+           [java.io InputStream]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -82,24 +83,35 @@
              (throw (ex-info "Ne can forstande " (assoc parse-tree :source source))))
       (generate (simplify parse-tree)))))
 
-(defn read-from-console
-  "Attempt to read a complete lisp expression from the console. NOTE that this
-   will only really work for S-Expressions, not M-Expressions."
-  []
-  (loop [r (read-line)]
-    (if (and (= (count (re-seq #"\(" r))
-           (count (re-seq #"\)" r)))
+(defn- dummy-read-chars [prompt]
+  (loop [r "" p prompt]
+    (if (and (seq r)
+             (= (count (re-seq #"\(" r))
+                (count (re-seq #"\)" r)))
              (= (count (re-seq #"\[" r))
                 (count (re-seq #"\]" r))))
       r
-      (recur (str r "\n" (read-line))))))
+      (do
+        (print (str p " "))
+        (flush)
+        (recur (str r "\n" (read-line)) "::")))))
+
+(defn read-from-console
+  "Attempt to read a complete lisp expression from the console.
+   
+   There's a major problem here that the read-chars reader messes up testing.
+   We need to be able to disable it while testing!"
+  [prompt]
+  (if (:testing *options*)
+    (dummy-read-chars prompt)
+    (read-chars prompt)))
 
 (defn READ
   "An implementation of a Lisp reader sufficient for bootstrapping; not necessarily
   the final Lisp reader. `input` should be either a string representation of a LISP
   expression, or else an input stream. A single form will be read."
   ([]
-   (gsp (read-from-console)))
+   (gsp (read-from-console (:prompt *options*))))
   ([input]
    (cond
      (empty? input) (READ)

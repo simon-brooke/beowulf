@@ -91,7 +91,8 @@
   ([]
    (SYSOUT nil))
   ([filepath]
-   (spit (full-path (str filepath))
+   (let [destination (full-path (str filepath))]
+    (spit destination
          (with-out-str
            (println (apply str (repeat 79 ";")))
            (println (format ";; Beowulf %s Sysout file generated at %s"
@@ -103,7 +104,9 @@
            (println)
            (let [output (safely-wrap-subrs @oblist)]
              (pretty-print output)
-             )))))
+             )))
+     (println "Saved sysout to " destination)
+     NIL)))
 
 (defn resolve-subr
   "If this oblist `entry` references a subroutine, attempt to fix up that

@@ -1721,6 +1721,7 @@ represented in storage only once,
 The following simple example has been included to illustrate the exact construction
 of list structures. Two types of list structures are shown, and a function for deriving
 one from the other is given in LISP.
+
 We assume that we have a list of the form
 n, = ((A B C) (D E F),... , (X Y z)),
 
@@ -2709,7 +2710,9 @@ If `deflist` or `define` is used twice on the same object with the same indicato
 The function attrib concatenates its two arguments by changing the last element of its first argument to point to the second argument. Thus it is commonly used to tack something onto the end of a property list. The value of attrib is the second argument.
 
 For example
-attrib[~~; (EXPR (LAMBDA (X) (COND ((ATOM X) X) (T (FF (CAR x))))))]
+```
+attrib[FF; (EXPR (LAMBDA (X) (COND ((ATOM X) X) (T (FF (CAR x))))))]
+```
 would put EXPR followed by the LAMBDA expression for FF onto the end of the prop-
 erty list for FF.
 

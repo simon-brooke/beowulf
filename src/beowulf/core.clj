@@ -53,7 +53,8 @@
                  (.canRead (io/file %)))
                "Could not find sysout file"]]
    ["-s" "--strict" "Strictly interpret the Lisp 1.5 language, without extensions."]
-   ["-t" "--time" "Time evaluations."]])
+   ["-t" "--time" "Time evaluations."]
+   ["-x" "--testing" "Disable the jline reader - useful when piping input."]])
 
 (defn- re 
   "Like REPL, but it isn't a loop and doesn't print."
@@ -63,11 +64,10 @@
 (defn repl
   "Read/eval/print loop."
   [prompt]
-  (loop []
-    (print prompt)
+  (loop [] 
     (flush)
     (try
-      (if-let [input (trim (read-from-console))]
+      (if-let [input (trim (read-from-console prompt))]
         (if (= input stop-word)
           (throw (ex-info "\nFærwell!" {:cause :quit}))
           (println 
@@ -116,7 +116,7 @@
              (catch Throwable any
                (println any))))
       (try
-        (repl (str (:prompt (:options args)) " "))
+        (repl (:prompt (:options args)))
         (catch
          Exception
          e
