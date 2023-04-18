@@ -167,7 +167,6 @@
         (T (GO START))))")]
       (is (= actual expected)))))
 
-
 (deftest put-get-tests
   (let [symbol 'TESTSYMBOL
         p1 'TESTPROPONE
@@ -204,3 +203,13 @@
         (is (= actual1 expected1) "The value set can be retrieved.")
         (is (= actual2 expected2) "Values are independent.")
         (is (= actual3 expected3) "Setting a second property does not obliterate the first.")))))
+
+(deftest fsubr-tests
+  (testing "FSUBR/CONC"
+    (reps "(SETQ P (RANGE 1 4))")
+    (reps "(SETQ Q (RANGE 5 8))")
+    (reps "(SETQ R (RANGE 9 12))")
+    (reps "(CONC P Q R)")
+    (let [expected "(1 2 3 4 5 6 7 8 9 10 11 12)"
+          actual (reps "X")]
+      (is (= actual expected)))))

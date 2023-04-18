@@ -11,9 +11,10 @@
   objects."
   (:require [beowulf.cons-cell :refer [F make-beowulf-list make-cons-cell
                                        pretty-print T]]
-            [beowulf.host :refer [ASSOC ATOM CAAR CADAR CADDR CADR CAR CDR
+            [beowulf.host :refer [ASSOC ATOM CAAR CAADR CADAR CADDR CADR CAR CDR
                                   CONS ERROR GET LIST NUMBERP PAIRLIS traced?]]
-            [beowulf.oblist :refer [*options* NIL]])
+            [beowulf.oblist :refer [*options* NIL]]
+            [clojure.tools.trace :refer [deftrace]])
   (:import [beowulf.cons_cell ConsCell]
            [clojure.lang Symbol]))
 
@@ -37,7 +38,7 @@
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(declare APPLY EVAL prog-eval)
+(declare APPLY EVAL EVCON prog-eval)
 
 ;;;; The PROGram feature ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -88,30 +89,45 @@
   (cond
     (number? expr) expr
     (symbol? expr) (@vars expr)
-    (instance? ConsCell expr) (case (.getCar expr)
-                                COND (prog-cond (.getCdr expr)
+    (instance? ConsCell expr) (case (CAR expr)
+                                COND (prog-cond (CDR expr)
                                                 vars env depth)
-                                GO (make-cons-cell
-                                    '*PROGGO* (.getCar (.getCdr expr)))
-                                RETURN (make-cons-cell
-                                        '*PROGRETURN*
-                                        (prog-eval (.getCar (.getCdr expr))
-                                                   vars env depth))
-                                SET (let [v (CADDR expr)]
+                                GO (let [target (CADR expr)]
+                                     (when (traced? 'PROG)
+                                       (println "  PROG:GO: Goto " target))
+                                     (make-cons-cell
+                                      '*PROGGO* target))
+                                RETURN (let [val (prog-eval
+                                                  (CADR expr)
+                                                  vars env depth)]
+                                         (when (traced? 'PROG)
+                                           (println "  PROG:RETURN: Returning " 
+                                                    val)
+                                           (make-cons-cell
+                                            '*PROGRETURN*
+                                            val)))
+                                SET (let [var (prog-eval (CADR expr)
+                                                         vars env depth)
+                                          val (prog-eval (CADDR expr)
+                                                         vars env depth)]
+                                      (when (traced? 'PROG)
+                                        (println "  PROG:SET: Setting " 
+                                                 var " to " val))
                                       (swap! vars
                                              assoc
-                                             (prog-eval (CADR expr)
-                                                        vars env depth)
-                                             (prog-eval (CADDR expr)
-                                                        vars env depth))
-                                      v)
-                                SETQ (let [v (CADDR expr)]
+                                             var
+                                             val)
+                                      val)
+                                SETQ (let [var (CADDR expr)
+                                           val (prog-eval var
+                                                          vars env depth)]
+                                       (when (traced? 'PROG)
+                                         (println "  PROG:SETQ: Setting " var " to " val))
                                        (swap! vars
                                               assoc
                                               (CADR expr)
-                                              (prog-eval v
-                                                         vars env depth))
-                                       v)
+                                              val)
+                                       val)
                                  ;; else
                                 (beowulf.bootstrap/EVAL expr
                                                         (merge-vars vars env)
@@ -224,7 +240,7 @@
       (println (str "<" indent " " function-symbol " " response))))
   response)
 
-(defn- value
+(defn value
   "Seek a value for this symbol `s` by checking each of these indicators in
    turn."
   ([s]
@@ -269,7 +285,7 @@
    return the result."
   [^Symbol function-symbol args ^ConsCell environment depth]
   (trace-call function-symbol args depth)
-  (let [lisp-fn (value function-symbol '(EXPR FEXPR))
+  (let [lisp-fn (value function-symbol '(EXPR FEXPR))  ;; <-- should these be handled differently? I think so!
         args' (cond (= NIL args) args
                     (empty? args) NIL
                     (instance? ConsCell args) args
@@ -296,16 +312,35 @@
     (trace-response function-symbol result depth)
     result))
 
-(defn- apply-label 
+;; (LABEL ARGS 
+;;        (COND ((COND ((ONEP (LENGTH ARGS)) ARGS) 
+;;                     (T (ATTRIB (CAR ARGS) (APPLY CONC (CDR ARGS) NIL)))) 
+;;               ARGS))) 
+;; ((1 2 3 4) (5 6 7 8) (9 10 11 12)) 
+;; NIL
+;; (def function (make-beowulf-list '(LABEL ARGS (COND 
+;;    ((COND ((ONEP (LENGTH ARGS)) ARGS) 
+;;           (T (ATTRIB (CAR ARGS) 
+;;                      (APPLY CONC (CDR ARGS) NIL))))
+;;     ARGS)))))
+;; (def args (make-beowulf-list '((1 2 3 4) (5 6 7 8) (9 10 11 12))))
+
+;; function
+;; (CADR function)
+;; (CADDR function)
+
+(defn apply-label
   "Apply in the special case that the first element in the function is `LABEL`."
   [function args environment depth]
-  (APPLY
+  (EVAL
    (CADDR function)
-   args
    (CONS
-    (CONS (CADR function) (CADDR function))
+    (CONS (CADR function) args)
     environment)
    depth))
+
+;; (apply-label function args NIL 1)
+;; (APPLY function args NIL 1)
 
 (defn- apply-lambda
   "Apply in the special case that the first element in the function is `LAMBDA`."
@@ -340,6 +375,8 @@
                             FUNARG (APPLY (CADR function) args (CADDR function) depth)
                             LAMBDA (apply-lambda function args environment depth)
                             ;; else
+                            ;; OK, this is *not* what is says in the manual...
+                            ;; COND (EVCON ???)
                             (throw (ex-info "Ungecnáwen wyrþan sí þegnung-weard"
                                             {:phase :apply
                                              :function function
@@ -394,7 +431,7 @@
       (println (str indent ": EVAL: sceald bindele: " (or v "nil"))))
     (if (instance? ConsCell v)
       (.getCdr v)
-      (let [v' (value expr (list 'APVAL))]
+      (let [v' (value expr)]
         (when (traced? 'EVAL)
           (println (str indent ": EVAL: deóp bindele: (" expr " . " (or v' "nil") ")")))
         (if v'
