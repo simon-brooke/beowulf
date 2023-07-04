@@ -77,7 +77,7 @@ You are of course welcome to fork the project and do whatever you like with it!
 
 Invoke with
 
-    java -jar target/uberjar/beowulf-0.3.0-standalone.jar --help
+    java -jar target/uberjar/beowulf-0.3.1-standalone.jar --help
 
 (Obviously, check your version number)
 

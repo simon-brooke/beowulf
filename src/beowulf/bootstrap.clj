@@ -14,6 +14,7 @@
             [beowulf.host :refer [ASSOC ATOM CAAR CAADR CADAR CADDR CADR CAR CDR
                                   CONS ERROR GET LIST NUMBERP PAIRLIS traced?]]
             [beowulf.oblist :refer [*options* NIL]]
+            [clojure.string :as s]
             [clojure.tools.trace :refer [deftrace]])
   (:import [beowulf.cons_cell ConsCell]
            [clojure.lang Symbol]))
@@ -47,6 +48,10 @@
   "Stack depth. Unfortunately we need to be able to pass round depth for 
    functions which call EVAL/APPLY but do not know about depth."
   0)
+
+(defn- trace-indent
+  ([] (trace-indent *depth*))
+  ([d] (s/join (repeat d " "))))
 
 (def find-target
   (memoize
@@ -101,17 +106,17 @@
                                                   (CADR expr)
                                                   vars env depth)]
                                          (when (traced? 'PROG)
-                                           (println "  PROG:RETURN: Returning " 
-                                                    val)
-                                           (make-cons-cell
-                                            '*PROGRETURN*
-                                            val)))
+                                           (println "  PROG:RETURN: Returning "
+                                                    val))
+                                         (make-cons-cell
+                                          '*PROGRETURN*
+                                          val))
                                 SET (let [var (prog-eval (CADR expr)
                                                          vars env depth)
                                           val (prog-eval (CADDR expr)
                                                          vars env depth)]
                                       (when (traced? 'PROG)
-                                        (println "  PROG:SET: Setting " 
+                                        (println "  PROG:SET: Setting "
                                                  var " to " val))
                                       (swap! vars
                                              assoc
@@ -195,7 +200,7 @@
                   (println "Program:")
                   (pretty-print program))) ;; for debugging
     (loop [cursor body]
-      (let [step (.getCar cursor)]
+      (let [step (if (= NIL cursor) NIL (.getCar cursor))]
         (when trace (do (println "Executing step: " step)
                         (println "  with vars: " @vars)))
         (cond (= cursor NIL) NIL
@@ -228,7 +233,7 @@
   with these `args` at this depth."
   [function-symbol args depth]
   (when (traced? function-symbol)
-    (let [indent (apply str (repeat depth "-"))]
+    (let [indent (trace-indent depth)]
       (println (str indent "> " function-symbol " " args)))))
 
 (defn- trace-response
@@ -236,9 +241,11 @@
    `function-symbol` at this depth."
   [function-symbol response depth]
   (when (traced? function-symbol)
-    (let [indent (apply str (repeat depth "-"))]
+    (let [indent (apply str (trace-indent depth))]
       (println (str "<" indent " " function-symbol " " response))))
   response)
+
+;;;; Support functions for interpreter ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn value
   "Seek a value for this symbol `s` by checking each of these indicators in

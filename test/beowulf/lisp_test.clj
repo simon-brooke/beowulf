@@ -7,7 +7,7 @@
             [beowulf.read :refer [READ]]
             [clojure.test :refer [deftest is testing use-fixtures]]))
 
-(defn- reps
+(defn reps
   "'Read eval print string', or 'read eval print single'.
    Reads and evaluates one input string, and returns the
    output string."
@@ -156,8 +156,11 @@
 ;;                      '(X WROTE Y))")]
 ;;       (is (= actual expected)))))
 
+;; this works just fine in the REPL provided PROG is traced, but does not work
+;; if PROG is not traced (and doesn't work in the test harness either way)
 (deftest prog-tests
   (testing "PROG"
+    ;; (reps "(TRACE 'PROG)")
     (let [expected "5"
           actual (reps "(PROG (X)
     (SETQ X 1)
@@ -208,8 +211,7 @@
   (testing "FSUBR/CONC"
     (reps "(SETQ P (RANGE 1 4))")
     (reps "(SETQ Q (RANGE 5 8))")
-    (reps "(SETQ R (RANGE 9 12))")
-    (reps "(CONC P Q R)")
+    (reps "(SETQ R (RANGE 9 12))") 
     (let [expected "(1 2 3 4 5 6 7 8 9 10 11 12)"
-          actual (reps "X")]
+          actual (reps "(CONC P Q R)")]
       (is (= actual expected)))))
