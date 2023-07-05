@@ -23,3 +23,5 @@ Sysout*.lsp
 src/beowulf/scratch.clj
 
 .portal/vs-code.edn
+
+.portal/

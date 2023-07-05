@@ -130,7 +130,6 @@
             actual (reps input)]
         (is (= actual expected))))))
 
-
 (deftest MEMBER-tests
   (testing "member"
     (let [expected "T"
@@ -147,17 +146,15 @@
       (is (= actual expected)))))
 
 ;; This is failing, and although yes, it does matter, I have not yet tracked the reason.
-;; (deftest sublis-tests
-;;   (testing "sublis"
-;;     (let [expected "(SHAKESPEARE WROTE (THE TEMPEST))"
-;;           actual (reps
-;;                    "(SUBLIS
-;;                      '((X . SHAKESPEARE) (Y . (THE TEMPEST)))
-;;                      '(X WROTE Y))")]
-;;       (is (= actual expected)))))
+(deftest sublis-tests
+  (testing "sublis"
+    (let [expected "(SHAKESPEARE WROTE (THE TEMPEST))"
+          actual (reps
+                   "(SUBLIS
+                     '((X . SHAKESPEARE) (Y . (THE TEMPEST)))
+                     '(X WROTE Y))")]
+      (is (= actual expected)))))
 
-;; this works just fine in the REPL provided PROG is traced, but does not work
-;; if PROG is not traced (and doesn't work in the test harness either way)
 (deftest prog-tests
   (testing "PROG"
     ;; (reps "(TRACE 'PROG)")
@@ -214,4 +211,15 @@
     (reps "(SETQ R (RANGE 9 12))") 
     (let [expected "(1 2 3 4 5 6 7 8 9 10 11 12)"
           actual (reps "(CONC P Q R)")]
+      (is (= actual expected)))))
+
+(deftest attrib-tests
+  (testing "ATTRIB"
+    (reps "(SETQ X '(A B C))")
+    (reps "(SETQ Y '(D E F))")
+    (let [expected "(D E F)"
+          actual (reps "(ATTRIB X Y)")]
+      (is (= actual expected)))
+    (let [expected "(A B C D E F)"
+          actual (reps "X")]
       (is (= actual expected)))))

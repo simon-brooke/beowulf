@@ -443,7 +443,7 @@
           (println (str indent ": EVAL: deóp bindele: (" expr " . " (or v' "nil") ")")))
         (if v'
           v'
-          (throw (ex-info "Ne tácen-bindele āfand"
+          (throw (ex-info (format "Ne tácen-bindele āfand: `%s`" expr)
                           {:phase :eval
                            :function 'EVAL
                            :args (list expr env depth)
