@@ -7,7 +7,7 @@
             [beowulf.read :refer [READ]]
             [clojure.test :refer [deftest is testing use-fixtures]]))
 
-(defn- reps
+(defn reps
   "'Read eval print string', or 'read eval print single'.
    Reads and evaluates one input string, and returns the
    output string."
@@ -130,7 +130,6 @@
             actual (reps input)]
         (is (= actual expected))))))
 
-
 (deftest MEMBER-tests
   (testing "member"
     (let [expected "T"
@@ -147,17 +146,18 @@
       (is (= actual expected)))))
 
 ;; This is failing, and although yes, it does matter, I have not yet tracked the reason.
-;; (deftest sublis-tests
-;;   (testing "sublis"
-;;     (let [expected "(SHAKESPEARE WROTE (THE TEMPEST))"
-;;           actual (reps
-;;                    "(SUBLIS
-;;                      '((X . SHAKESPEARE) (Y . (THE TEMPEST)))
-;;                      '(X WROTE Y))")]
-;;       (is (= actual expected)))))
+(deftest sublis-tests
+  (testing "sublis"
+    (let [expected "(SHAKESPEARE WROTE (THE TEMPEST))"
+          actual (reps
+                   "(SUBLIS
+                     '((X . SHAKESPEARE) (Y . (THE TEMPEST)))
+                     '(X WROTE Y))")]
+      (is (= actual expected)))))
 
 (deftest prog-tests
   (testing "PROG"
+    ;; (reps "(TRACE 'PROG)")
     (let [expected "5"
           actual (reps "(PROG (X)
     (SETQ X 1)
@@ -208,8 +208,18 @@
   (testing "FSUBR/CONC"
     (reps "(SETQ P (RANGE 1 4))")
     (reps "(SETQ Q (RANGE 5 8))")
-    (reps "(SETQ R (RANGE 9 12))")
-    (reps "(CONC P Q R)")
+    (reps "(SETQ R (RANGE 9 12))") 
     (let [expected "(1 2 3 4 5 6 7 8 9 10 11 12)"
+          actual (reps "(CONC P Q R)")]
+      (is (= actual expected)))))
+
+(deftest attrib-tests
+  (testing "ATTRIB"
+    (reps "(SETQ X '(A B C))")
+    (reps "(SETQ Y '(D E F))")
+    (let [expected "(D E F)"
+          actual (reps "(ATTRIB X Y)")]
+      (is (= actual expected)))
+    (let [expected "(A B C D E F)"
           actual (reps "X")]
       (is (= actual expected)))))

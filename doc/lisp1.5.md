@@ -961,19 +961,15 @@ But if eval is given (QUOTE X), X should not be evaluated. QUOTE is a special fo
 that prevents its argument from being evaluated.
 A special form differs from a function in two ways. Its arguments are not evaluated
 before the special form sees them. COND, for example, has a very special way of
-```
-
 evaluating its arguments by using evcon. The second way which special forms differ
-from functions is that they may have an indefinite number of arguments. Special forrrls
-have indicators on their property lists called FEXPR and FSUBR for LISP -defined forms
+from functions is that they may have an indefinite number of arguments. Special forms
+have indicators on their property lists called FEXPR and FSUBR for LISP-defined forms
 and machine language coded forms, respectively.
 
-```
-2.6 Programming for the Interpreter
-```
+### 2.6 Programming for the Interpreter
 
 The purpose of this section is to help the programmer avoid certain common errors.
-Example 1
+Example 1: CAR
 fn: CAR
 args: ((A B))
 The value is A. Note that the interpreter expects a list of arguments. The one argu-
@@ -981,20 +977,18 @@ ment for car is (A B). The extra pair of parentheses is necessary.
 One could write (LAMBDA (X) (CAR X)) instead of just CAR. This is correct but
 unnecessary.
 
-```
-Example 2
+Example 2: CONS
 fn: CONS
-args: (A (B. C))
-The value is cons[^;(^. c)] = (A. (B. C)).
-The print program will write this as (A B. C).
-```
+args: (A (B . C))
+The value is cons[a; cons[b; c]] = (A . (B . C)).
+The print program will write this as (A B . C).
 
 Example (^3) -
 fn: CONS
-args: ((CAR (QUOTE (A. B))) (CDR (QUOTE (C. D))))
-The value of this computation will be ((CAR (QUOTE (A. B))). (CDR (QUOTE (C. D)))).
-This is not what the programmer expected. He expected (CAR (QUOTE (A. B))) to
-evaluate to A, and expected (A. D) as the value of cons.
+args: ((CAR (QUOTE (A . B))) (CDR (QUOTE (C . D))))
+The value of this computation will be ((CAR (QUOTE (A . B))) . (CDR (QUOTE (C . D)))).
+This is not what the programmer expected. He expected (CAR (QUOTE (A . B))) to
+evaluate to A, and expected (A . D) as the value of cons.
 
 * The interpreter expects a ---- list of arguments. ------- It does not expect a list of expressions
 -- that will evaluate to the arguments. Tworcorrect ways of writing this function are listed
