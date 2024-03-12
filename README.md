@@ -338,7 +338,7 @@ even has a working compiler!
 
 ### History resources
 
-I'm compiling a [list of links to historical documents on Lisp 1.5](https://simon-brooke.github.io/beowulf/docs/further_reading.html).
+I'm compiling a [list of links to historical documents on Lisp 1.5](https://simon-brooke.github.io/beowulf/docs/codox/further_reading.html).
 
 ## License
 
