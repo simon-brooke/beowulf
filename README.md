@@ -48,10 +48,19 @@ Because Lisp is the only computer language worth learning, and if a thing
 is worth learning, it's worth learning properly; which means going back to
 the beginning and trying to understand that.
 
-Because there is, so far as I know, no working implementation of Lisp 1.5
-for modern machines.
-
 Because I'm barking mad, and this is therapy.
+
+#### There are other barking mad people out there
+
+Since I wrote Beowulf, I've become aware of other modern reimplementations of Lisp 1.5:
+
+1. [Kenichi Sasagawa's in C](https://github.com/sasagawa888/lisp1.5);
+2. [Ichigo Lisp, in JavaScript, which compiles to Web Assembly](https://github.com/zick/IchigoLisp);
+3. [Geert Bosch's implementation in ADA](https://github.com/GeertBosch/lisp);
+
+There are probably others.
+
+In addition, [this](https://github.com/informatimago/lisp-1-5) appears to be a transcription of the original IBM 709 card deck for the Lisp 1.5 system. There's an IBM 709 emulator [here](https://github.com/Bertoid1311/B7094) on which it might be possible to actually run this.
 
 ### Status
 

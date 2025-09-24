@@ -45,8 +45,16 @@
 <h3><a href="#but-why" id="but-why"></a>BUT WHY?!!?!</h3>
 <p>Because.</p>
 <p>Because Lisp is the only computer language worth learning, and if a thing is worth learning, it’s worth learning properly; which means going back to the beginning and trying to understand that.</p>
-<p>Because there is, so far as I know, no working implementation of Lisp 1.5 for modern machines.</p>
 <p>Because I’m barking mad, and this is therapy.</p>
+<h4><a href="#there-are-other-barking-mad-people-out-there" id="there-are-other-barking-mad-people-out-there"></a>There are other barking mad people out there</h4>
+<p>Since I wrote Beowulf, I’ve become aware of other modern reimplementations of Lisp 1.5:</p>
+<ol>
+<li><a href="https://github.com/sasagawa888/lisp1.5">Kenichi Sasagawa’s in C</a>;</li>
+<li><a href="https://github.com/zick/IchigoLisp">Ichigo Lisp, in JavaScript, which compiles to Web Assembly</a>;</li>
+<li><a href="https://github.com/GeertBosch/lisp">Geert Bosch’s implementation in ADA</a>;</li>
+</ol>
+<p>There are probably others.</p>
+<p>In addition, <a href="https://github.com/informatimago/lisp-1-5">this</a> appears to be a transcription of the original IBM 709 card deck for the Lisp 1.5 system. There’s an IBM 709 emulator <a href="https://github.com/Bertoid1311/B7094">here</a> on which it might be possible to actually run this.</p>
 <h3><a href="#status" id="status"></a>Status</h3>
 <p>Working Lisp interpreter, but some key features not yet implemented.</p>
 <ul>
@@ -60,7 +68,7 @@
 <p>You are of course welcome to fork the project and do whatever you like with it!</p>
 <h3><a href="#invoking" id="invoking"></a>Invoking</h3>
 <p>Invoke with</p>
-<pre><code>java -jar target/uberjar/beowulf-0.3.0-standalone.jar --help
+<pre><code>java -jar target/uberjar/beowulf-0.3.1-standalone.jar --help
 </code></pre>
 <p>(Obviously, check your version number)</p>
 <p>Command line arguments as follows:</p>
