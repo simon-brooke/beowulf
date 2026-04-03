@@ -293,6 +293,7 @@
   [^Symbol function-symbol args ^ConsCell environment depth]
   (trace-call function-symbol args depth)
   (let [lisp-fn (value function-symbol '(EXPR FEXPR))  ;; <-- should these be handled differently? I think so!
+        ;; TODO: Yes they should. EXPRs should have their args evaluated; FEXPRs should not, but currently both do.
         args' (cond (= NIL args) args
                     (empty? args) NIL
                     (instance? ConsCell args) args
