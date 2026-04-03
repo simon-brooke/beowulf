@@ -4,7 +4,7 @@
 
 LISP 1.5 is to all Lisp dialects as Beowulf is to English literature.
 
-![Beowulf logo](https://simon-brooke.github.io/beowulf/docs/img/beowulf_logo_med.png)
+![Beowulf logo](https://www.journeyman.cc/~simon/album/beowulf_logo_med.png)
 
 ## Contents
   * [What this is](#what-this-is)
